@@ -13,6 +13,9 @@ import NotaryOnboarding from './pages/NotaryOnboarding';
 import NotaryDashboard from './pages/NotaryDashboard';
 import RequestNotarization from './pages/RequestNotarization';
 import VerifyDocument from './pages/VerifyDocument';
+import CheckoutPage from './pages/CheckoutPage';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentCancel from './pages/PaymentCancel';
 import { Toaster } from './components/ui/toaster';
 
 function App() {
@@ -27,6 +30,9 @@ function App() {
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/demo" element={<QuickSealDemo />} />
             <Route path="/verify" element={<VerifyDocument />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/payment/success" element={<PaymentSuccess />} />
+            <Route path="/payment/cancel" element={<PaymentCancel />} />
             <Route
               path="/dashboard"
               element={
