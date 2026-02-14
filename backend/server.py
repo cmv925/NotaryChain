@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 # Import route modules
-from routes import auth_routes, document_routes
+from routes import auth_routes, document_routes, notary_routes
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -20,6 +20,7 @@ db = client[os.environ['DB_NAME']]
 # Inject db into route modules
 auth_routes.set_db(db)
 document_routes.set_db(db)
+notary_routes.set_db(db)
 
 # Create the main app without a prefix
 app = FastAPI()
@@ -38,6 +39,7 @@ app.include_router(api_router)
 # Include auth and document routes (they already have /api prefix)
 app.include_router(auth_routes.router)
 app.include_router(document_routes.router)
+app.include_router(notary_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
