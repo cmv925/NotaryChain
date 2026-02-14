@@ -158,7 +158,7 @@ async def get_analysis(
     analysis = await db.document_analyses.find_one({
         "id": analysis_id,
         "user_id": current_user.id
-    })
+    }, {"_id": 0})
     
     if not analysis:
         raise HTTPException(status_code=404, detail="Analysis not found")
