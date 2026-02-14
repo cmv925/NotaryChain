@@ -158,13 +158,40 @@ const Dashboard = () => {
 
         {/* Quick Actions */}
         <div className="mb-8">
-          <Button
-            onClick={() => navigate('/demo')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg"
-          >
-            <Upload className="w-5 h-5 mr-2" />
-            Seal New Document
-          </Button>
+          <h3 className="text-xl font-semibold text-white mb-4">Quick Actions</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Button
+              onClick={() => navigate('/demo')}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-6 text-lg justify-start"
+            >
+              <Upload className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Quick Seal</div>
+                <div className="text-sm text-blue-200">Instant blockchain timestamp</div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => navigate('/request-notarization')}
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-6 text-lg justify-start"
+            >
+              <FileText className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Request Notarization</div>
+                <div className="text-sm text-green-200">Full notary service</div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => navigate('/notary/onboarding')}
+              variant="outline"
+              className="border-2 border-purple-500 text-purple-400 hover:bg-purple-500/10 px-6 py-6 text-lg justify-start"
+            >
+              <Shield className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Become a Notary</div>
+                <div className="text-sm text-purple-300">Join our network</div>
+              </div>
+            </Button>
+          </div>
         </div>
 
         {/* Recent Documents */}
