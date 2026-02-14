@@ -7,24 +7,40 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent } from '../components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '../hooks/use-toast';
+import { useAuth } from '../contexts/AuthContext';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Mock login
-    toast({
-      title: 'Login Successful',
-      description: 'Welcome back to NotaryChain!',
-    });
-    setTimeout(() => {
-      navigate('/');
-    }, 1000);
+    setLoading(true);
+
+    const result = await login(formData.email, formData.password);
+
+    if (result.success) {
+      toast({
+        title: 'Login Successful',
+        description: 'Welcome back to NotaryChain!',
+      });
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 500);
+    } else {
+      toast({
+        title: 'Login Failed',
+        description: result.error || 'Please check your credentials',
+        variant: 'destructive',
+      });
+    }
+
+    setLoading(false);
   };
 
   const handleChange = (e) => {
@@ -60,6 +76,7 @@ const LoginPage = () => {
                   onChange={handleChange}
                   className="bg-[#0a0f1a] border-gray-700 text-white focus:border-blue-500"
                   placeholder="you@example.com"
+                  disabled={loading}
                 />
               </div>
 
@@ -76,6 +93,7 @@ const LoginPage = () => {
                   onChange={handleChange}
                   className="bg-[#0a0f1a] border-gray-700 text-white focus:border-blue-500"
                   placeholder="••••••••"
+                  disabled={loading}
                 />
               </div>
 
@@ -91,9 +109,10 @@ const LoginPage = () => {
 
               <Button
                 type="submit"
+                disabled={loading}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg"
               >
-                Sign In
+                {loading ? 'Signing in...' : 'Sign In'}
               </Button>
             </form>
 
