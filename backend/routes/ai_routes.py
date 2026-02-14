@@ -134,11 +134,11 @@ async def get_session_analysis(
     
     analyses = await db.document_analyses.find({
         "session_id": session_id
-    }).to_list(100)
+    }, {"_id": 0}).to_list(100)
     
     verifications = await db.biometric_verifications.find({
         "session_id": session_id
-    }).to_list(100)
+    }, {"_id": 0}).to_list(100)
     
     return {
         "session_id": session_id,
