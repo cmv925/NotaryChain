@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import PricingPage from './pages/PricingPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
+import { Toaster } from './components/ui/toaster';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/signup" element={<SignUpPage />} />
         </Routes>
       </BrowserRouter>
+      <Toaster />
     </div>
   );
 }
