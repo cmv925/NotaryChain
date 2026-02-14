@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 # Import route modules
-from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes
+from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -24,6 +24,7 @@ notary_routes.set_db(db)
 ai_routes.set_db(db)
 blockchain_routes.set_db(db)
 payment_routes.set_db(db)
+video_routes.set_db(db)
 
 # Create the main app without a prefix
 app = FastAPI()
@@ -46,6 +47,7 @@ app.include_router(notary_routes.router)
 app.include_router(ai_routes.router)
 app.include_router(blockchain_routes.router)
 app.include_router(payment_routes.router)
+app.include_router(video_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
