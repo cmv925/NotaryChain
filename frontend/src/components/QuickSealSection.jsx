@@ -72,7 +72,7 @@ const QuickSealSection = () => {
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold text-white">Quick Seal Process</h3>
                 <span className="bg-yellow-500/20 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full">
-                  < 10 seconds
+                  &lt; 10 seconds
                 </span>
               </div>
 
