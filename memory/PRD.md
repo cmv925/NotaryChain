@@ -150,10 +150,63 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - [x] Biometric Verification (Simulated)
 - [x] Hedera Blockchain Integration (Testnet)
 - [x] Document Verification Page
-- [ ] **Payment Processing (Stripe)** - NEXT
-- [ ] **Video Conferencing (RON sessions)** - UPCOMING
+- [x] **Payment Processing (Stripe)** - Card + Crypto ready
+- [x] **Video Conferencing Infrastructure (Daily.co)** - Backend ready, needs API key
 - [ ] HCS Topic creation for on-chain messages
 - [ ] Email notifications
+- [ ] Daily.co API key configuration
+
+## Pricing Structure (Implemented)
+| Document Type | Price (USD) |
+|--------------|-------------|
+| General Document | $25 |
+| Affidavit | $30 |
+| Power of Attorney | $35 |
+| Contract | $40 |
+| Last Will & Testament | $50 |
+| Trust Document | $65 |
+| Real Estate Document | $75 |
+
+## API Endpoints Summary
+
+### Authentication
+- `POST /api/auth/signup` - Register new user
+- `POST /api/auth/login` - Login and get token
+- `GET /api/auth/me` - Get current user
+
+### AI Analysis
+- `POST /api/ai/analyze-document` - AI document analysis
+- `POST /api/ai/verify-biometric` - Biometric verification
+- `GET /api/ai/session/{session_id}/analysis` - Get session analysis
+
+### Blockchain
+- `GET /api/blockchain/status` - Hedera connection status
+- `POST /api/blockchain/seal` - Seal document on chain
+- `GET /api/blockchain/verify/{hash}` - Verify document
+
+### Payments
+- `GET /api/payments/packages` - Get pricing packages
+- `POST /api/payments/checkout` - Create Stripe checkout
+- `GET /api/payments/status/{session_id}` - Check payment status
+- `GET /api/payments/history` - User payment history
+
+### Video Conferencing
+- `GET /api/video/status` - Daily.co connection status
+- `POST /api/video/rooms` - Create video room for RON session
+- `POST /api/video/rooms/{id}/join` - Join video room
+- `POST /api/video/rooms/{id}/end` - End video session
+
+## Environment Variables Required
+```
+MONGO_URL=mongodb://localhost:27017
+DB_NAME=test_database
+EMERGENT_LLM_KEY=sk-emergent-xxx (for Gemini AI)
+HEDERA_ACCOUNT_ID=0.0.xxxxxx
+HEDERA_PRIVATE_KEY=0x...
+HEDERA_NETWORK=testnet
+STRIPE_API_KEY=sk_test_emergent
+DAILY_API_KEY=your_daily_api_key (get from daily.co dashboard)
+```
 
 ## Potential Enhancements
 - Real face detection using TensorFlow.js
