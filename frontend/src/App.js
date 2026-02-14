@@ -9,6 +9,9 @@ import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import QuickSealDemo from './pages/QuickSealDemo';
 import Dashboard from './pages/Dashboard';
+import NotaryOnboarding from './pages/NotaryOnboarding';
+import NotaryDashboard from './pages/NotaryDashboard';
+import RequestNotarization from './pages/RequestNotarization';
 import { Toaster } from './components/ui/toaster';
 
 function App() {
@@ -27,6 +30,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/request-notarization"
+              element={
+                <ProtectedRoute>
+                  <RequestNotarization />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/notary/onboarding"
+              element={
+                <ProtectedRoute>
+                  <NotaryOnboarding />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/notary/dashboard"
+              element={
+                <ProtectedRoute>
+                  <NotaryDashboard />
                 </ProtectedRoute>
               }
             />
