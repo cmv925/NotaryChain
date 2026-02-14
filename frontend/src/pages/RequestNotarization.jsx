@@ -192,6 +192,7 @@ const RequestNotarization = () => {
       stopCamera();
     }
     return () => stopCamera();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
   // Perform biometric verification
