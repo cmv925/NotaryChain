@@ -1,5 +1,5 @@
 import React from 'react';
-import { Zap, Shield, Leaf, Cpu } from 'lucide-react';
+import { Zap, Shield, Leaf, Cpu, UserCheck } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
 
 const TechnologyStackSection = () => {
