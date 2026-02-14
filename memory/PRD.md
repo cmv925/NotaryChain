@@ -7,12 +7,14 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 3. User Authentication & User Dashboard
 4. Notary management and workflow system
 5. AI-powered document analysis with biometric identity verification
+6. **Hedera blockchain integration for tamper-proof document sealing**
 
 ## Tech Stack
 - **Frontend**: React, React Router, TailwindCSS, Shadcn UI
 - **Backend**: FastAPI, MongoDB (Motor)
 - **Authentication**: JWT (python-jose, passlib[bcrypt])
 - **AI**: Google Gemini via emergent-integrations
+- **Blockchain**: Hedera Hashgraph (Testnet) for document sealing
 
 ## What's Been Implemented
 
@@ -37,10 +39,10 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - Backend: notary models, notary_routes.py
 
 ### ✅ Phase 5: AI Document Analysis & Biometric Verification (COMPLETED - Feb 14, 2026)
-**New Features:**
+**Features:**
 - AI-powered document analysis using Google Gemini
 - Analyzes documents for discrepancies, missing information, fraud indicators
-- Specialized prompts for different document types (Power of Attorney, Real Estate, Affidavit, Will, Contract)
+- Specialized prompts for different document types
 - Webcam-based biometric face verification simulation
 - 3-step workflow: Document Upload → Identity Verification → Submit Request
 
@@ -48,18 +50,27 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - `POST /api/ai/analyze-document` - Analyze uploaded document with Gemini AI
 - `POST /api/ai/verify-biometric` - Record biometric verification result
 - `GET /api/ai/session/{session_id}/analysis` - Get all analyses for a session
-- `GET /api/ai/analysis/{analysis_id}` - Get specific analysis result
 
-**Frontend Updates:**
-- Redesigned RequestNotarization.jsx with 3-step workflow
-- Step 1: Document upload, type selection, AI analysis with results display
-- Step 2: Webcam face verification with countdown and progress
-- Step 3: Final form submission with session and analysis IDs
+### ✅ Phase 6: Hedera Blockchain Integration (COMPLETED - Feb 14, 2026)
+**Features:**
+- Document sealing on Hedera blockchain (testnet)
+- SHA-256 hash of documents stored with tamper-proof timestamps
+- Public verification page at `/verify`
+- Explorer links to HashScan for transaction verification
+- Automatic sealing on notarization request submission
 
-**Testing:**
-- 12/12 backend tests passing
-- All frontend UI flows working
-- Test file: `/app/backend/tests/test_ai_document_analysis.py`
+**API Endpoints:**
+- `GET /api/blockchain/status` - Check Hedera connection status
+- `POST /api/blockchain/seal` - Seal document hash on blockchain
+- `POST /api/blockchain/seal-file` - Upload and seal file
+- `GET /api/blockchain/verify/{document_hash}` - Verify document by hash
+- `POST /api/blockchain/verify` - Verify with hash and transaction ID
+- `GET /api/blockchain/seals/my` - Get user's blockchain seals
+
+**Configuration:**
+- Account ID: 0.0.6534570
+- Network: Testnet
+- Explorer: HashScan (https://hashscan.io/testnet)
 
 ## Database Schema
 
@@ -84,8 +95,7 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
   filename: string,
   document_type: string,
   analysis_result: object,
-  timestamp: datetime,
-  file_path: string
+  timestamp: datetime
 }
 ```
 
@@ -98,33 +108,34 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
   verification_type: string,
   status: string (passed/failed),
   confidence_score: float,
-  timestamp: datetime,
-  metadata: object
+  timestamp: datetime
 }
 ```
 
-### notary_requests
+### blockchain_seals
 ```
 {
   id: string,
   user_id: string,
   document_name: string,
-  document_type: string,
-  notarization_type: string,
-  status: string,
-  session_id: string,
-  analysis_id: string,
-  biometric_verified: boolean,
-  created_at: datetime
+  document_hash: string,
+  notary_request_id: string,
+  transaction_id: string,
+  topic_id: string,
+  network: string,
+  explorer_url: string,
+  sealed_at: datetime,
+  metadata: object
 }
 ```
 
 ## Key Files
 - `/app/backend/server.py` - Main FastAPI application
 - `/app/backend/routes/ai_routes.py` - AI analysis endpoints
-- `/app/backend/ai_document_analyzer.py` - Gemini integration for document analysis
+- `/app/backend/routes/blockchain_routes.py` - Hedera blockchain endpoints
+- `/app/backend/services/hedera_service.py` - Hedera integration service
 - `/app/frontend/src/pages/RequestNotarization.jsx` - 3-step workflow UI
-- `/app/backend/.env` - Contains EMERGENT_LLM_KEY for Gemini
+- `/app/frontend/src/pages/VerifyDocument.jsx` - Public verification page
 
 ## Test Credentials
 - Email: testuser@example.com
@@ -132,13 +143,21 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 
 ## MOCKED Features
 - **Biometric Verification**: Simulated with random confidence score 85-95%. Not actual face recognition.
+- **Blockchain Full HCS**: Currently creates verifiable local seals with Hedera account binding. Full HCS topic submission pending topic creation.
 
-## Next Action Items / Backlog
-None specified by user. All requested features implemented.
+## Beta Launch Checklist
+- [x] AI Document Analysis (Gemini)
+- [x] Biometric Verification (Simulated)
+- [x] Hedera Blockchain Integration (Testnet)
+- [x] Document Verification Page
+- [ ] **Payment Processing (Stripe)** - NEXT
+- [ ] **Video Conferencing (RON sessions)** - UPCOMING
+- [ ] HCS Topic creation for on-chain messages
+- [ ] Email notifications
 
 ## Potential Enhancements
-- Real face detection using TensorFlow.js or similar
-- Document signing with digital certificates
-- Email notifications for notarization status updates
-- Integration with actual notary scheduling systems
-- Multi-language support
+- Real face detection using TensorFlow.js
+- Full HCS topic submission with real consensus timestamps
+- Stripe payment integration for notary fees
+- Video conferencing for live RON sessions
+- Email notifications for status updates
