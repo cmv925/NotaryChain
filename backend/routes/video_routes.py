@@ -46,10 +46,16 @@ async def create_video_room(
     Create a video room for a notarization session.
     Called when starting a RON session.
     """
-    # Verify notary request exists
-    notary_request = await db.notary_requests.find_one({
+    # Verify notary request exists (check both possible collection names)
+    notary_request = await db.notarization_requests.find_one({
         "id": request.notary_request_id
     })
+    
+    if not notary_request:
+        # Also try notary_requests collection
+        notary_request = await db.notary_requests.find_one({
+            "id": request.notary_request_id
+        })
     
     if not notary_request:
         raise HTTPException(status_code=404, detail="Notary request not found")
