@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard';
 import NotaryOnboarding from './pages/NotaryOnboarding';
 import NotaryDashboard from './pages/NotaryDashboard';
 import RequestNotarization from './pages/RequestNotarization';
+import VerifyDocument from './pages/VerifyDocument';
 import { Toaster } from './components/ui/toaster';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/demo" element={<QuickSealDemo />} />
+            <Route path="/verify" element={<VerifyDocument />} />
             <Route
               path="/dashboard"
               element={
