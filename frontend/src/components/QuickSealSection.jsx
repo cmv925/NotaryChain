@@ -1,8 +1,11 @@
 import React from 'react';
 import { Zap, Clock, DollarSign, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const QuickSealSection = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="py-24 bg-gradient-to-br from-[#0f1825] via-[#1a2332] to-[#0f1825]">
       <div className="max-w-7xl mx-auto px-6">
@@ -60,7 +63,10 @@ const QuickSealSection = () => {
               </div>
             </div>
 
-            <Button className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 px-8 py-6 text-lg rounded-md transition-all shadow-lg shadow-yellow-500/30 font-semibold">
+            <Button 
+              onClick={() => navigate('/demo')}
+              className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 px-8 py-6 text-lg rounded-md transition-all shadow-lg shadow-yellow-500/30 font-semibold"
+            >
               Try Quick Seal Now
               <Zap className="ml-2 w-5 h-5" />
             </Button>
