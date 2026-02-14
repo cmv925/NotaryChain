@@ -7,17 +7,20 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent } from '../components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '../hooks/use-toast';
+import { useAuth } from '../contexts/AuthContext';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
+  const { signup } = useAuth();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
@@ -29,14 +32,36 @@ const SignUpPage = () => {
       return;
     }
 
-    // Mock signup
-    toast({
-      title: 'Account Created!',
-      description: 'Welcome to NotaryChain. Redirecting...',
-    });
-    setTimeout(() => {
-      navigate('/');
-    }, 1000);
+    if (formData.password.length < 6) {
+      toast({
+        title: 'Error',
+        description: 'Password must be at least 6 characters',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    const result = await signup(formData.fullName, formData.email, formData.password);
+
+    if (result.success) {
+      toast({
+        title: 'Account Created!',
+        description: 'Welcome to NotaryChain. Redirecting to dashboard...',
+      });
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 500);
+    } else {
+      toast({
+        title: 'Signup Failed',
+        description: result.error || 'Unable to create account',
+        variant: 'destructive',
+      });
+    }
+
+    setLoading(false);
   };
 
   const handleChange = (e) => {
@@ -72,6 +97,7 @@ const SignUpPage = () => {
                   onChange={handleChange}
                   className="bg-[#0a0f1a] border-gray-700 text-white focus:border-blue-500"
                   placeholder="John Doe"
+                  disabled={loading}
                 />
               </div>
 
@@ -88,6 +114,7 @@ const SignUpPage = () => {
                   onChange={handleChange}
                   className="bg-[#0a0f1a] border-gray-700 text-white focus:border-blue-500"
                   placeholder="you@example.com"
+                  disabled={loading}
                 />
               </div>
 
@@ -104,6 +131,8 @@ const SignUpPage = () => {
                   onChange={handleChange}
                   className="bg-[#0a0f1a] border-gray-700 text-white focus:border-blue-500"
                   placeholder="••••••••"
+                  disabled={loading}
+                  minLength={6}
                 />
               </div>
 
@@ -120,6 +149,7 @@ const SignUpPage = () => {
                   onChange={handleChange}
                   className="bg-[#0a0f1a] border-gray-700 text-white focus:border-blue-500"
                   placeholder="••••••••"
+                  disabled={loading}
                 />
               </div>
 
@@ -139,9 +169,10 @@ const SignUpPage = () => {
 
               <Button
                 type="submit"
+                disabled={loading}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg"
               >
-                Create Account
+                {loading ? 'Creating Account...' : 'Create Account'}
               </Button>
             </form>
 
