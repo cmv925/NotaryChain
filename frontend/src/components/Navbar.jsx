@@ -23,6 +23,12 @@ const Navbar = () => {
           {/* Navigation Links */}
           <div className="flex items-center space-x-6">
             <Link
+              to="/verify"
+              className="text-gray-300 hover:text-white transition-colors text-sm font-medium"
+            >
+              Verify
+            </Link>
+            <Link
               to="/pricing"
               className="text-gray-300 hover:text-white transition-colors text-sm font-medium"
             >
