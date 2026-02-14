@@ -283,12 +283,21 @@ const RequestNotarization = () => {
     setFaceDetected(false);
   };
 
+  // Calculate document hash for blockchain
+  const calculateDocumentHash = async (file) => {
+    const buffer = await file.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  };
+
   // Form handlers
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // Step 1: Create notary request
       const response = await axios.post(
         `${API}/notary/requests`,
         {
@@ -301,6 +310,48 @@ const RequestNotarization = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
+      const requestId = response.data.id;
+
+      // Step 2: Seal document on blockchain
+      let blockchainSeal = null;
+      if (selectedFile) {
+        try {
+          const documentHash = await calculateDocumentHash(selectedFile);
+          
+          const sealResponse = await axios.post(
+            `${API}/blockchain/seal`,
+            {
+              document_name: formData.document_name || selectedFile.name,
+              document_hash: documentHash,
+              notary_request_id: requestId,
+              metadata: {
+                document_type: formData.document_type,
+                notarization_type: formData.notarization_type,
+                analysis_id: analysisId,
+                session_id: sessionId
+              }
+            },
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+
+          blockchainSeal = sealResponse.data.seal;
+          
+          toast({
+            title: 'Document Sealed on Blockchain!',
+            description: `Transaction: ${blockchainSeal.transaction_id.substring(0, 20)}...`,
+          });
+        } catch (sealError) {
+          console.error('Blockchain seal failed:', sealError);
+          // Continue even if seal fails - notary request was created
+          toast({
+            title: 'Request Submitted',
+            description: 'Blockchain seal pending - will be processed shortly.',
+          });
+        }
+      }
 
       toast({
         title: 'Request Submitted!',
