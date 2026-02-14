@@ -1,8 +1,11 @@
 import React from 'react';
 import { Button } from './ui/button';
 import { ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+
   const scrollToFeatures = () => {
     const featuresSection = document.getElementById('features');
     if (featuresSection) {
@@ -28,7 +31,10 @@ const HeroSection = () => {
           platform.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg rounded-md transition-all shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50 group">
+          <Button 
+            onClick={() => navigate('/demo')}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg rounded-md transition-all shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50 group"
+          >
             Get Started Free
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
