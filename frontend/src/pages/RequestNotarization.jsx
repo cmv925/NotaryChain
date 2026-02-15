@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import BiometricVerification from '../components/BiometricVerification';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -34,14 +35,7 @@ const RequestNotarization = () => {
   const [analysisId, setAnalysisId] = useState(null);
   
   // Biometric verification state
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  const [cameraStream, setCameraStream] = useState(null);
-  const [cameraError, setCameraError] = useState(null);
-  const [verifying, setVerifying] = useState(false);
   const [verificationResult, setVerificationResult] = useState(null);
-  const [countdown, setCountdown] = useState(null);
-  const [faceDetected, setFaceDetected] = useState(false);
   
   // Form state
   const [formData, setFormData] = useState({
