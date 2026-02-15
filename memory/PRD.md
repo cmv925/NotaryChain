@@ -10,11 +10,12 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 6. **Hedera blockchain integration for tamper-proof document sealing**
 
 ## Tech Stack
-- **Frontend**: React, React Router, TailwindCSS, Shadcn UI
+- **Frontend**: React, React Router, TailwindCSS, Shadcn UI, TensorFlow.js
 - **Backend**: FastAPI, MongoDB (Motor)
 - **Authentication**: JWT (python-jose, passlib[bcrypt])
 - **AI**: Google Gemini via emergent-integrations
 - **Blockchain**: Hedera Hashgraph (Testnet) for document sealing
+- **Video**: Daily.co for Remote Online Notarization
 
 ## What's Been Implemented
 
@@ -32,24 +33,34 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - Protected routes with AuthContext
 - User dashboard at `/dashboard`
 
-### ✅ Phase 4: Notary Management System (COMPLETED)
-- Notary Dashboard (`/notary/dashboard`)
+### ✅ Phase 4: Notary Management System (UPDATED - Feb 15, 2026)
+- **Enhanced Notary Dashboard** (`/notary/dashboard`) with:
+  - 4 stat cards (Completed, In Progress, Available, Active Sessions)
+  - Request details modal with Document Info, Signers, Verification Status
+  - Accept Request → Start Session → Complete workflow
+  - Video session integration
 - Request Notarization (`/request-notarization`)
 - Notary onboarding (`/notary/onboarding`)
-- Backend: notary models, notary_routes.py
+- Backend: notary models, notary_routes.py (route ordering fix applied)
 
 ### ✅ Phase 5: AI Document Analysis & Biometric Verification (UPDATED - Feb 15, 2026)
 **Features:**
 - AI-powered document analysis using Google Gemini
+- **Document Signature Detection** - Analyzes signatures in documents:
+  - Signatures found count and locations
+  - Signature types (handwritten, digital, stamp, initials)
+  - Signature quality assessment
+  - Missing signatures identification
+  - Signature authenticity concerns
 - Analyzes documents for discrepancies, missing information, fraud indicators
-- Specialized prompts for different document types
+- Specialized prompts for different document types (POA, Real Estate, Will, Trust, Contract, Affidavit)
 - **REAL** webcam-based biometric face verification using TensorFlow.js + MediaPipe
 - 5 liveness challenges: center gaze, blink detection, head turn left/right, smile
 - Client-side face detection with confidence scoring
 - 3-step workflow: Document Upload → Identity Verification → Submit Request
 
 **API Endpoints:**
-- `POST /api/ai/analyze-document` - Analyze uploaded document with Gemini AI
+- `POST /api/ai/analyze-document` - Analyze uploaded document with Gemini AI (includes signature_analysis)
 - `POST /api/ai/verify-biometric` - Record biometric verification result
 - `GET /api/ai/session/{session_id}/analysis` - Get all analyses for a session
 
@@ -59,6 +70,7 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
   - WebGL backend with CPU fallback
   - Liveness challenge progression
   - Confidence and liveness score display
+- Signature Analysis UI section in RequestNotarization.jsx
 
 ### ✅ Phase 6: Hedera Blockchain Integration (COMPLETED - Feb 14, 2026)
 **Features:**
