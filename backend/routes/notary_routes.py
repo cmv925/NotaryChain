@@ -193,6 +193,14 @@ async def assign_request(
             detail="User is not a certified notary"
         )
     
+    # Get the request first to access HCS topic
+    request = await db.notarization_requests.find_one({"id": request_id, "status": "pending"})
+    if not request:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Request not available"
+        )
+    
     # Update request
     result = await db.notarization_requests.update_one(
         {"id": request_id, "status": "pending"},
@@ -213,6 +221,17 @@ async def assign_request(
         notes="Notary assigned to request"
     )
     await db.notary_actions.insert_one(action.dict())
+    
+    # Log to HCS topic if available
+    if request.get("hcs_topic_id"):
+        try:
+            await hedera_service.submit_message(request["hcs_topic_id"], {
+                "type": "NOTARY_ASSIGNED",
+                "request_id": request_id,
+                "notary_id": current_user.id
+            })
+        except Exception as e:
+            logger.error(f"Failed to log assign to HCS: {e}")
     
     return {"success": True, "message": "Request assigned successfully"}
 
