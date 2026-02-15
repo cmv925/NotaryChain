@@ -3,6 +3,14 @@ from typing import Optional, List
 from datetime import datetime
 import uuid
 
+class NotaryCredentials(BaseModel):
+    """Uploaded credential documents for notary verification"""
+    commission_certificate_url: Optional[str] = None
+    government_id_url: Optional[str] = None
+    e_signature_url: Optional[str] = None
+    background_check_url: Optional[str] = None
+    ron_certificate_url: Optional[str] = None
+
 class NotaryProfile(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
@@ -13,8 +21,28 @@ class NotaryProfile(BaseModel):
     specializations: List[str] = []
     hourly_rate: float = 0.0
     bio: str = ""
-    status: str = "pending"  # pending, approved, suspended
+    
+    # Extended credential fields
+    full_legal_name: Optional[str] = None
+    phone_number: Optional[str] = None
+    address: Optional[str] = None
+    city: Optional[str] = None
+    zip_code: Optional[str] = None
+    years_experience: Optional[int] = 0
+    
+    # Credential documents
+    credentials: Optional[NotaryCredentials] = None
+    
+    # Application status workflow
+    status: str = "pending"  # pending, under_review, approved, rejected, suspended
+    review_notes: Optional[str] = None
+    rejection_reason: Optional[str] = None
+    reviewed_by: Optional[str] = None
+    reviewed_at: Optional[datetime] = None
+    approved_at: Optional[datetime] = None
+    
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: Optional[datetime] = None
 
 class NotaryProfileCreate(BaseModel):
     license_number: str
@@ -24,6 +52,14 @@ class NotaryProfileCreate(BaseModel):
     specializations: List[str] = []
     hourly_rate: float = 0.0
     bio: str = ""
+    
+    # Extended fields
+    full_legal_name: Optional[str] = None
+    phone_number: Optional[str] = None
+    address: Optional[str] = None
+    city: Optional[str] = None
+    zip_code: Optional[str] = None
+    years_experience: Optional[int] = 0
 
 class NotarizationRequest(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
