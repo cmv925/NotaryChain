@@ -160,10 +160,10 @@ async def get_application_status(current_user: User = Depends(get_current_user))
             "message": "No notary application found. Apply to become a notary."
         }
     
-    # Get credential upload status
+    # Get credential upload status - use inclusion projection only
     credentials = await db.notary_credentials.find(
         {"user_id": current_user.id},
-        {"_id": 0, "data": 0, "credential_type": 1}
+        {"credential_type": 1}
     ).to_list(10)
     
     credential_types = [c["credential_type"] for c in credentials]
