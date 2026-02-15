@@ -636,7 +636,7 @@ const RequestNotarization = () => {
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                     <Camera className="w-6 h-6 text-blue-500" />
-                    Step 2: Identity Verification
+                    Step 2: AI-Powered Identity Verification
                   </h2>
                   <Button
                     variant="ghost"
@@ -649,153 +649,89 @@ const RequestNotarization = () => {
                 </div>
 
                 <p className="text-gray-400 mb-6">
-                  To ensure document security, please verify your identity using your camera.
-                  Position your face within the frame and click the verify button.
+                  Our AI-powered biometric system uses TensorFlow.js for real-time face detection 
+                  and liveness verification. Complete the challenges to verify your identity.
                 </p>
 
-                {/* Camera View */}
-                <div className="relative mb-6">
-                  <div className="aspect-video bg-[#0a0f1a] rounded-lg overflow-hidden border border-gray-700 relative">
-                    {cameraError ? (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <XCircle className="w-12 h-12 text-red-500 mb-4" />
-                        <p className="text-red-400 text-center px-4">{cameraError}</p>
-                        <Button
-                          onClick={startCamera}
-                          className="mt-4 bg-blue-600 hover:bg-blue-700"
-                        >
-                          <RefreshCw className="w-4 h-4 mr-2" />
-                          Retry
-                        </Button>
-                      </div>
-                    ) : (
-                      <>
-                        <video
-                          ref={videoRef}
-                          autoPlay
-                          playsInline
-                          muted
-                          className="w-full h-full object-cover"
-                        />
-                        
-                        {/* Face Detection Overlay */}
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                          <div className={`w-48 h-64 border-4 rounded-full transition-colors ${
-                            faceDetected ? 'border-green-500' : 'border-gray-500'
-                          }`} />
+                {/* Biometric Verification Component */}
+                {!verificationResult ? (
+                  <BiometricVerification
+                    onVerificationComplete={handleBiometricComplete}
+                    onError={(error) => console.error('Biometric error:', error)}
+                  />
+                ) : (
+                  <>
+                    {/* Verification Result */}
+                    <div className={`p-4 rounded-lg mb-6 ${
+                      verificationResult.status === 'passed'
+                        ? 'bg-green-500/10 border border-green-500/30'
+                        : 'bg-red-500/10 border border-red-500/30'
+                    }`} data-testid="verification-result">
+                      <div className="flex items-center gap-3 mb-3">
+                        {verificationResult.status === 'passed' ? (
+                          <CheckCircle className="w-8 h-8 text-green-500" />
+                        ) : (
+                          <XCircle className="w-8 h-8 text-red-500" />
+                        )}
+                        <div>
+                          <span className={`font-bold text-xl ${
+                            verificationResult.status === 'passed' ? 'text-green-400' : 'text-red-400'
+                          }`}>
+                            {verificationResult.status === 'passed' ? 'Identity Verified!' : 'Verification Failed'}
+                          </span>
+                          <p className="text-gray-400 text-sm">
+                            {verificationResult.status === 'passed' 
+                              ? 'Your identity has been verified using AI biometrics'
+                              : 'Please try again with better lighting and face positioning'}
+                          </p>
                         </div>
-
-                        {/* Countdown Overlay */}
-                        {countdown !== null && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                            <span className="text-8xl font-bold text-white animate-pulse">
-                              {countdown}
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 mt-4">
+                        <div className="bg-[#0a0f1a] rounded p-3">
+                          <span className="text-gray-500 text-xs">Face Confidence</span>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Progress value={verificationResult.confidence * 100} className="flex-1 h-2" />
+                            <span className="text-white font-medium text-sm">
+                              {Math.round(verificationResult.confidence * 100)}%
                             </span>
                           </div>
-                        )}
-
-                        {/* Verifying Overlay */}
-                        {verifying && countdown === null && (
-                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50">
-                            <Loader2 className="w-16 h-16 text-blue-500 animate-spin mb-4" />
-                            <span className="text-white text-lg">Verifying identity...</span>
+                        </div>
+                        <div className="bg-[#0a0f1a] rounded p-3">
+                          <span className="text-gray-500 text-xs">Liveness Score</span>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Progress value={verificationResult.livenessScore || 0} className="flex-1 h-2" />
+                            <span className="text-white font-medium text-sm">
+                              {verificationResult.livenessScore || 0}%
+                            </span>
                           </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                  <canvas ref={canvasRef} className="hidden" />
-                </div>
+                        </div>
+                      </div>
+                    </div>
 
-                {/* Face Detection Status */}
-                {!verificationResult && !verifying && cameraStream && (
-                  <div className={`p-3 rounded-lg mb-6 flex items-center gap-3 ${
-                    faceDetected ? 'bg-green-500/10 border border-green-500/30' : 'bg-yellow-500/10 border border-yellow-500/30'
-                  }`}>
-                    {faceDetected ? (
-                      <>
-                        <CheckCircle className="w-5 h-5 text-green-500" />
-                        <span className="text-green-400">Face detected - Ready to verify</span>
-                      </>
-                    ) : (
-                      <>
-                        <AlertTriangle className="w-5 h-5 text-yellow-500" />
-                        <span className="text-yellow-400">Position your face in the frame</span>
-                      </>
-                    )}
-                  </div>
-                )}
-
-                {/* Verification Result */}
-                {verificationResult && (
-                  <div className={`p-4 rounded-lg mb-6 ${
-                    verificationResult.status === 'passed'
-                      ? 'bg-green-500/10 border border-green-500/30'
-                      : 'bg-red-500/10 border border-red-500/30'
-                  }`} data-testid="verification-result">
-                    <div className="flex items-center gap-3 mb-2">
+                    {/* Action Buttons */}
+                    <div className="space-y-3">
                       {verificationResult.status === 'passed' ? (
-                        <CheckCircle className="w-6 h-6 text-green-500" />
+                        <Button
+                          onClick={() => setCurrentStep(3)}
+                          className="w-full bg-green-600 hover:bg-green-700 text-white py-4"
+                          data-testid="proceed-to-step-3-btn"
+                        >
+                          <CheckCircle className="w-5 h-5 mr-2" />
+                          Continue to Submit Request
+                          <ArrowRight className="w-5 h-5 ml-2" />
+                        </Button>
                       ) : (
-                        <XCircle className="w-6 h-6 text-red-500" />
+                        <Button
+                          onClick={handleRetryVerification}
+                          className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-4"
+                        >
+                          <RefreshCw className="w-5 h-5 mr-2" />
+                          Try Again
+                        </Button>
                       )}
-                      <span className={`font-semibold text-lg ${
-                        verificationResult.status === 'passed' ? 'text-green-400' : 'text-red-400'
-                      }`}>
-                        {verificationResult.status === 'passed' ? 'Verification Successful' : 'Verification Failed'}
-                      </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-400">Confidence:</span>
-                      <Progress value={verificationResult.confidence * 100} className="flex-1 h-2" />
-                      <span className="text-white font-medium">
-                        {(verificationResult.confidence * 100).toFixed(1)}%
-                      </span>
-                    </div>
-                  </div>
+                  </>
                 )}
-
-                {/* Action Buttons */}
-                <div className="space-y-3">
-                  {!verificationResult ? (
-                    <Button
-                      onClick={handleBiometricVerification}
-                      disabled={!cameraStream || verifying}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4"
-                      data-testid="verify-btn"
-                    >
-                      {verifying ? (
-                        <>
-                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                          Verifying...
-                        </>
-                      ) : (
-                        <>
-                          <Camera className="w-5 h-5 mr-2" />
-                          Verify My Identity
-                        </>
-                      )}
-                    </Button>
-                  ) : verificationResult.status === 'passed' ? (
-                    <Button
-                      onClick={() => setCurrentStep(3)}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white py-4"
-                      data-testid="proceed-to-step-3-btn"
-                    >
-                      <CheckCircle className="w-5 h-5 mr-2" />
-                      Continue to Submit Request
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={handleRetryVerification}
-                      className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-4"
-                    >
-                      <RefreshCw className="w-5 h-5 mr-2" />
-                      Try Again
-                    </Button>
-                  )}
-                </div>
               </CardContent>
             </Card>
           )}
