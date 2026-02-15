@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Shield, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy } from 'lucide-react';
+import { Shield, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { toast } from '../hooks/use-toast';
@@ -15,6 +15,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState({ total_seals: 0, recent_seals: 0 });
   const [documents, setDocuments] = useState([]);
+  const [notaryRequests, setNotaryRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,17 +24,21 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [statsRes, docsRes] = await Promise.all([
+      const [statsRes, docsRes, requestsRes] = await Promise.all([
         axios.get(`${API}/documents/stats`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         axios.get(`${API}/documents/seals?limit=10`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
+        axios.get(`${API}/notary/requests/my`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }).catch(() => ({ data: [] })), // Gracefully handle if no requests
       ]);
 
       setStats(statsRes.data);
       setDocuments(docsRes.data);
+      setNotaryRequests(requestsRes.data || []);
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
       toast({
