@@ -36,6 +36,8 @@ class NotarizationRequest(BaseModel):
     scheduled_time: Optional[datetime] = None
     signers: List[dict] = []  # [{name, email, verified}]
     notes: str = ""
+    hcs_topic_id: Optional[str] = None  # Hedera Consensus Service topic for audit trail
+    hcs_topic_explorer: Optional[str] = None  # HashScan explorer URL for the topic
     created_at: datetime = Field(default_factory=datetime.utcnow)
     completed_at: Optional[datetime] = None
 
