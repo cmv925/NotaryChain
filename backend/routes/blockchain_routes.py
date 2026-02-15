@@ -495,7 +495,9 @@ async def get_account_balance(
     """
     Get the Hedera account balance (for admin monitoring).
     """
-    if current_user.role != "admin":
+    # Get user role from database
+    user_doc = await db.users.find_one({"email": current_user.email})
+    if not user_doc or user_doc.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
     
     result = await hedera_service.get_account_balance()
