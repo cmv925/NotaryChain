@@ -264,6 +264,7 @@ async def seal_file(
     file: UploadFile = File(...),
     document_name: str = Form(None),
     notary_request_id: str = Form(None),
+    session_topic_id: str = Form(None),
     current_user: User = Depends(get_current_user)
 ):
     """
@@ -278,11 +279,12 @@ async def seal_file(
         # Use filename if no name provided
         doc_name = document_name or file.filename
         
-        # Seal on Hedera
+        # Seal on Hedera (optionally using session topic)
         result = await hedera_service.seal_document(
             document_hash=document_hash,
             document_name=doc_name,
             user_id=current_user.id,
+            session_topic_id=session_topic_id,
             metadata={
                 "original_filename": file.filename,
                 "content_type": file.content_type,
@@ -306,6 +308,7 @@ async def seal_file(
             "transaction_id": result["transaction_id"],
             "topic_id": result["topic_id"],
             "sequence_number": result.get("sequence_number"),
+            "hcs_submitted": result.get("hcs_submitted", False),
             "network": result["network"],
             "explorer_url": result["explorer_url"],
             "sealed_at": datetime.now(timezone.utc),
@@ -322,6 +325,7 @@ async def seal_file(
         return {
             "success": True,
             "document_hash": document_hash,
+            "hcs_submitted": result.get("hcs_submitted", False),
             "seal": seal_record
         }
         
