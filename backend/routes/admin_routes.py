@@ -366,8 +366,8 @@ async def approve_notary_application(
     if not notary:
         raise HTTPException(status_code=404, detail="Notary application not found")
     
-    if notary.get("status") != "pending":
-        raise HTTPException(status_code=400, detail="Application is not pending")
+    if notary.get("status") not in ["pending", "under_review"]:
+        raise HTTPException(status_code=400, detail="Application is not pending or under review")
     
     await db.notary_profiles.update_one(
         {"id": notary_id},
@@ -375,7 +375,8 @@ async def approve_notary_application(
             "$set": {
                 "status": "approved",
                 "approved_at": datetime.now(timezone.utc),
-                "approved_by": current_user.id,
+                "reviewed_by": current_user.id,
+                "reviewed_at": datetime.now(timezone.utc),
                 "updated_at": datetime.now(timezone.utc)
             }
         }
@@ -412,8 +413,8 @@ async def reject_notary_application(
     if not notary:
         raise HTTPException(status_code=404, detail="Notary application not found")
     
-    if notary.get("status") != "pending":
-        raise HTTPException(status_code=400, detail="Application is not pending")
+    if notary.get("status") not in ["pending", "under_review"]:
+        raise HTTPException(status_code=400, detail="Application is not pending or under review")
     
     await db.notary_profiles.update_one(
         {"id": notary_id},
@@ -421,8 +422,8 @@ async def reject_notary_application(
             "$set": {
                 "status": "rejected",
                 "rejection_reason": reason,
-                "rejected_at": datetime.now(timezone.utc),
-                "rejected_by": current_user.id,
+                "reviewed_by": current_user.id,
+                "reviewed_at": datetime.now(timezone.utc),
                 "updated_at": datetime.now(timezone.utc)
             }
         }
@@ -439,6 +440,74 @@ async def reject_notary_application(
     )
     
     return {"message": "Notary application rejected", "notary_id": notary_id}
+
+
+@router.post("/notaries/{notary_id}/review")
+async def start_notary_review(
+    notary_id: str,
+    notes: Optional[str] = None,
+    current_user: User = Depends(get_current_user)
+):
+    """Mark a notary application as under review"""
+    await check_admin(current_user)
+    
+    notary = await db.notary_profiles.find_one({"id": notary_id})
+    if not notary:
+        raise HTTPException(status_code=404, detail="Notary application not found")
+    
+    if notary.get("status") != "pending":
+        raise HTTPException(status_code=400, detail="Application is not pending")
+    
+    await db.notary_profiles.update_one(
+        {"id": notary_id},
+        {
+            "$set": {
+                "status": "under_review",
+                "review_notes": notes,
+                "reviewed_by": current_user.id,
+                "updated_at": datetime.now(timezone.utc)
+            }
+        }
+    )
+    
+    return {"message": "Application marked as under review", "notary_id": notary_id}
+
+
+@router.get("/notaries/{notary_id}/credentials")
+async def get_notary_credentials(
+    notary_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get uploaded credentials for a notary application"""
+    await check_admin(current_user)
+    
+    notary = await db.notary_profiles.find_one({"id": notary_id})
+    if not notary:
+        raise HTTPException(status_code=404, detail="Notary profile not found")
+    
+    # Get credentials (excluding binary data for listing)
+    credentials = await db.notary_credentials.find(
+        {"notary_profile_id": notary_id},
+        {"_id": 0, "data": 0}
+    ).to_list(20)
+    
+    # Get user info
+    user = await db.users.find_one({"id": notary.get("user_id")}, {"_id": 0, "hashed_password": 0})
+    
+    # Format dates
+    for cred in credentials:
+        if isinstance(cred.get("uploaded_at"), datetime):
+            cred["uploaded_at"] = cred["uploaded_at"].isoformat()
+    
+    for field in ["created_at", "updated_at", "reviewed_at", "approved_at"]:
+        if field in notary and isinstance(notary[field], datetime):
+            notary[field] = notary[field].isoformat()
+    
+    return {
+        "notary": {k: v for k, v in notary.items() if k != "_id"},
+        "user": user,
+        "credentials": credentials
+    }
 
 
 @router.get("/analytics/revenue")
