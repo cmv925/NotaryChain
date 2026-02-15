@@ -6,12 +6,31 @@ import pytest
 import requests
 import os
 import uuid
+import time
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
 # Test topic ID created during testing - will be set in first test
 TEST_TOPIC_ID = None
 TEST_SEAL_DATA = None
+
+
+def retry_request(func, retries=3, delay=2):
+    """Retry helper for flaky network requests"""
+    for attempt in range(retries):
+        try:
+            result = func()
+            if hasattr(result, 'status_code') and result.status_code == 520:
+                if attempt < retries - 1:
+                    time.sleep(delay)
+                    continue
+            return result
+        except Exception as e:
+            if attempt < retries - 1:
+                time.sleep(delay)
+            else:
+                raise
+    return result
 
 
 class TestBlockchainStatus:
