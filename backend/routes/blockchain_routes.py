@@ -451,15 +451,52 @@ async def get_seal(
 
 @router.get("/topic/messages")
 async def get_topic_messages(
+    topic_id: Optional[str] = None,
     limit: int = 50,
     current_user: User = Depends(get_current_user)
 ):
     """
-    Get recent messages from the notary HCS topic.
+    Get recent messages from an HCS topic.
+    If no topic_id provided, uses the default topic.
     """
-    messages = await hedera_service.get_topic_messages(limit=limit)
+    messages = await hedera_service.get_topic_messages(topic_id=topic_id, limit=limit)
+    tid = topic_id or os.environ.get('HEDERA_TOPIC_ID')
     return {
-        "topic_id": os.environ.get('HEDERA_TOPIC_ID'),
+        "topic_id": tid,
         "count": len(messages),
-        "messages": messages
+        "messages": messages,
+        "explorer_url": f"https://hashscan.io/{hedera_service.network}/topic/{tid}" if tid else None
     }
+
+
+@router.get("/topics/my")
+async def get_my_topics(
+    limit: int = 50,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get all HCS topics created by the current user.
+    """
+    topics = await db.hcs_topics.find(
+        {"user_id": current_user.id},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    return {
+        "count": len(topics),
+        "topics": topics
+    }
+
+
+@router.get("/account/balance")
+async def get_account_balance(
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get the Hedera account balance (for admin monitoring).
+    """
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    result = await hedera_service.get_account_balance()
+    return result
