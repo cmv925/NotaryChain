@@ -374,7 +374,7 @@ class HederaNotaryService:
                                 try:
                                     decoded = base64.b64decode(msg['message']).decode('utf-8')
                                     msg['decoded_message'] = json.loads(decoded)
-                                except:
+                                except Exception:
                                     msg['decoded_message'] = None
                         return messages
                     return []
