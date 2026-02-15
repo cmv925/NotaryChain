@@ -176,12 +176,19 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - Password: Test123!
 
 ## MOCKED Features
-- **Biometric Verification**: Simulated with random confidence score 85-95%. Not actual face recognition.
 - **Blockchain Full HCS**: Currently creates verifiable local seals with Hedera account binding. Full HCS topic submission pending topic creation.
+
+## Real Implementations
+- **Biometric Verification (Feb 15, 2026)**: REAL client-side face detection using TensorFlow.js and MediaPipe FaceDetector. Includes:
+  - Real-time face detection and tracking
+  - 5 liveness challenges (center, blink, turnLeft, turnRight, smile)
+  - Confidence scoring based on face size and centering
+  - WebGL backend with CPU fallback
+  - Camera error handling with retry functionality
 
 ## Beta Launch Checklist
 - [x] AI Document Analysis (Gemini)
-- [x] Biometric Verification (Simulated)
+- [x] **Biometric Verification (REAL)** - TensorFlow.js face detection with liveness challenges
 - [x] Hedera Blockchain Integration (Testnet)
 - [x] Document Verification Page
 - [x] **Payment Processing (Stripe)** - Card + Crypto ready
