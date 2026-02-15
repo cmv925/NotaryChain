@@ -16,6 +16,7 @@ import VerifyDocument from './pages/VerifyDocument';
 import CheckoutPage from './pages/CheckoutPage';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
+import NotaryVideoSession from './pages/NotaryVideoSession';
 import { Toaster } from './components/ui/toaster';
 
 function App() {
@@ -46,6 +47,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <RequestNotarization />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/session/:requestId"
+              element={
+                <ProtectedRoute>
+                  <NotaryVideoSession />
                 </ProtectedRoute>
               }
             />
