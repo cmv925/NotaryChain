@@ -211,69 +211,102 @@ const Dashboard = () => {
               </h2>
               <div className="space-y-4">
                 {notaryRequests.slice(0, 5).map((request) => (
-                  <div
-                    key={request.id}
-                    className="bg-[#0a0f1a] rounded-lg p-4 border border-gray-800 hover:border-blue-500/50 transition-all"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                          request.status === 'pending' ? 'bg-yellow-500/20' :
-                          request.status === 'in_session' ? 'bg-green-500/20' :
-                          request.status === 'completed' ? 'bg-blue-500/20' :
-                          'bg-gray-500/20'
-                        }`}>
-                          {request.status === 'in_session' ? (
-                            <Video className="w-5 h-5 text-green-500" />
-                          ) : (
-                            <FileText className={`w-5 h-5 ${
-                              request.status === 'pending' ? 'text-yellow-500' :
-                              request.status === 'completed' ? 'text-blue-500' :
-                              'text-gray-500'
-                            }`} />
+                  <div key={request.id}>
+                    <div
+                      className="bg-[#0a0f1a] rounded-lg p-4 border border-gray-800 hover:border-blue-500/50 transition-all"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                            request.status === 'pending' ? 'bg-yellow-500/20' :
+                            request.status === 'in_session' ? 'bg-green-500/20' :
+                            request.status === 'completed' ? 'bg-blue-500/20' :
+                            'bg-gray-500/20'
+                          }`}>
+                            {request.status === 'in_session' ? (
+                              <Video className="w-5 h-5 text-green-500" />
+                            ) : (
+                              <FileText className={`w-5 h-5 ${
+                                request.status === 'pending' ? 'text-yellow-500' :
+                                request.status === 'completed' ? 'text-blue-500' :
+                                'text-gray-500'
+                              }`} />
+                            )}
+                          </div>
+                          <div>
+                            <h4 className="text-white font-semibold">{request.document_name}</h4>
+                            <p className="text-gray-400 text-sm">
+                              {request.document_type} • {new Date(request.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            request.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
+                            request.status === 'in_session' ? 'bg-green-500/20 text-green-400' :
+                            request.status === 'assigned' ? 'bg-blue-500/20 text-blue-400' :
+                            request.status === 'completed' ? 'bg-gray-500/20 text-gray-400' :
+                            'bg-gray-500/20 text-gray-400'
+                          }`}>
+                            {request.status?.replace('_', ' ')}
+                          </span>
+                          
+                          {/* View Audit Trail Button */}
+                          {request.hcs_topic_id && (
+                            <Button
+                              onClick={() => setExpandedRequest(expandedRequest === request.id ? null : request.id)}
+                              size="sm"
+                              variant="outline"
+                              className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"
+                              data-testid={`audit-trail-btn-${request.id}`}
+                            >
+                              <Shield className="w-4 h-4 mr-1" />
+                              Audit Trail
+                              {expandedRequest === request.id ? (
+                                <ChevronUp className="w-4 h-4 ml-1" />
+                              ) : (
+                                <ChevronDown className="w-4 h-4 ml-1" />
+                              )}
+                            </Button>
+                          )}
+                          
+                          {(request.status === 'pending' || request.status === 'assigned' || request.status === 'in_session') && (
+                            <Button
+                              onClick={() => navigate(`/session/${request.id}`)}
+                              size="sm"
+                              className={request.status === 'in_session' 
+                                ? 'bg-green-600 hover:bg-green-700' 
+                                : 'bg-blue-600 hover:bg-blue-700'
+                              }
+                            >
+                              {request.status === 'in_session' ? (
+                                <>
+                                  <Play className="w-4 h-4 mr-1" />
+                                  Join Session
+                                </>
+                              ) : (
+                                <>
+                                  <Video className="w-4 h-4 mr-1" />
+                                  Start Session
+                                </>
+                              )}
+                            </Button>
                           )}
                         </div>
-                        <div>
-                          <h4 className="text-white font-semibold">{request.document_name}</h4>
-                          <p className="text-gray-400 text-sm">
-                            {request.document_type} • {new Date(request.created_at).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          request.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
-                          request.status === 'in_session' ? 'bg-green-500/20 text-green-400' :
-                          request.status === 'assigned' ? 'bg-blue-500/20 text-blue-400' :
-                          request.status === 'completed' ? 'bg-gray-500/20 text-gray-400' :
-                          'bg-gray-500/20 text-gray-400'
-                        }`}>
-                          {request.status?.replace('_', ' ')}
-                        </span>
-                        {(request.status === 'pending' || request.status === 'assigned' || request.status === 'in_session') && (
-                          <Button
-                            onClick={() => navigate(`/session/${request.id}`)}
-                            size="sm"
-                            className={request.status === 'in_session' 
-                              ? 'bg-green-600 hover:bg-green-700' 
-                              : 'bg-blue-600 hover:bg-blue-700'
-                            }
-                          >
-                            {request.status === 'in_session' ? (
-                              <>
-                                <Play className="w-4 h-4 mr-1" />
-                                Join Session
-                              </>
-                            ) : (
-                              <>
-                                <Video className="w-4 h-4 mr-1" />
-                                Start Session
-                              </>
-                            )}
-                          </Button>
-                        )}
                       </div>
                     </div>
+                    
+                    {/* Expanded Audit Trail */}
+                    {expandedRequest === request.id && request.hcs_topic_id && (
+                      <div className="mt-2 ml-4">
+                        <BlockchainAuditTrail 
+                          topicId={request.hcs_topic_id}
+                          token={token}
+                          requestId={request.id}
+                          title={`Audit Trail: ${request.document_name}`}
+                        />
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
