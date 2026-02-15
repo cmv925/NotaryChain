@@ -282,15 +282,36 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 }
 ```
 
+### audit_logs
+```
+{
+  id: string,
+  action: string (enum: user.*, document.*, notarization.*, verification.*, blockchain.*, payment.*, notary.*, admin.*),
+  resource_type: string,
+  resource_id: string (optional),
+  description: string,
+  user_id: string (optional),
+  user_email: string (optional),
+  severity: string (info/warning/critical),
+  ip_address: string (optional),
+  metadata: object,
+  timestamp: datetime,
+  created_at: datetime
+}
+```
+
 ## Key Files
 - `/app/backend/server.py` - Main FastAPI application
 - `/app/backend/routes/ai_routes.py` - AI analysis endpoints
 - `/app/backend/routes/blockchain_routes.py` - Hedera blockchain endpoints
 - `/app/backend/routes/crypto_routes.py` - Cryptocurrency payment endpoints
+- `/app/backend/routes/audit_routes.py` - Audit logging endpoints
+- `/app/backend/routes/admin_routes.py` - Admin dashboard endpoints
 - `/app/backend/services/hedera_service.py` - Hedera integration service
 - `/app/frontend/src/pages/RequestNotarization.jsx` - 3-step workflow UI
 - `/app/frontend/src/pages/VerifyDocument.jsx` - Public verification page
 - `/app/frontend/src/pages/CryptoCheckout.jsx` - Cryptocurrency checkout page
+- `/app/frontend/src/pages/AdminDashboard.jsx` - Admin dashboard UI
 
 ## Test Credentials
 - Email: demo@test.com
