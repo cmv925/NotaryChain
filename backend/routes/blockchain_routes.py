@@ -207,13 +207,15 @@ async def seal_document(
     """
     Seal a document on Hedera blockchain.
     Records the document hash with a tamper-proof timestamp.
+    Optionally uses a session-specific HCS topic.
     """
     try:
-        # Seal on Hedera
+        # Seal on Hedera (optionally using session topic)
         result = await hedera_service.seal_document(
             document_hash=request.document_hash,
             document_name=request.document_name,
             user_id=current_user.id,
+            session_topic_id=request.session_topic_id,
             metadata=request.metadata
         )
         
@@ -233,6 +235,7 @@ async def seal_document(
             "transaction_id": result["transaction_id"],
             "topic_id": result["topic_id"],
             "sequence_number": result.get("sequence_number"),
+            "hcs_submitted": result.get("hcs_submitted", False),
             "network": result["network"],
             "explorer_url": result["explorer_url"],
             "sealed_at": datetime.now(timezone.utc),
@@ -246,6 +249,7 @@ async def seal_document(
         
         return {
             "success": True,
+            "hcs_submitted": result.get("hcs_submitted", False),
             "seal": seal_record
         }
         
