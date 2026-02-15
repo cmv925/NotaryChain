@@ -339,7 +339,6 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - Password: Demo123!
 
 ## MOCKED Features
-- **Blockchain Full HCS**: Currently creates verifiable local seals with Hedera account binding. Full HCS topic submission pending topic creation.
 - **Crypto Wallet Addresses**: Demo uses static wallet addresses. Production would generate unique addresses per payment.
 - **QR Code**: QR code display is a placeholder icon. Production would use actual QR generation library.
 
@@ -358,6 +357,18 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
   - Confirmation tracking (3 for BTC, 12 for ETH)
   - Demo simulation endpoint for testing
 
+- **HCS Topic Creation (Feb 15, 2026)**: REAL Hedera SDK integration for topic creation and messaging
+  - hiero-sdk-python v0.2.0 for native blockchain interactions
+  - Dynamic topic per notarization session
+  - Events logged to HCS with sequence numbers
+  - Audit trail visible via BlockchainAuditTrail component
+
+- **Notary Onboarding (Feb 16, 2026)**: Full credential verification workflow
+  - Multi-step application form
+  - Document upload for credentials (Commission Certificate, Gov ID, etc.)
+  - Admin review/approve/reject workflow
+  - Role promotion on approval
+
 ## Beta Launch Checklist
 - [x] AI Document Analysis (Gemini)
 - [x] **Biometric Verification (REAL)** - TensorFlow.js face detection with liveness challenges
@@ -369,6 +380,8 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - [x] **Compliance & Audit Logs** - Immutable audit trail with export
 - [x] **Admin Dashboard** - User management, notary approvals, analytics
 - [x] **HCS Topic Creation (REAL)** - Dynamic topic creation per notarization session ✅ COMPLETED Feb 15, 2026
+- [x] **Full Notary Onboarding** - Multi-step form with credential uploads ✅ COMPLETED Feb 16, 2026
+- [x] **Blockchain Audit Trail UI** - Visual HCS event display ✅ COMPLETED Feb 16, 2026
 - [ ] Email notifications
 
 ## Admin Access
