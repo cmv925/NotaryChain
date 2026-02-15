@@ -421,7 +421,7 @@ class HederaNotaryService:
         if self._client:
             try:
                 self._client.close()
-            except:
+            except Exception:
                 pass
 
 
