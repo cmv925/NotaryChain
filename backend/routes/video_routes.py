@@ -207,7 +207,7 @@ async def end_video_room(
         raise HTTPException(status_code=404, detail="Video session not found")
     
     # Only creator or notary can end session
-    notary_request = await db.notary_requests.find_one({
+    notary_request = await db.notarization_requests.find_one({
         "id": video_session["notary_request_id"]
     })
     
