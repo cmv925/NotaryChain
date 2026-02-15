@@ -93,18 +93,40 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - Network: Testnet
 - Explorer: HashScan (https://hashscan.io/testnet)
 
-### ✅ Phase 7: Stripe Payments (COMPLETED - Feb 15, 2026)
+### ✅ Phase 7: Payment Processing (COMPLETED & ENHANCED - Feb 15, 2026)
 **Features:**
-- Checkout page at `/checkout` with 7 pricing tiers ($25-$75)
-- Card + Crypto payment options via Stripe
-- Payment success/cancel pages with status polling
-- Payment history in database
+- **Stripe Card Payments:**
+  - Checkout page at `/checkout` with 7 pricing tiers ($25-$75)
+  - Card + Crypto payment options via Stripe
+  - Payment success/cancel pages with status polling
+  - Payment history in database
 
-**API Endpoints:**
+- **Cryptocurrency Payments (NEW):**
+  - Dedicated crypto checkout at `/checkout/crypto`
+  - Supports BTC, ETH, USDC, USDT
+  - Real-time price conversion from CoinGecko API
+  - 60-second price caching with fallback prices
+  - Unique payment IDs with 30-minute expiration
+  - Wallet address and QR code for payments
+  - Confirmation tracking (3 confirmations BTC, 12 for ETH/tokens)
+  - Payment history with full transaction details
+  - Demo mode with simulated confirmation for testing
+
+**API Endpoints (Stripe):**
 - `GET /api/payments/packages` - Get pricing packages
 - `POST /api/payments/checkout` - Create Stripe checkout session
 - `GET /api/payments/status/{session_id}` - Check payment status
 - `GET /api/payments/history` - User payment history
+
+**API Endpoints (Crypto):**
+- `GET /api/crypto/supported` - List supported cryptocurrencies
+- `GET /api/crypto/prices` - Get live crypto prices from CoinGecko
+- `GET /api/crypto/convert/{crypto_id}/{usd_amount}` - USD to crypto conversion
+- `POST /api/crypto/payment` - Create crypto payment request
+- `GET /api/crypto/payment/{payment_id}/status` - Check payment status
+- `POST /api/crypto/payment/{payment_id}/simulate-confirm` - Demo confirmation
+- `GET /api/crypto/payments/history` - User's crypto payment history
+- `GET /api/crypto/packages` - Get packages with crypto pricing
 
 ### ✅ Phase 8: Daily.co Video Conferencing (COMPLETED - Feb 15, 2026)
 **Features:**
