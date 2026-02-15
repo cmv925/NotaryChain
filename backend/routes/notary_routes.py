@@ -308,6 +308,18 @@ async def complete_notarization(
     notes: str = "",
     current_user: User = Depends(get_current_user)
 ):
+    # Get request first for HCS topic
+    request = await db.notarization_requests.find_one({
+        "id": request_id,
+        "notary_id": current_user.id
+    })
+    
+    if not request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Request not found"
+        )
+    
     # Update request
     result = await db.notarization_requests.update_one(
         {"id": request_id, "notary_id": current_user.id},
@@ -331,6 +343,19 @@ async def complete_notarization(
         notes=notes
     )
     await db.notary_actions.insert_one(action.dict())
+    
+    # Log to HCS topic if available
+    if request.get("hcs_topic_id"):
+        try:
+            await hedera_service.submit_message(request["hcs_topic_id"], {
+                "type": "NOTARIZATION_COMPLETED",
+                "request_id": request_id,
+                "notary_id": current_user.id,
+                "notes": notes,
+                "completed_at": datetime.utcnow().isoformat()
+            })
+        except Exception as e:
+            logger.error(f"Failed to log completion to HCS: {e}")
     
     return {"success": True, "message": "Notarization completed"}
 
