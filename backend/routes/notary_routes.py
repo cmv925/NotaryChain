@@ -94,15 +94,23 @@ async def upload_credentials(
     
     await db.notary_credentials.insert_one(credential_doc)
     
-    # Update profile credentials field
+    # Update profile credentials field - ensure credentials object exists first
     credential_url_field = f"{credential_type}_url"
-    update_dict = {
-        f"credentials.{credential_url_field}": f"/api/notary/credentials/{doc_id}",
-        "updated_at": datetime.now(timezone.utc)
-    }
     
+    # First ensure the credentials object exists
+    if not profile.get("credentials"):
+        await db.notary_profiles.update_one(
+            {"id": profile["id"]},
+            {"$set": {"credentials": {}}}
+        )
+    
+    # Now update the specific credential URL
     await db.notary_profiles.update_one(
         {"id": profile["id"]},
+        {"$set": {
+            f"credentials.{credential_url_field}": f"/api/notary/credentials/{doc_id}",
+            "updated_at": datetime.now(timezone.utc)
+        }}
         {"$set": update_dict}
     )
     
