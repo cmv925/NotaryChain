@@ -90,6 +90,28 @@ async def get_my_requests(
     requests = await db.notarization_requests.find(query).sort("created_at", -1).to_list(100)
     return [NotarizationRequest(**r) for r in requests]
 
+@router.get("/requests/{request_id}", response_model=NotarizationRequest)
+async def get_request_by_id(
+    request_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get a single notarization request by ID"""
+    request = await db.notarization_requests.find_one({"id": request_id})
+    if not request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Notarization request not found"
+        )
+    
+    # Check authorization - user must be the requester or assigned notary
+    if request.get("user_id") != current_user.id and request.get("notary_id") != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view this request"
+        )
+    
+    return NotarizationRequest(**request)
+
 @router.get("/requests/pending", response_model=List[NotarizationRequest])
 async def get_pending_requests(current_user: User = Depends(get_current_user)):
     # Check if user is a notary
