@@ -381,8 +381,9 @@ class TestNotarizationRequestWithHCS:
     def test_create_notarization_request_creates_topic(self, authenticated_client):
         """Test POST /api/notary/requests creates HCS topic automatically"""
         request_data = {
+            "document_name": "TEST_HCS_Document.pdf",
             "document_type": "TEST_Will",
-            "urgency": "standard",
+            "notarization_type": "remote_online",
             "notes": "pytest HCS test notarization"
         }
         
