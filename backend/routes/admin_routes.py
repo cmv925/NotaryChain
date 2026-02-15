@@ -217,7 +217,7 @@ async def update_user_status(
     current_user: User = Depends(get_current_user)
 ):
     """Enable or disable a user account"""
-    admin_doc = await check_admin(current_user)
+    await check_admin(current_user)
     
     user = await db.users.find_one({"id": user_id})
     if not user:
