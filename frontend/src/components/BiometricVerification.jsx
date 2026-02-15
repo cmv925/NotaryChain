@@ -46,9 +46,15 @@ const BiometricVerification = ({ onVerificationComplete, onError }) => {
       try {
         setStatus('initializing');
         
-        // Set TensorFlow backend
-        await tf.setBackend('webgl');
-        await tf.ready();
+        // Set TensorFlow backend with fallback
+        try {
+          await tf.setBackend('webgl');
+          await tf.ready();
+        } catch (webglError) {
+          console.warn('WebGL unavailable, falling back to CPU:', webglError);
+          await tf.setBackend('cpu');
+          await tf.ready();
+        }
         
         // Load face detection model
         const model = faceDetection.SupportedModels.MediaPipeFaceDetector;
