@@ -339,6 +339,10 @@ async def get_payment_status(
         if isinstance(expires_at, str):
             expires_at = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
         
+        # Make sure expires_at is timezone aware
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+        
         if datetime.now(timezone.utc) > expires_at:
             await db.crypto_payments.update_one(
                 {"id": payment_id},
