@@ -148,7 +148,7 @@ async def join_video_room(
         raise HTTPException(status_code=400, detail="Video session is not active")
     
     # Check if user is authorized (owner, notary, or signer)
-    notary_request = await db.notary_requests.find_one({
+    notary_request = await db.notarization_requests.find_one({
         "id": video_session["notary_request_id"]
     })
     
