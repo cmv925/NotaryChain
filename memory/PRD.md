@@ -347,7 +347,7 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - [x] **Video Conferencing Infrastructure (Daily.co)** - Backend ready
 - [x] **Compliance & Audit Logs** - Immutable audit trail with export
 - [x] **Admin Dashboard** - User management, notary approvals, analytics
-- [ ] HCS Topic creation for on-chain messages
+- [x] **HCS Topic Creation (REAL)** - Dynamic topic creation per notarization session ✅ COMPLETED Feb 15, 2026
 - [ ] Email notifications
 
 ## Admin Access
@@ -378,10 +378,18 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - `POST /api/ai/verify-biometric` - Biometric verification
 - `GET /api/ai/session/{session_id}/analysis` - Get session analysis
 
-### Blockchain
-- `GET /api/blockchain/status` - Hedera connection status
-- `POST /api/blockchain/seal` - Seal document on chain
-- `GET /api/blockchain/verify/{hash}` - Verify document
+### Blockchain / HCS
+- `GET /api/blockchain/status` - Hedera connection status (includes sdk_available)
+- `POST /api/blockchain/topics/create` - Create HCS topic for notarization session
+- `POST /api/blockchain/topics/{topic_id}/messages` - Submit audit message to topic
+- `GET /api/blockchain/topics/{topic_id}` - Get topic info and messages
+- `GET /api/blockchain/topics/my` - Get user's created topics
+- `POST /api/blockchain/seal` - Seal document on chain (with optional session_topic_id)
+- `POST /api/blockchain/seal-file` - Upload and seal file
+- `GET /api/blockchain/verify/{hash}` - Verify document by hash
+- `POST /api/blockchain/verify` - Verify with hash and transaction ID
+- `GET /api/blockchain/seals/my` - Get user's blockchain seals
+- `GET /api/blockchain/account/balance` - Admin: Check HBAR balance
 
 ### Payments
 - `GET /api/payments/packages` - Get pricing packages
@@ -409,11 +417,11 @@ DAILY_API_KEY=your_daily_api_key (get from daily.co dashboard)
 
 ## Potential Enhancements
 - ~~Real face detection using TensorFlow.js~~ ✅ COMPLETED Feb 15, 2026
-- Full HCS topic submission with real consensus timestamps
+- ~~Full HCS topic submission with real consensus timestamps~~ ✅ COMPLETED Feb 15, 2026
 - ~~Stripe payment integration for notary fees~~ ✅ COMPLETED
 - ~~Video conferencing for live RON sessions~~ ✅ COMPLETED
 - Notary-side workflow UI (manage requests, join sessions, approve/reject)
-- Crypto payment backend logic
-- Compliance & Audit Logs system
-- Admin Dashboard
+- ~~Crypto payment backend logic~~ ✅ COMPLETED
+- ~~Compliance & Audit Logs system~~ ✅ COMPLETED
+- ~~Admin Dashboard~~ ✅ COMPLETED
 - Email notifications for status updates
