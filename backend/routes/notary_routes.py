@@ -465,8 +465,17 @@ async def verify_identity(
 async def complete_notarization(
     request_id: str,
     notes: str = "",
+    seal_package: bool = True,
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Complete a notarization request.
+    Optionally seals all verification data (AI analysis, biometrics, video) 
+    into an immutable package on Hedera blockchain.
+    """
+    # Import package service
+    from services.notarization_package import NotarizationPackageService
+    
     # Get request first for HCS topic
     request = await db.notarization_requests.find_one({
         "id": request_id,
@@ -516,7 +525,25 @@ async def complete_notarization(
         except Exception as e:
             logger.error(f"Failed to log completion to HCS: {e}")
     
-    return {"success": True, "message": "Notarization completed"}
+    # Seal the notarization package on blockchain
+    package_result = None
+    if seal_package:
+        try:
+            package_service = NotarizationPackageService(db, hedera_service)
+            package_result = await package_service.seal_package(
+                request_id=request_id,
+                notary_id=current_user.id
+            )
+            logger.info(f"Notarization package sealed: {package_result.get('package_id')}")
+        except Exception as e:
+            logger.error(f"Failed to seal notarization package: {e}")
+            package_result = {"error": str(e)}
+    
+    return {
+        "success": True, 
+        "message": "Notarization completed",
+        "package": package_result
+    }
 
 @router.get("/stats")
 async def get_notary_stats(current_user: User = Depends(get_current_user)):
