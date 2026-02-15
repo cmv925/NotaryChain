@@ -38,7 +38,7 @@ class TestBlockchainStatus:
     
     def test_blockchain_status(self, api_client):
         """Test GET /api/blockchain/status - Should show sdk_available: true and connected: true"""
-        response = api_client.get(f"{BASE_URL}/api/blockchain/status")
+        response = retry_request(lambda: api_client.get(f"{BASE_URL}/api/blockchain/status"))
         
         assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
         
