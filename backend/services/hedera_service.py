@@ -12,7 +12,6 @@ from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 import logging
 import asyncio
-from functools import partial
 
 logger = logging.getLogger(__name__)
 
@@ -24,40 +23,72 @@ class HederaNotaryService:
     """
     
     def __init__(self):
-        self.account_id = os.environ.get('HEDERA_ACCOUNT_ID')
-        self.private_key_hex = os.environ.get('HEDERA_PRIVATE_KEY', '').replace('0x', '')
-        self.network = os.environ.get('HEDERA_NETWORK', 'testnet')
-        self.default_topic_id = os.environ.get('HEDERA_TOPIC_ID')
-        
-        # SDK imports (done lazily to handle import errors gracefully)
+        # Lazy initialization - credentials will be loaded on first use
+        self._initialized = False
         self._sdk_available = False
         self._client = None
+        self._account_id = None
+        self._private_key_hex = None
+        self._network = None
+        self._default_topic_id = None
+        self._mirror_url = None
+    
+    def _ensure_initialized(self):
+        """Lazy initialization - load credentials from env on first use"""
+        if self._initialized:
+            return
+        
+        self._account_id = os.environ.get('HEDERA_ACCOUNT_ID')
+        self._private_key_hex = os.environ.get('HEDERA_PRIVATE_KEY', '').replace('0x', '')
+        self._network = os.environ.get('HEDERA_NETWORK', 'testnet')
+        self._default_topic_id = os.environ.get('HEDERA_TOPIC_ID')
         
         # API endpoints for mirror node queries
-        if self.network == 'mainnet':
-            self.mirror_url = "https://mainnet-public.mirrornode.hedera.com"
+        if self._network == 'mainnet':
+            self._mirror_url = "https://mainnet-public.mirrornode.hedera.com"
         else:
-            self.mirror_url = "https://testnet.mirrornode.hedera.com"
+            self._mirror_url = "https://testnet.mirrornode.hedera.com"
         
         # Initialize SDK if credentials are available
         self._init_sdk()
+        self._initialized = True
+    
+    @property
+    def account_id(self):
+        self._ensure_initialized()
+        return self._account_id
+    
+    @property
+    def network(self):
+        self._ensure_initialized()
+        return self._network
+    
+    @property
+    def default_topic_id(self):
+        self._ensure_initialized()
+        return self._default_topic_id
+    
+    @property
+    def mirror_url(self):
+        self._ensure_initialized()
+        return self._mirror_url
     
     def _init_sdk(self):
         """Initialize the Hedera SDK client"""
-        if not self.account_id or not self.private_key_hex:
+        if not self._account_id or not self._private_key_hex:
             logger.warning("Hedera credentials not configured - SDK features disabled")
             return
             
         try:
             from hiero_sdk_python import Client, PrivateKey, AccountId
             
-            if self.network == 'mainnet':
+            if self._network == 'mainnet':
                 self._client = Client.for_mainnet()
             else:
                 self._client = Client.for_testnet()
             
-            account_id = AccountId.from_string(self.account_id)
-            private_key = PrivateKey.from_bytes_ecdsa(bytes.fromhex(self.private_key_hex))
+            account_id = AccountId.from_string(self._account_id)
+            private_key = PrivateKey.from_bytes_ecdsa(bytes.fromhex(self._private_key_hex))
             self._client.set_operator(account_id, private_key)
             
             self._sdk_available = True
