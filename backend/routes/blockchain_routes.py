@@ -489,25 +489,6 @@ async def get_topic_messages(
     }
 
 
-@router.get("/topics/my")
-async def get_my_topics(
-    limit: int = 50,
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Get all HCS topics created by the current user.
-    """
-    topics = await db.hcs_topics.find(
-        {"user_id": current_user.id},
-        {"_id": 0}
-    ).sort("created_at", -1).limit(limit).to_list(limit)
-    
-    return {
-        "count": len(topics),
-        "topics": topics
-    }
-
-
 @router.get("/account/balance")
 async def get_account_balance(
     current_user: User = Depends(get_current_user)
