@@ -135,6 +135,14 @@ const CheckoutPage = () => {
               <Wallet className="w-4 h-4 mr-2" />
               Card or Crypto
             </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate(`/checkout/crypto?package=${selectedPackage}`)}
+              className="border-orange-500/50 text-orange-400 hover:bg-orange-500/10"
+            >
+              <Wallet className="w-4 h-4 mr-2" />
+              Pay with Crypto Only
+            </Button>
           </div>
 
           {/* Packages Grid */}
