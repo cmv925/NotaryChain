@@ -235,7 +235,7 @@ async def end_video_room(
     )
     
     # Update notary request
-    await db.notary_requests.update_one(
+    await db.notarization_requests.update_one(
         {"id": video_session["notary_request_id"]},
         {
             "$set": {
