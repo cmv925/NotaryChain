@@ -1,7 +1,6 @@
 """
 Hedera Blockchain Service for Document Notarization
-Uses Hedera REST API and Mirror Node for document timestamping
-No Java dependency - pure Python with HTTP requests
+Uses Hedera SDK (hiero-sdk-python) for HCS topic creation and message submission
 """
 
 import os
@@ -12,10 +11,8 @@ import base64
 from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 import logging
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.backends import default_backend
+import asyncio
+from functools import partial
 
 logger = logging.getLogger(__name__)
 
@@ -23,22 +20,52 @@ logger = logging.getLogger(__name__)
 class HederaNotaryService:
     """
     Service for recording document notarizations on Hedera blockchain.
-    Uses direct HTTP calls to Hedera API (no Java SDK required).
+    Creates unique HCS topics per notarization session for private audit trails.
     """
     
     def __init__(self):
         self.account_id = os.environ.get('HEDERA_ACCOUNT_ID')
         self.private_key_hex = os.environ.get('HEDERA_PRIVATE_KEY', '').replace('0x', '')
         self.network = os.environ.get('HEDERA_NETWORK', 'testnet')
-        self.topic_id = os.environ.get('HEDERA_TOPIC_ID')
+        self.default_topic_id = os.environ.get('HEDERA_TOPIC_ID')
         
-        # API endpoints
+        # SDK imports (done lazily to handle import errors gracefully)
+        self._sdk_available = False
+        self._client = None
+        
+        # API endpoints for mirror node queries
         if self.network == 'mainnet':
             self.mirror_url = "https://mainnet-public.mirrornode.hedera.com"
-            self.api_url = "https://mainnet.hedera.com"
         else:
             self.mirror_url = "https://testnet.mirrornode.hedera.com"
-            self.api_url = "https://testnet.hedera.com"
+        
+        # Initialize SDK if credentials are available
+        self._init_sdk()
+    
+    def _init_sdk(self):
+        """Initialize the Hedera SDK client"""
+        if not self.account_id or not self.private_key_hex:
+            logger.warning("Hedera credentials not configured - SDK features disabled")
+            return
+            
+        try:
+            from hiero_sdk_python import Client, PrivateKey, AccountId
+            
+            if self.network == 'mainnet':
+                self._client = Client.for_mainnet()
+            else:
+                self._client = Client.for_testnet()
+            
+            account_id = AccountId.from_string(self.account_id)
+            private_key = PrivateKey.from_bytes_ecdsa(bytes.fromhex(self.private_key_hex))
+            self._client.set_operator(account_id, private_key)
+            
+            self._sdk_available = True
+            logger.info(f"Hedera SDK initialized for {self.network}")
+        except ImportError:
+            logger.warning("hiero-sdk-python not installed - SDK features disabled")
+        except Exception as e:
+            logger.error(f"Failed to initialize Hedera SDK: {e}")
     
     @staticmethod
     def hash_document(content: bytes) -> str:
@@ -53,6 +80,202 @@ class HederaNotaryService:
             for chunk in iter(lambda: f.read(4096), b""):
                 sha256_hash.update(chunk)
         return sha256_hash.hexdigest()
+    
+    async def create_topic(self, memo: str = "NotaryChain Session") -> Dict[str, Any]:
+        """
+        Create a new HCS topic for a notarization session.
+        Each notarization gets its own private topic for audit trail.
+        
+        Returns:
+            Dict with topic_id and creation details
+        """
+        if not self._sdk_available:
+            return {
+                "success": False,
+                "error": "Hedera SDK not available",
+                "fallback_topic": self.default_topic_id
+            }
+        
+        try:
+            from hiero_sdk_python import TopicCreateTransaction
+            
+            # Run SDK call in executor to avoid blocking
+            loop = asyncio.get_event_loop()
+            
+            def create_topic_sync():
+                tx = TopicCreateTransaction()
+                tx.set_memo(memo[:100])  # Max 100 bytes
+                receipt = tx.execute(self._client)
+                return {
+                    "topic_id": str(receipt.topic_id),
+                    "status": receipt.status
+                }
+            
+            result = await loop.run_in_executor(None, create_topic_sync)
+            
+            logger.info(f"Created HCS topic: {result['topic_id']}")
+            
+            return {
+                "success": True,
+                "topic_id": result["topic_id"],
+                "network": self.network,
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "explorer_url": f"https://hashscan.io/{self.network}/topic/{result['topic_id']}"
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to create HCS topic: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "fallback_topic": self.default_topic_id
+            }
+    
+    async def submit_message(
+        self,
+        topic_id: str,
+        message: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Submit a message to an HCS topic.
+        Used to record events in the notarization audit trail.
+        
+        Args:
+            topic_id: The HCS topic ID (e.g., "0.0.1234567")
+            message: Dictionary to be JSON-encoded and submitted
+            
+        Returns:
+            Dict with submission details
+        """
+        if not self._sdk_available:
+            return {
+                "success": False,
+                "error": "Hedera SDK not available"
+            }
+        
+        try:
+            from hiero_sdk_python import TopicMessageSubmitTransaction, TopicId
+            
+            # Add timestamp to message
+            message["submitted_at"] = datetime.now(timezone.utc).isoformat()
+            message_json = json.dumps(message, sort_keys=True)
+            
+            loop = asyncio.get_event_loop()
+            
+            def submit_sync():
+                tx = TopicMessageSubmitTransaction()
+                tx.set_topic_id(TopicId.from_string(topic_id))
+                tx.set_message(message_json)
+                receipt = tx.execute(self._client)
+                return {
+                    "status": receipt.status,
+                    "sequence_number": receipt.topic_sequence_number
+                }
+            
+            result = await loop.run_in_executor(None, submit_sync)
+            
+            logger.info(f"Message submitted to {topic_id}, seq: {result['sequence_number']}")
+            
+            return {
+                "success": True,
+                "topic_id": topic_id,
+                "sequence_number": result["sequence_number"],
+                "message_hash": hashlib.sha256(message_json.encode()).hexdigest(),
+                "network": self.network,
+                "explorer_url": f"https://hashscan.io/{self.network}/topic/{topic_id}"
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to submit message to topic {topic_id}: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "topic_id": topic_id
+            }
+    
+    async def seal_document(
+        self,
+        document_hash: str,
+        document_name: str,
+        user_id: str,
+        notary_id: Optional[str] = None,
+        session_topic_id: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Seal a document by recording its hash on Hedera HCS.
+        
+        If session_topic_id is provided, submits to that specific topic.
+        Otherwise, uses the default topic or creates a local record.
+        
+        Returns:
+            Dict with transaction_id, timestamp, verification data
+        """
+        try:
+            seal_timestamp = datetime.now(timezone.utc)
+            
+            # Prepare seal payload
+            seal_payload = {
+                "type": "NOTARY_SEAL",
+                "version": "2.0",
+                "document_hash": document_hash,
+                "document_name": document_name,
+                "user_id": user_id,
+                "notary_id": notary_id,
+                "network": self.network,
+                "account_id": self.account_id,
+                "timestamp_utc": seal_timestamp.isoformat(),
+                "metadata": metadata or {}
+            }
+            
+            # Generate seal ID
+            seal_payload_bytes = json.dumps(seal_payload, sort_keys=True).encode('utf-8')
+            seal_id = hashlib.sha256(seal_payload_bytes).hexdigest()[:16]
+            
+            # Create transaction ID
+            transaction_id = f"{self.account_id}@{int(seal_timestamp.timestamp())}-{seal_id}"
+            
+            # Determine which topic to use
+            topic_id = session_topic_id or self.default_topic_id
+            sequence_number = None
+            hcs_submitted = False
+            
+            # Try to submit to HCS if SDK is available
+            if self._sdk_available and topic_id:
+                hcs_result = await self.submit_message(topic_id, seal_payload)
+                if hcs_result.get("success"):
+                    sequence_number = hcs_result.get("sequence_number")
+                    hcs_submitted = True
+                    logger.info(f"Seal recorded on HCS topic {topic_id}, seq: {sequence_number}")
+            
+            result = {
+                "success": True,
+                "transaction_id": transaction_id,
+                "seal_id": seal_id,
+                "topic_id": topic_id or "local_only",
+                "sequence_number": sequence_number,
+                "hcs_submitted": hcs_submitted,
+                "document_hash": document_hash,
+                "network": self.network,
+                "account_id": self.account_id,
+                "sealed_at": seal_timestamp.isoformat(),
+                "verification_hash": hashlib.sha256(
+                    f"{document_hash}:{transaction_id}:{self.account_id}".encode()
+                ).hexdigest(),
+                "explorer_url": self._get_explorer_url(transaction_id, topic_id),
+                "status": "sealed"
+            }
+            
+            logger.info(f"Document sealed: {transaction_id}, HCS: {hcs_submitted}")
+            return result
+            
+        except Exception as e:
+            logger.error(f"Failed to seal document: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "document_hash": document_hash
+            }
     
     async def get_account_balance(self) -> Dict[str, Any]:
         """Get account balance from Mirror Node"""
@@ -72,94 +295,16 @@ class HederaNotaryService:
         except Exception as e:
             return {"success": False, "error": str(e)}
     
-    async def seal_document(
-        self,
-        document_hash: str,
-        document_name: str,
-        user_id: str,
-        notary_id: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
-        """
-        Seal a document by recording its hash on Hedera.
-        
-        For the MVP, we store the seal record locally and generate
-        a verification hash that can be checked against the document.
-        In production, this would submit to HCS topic.
-        
-        Returns:
-            Dict with transaction_id, timestamp, verification data
-        """
-        try:
-            # Create seal timestamp
-            seal_timestamp = datetime.now(timezone.utc)
-            
-            # Create verification payload
-            seal_payload = {
-                "type": "NOTARY_SEAL",
-                "version": "1.0",
-                "document_hash": document_hash,
-                "document_name": document_name,
-                "user_id": user_id,
-                "notary_id": notary_id,
-                "network": self.network,
-                "account_id": self.account_id,
-                "timestamp_utc": seal_timestamp.isoformat(),
-                "metadata": metadata or {}
-            }
-            
-            # Generate seal ID (would be transaction ID in production)
-            seal_payload_bytes = json.dumps(seal_payload, sort_keys=True).encode('utf-8')
-            seal_id = hashlib.sha256(seal_payload_bytes).hexdigest()[:16]
-            
-            # Create a verifiable seal record
-            transaction_id = f"{self.account_id}@{int(seal_timestamp.timestamp())}-{seal_id}"
-            
-            # For testnet with real HCS submission, we would:
-            # 1. Create TopicMessageSubmitTransaction
-            # 2. Sign with private key
-            # 3. Submit to network
-            # For now, we create a verifiable local record that can be upgraded to HCS
-            
-            result = {
-                "success": True,
-                "transaction_id": transaction_id,
-                "seal_id": seal_id,
-                "topic_id": self.topic_id or "pending_topic_creation",
-                "document_hash": document_hash,
-                "network": self.network,
-                "account_id": self.account_id,
-                "sealed_at": seal_timestamp.isoformat(),
-                "verification_hash": hashlib.sha256(
-                    f"{document_hash}:{transaction_id}:{self.account_id}".encode()
-                ).hexdigest(),
-                "explorer_url": self._get_explorer_url(transaction_id),
-                "status": "sealed"
-            }
-            
-            logger.info(f"Document sealed: {transaction_id}")
-            return result
-            
-        except Exception as e:
-            logger.error(f"Failed to seal document: {e}")
-            return {
-                "success": False,
-                "error": str(e),
-                "document_hash": document_hash
-            }
-    
     async def verify_document(self, document_hash: str, transaction_id: str) -> Dict[str, Any]:
         """
         Verify a document seal.
-        Checks both local records and (when available) blockchain records.
+        Checks both local records and blockchain records via mirror node.
         """
         try:
-            # Parse transaction ID to extract account and timestamp
             parts = transaction_id.split('@')
             if len(parts) >= 2:
                 account = parts[0]
                 
-                # Recreate verification hash
                 verification_hash = hashlib.sha256(
                     f"{document_hash}:{transaction_id}:{account}".encode()
                 ).hexdigest()
@@ -189,29 +334,36 @@ class HederaNotaryService:
                 "transaction_id": transaction_id
             }
     
-    async def get_topic_info(self) -> Dict[str, Any]:
+    async def get_topic_info(self, topic_id: Optional[str] = None) -> Dict[str, Any]:
         """Get topic information from Mirror Node"""
-        if not self.topic_id:
-            return {"success": False, "error": "No topic configured"}
+        tid = topic_id or self.default_topic_id
+        if not tid:
+            return {"success": False, "error": "No topic specified"}
             
         try:
             async with aiohttp.ClientSession() as session:
-                url = f"{self.mirror_url}/api/v1/topics/{self.topic_id}"
+                url = f"{self.mirror_url}/api/v1/topics/{tid}"
                 async with session.get(url) as response:
                     if response.status == 200:
-                        return {"success": True, "data": await response.json()}
+                        data = await response.json()
+                        return {
+                            "success": True,
+                            "topic_id": tid,
+                            "data": data
+                        }
                     return {"success": False, "error": f"HTTP {response.status}"}
         except Exception as e:
             return {"success": False, "error": str(e)}
     
-    async def get_topic_messages(self, limit: int = 100) -> list:
-        """Retrieve recent messages from the notary topic via Mirror Node"""
-        if not self.topic_id:
+    async def get_topic_messages(self, topic_id: Optional[str] = None, limit: int = 100) -> list:
+        """Retrieve recent messages from an HCS topic via Mirror Node"""
+        tid = topic_id or self.default_topic_id
+        if not tid:
             return []
             
         try:
             async with aiohttp.ClientSession() as session:
-                url = f"{self.mirror_url}/api/v1/topics/{self.topic_id}/messages?limit={limit}"
+                url = f"{self.mirror_url}/api/v1/topics/{tid}/messages?limit={limit}"
                 async with session.get(url) as response:
                     if response.status == 200:
                         data = await response.json()
@@ -244,23 +396,33 @@ class HederaNotaryService:
             logger.error(f"Failed to get transactions: {e}")
             return []
     
-    def _get_explorer_url(self, transaction_id: str) -> str:
-        """Get HashScan explorer URL for transaction"""
+    def _get_explorer_url(self, transaction_id: str, topic_id: Optional[str] = None) -> str:
+        """Get HashScan explorer URL"""
+        base = f"https://hashscan.io/{self.network}"
+        if topic_id and topic_id != "local_only":
+            return f"{base}/topic/{topic_id}"
         # Format transaction ID for HashScan
         formatted_id = transaction_id.replace('@', '-').replace('.', '-')
-        if self.network == 'mainnet':
-            return f"https://hashscan.io/mainnet/transaction/{formatted_id}"
-        return f"https://hashscan.io/testnet/transaction/{formatted_id}"
+        return f"{base}/transaction/{formatted_id}"
     
     def get_status(self) -> Dict[str, Any]:
         """Get service configuration status"""
         return {
             "configured": bool(self.account_id and self.private_key_hex),
+            "sdk_available": self._sdk_available,
             "account_id": self.account_id,
             "network": self.network,
-            "topic_id": self.topic_id,
+            "default_topic_id": self.default_topic_id,
             "mirror_url": self.mirror_url
         }
+    
+    def close(self):
+        """Close the SDK client connection"""
+        if self._client:
+            try:
+                self._client.close()
+            except:
+                pass
 
 
 # Singleton instance
