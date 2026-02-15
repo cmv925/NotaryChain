@@ -451,12 +451,19 @@ const CryptoCheckout = () => {
                     </div>
                   </div>
 
-                  {/* QR Code placeholder */}
+                  {/* QR Code */}
                   <div className="bg-[#0a0f1a] rounded-lg p-6 mb-4 text-center">
-                    <div className="w-48 h-48 mx-auto bg-white rounded-lg flex items-center justify-center mb-4">
-                      <QrCode className="w-32 h-32 text-gray-800" />
+                    <div className="w-52 h-52 mx-auto bg-white rounded-lg flex items-center justify-center mb-4 p-3">
+                      <QRCodeSVG 
+                        value={payment.qr_data || payment.wallet_address}
+                        size={180}
+                        level="H"
+                        includeMargin={false}
+                        bgColor="#ffffff"
+                        fgColor="#000000"
+                      />
                     </div>
-                    <p className="text-gray-500 text-sm">Scan QR code with your wallet</p>
+                    <p className="text-gray-500 text-sm">Scan QR code with your {payment.crypto_name} wallet</p>
                   </div>
 
                   {/* Status */}
