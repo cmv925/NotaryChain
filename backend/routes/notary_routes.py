@@ -111,7 +111,6 @@ async def upload_credentials(
             f"credentials.{credential_url_field}": f"/api/notary/credentials/{doc_id}",
             "updated_at": datetime.now(timezone.utc)
         }}
-        {"$set": update_dict}
     )
     
     return {
