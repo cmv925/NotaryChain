@@ -246,6 +246,8 @@ class HederaNotaryService:
         Returns:
             Dict with transaction_id, timestamp, verification data
         """
+        self._ensure_initialized()
+        
         try:
             seal_timestamp = datetime.now(timezone.utc)
             
@@ -257,8 +259,8 @@ class HederaNotaryService:
                 "document_name": document_name,
                 "user_id": user_id,
                 "notary_id": notary_id,
-                "network": self.network,
-                "account_id": self.account_id,
+                "network": self._network,
+                "account_id": self._account_id,
                 "timestamp_utc": seal_timestamp.isoformat(),
                 "metadata": metadata or {}
             }
@@ -268,10 +270,10 @@ class HederaNotaryService:
             seal_id = hashlib.sha256(seal_payload_bytes).hexdigest()[:16]
             
             # Create transaction ID
-            transaction_id = f"{self.account_id}@{int(seal_timestamp.timestamp())}-{seal_id}"
+            transaction_id = f"{self._account_id}@{int(seal_timestamp.timestamp())}-{seal_id}"
             
             # Determine which topic to use
-            topic_id = session_topic_id or self.default_topic_id
+            topic_id = session_topic_id or self._default_topic_id
             sequence_number = None
             hcs_submitted = False
             
@@ -291,11 +293,11 @@ class HederaNotaryService:
                 "sequence_number": sequence_number,
                 "hcs_submitted": hcs_submitted,
                 "document_hash": document_hash,
-                "network": self.network,
-                "account_id": self.account_id,
+                "network": self._network,
+                "account_id": self._account_id,
                 "sealed_at": seal_timestamp.isoformat(),
                 "verification_hash": hashlib.sha256(
-                    f"{document_hash}:{transaction_id}:{self.account_id}".encode()
+                    f"{document_hash}:{transaction_id}:{self._account_id}".encode()
                 ).hexdigest(),
                 "explorer_url": self._get_explorer_url(transaction_id, topic_id),
                 "status": "sealed"
@@ -314,15 +316,16 @@ class HederaNotaryService:
     
     async def get_account_balance(self) -> Dict[str, Any]:
         """Get account balance from Mirror Node"""
+        self._ensure_initialized()
         try:
             async with aiohttp.ClientSession() as session:
-                url = f"{self.mirror_url}/api/v1/accounts/{self.account_id}"
+                url = f"{self._mirror_url}/api/v1/accounts/{self._account_id}"
                 async with session.get(url) as response:
                     if response.status == 200:
                         data = await response.json()
                         return {
                             "success": True,
-                            "account_id": self.account_id,
+                            "account_id": self._account_id,
                             "balance_hbar": data.get('balance', {}).get('balance', 0) / 100_000_000,
                             "balance_tinybars": data.get('balance', {}).get('balance', 0)
                         }
