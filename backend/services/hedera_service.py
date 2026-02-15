@@ -151,9 +151,9 @@ class HederaNotaryService:
             return {
                 "success": True,
                 "topic_id": result["topic_id"],
-                "network": self.network,
+                "network": self._network,
                 "created_at": datetime.now(timezone.utc).isoformat(),
-                "explorer_url": f"https://hashscan.io/{self.network}/topic/{result['topic_id']}"
+                "explorer_url": f"https://hashscan.io/{self._network}/topic/{result['topic_id']}"
             }
             
         except Exception as e:
@@ -161,7 +161,7 @@ class HederaNotaryService:
             return {
                 "success": False,
                 "error": str(e),
-                "fallback_topic": self.default_topic_id
+                "fallback_topic": self._default_topic_id
             }
     
     async def submit_message(
