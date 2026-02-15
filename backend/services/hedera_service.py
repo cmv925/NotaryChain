@@ -338,6 +338,7 @@ class HederaNotaryService:
         Verify a document seal.
         Checks both local records and blockchain records via mirror node.
         """
+        self._ensure_initialized()
         try:
             parts = transaction_id.split('@')
             if len(parts) >= 2:
@@ -353,7 +354,7 @@ class HederaNotaryService:
                     "document_hash": document_hash,
                     "verification_hash": verification_hash,
                     "account_id": account,
-                    "network": self.network,
+                    "network": self._network,
                     "explorer_url": self._get_explorer_url(transaction_id),
                     "verification_method": "cryptographic_hash"
                 }
@@ -374,13 +375,14 @@ class HederaNotaryService:
     
     async def get_topic_info(self, topic_id: Optional[str] = None) -> Dict[str, Any]:
         """Get topic information from Mirror Node"""
-        tid = topic_id or self.default_topic_id
+        self._ensure_initialized()
+        tid = topic_id or self._default_topic_id
         if not tid:
             return {"success": False, "error": "No topic specified"}
             
         try:
             async with aiohttp.ClientSession() as session:
-                url = f"{self.mirror_url}/api/v1/topics/{tid}"
+                url = f"{self._mirror_url}/api/v1/topics/{tid}"
                 async with session.get(url) as response:
                     if response.status == 200:
                         data = await response.json()
@@ -395,13 +397,14 @@ class HederaNotaryService:
     
     async def get_topic_messages(self, topic_id: Optional[str] = None, limit: int = 100) -> list:
         """Retrieve recent messages from an HCS topic via Mirror Node"""
-        tid = topic_id or self.default_topic_id
+        self._ensure_initialized()
+        tid = topic_id or self._default_topic_id
         if not tid:
             return []
             
         try:
             async with aiohttp.ClientSession() as session:
-                url = f"{self.mirror_url}/api/v1/topics/{tid}/messages?limit={limit}"
+                url = f"{self._mirror_url}/api/v1/topics/{tid}/messages?limit={limit}"
                 async with session.get(url) as response:
                     if response.status == 200:
                         data = await response.json()
