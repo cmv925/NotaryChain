@@ -11,6 +11,12 @@ import {
   Calendar,
   TrendingUp,
   LogOut,
+  XCircle,
+  Eye,
+  ExternalLink,
+  Copy,
+  RefreshCw,
+  AlertTriangle,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
@@ -28,6 +34,9 @@ const NotaryDashboard = () => {
   const [assignedRequests, setAssignedRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pending');
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [processingAction, setProcessingAction] = useState(null);
 
   useEffect(() => {
     fetchDashboardData();
@@ -66,6 +75,7 @@ const NotaryDashboard = () => {
   };
 
   const handleAssignRequest = async (requestId) => {
+    setProcessingAction(requestId);
     try {
       await axios.post(
         `${API}/notary/requests/${requestId}/assign`,
@@ -87,32 +97,79 @@ const NotaryDashboard = () => {
         description: error.response?.data?.detail || 'Failed to assign request',
         variant: 'destructive',
       });
+    } finally {
+      setProcessingAction(null);
     }
   };
 
   const handleStartSession = async (requestId) => {
+    setProcessingAction(requestId);
     try {
-      const response = await axios.post(
-        `${API}/notary/requests/${requestId}/start-session`,
-        {},
+      // First create a video room
+      const roomResponse = await axios.post(
+        `${API}/video/rooms`,
+        { request_id: requestId },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
       toast({
-        title: 'Session Started',
-        description: 'Redirecting to session...',
+        title: 'Session Created',
+        description: 'Redirecting to video session...',
       });
 
-      navigate(`/notary/session/${response.data.session_id}`);
+      // Navigate to video session
+      navigate(`/session/${requestId}`);
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to start session',
+        description: error.response?.data?.detail || 'Failed to start session',
         variant: 'destructive',
       });
+    } finally {
+      setProcessingAction(null);
     }
+  };
+
+  const handleCompleteNotarization = async (requestId) => {
+    setProcessingAction(requestId);
+    try {
+      await axios.post(
+        `${API}/notary/requests/${requestId}/complete`,
+        { notes: 'Notarization completed successfully' },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      toast({
+        title: 'Notarization Complete',
+        description: 'The document has been notarized successfully',
+      });
+
+      setShowModal(false);
+      setSelectedRequest(null);
+      fetchDashboardData();
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error.response?.data?.detail || 'Failed to complete notarization',
+        variant: 'destructive',
+      });
+    } finally {
+      setProcessingAction(null);
+    }
+  };
+
+  const handleViewDetails = (request) => {
+    setSelectedRequest(request);
+    setShowModal(true);
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    toast({ title: 'Copied', description: 'Copied to clipboard' });
   };
 
   const handleLogout = () => {
@@ -120,10 +177,25 @@ const NotaryDashboard = () => {
     navigate('/');
   };
 
+  const getStatusBadge = (status) => {
+    const styles = {
+      pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+      assigned: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+      in_progress: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+      reviewing: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+      completed: 'bg-green-500/20 text-green-400 border-green-500/30',
+      rejected: 'bg-red-500/20 text-red-400 border-red-500/30',
+    };
+    return styles[status] || styles.pending;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+        <div className="text-center">
+          <RefreshCw className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
+          <div className="text-white text-xl">Loading dashboard...</div>
+        </div>
       </div>
     );
   }
