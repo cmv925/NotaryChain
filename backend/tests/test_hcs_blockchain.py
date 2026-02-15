@@ -373,9 +373,9 @@ class TestAccountBalance:
     
     def test_account_balance_admin(self, admin_client):
         """Test GET /api/blockchain/account/balance for admin"""
-        response = admin_client.get(f"{BASE_URL}/api/blockchain/account/balance")
+        response = retry_request(lambda: admin_client.get(f"{BASE_URL}/api/blockchain/account/balance"))
         
-        assert response.status_code == 200
+        assert response.status_code == 200, f"Expected 200, got {response.status_code}"
         data = response.json()
         
         # Should have balance info
@@ -388,7 +388,7 @@ class TestAccountBalance:
     
     def test_account_balance_non_admin(self, authenticated_client_regular):
         """Test account balance endpoint returns 403 for non-admin"""
-        response = authenticated_client_regular.get(f"{BASE_URL}/api/blockchain/account/balance")
+        response = retry_request(lambda: authenticated_client_regular.get(f"{BASE_URL}/api/blockchain/account/balance"))
         
         assert response.status_code == 403, f"Expected 403 for non-admin, got {response.status_code}"
         print(f"✓ Account balance requires admin access")
