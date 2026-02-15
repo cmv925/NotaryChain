@@ -120,11 +120,13 @@ class HederaNotaryService:
         Returns:
             Dict with topic_id and creation details
         """
+        self._ensure_initialized()
+        
         if not self._sdk_available:
             return {
                 "success": False,
                 "error": "Hedera SDK not available",
-                "fallback_topic": self.default_topic_id
+                "fallback_topic": self._default_topic_id
             }
         
         try:
