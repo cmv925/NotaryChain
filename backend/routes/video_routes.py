@@ -107,7 +107,7 @@ async def create_video_room(
     await db.video_sessions.insert_one(video_session)
     
     # Update notary request with video session
-    await db.notary_requests.update_one(
+    await db.notarization_requests.update_one(
         {"id": request.notary_request_id},
         {
             "$set": {
