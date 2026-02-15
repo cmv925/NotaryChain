@@ -38,18 +38,27 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - Notary onboarding (`/notary/onboarding`)
 - Backend: notary models, notary_routes.py
 
-### ✅ Phase 5: AI Document Analysis & Biometric Verification (COMPLETED - Feb 14, 2026)
+### ✅ Phase 5: AI Document Analysis & Biometric Verification (UPDATED - Feb 15, 2026)
 **Features:**
 - AI-powered document analysis using Google Gemini
 - Analyzes documents for discrepancies, missing information, fraud indicators
 - Specialized prompts for different document types
-- Webcam-based biometric face verification simulation
+- **REAL** webcam-based biometric face verification using TensorFlow.js + MediaPipe
+- 5 liveness challenges: center gaze, blink detection, head turn left/right, smile
+- Client-side face detection with confidence scoring
 - 3-step workflow: Document Upload → Identity Verification → Submit Request
 
 **API Endpoints:**
 - `POST /api/ai/analyze-document` - Analyze uploaded document with Gemini AI
 - `POST /api/ai/verify-biometric` - Record biometric verification result
 - `GET /api/ai/session/{session_id}/analysis` - Get all analyses for a session
+
+**Frontend Components:**
+- `BiometricVerification.jsx` - Real-time face detection with TensorFlow.js
+  - MediaPipe FaceDetector model
+  - WebGL backend with CPU fallback
+  - Liveness challenge progression
+  - Confidence and liveness score display
 
 ### ✅ Phase 6: Hedera Blockchain Integration (COMPLETED - Feb 14, 2026)
 **Features:**
