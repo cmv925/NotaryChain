@@ -55,6 +55,8 @@ async def compile_package(
             "package": package
         }
         
+    except HTTPException:
+        raise
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
@@ -107,6 +109,8 @@ async def seal_package(
         
         return result
         
+    except HTTPException:
+        raise
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
