@@ -49,6 +49,7 @@ app.include_router(ai_routes.router)
 app.include_router(blockchain_routes.router)
 app.include_router(payment_routes.router)
 app.include_router(video_routes.router)
+app.include_router(crypto_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
