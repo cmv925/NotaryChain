@@ -558,6 +558,90 @@ const RequestNotarization = () => {
                       </div>
                     )}
 
+                    {/* Signature Analysis */}
+                    {analysisResult.signature_analysis && (
+                      <div className="bg-[#0a0f1a] rounded-lg p-4 border border-gray-800" data-testid="signature-analysis">
+                        <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                          <FileText className="w-5 h-5 text-purple-500" />
+                          Signature Analysis
+                        </h3>
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div className="bg-[#1a2332] rounded p-3">
+                            <span className="text-gray-500 text-xs">Signatures Found</span>
+                            <p className="text-white text-lg font-bold">
+                              {analysisResult.signature_analysis.signatures_found || 0}
+                            </p>
+                          </div>
+                          <div className="bg-[#1a2332] rounded p-3">
+                            <span className="text-gray-500 text-xs">Signature Quality</span>
+                            <p className={`text-lg font-bold capitalize ${
+                              analysisResult.signature_analysis.signature_quality === 'clear' ? 'text-green-400' :
+                              analysisResult.signature_analysis.signature_quality === 'partial' ? 'text-yellow-400' :
+                              analysisResult.signature_analysis.signature_quality === 'unclear' ? 'text-orange-400' :
+                              'text-red-400'
+                            }`}>
+                              {analysisResult.signature_analysis.signature_quality || 'N/A'}
+                            </p>
+                          </div>
+                          
+                          {analysisResult.signature_analysis.signature_locations?.length > 0 && (
+                            <div className="col-span-2">
+                              <span className="text-gray-500 text-xs">Signature Locations</span>
+                              <ul className="text-white text-sm mt-1 list-disc list-inside">
+                                {analysisResult.signature_analysis.signature_locations.map((loc, idx) => (
+                                  <li key={idx}>{loc}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          
+                          {analysisResult.signature_analysis.signature_types?.length > 0 && (
+                            <div className="col-span-2">
+                              <span className="text-gray-500 text-xs">Signature Types</span>
+                              <div className="flex flex-wrap gap-2 mt-1">
+                                {analysisResult.signature_analysis.signature_types.map((type, idx) => (
+                                  <span key={idx} className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs capitalize">
+                                    {type}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          
+                          <div className="col-span-2">
+                            <span className="text-gray-500 text-xs">All Required Signatures Present</span>
+                            <p className={`font-medium ${
+                              analysisResult.signature_analysis.all_required_signatures_present ? 'text-green-400' : 'text-yellow-400'
+                            }`}>
+                              {analysisResult.signature_analysis.all_required_signatures_present ? 'Yes - Ready for notarization' : 'No - Some signatures may be missing'}
+                            </p>
+                          </div>
+                          
+                          {analysisResult.signature_analysis.missing_signatures?.length > 0 && (
+                            <div className="col-span-2 bg-yellow-500/10 border border-yellow-500/30 rounded p-3">
+                              <span className="text-yellow-400 text-xs font-medium">Missing Signatures</span>
+                              <ul className="text-yellow-300 text-sm mt-1 list-disc list-inside">
+                                {analysisResult.signature_analysis.missing_signatures.map((sig, idx) => (
+                                  <li key={idx}>{sig}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          
+                          {analysisResult.signature_analysis.signature_concerns?.length > 0 && (
+                            <div className="col-span-2 bg-red-500/10 border border-red-500/30 rounded p-3">
+                              <span className="text-red-400 text-xs font-medium">Signature Concerns</span>
+                              <ul className="text-red-300 text-sm mt-1 list-disc list-inside">
+                                {analysisResult.signature_analysis.signature_concerns.map((concern, idx) => (
+                                  <li key={idx}>{concern}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Key Information */}
                     {analysisResult.key_information && (
                       <div className="bg-[#0a0f1a] rounded-lg p-4 border border-gray-800">
