@@ -8,7 +8,11 @@ from models_notary import (
 )
 from models import User
 from routes.auth_routes import get_current_user
+from services.hedera_service import hedera_service
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/notary", tags=["notary"])
 
@@ -75,8 +79,36 @@ async def create_notarization_request(
         **request_data.dict()
     )
     
-    await db.notarization_requests.insert_one(request.dict())
-    return request
+    # Create HCS topic for this notarization session
+    hcs_topic_id = None
+    hcs_topic_result = None
+    try:
+        topic_memo = f"Notarization: {request_data.document_type}"
+        hcs_topic_result = await hedera_service.create_topic(memo=topic_memo)
+        if hcs_topic_result.get("success"):
+            hcs_topic_id = hcs_topic_result["topic_id"]
+            logger.info(f"Created HCS topic {hcs_topic_id} for notarization {request.id}")
+            
+            # Submit initial event to topic
+            await hedera_service.submit_message(hcs_topic_id, {
+                "type": "REQUEST_CREATED",
+                "request_id": request.id,
+                "user_id": current_user.id,
+                "document_type": request_data.document_type
+            })
+    except Exception as e:
+        logger.error(f"Failed to create HCS topic for notarization: {e}")
+    
+    # Add HCS topic to request
+    request_dict = request.dict()
+    request_dict["hcs_topic_id"] = hcs_topic_id
+    request_dict["hcs_topic_explorer"] = hcs_topic_result.get("explorer_url") if hcs_topic_result else None
+    
+    await db.notarization_requests.insert_one(request_dict)
+    
+    # Return augmented response
+    return NotarizationRequest(**{**request.dict(), "hcs_topic_id": hcs_topic_id})
+
 
 @router.get("/requests/my", response_model=List[NotarizationRequest])
 async def get_my_requests(
