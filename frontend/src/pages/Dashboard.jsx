@@ -18,6 +18,7 @@ const Dashboard = () => {
   const [documents, setDocuments] = useState([]);
   const [notaryRequests, setNotaryRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [expandedRequest, setExpandedRequest] = useState(null);
 
   useEffect(() => {
     fetchDashboardData();
