@@ -149,6 +149,51 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 
 **Route:** `/session/:requestId` - Video session page
 
+### ✅ Phase 9: Compliance & Audit Logging (COMPLETED - Feb 15, 2026)
+**Features:**
+- Immutable audit trail for all platform actions
+- 20+ action types covering user, document, notarization, payment, and admin actions
+- Severity levels: info, warning, critical
+- Automatic logging from admin actions (user enable/disable, role changes, notary approvals)
+- Export capabilities for compliance (JSON and CSV formats)
+- User activity tracking
+- Statistics and analytics aggregations
+
+**API Endpoints:**
+- `GET /api/audit/logs` - Get audit logs with pagination and filtering
+- `GET /api/audit/logs/{id}` - Get detailed audit log entry
+- `GET /api/audit/stats` - Get audit statistics by action, severity, resource, daily
+- `GET /api/audit/export` - Export logs in JSON or CSV format
+- `GET /api/audit/user/{id}/activity` - Get user activity logs
+
+**Database Collection:** `audit_logs`
+
+### ✅ Phase 10: Admin Dashboard (COMPLETED - Feb 15, 2026)
+**Features:**
+- Platform-wide statistics dashboard
+- User management (view, search, enable/disable, role changes)
+- Notary application management (approve/reject pending applications)
+- Revenue analytics with daily breakdown (Stripe + Crypto)
+- Notarization analytics by status and document type
+- Audit logs viewer with severity indicators
+- Role-based access control (admin only)
+
+**API Endpoints:**
+- `GET /api/admin/stats` - Platform statistics
+- `GET /api/admin/users` - List users with pagination/filtering
+- `GET /api/admin/users/{id}` - Detailed user info with activity
+- `PATCH /api/admin/users/{id}/status` - Enable/disable user
+- `PATCH /api/admin/users/{id}/role` - Change user role
+- `GET /api/admin/notaries` - List notary profiles
+- `GET /api/admin/notaries/pending` - Pending applications
+- `POST /api/admin/notaries/{id}/approve` - Approve notary
+- `POST /api/admin/notaries/{id}/reject` - Reject notary
+- `GET /api/admin/analytics/revenue` - Revenue analytics
+- `GET /api/admin/analytics/notarizations` - Notarization analytics
+- `POST /api/admin/seed-admin` - Create initial admin user
+
+**Route:** `/admin` - Admin dashboard (admin role required)
+
 ## Database Schema
 
 ### users
@@ -158,7 +203,10 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
   email: string,
   full_name: string,
   hashed_password: string,
+  role: string (user/notary/admin),
+  status: string (active/disabled/suspended),
   created_at: datetime,
+  last_login: datetime,
   is_active: boolean
 }
 ```
