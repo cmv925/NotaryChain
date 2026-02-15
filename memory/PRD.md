@@ -72,25 +72,40 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
   - Confidence and liveness score display
 - Signature Analysis UI section in RequestNotarization.jsx
 
-### ✅ Phase 6: Hedera Blockchain Integration (COMPLETED - Feb 14, 2026)
+### ✅ Phase 6: Hedera Blockchain Integration (COMPLETED & ENHANCED - Feb 15, 2026)
 **Features:**
 - Document sealing on Hedera blockchain (testnet)
 - SHA-256 hash of documents stored with tamper-proof timestamps
 - Public verification page at `/verify`
 - Explorer links to HashScan for transaction verification
 - Automatic sealing on notarization request submission
+- **NEW: Dynamic HCS Topic Creation** - Each notarization session gets its own HCS topic
+- **NEW: Immutable Audit Trail** - All notarization events logged on-chain
+- **NEW: Real SDK Integration** - Using hiero-sdk-python for native Hedera interactions
+
+**HCS (Hedera Consensus Service) Integration:**
+- Topic creation per notarization session (~0.01 HBAR per topic)
+- Events logged: REQUEST_CREATED, NOTARY_ASSIGNED, SESSION_STARTED, NOTARIZATION_COMPLETED
+- Messages retrievable via mirror node API
+- Sequence numbers for ordered audit trail
 
 **API Endpoints:**
-- `GET /api/blockchain/status` - Check Hedera connection status
-- `POST /api/blockchain/seal` - Seal document hash on blockchain
+- `GET /api/blockchain/status` - Check Hedera connection status (includes sdk_available)
+- `POST /api/blockchain/topics/create` - Create HCS topic for session
+- `POST /api/blockchain/topics/{topic_id}/messages` - Submit audit message
+- `GET /api/blockchain/topics/{topic_id}` - Get topic info and messages
+- `GET /api/blockchain/topics/my` - Get user's created topics
+- `POST /api/blockchain/seal` - Seal document hash (with optional session_topic_id)
 - `POST /api/blockchain/seal-file` - Upload and seal file
 - `GET /api/blockchain/verify/{document_hash}` - Verify document by hash
 - `POST /api/blockchain/verify` - Verify with hash and transaction ID
 - `GET /api/blockchain/seals/my` - Get user's blockchain seals
+- `GET /api/blockchain/account/balance` - Admin: Check HBAR balance
 
 **Configuration:**
 - Account ID: 0.0.6534570
 - Network: Testnet
+- SDK: hiero-sdk-python v0.2.0
 - Explorer: HashScan (https://hashscan.io/testnet)
 
 ### ✅ Phase 7: Payment Processing (COMPLETED & ENHANCED - Feb 15, 2026)
