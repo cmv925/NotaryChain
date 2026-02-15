@@ -180,6 +180,8 @@ class HederaNotaryService:
         Returns:
             Dict with submission details
         """
+        self._ensure_initialized()
+        
         if not self._sdk_available:
             return {
                 "success": False,
@@ -214,8 +216,8 @@ class HederaNotaryService:
                 "topic_id": topic_id,
                 "sequence_number": result["sequence_number"],
                 "message_hash": hashlib.sha256(message_json.encode()).hexdigest(),
-                "network": self.network,
-                "explorer_url": f"https://hashscan.io/{self.network}/topic/{topic_id}"
+                "network": self._network,
+                "explorer_url": f"https://hashscan.io/{self._network}/topic/{topic_id}"
             }
             
         except Exception as e:
