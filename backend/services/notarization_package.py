@@ -415,7 +415,7 @@ class NotarizationPackageService:
                     start = datetime.fromisoformat(session["start_time"].replace("Z", "+00:00"))
                     end = datetime.fromisoformat(session["end_time"].replace("Z", "+00:00"))
                     total_duration += (end - start).total_seconds()
-                except:
+                except (ValueError, TypeError):
                     pass
         
         return {
