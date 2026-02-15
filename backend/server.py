@@ -26,6 +26,8 @@ blockchain_routes.set_db(db)
 payment_routes.set_db(db)
 video_routes.set_db(db)
 crypto_routes.set_db(db)
+audit_routes.set_db(db)
+admin_routes.set_db(db)
 
 # Create the main app without a prefix
 app = FastAPI()
