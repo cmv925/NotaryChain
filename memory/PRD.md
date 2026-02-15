@@ -259,8 +259,12 @@ DAILY_API_KEY=your_daily_api_key (get from daily.co dashboard)
 ```
 
 ## Potential Enhancements
-- Real face detection using TensorFlow.js
+- ~~Real face detection using TensorFlow.js~~ ✅ COMPLETED Feb 15, 2026
 - Full HCS topic submission with real consensus timestamps
-- Stripe payment integration for notary fees
-- Video conferencing for live RON sessions
+- ~~Stripe payment integration for notary fees~~ ✅ COMPLETED
+- ~~Video conferencing for live RON sessions~~ ✅ COMPLETED
+- Notary-side workflow UI (manage requests, join sessions, approve/reject)
+- Crypto payment backend logic
+- Compliance & Audit Logs system
+- Admin Dashboard
 - Email notifications for status updates
