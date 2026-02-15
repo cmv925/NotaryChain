@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, File, Form
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import List, Optional
 from models_notary import (
@@ -9,8 +9,11 @@ from models_notary import (
 from models import User
 from routes.auth_routes import get_current_user
 from services.hedera_service import hedera_service
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
+import uuid
+import base64
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +46,155 @@ async def create_notary_profile(
     
     await db.notary_profiles.insert_one(profile.dict())
     return profile
+
+
+@router.post("/profile/credentials")
+async def upload_credentials(
+    credential_type: str = Form(...),  # commission_certificate, government_id, e_signature, etc.
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user)
+):
+    """Upload credential documents for notary verification"""
+    # Check if profile exists
+    profile = await db.notary_profiles.find_one({"user_id": current_user.id})
+    if not profile:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Notary profile not found. Create profile first."
+        )
+    
+    valid_types = ["commission_certificate", "government_id", "e_signature", "background_check", "ron_certificate"]
+    if credential_type not in valid_types:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid credential type. Must be one of: {', '.join(valid_types)}"
+        )
+    
+    # Read file and store as base64 (in production, use cloud storage)
+    content = await file.read()
+    if len(content) > 5 * 1024 * 1024:  # 5MB limit
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File too large. Maximum size is 5MB."
+        )
+    
+    # Store document metadata
+    doc_id = str(uuid.uuid4())
+    credential_doc = {
+        "id": doc_id,
+        "notary_profile_id": profile["id"],
+        "user_id": current_user.id,
+        "credential_type": credential_type,
+        "filename": file.filename,
+        "content_type": file.content_type,
+        "size": len(content),
+        "data": base64.b64encode(content).decode('utf-8'),
+        "uploaded_at": datetime.now(timezone.utc)
+    }
+    
+    await db.notary_credentials.insert_one(credential_doc)
+    
+    # Update profile credentials field
+    credential_url_field = f"{credential_type}_url"
+    update_dict = {
+        f"credentials.{credential_url_field}": f"/api/notary/credentials/{doc_id}",
+        "updated_at": datetime.now(timezone.utc)
+    }
+    
+    await db.notary_profiles.update_one(
+        {"id": profile["id"]},
+        {"$set": update_dict}
+    )
+    
+    return {
+        "success": True,
+        "credential_id": doc_id,
+        "credential_type": credential_type,
+        "filename": file.filename
+    }
+
+
+@router.get("/profile/credentials")
+async def get_my_credentials(current_user: User = Depends(get_current_user)):
+    """Get list of uploaded credentials for current user's notary profile"""
+    profile = await db.notary_profiles.find_one({"user_id": current_user.id})
+    if not profile:
+        raise HTTPException(status_code=404, detail="Notary profile not found")
+    
+    credentials = await db.notary_credentials.find(
+        {"user_id": current_user.id},
+        {"_id": 0, "data": 0}  # Exclude binary data from list
+    ).to_list(20)
+    
+    # Format dates
+    for cred in credentials:
+        if isinstance(cred.get("uploaded_at"), datetime):
+            cred["uploaded_at"] = cred["uploaded_at"].isoformat()
+    
+    return {
+        "profile_id": profile["id"],
+        "status": profile.get("status", "pending"),
+        "credentials": credentials
+    }
+
+
+@router.get("/profile/status")
+async def get_application_status(current_user: User = Depends(get_current_user)):
+    """Get detailed status of notary application"""
+    profile = await db.notary_profiles.find_one(
+        {"user_id": current_user.id},
+        {"_id": 0}
+    )
+    
+    if not profile:
+        return {
+            "has_profile": False,
+            "status": None,
+            "message": "No notary application found. Apply to become a notary."
+        }
+    
+    # Get credential upload status
+    credentials = await db.notary_credentials.find(
+        {"user_id": current_user.id},
+        {"_id": 0, "data": 0, "credential_type": 1}
+    ).to_list(10)
+    
+    credential_types = [c["credential_type"] for c in credentials]
+    required_docs = ["commission_certificate", "government_id"]
+    missing_docs = [doc for doc in required_docs if doc not in credential_types]
+    
+    # Format dates
+    for field in ["created_at", "updated_at", "reviewed_at", "approved_at"]:
+        if field in profile and isinstance(profile[field], datetime):
+            profile[field] = profile[field].isoformat()
+    
+    return {
+        "has_profile": True,
+        "status": profile.get("status", "pending"),
+        "profile": profile,
+        "credentials_uploaded": credential_types,
+        "missing_required_docs": missing_docs,
+        "review_notes": profile.get("review_notes"),
+        "rejection_reason": profile.get("rejection_reason"),
+        "message": _get_status_message(profile.get("status"), missing_docs)
+    }
+
+
+def _get_status_message(status: str, missing_docs: list) -> str:
+    """Generate user-friendly status message"""
+    if status == "pending":
+        if missing_docs:
+            return f"Please upload required documents: {', '.join(missing_docs)}"
+        return "Your application is pending review. We'll notify you once reviewed."
+    elif status == "under_review":
+        return "Your application is currently being reviewed by our team."
+    elif status == "approved":
+        return "Congratulations! Your notary application has been approved."
+    elif status == "rejected":
+        return "Your application was not approved. Please see rejection reason for details."
+    elif status == "suspended":
+        return "Your notary privileges have been suspended. Contact support for details."
+    return "Unknown status"
 
 @router.get("/profile", response_model=NotaryProfile)
 async def get_notary_profile(current_user: User = Depends(get_current_user)):
