@@ -165,6 +165,26 @@ async def submit_topic_message(
         raise HTTPException(status_code=500, detail=f"Message submission failed: {str(e)}")
 
 
+@router.get("/topics/my")
+async def get_my_topics(
+    limit: int = 50,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get all HCS topics created by the current user.
+    Note: This route must be defined BEFORE /topics/{topic_id} to avoid 'my' being parsed as a topic_id.
+    """
+    topics = await db.hcs_topics.find(
+        {"user_id": current_user.id},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    return {
+        "count": len(topics),
+        "topics": topics
+    }
+
+
 @router.get("/topics/{topic_id}")
 async def get_topic_info(
     topic_id: str,
