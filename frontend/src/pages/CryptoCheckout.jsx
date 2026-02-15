@@ -8,10 +8,11 @@ import { Card, CardContent } from '../components/ui/card';
 import { Progress } from '../components/ui/progress';
 import { 
   Wallet, Copy, CheckCircle, Clock, AlertTriangle,
-  RefreshCw, ArrowLeft, ExternalLink, QrCode, Loader2
+  RefreshCw, ArrowLeft, ExternalLink, Loader2
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
+import { QRCodeSVG } from 'qrcode.react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
