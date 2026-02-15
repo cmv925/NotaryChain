@@ -343,11 +343,17 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - [x] Hedera Blockchain Integration (Testnet)
 - [x] Document Verification Page
 - [x] **Payment Processing (Stripe)** - Card payments ready
-- [x] **Cryptocurrency Payments** - BTC, ETH, USDC, USDT with CoinGecko
+- [x] **Cryptocurrency Payments** - BTC, ETH, USDC, USDT with CoinGecko + QR codes
 - [x] **Video Conferencing Infrastructure (Daily.co)** - Backend ready
+- [x] **Compliance & Audit Logs** - Immutable audit trail with export
+- [x] **Admin Dashboard** - User management, notary approvals, analytics
 - [ ] HCS Topic creation for on-chain messages
 - [ ] Email notifications
-- [ ] Daily.co API key configuration
+
+## Admin Access
+- **Email:** admin@notarychain.com
+- **Password:** Admin123!
+- **Route:** /admin
 
 ## Pricing Structure (Implemented)
 | Document Type | Price (USD) |
