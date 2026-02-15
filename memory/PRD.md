@@ -206,20 +206,52 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 }
 ```
 
+### crypto_payments
+```
+{
+  id: string,
+  user_id: string,
+  user_email: string,
+  package_id: string,
+  package_name: string,
+  notary_request_id: string (optional),
+  crypto_id: string (bitcoin/ethereum/usd-coin/tether),
+  crypto_symbol: string (BTC/ETH/USDC/USDT),
+  crypto_name: string,
+  crypto_amount: float,
+  usd_amount: float,
+  exchange_rate: float,
+  wallet_address: string,
+  network: string,
+  confirmations_required: int,
+  confirmations: int,
+  status: string (pending/confirming/confirmed/expired),
+  qr_data: string,
+  created_at: datetime,
+  expires_at: datetime,
+  updated_at: datetime,
+  confirmed_at: datetime (optional)
+}
+```
+
 ## Key Files
 - `/app/backend/server.py` - Main FastAPI application
 - `/app/backend/routes/ai_routes.py` - AI analysis endpoints
 - `/app/backend/routes/blockchain_routes.py` - Hedera blockchain endpoints
+- `/app/backend/routes/crypto_routes.py` - Cryptocurrency payment endpoints
 - `/app/backend/services/hedera_service.py` - Hedera integration service
 - `/app/frontend/src/pages/RequestNotarization.jsx` - 3-step workflow UI
 - `/app/frontend/src/pages/VerifyDocument.jsx` - Public verification page
+- `/app/frontend/src/pages/CryptoCheckout.jsx` - Cryptocurrency checkout page
 
 ## Test Credentials
-- Email: testuser@example.com
-- Password: Test123!
+- Email: demo@test.com
+- Password: Demo123!
 
 ## MOCKED Features
 - **Blockchain Full HCS**: Currently creates verifiable local seals with Hedera account binding. Full HCS topic submission pending topic creation.
+- **Crypto Wallet Addresses**: Demo uses static wallet addresses. Production would generate unique addresses per payment.
+- **QR Code**: QR code display is a placeholder icon. Production would use actual QR generation library.
 
 ## Real Implementations
 - **Biometric Verification (Feb 15, 2026)**: REAL client-side face detection using TensorFlow.js and MediaPipe FaceDetector. Includes:
@@ -229,13 +261,21 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
   - WebGL backend with CPU fallback
   - Camera error handling with retry functionality
 
+- **Cryptocurrency Payments (Feb 15, 2026)**: REAL price conversion from CoinGecko API. Includes:
+  - Live BTC, ETH, USDC, USDT prices with 60-second caching
+  - Fallback prices if API unavailable
+  - Payment expiration tracking (30 minutes)
+  - Confirmation tracking (3 for BTC, 12 for ETH)
+  - Demo simulation endpoint for testing
+
 ## Beta Launch Checklist
 - [x] AI Document Analysis (Gemini)
 - [x] **Biometric Verification (REAL)** - TensorFlow.js face detection with liveness challenges
 - [x] Hedera Blockchain Integration (Testnet)
 - [x] Document Verification Page
-- [x] **Payment Processing (Stripe)** - Card + Crypto ready
-- [x] **Video Conferencing Infrastructure (Daily.co)** - Backend ready, needs API key
+- [x] **Payment Processing (Stripe)** - Card payments ready
+- [x] **Cryptocurrency Payments** - BTC, ETH, USDC, USDT with CoinGecko
+- [x] **Video Conferencing Infrastructure (Daily.co)** - Backend ready
 - [ ] HCS Topic creation for on-chain messages
 - [ ] Email notifications
 - [ ] Daily.co API key configuration
