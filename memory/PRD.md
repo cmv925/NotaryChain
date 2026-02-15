@@ -72,6 +72,40 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - Network: Testnet
 - Explorer: HashScan (https://hashscan.io/testnet)
 
+### ✅ Phase 7: Stripe Payments (COMPLETED - Feb 15, 2026)
+**Features:**
+- Checkout page at `/checkout` with 7 pricing tiers ($25-$75)
+- Card + Crypto payment options via Stripe
+- Payment success/cancel pages with status polling
+- Payment history in database
+
+**API Endpoints:**
+- `GET /api/payments/packages` - Get pricing packages
+- `POST /api/payments/checkout` - Create Stripe checkout session
+- `GET /api/payments/status/{session_id}` - Check payment status
+- `GET /api/payments/history` - User payment history
+
+### ✅ Phase 8: Daily.co Video Conferencing (COMPLETED - Feb 15, 2026)
+**Features:**
+- Full video room UI integrated with Daily.co
+- VideoRoom component with camera/mic/screenshare controls
+- NotaryVideoSession page with pre-session, joining, active, and ended states
+- Dashboard shows notary requests with "Start Session" / "Join Session" buttons
+- Invite link sharing for participants
+- Session expiry tracking with cloud recording enabled
+
+**Frontend Components:**
+- `/app/frontend/src/components/VideoRoom.jsx` - Daily.co video embed
+- `/app/frontend/src/pages/NotaryVideoSession.jsx` - Full session management
+
+**API Endpoints:**
+- `GET /api/video/status` - Daily.co connection status
+- `POST /api/video/rooms` - Create video room for RON session
+- `POST /api/video/rooms/{id}/join` - Join existing room
+- `POST /api/video/rooms/{id}/end` - End video session
+
+**Route:** `/session/:requestId` - Video session page
+
 ## Database Schema
 
 ### users
