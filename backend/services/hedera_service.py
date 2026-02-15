@@ -425,9 +425,10 @@ class HederaNotaryService:
     
     async def get_recent_transactions(self, limit: int = 25) -> list:
         """Get recent transactions for the account"""
+        self._ensure_initialized()
         try:
             async with aiohttp.ClientSession() as session:
-                url = f"{self.mirror_url}/api/v1/transactions?account.id={self.account_id}&limit={limit}"
+                url = f"{self._mirror_url}/api/v1/transactions?account.id={self._account_id}&limit={limit}"
                 async with session.get(url) as response:
                     if response.status == 200:
                         data = await response.json()
@@ -439,7 +440,8 @@ class HederaNotaryService:
     
     def _get_explorer_url(self, transaction_id: str, topic_id: Optional[str] = None) -> str:
         """Get HashScan explorer URL"""
-        base = f"https://hashscan.io/{self.network}"
+        self._ensure_initialized()
+        base = f"https://hashscan.io/{self._network}"
         if topic_id and topic_id != "local_only":
             return f"{base}/topic/{topic_id}"
         # Format transaction ID for HashScan
@@ -448,13 +450,14 @@ class HederaNotaryService:
     
     def get_status(self) -> Dict[str, Any]:
         """Get service configuration status"""
+        self._ensure_initialized()
         return {
-            "configured": bool(self.account_id and self.private_key_hex),
+            "configured": bool(self._account_id and self._private_key_hex),
             "sdk_available": self._sdk_available,
-            "account_id": self.account_id,
-            "network": self.network,
-            "default_topic_id": self.default_topic_id,
-            "mirror_url": self.mirror_url
+            "account_id": self._account_id,
+            "network": self._network,
+            "default_topic_id": self._default_topic_id,
+            "mirror_url": self._mirror_url
         }
     
     def close(self):
