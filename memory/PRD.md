@@ -76,22 +76,24 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
   - Confidence and liveness score display
 - Signature Analysis UI section in RequestNotarization.jsx
 
-### ✅ Phase 6: Hedera Blockchain Integration (COMPLETED & ENHANCED - Feb 15, 2026)
+### ✅ Phase 6: Hedera Blockchain Integration (COMPLETED & ENHANCED - Feb 16, 2026)
 **Features:**
 - Document sealing on Hedera blockchain (testnet)
 - SHA-256 hash of documents stored with tamper-proof timestamps
 - Public verification page at `/verify`
 - Explorer links to HashScan for transaction verification
 - Automatic sealing on notarization request submission
-- **NEW: Dynamic HCS Topic Creation** - Each notarization session gets its own HCS topic
-- **NEW: Immutable Audit Trail** - All notarization events logged on-chain
-- **NEW: Real SDK Integration** - Using hiero-sdk-python for native Hedera interactions
+- **Dynamic HCS Topic Creation** - Each notarization session gets its own HCS topic
+- **Immutable Audit Trail** - All notarization events logged on-chain
+- **Real SDK Integration** - Using hiero-sdk-python for native Hedera interactions
+- **NEW: Blockchain Audit Trail UI Component** - Visual timeline display of HCS events
 
 **HCS (Hedera Consensus Service) Integration:**
 - Topic creation per notarization session (~0.01 HBAR per topic)
 - Events logged: REQUEST_CREATED, NOTARY_ASSIGNED, SESSION_STARTED, NOTARIZATION_COMPLETED
 - Messages retrievable via mirror node API
 - Sequence numbers for ordered audit trail
+- **NEW: BlockchainAuditTrail.jsx component** - Displays events in expandable timeline UI
 
 **API Endpoints:**
 - `GET /api/blockchain/status` - Check Hedera connection status (includes sdk_available)
