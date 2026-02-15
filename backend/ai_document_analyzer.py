@@ -145,6 +145,12 @@ Analyze this Power of Attorney document. Check for:
 - Signature lines and witness requirements
 - State-specific requirements
 - No ambiguous language
+
+SIGNATURE REQUIREMENTS:
+- Principal's signature (required)
+- Agent's signature (often required)
+- Notary acknowledgment signature
+- Witness signatures (typically 1-2 required)
 """,
             "real_estate": """
 Analyze this real estate document. Check for:
@@ -154,6 +160,13 @@ Analyze this real estate document. Check for:
 - Closing date
 - Contingencies clearly stated
 - All required disclosures
+
+SIGNATURE REQUIREMENTS:
+- Buyer's signature(s) (required)
+- Seller's signature(s) (required)
+- Agent/broker signatures if applicable
+- Notary acknowledgment signature
+- Witness signatures if required by state
 """,
             "affidavit": """
 Analyze this affidavit. Check for:
@@ -162,6 +175,11 @@ Analyze this affidavit. Check for:
 - Notary acknowledgment section
 - Date and place of execution
 - Oath or affirmation language
+
+SIGNATURE REQUIREMENTS:
+- Affiant's signature (required)
+- Notary signature and seal (required)
+- Witness signature if required
 """,
             "will": """
 Analyze this Last Will & Testament. Check for:
@@ -171,6 +189,26 @@ Analyze this Last Will & Testament. Check for:
 - Asset distribution instructions
 - Witness requirements (typically 2 witnesses)
 - Testamentary capacity language
+
+SIGNATURE REQUIREMENTS:
+- Testator's signature (required)
+- Two witness signatures (required in most states)
+- Notary signature for self-proving affidavit
+- Each page may need initials
+""",
+            "trust": """
+Analyze this Trust document. Check for:
+- Grantor/settlor information
+- Trustee designation
+- Beneficiary information
+- Trust assets and management instructions
+- Amendment and revocation provisions
+
+SIGNATURE REQUIREMENTS:
+- Grantor/settlor signature (required)
+- Trustee acceptance signature
+- Notary acknowledgment
+- Witness signatures if required
 """,
             "contract": """
 Analyze this contract. Check for:
@@ -180,6 +218,12 @@ Analyze this contract. Check for:
 - Obligations of each party
 - Termination clauses
 - Signature blocks for all parties
+
+SIGNATURE REQUIREMENTS:
+- All parties' signatures (required)
+- Witness signatures if applicable
+- Corporate officer signatures with titles
+- Date next to each signature
 """
         }
         
@@ -191,6 +235,13 @@ Analyze this document thoroughly. Check for:
 - No missing or incomplete information
 - Proper formatting and structure
 - Any suspicious alterations or irregularities
+
+SIGNATURE ANALYSIS:
+- Identify all existing signatures
+- Note any signature lines that are empty
+- Check signature dates
+- Verify signatures match named parties
+- Flag any suspicious signature alterations
 """)
         
         return f"""
@@ -198,5 +249,13 @@ Please analyze the attached document.
 
 {specific_prompt}
 
-Provide your analysis in the required JSON format with confidence score, discrepancies, key information, and recommendations.
+IMPORTANT: Perform detailed SIGNATURE ANALYSIS:
+1. Count the number of signatures present
+2. Describe where each signature appears
+3. Identify if signatures are handwritten, digital, stamps, or initials
+4. Assess signature quality and clarity
+5. List any required signatures that are missing
+6. Flag any concerns about signature authenticity
+
+Provide your analysis in the required JSON format with confidence score, discrepancies, key information, signature_analysis, and recommendations.
 """
