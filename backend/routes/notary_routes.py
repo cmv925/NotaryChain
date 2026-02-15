@@ -269,6 +269,18 @@ async def start_session(
         {"$set": {"status": "in_progress"}}
     )
     
+    # Log to HCS topic if available
+    if request.get("hcs_topic_id"):
+        try:
+            await hedera_service.submit_message(request["hcs_topic_id"], {
+                "type": "SESSION_STARTED",
+                "request_id": request_id,
+                "session_id": session.id,
+                "notary_id": current_user.id
+            })
+        except Exception as e:
+            logger.error(f"Failed to log session start to HCS: {e}")
+    
     return {"success": True, "session_id": session.id}
 
 @router.post("/sessions/{session_id}/verify")
