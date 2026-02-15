@@ -139,55 +139,59 @@ const RequestNotarization = () => {
     }
   };
 
-  // Camera functions
-  const startCamera = useCallback(async () => {
+  // Handle biometric verification completion
+  const handleBiometricComplete = async (result) => {
     try {
-      setCameraError(null);
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: 640, height: 480 }
+      // Send verification result to backend
+      const verificationFormData = new FormData();
+      verificationFormData.append('verification_type', 'facial_tensorflow');
+      verificationFormData.append('session_id', sessionId);
+      verificationFormData.append('confidence_score', result.confidence.toString());
+      verificationFormData.append('liveness_score', (result.livenessScore / 100).toString());
+      verificationFormData.append('challenges_passed', result.challengesPassed.toString());
+
+      const response = await axios.post(
+        `${API}/ai/verify-biometric`,
+        verificationFormData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      setVerificationResult({
+        status: result.status,
+        confidence: result.confidence,
+        livenessScore: result.livenessScore,
       });
-      setCameraStream(stream);
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
+
+      if (result.status === 'passed') {
+        toast({
+          title: 'Identity Verified!',
+          description: `Biometric verification successful (${Math.round(result.confidence * 100)}% confidence)`,
+        });
+      } else {
+        toast({
+          title: 'Verification Failed',
+          description: 'Please try again with better lighting and face positioning.',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
-      setCameraError('Camera access denied. Please allow camera access to proceed.');
       toast({
-        title: 'Camera Error',
-        description: 'Could not access camera. Please check permissions.',
+        title: 'Verification Error',
+        description: error.response?.data?.detail || 'Failed to save verification',
         variant: 'destructive',
       });
     }
-  }, []);
+  };
 
-  const stopCamera = useCallback(() => {
-    if (cameraStream) {
-      cameraStream.getTracks().forEach(track => track.stop());
-      setCameraStream(null);
-    }
-  }, [cameraStream]);
-
-  // Simulate face detection
-  useEffect(() => {
-    if (currentStep === 2 && cameraStream && !verificationResult) {
-      const interval = setInterval(() => {
-        // Simulate face detection (in production, use actual face detection library)
-        setFaceDetected(Math.random() > 0.3);
-      }, 500);
-      return () => clearInterval(interval);
-    }
-  }, [currentStep, cameraStream, verificationResult]);
-
-  // Start camera when entering step 2
-  useEffect(() => {
-    if (currentStep === 2) {
-      startCamera();
-    } else {
-      stopCamera();
-    }
-    return () => stopCamera();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentStep]);
+  // Retry verification
+  const handleRetryVerification = () => {
+    setVerificationResult(null);
+  };
 
   // Perform biometric verification
   const handleBiometricVerification = async () => {
