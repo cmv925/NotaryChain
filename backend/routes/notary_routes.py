@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, File, Form, BackgroundTasks
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import List, Optional
 from models_notary import (
@@ -9,6 +9,7 @@ from models_notary import (
 from models import User
 from routes.auth_routes import get_current_user
 from services.hedera_service import hedera_service
+from services.email_service import email_service
 from datetime import datetime, timezone
 import logging
 import uuid
