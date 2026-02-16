@@ -30,6 +30,7 @@ def set_db(database):
 @router.post("/profile", response_model=NotaryProfile)
 async def create_notary_profile(
     profile_data: NotaryProfileCreate,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user)
 ):
     # Check if profile already exists
@@ -46,6 +47,15 @@ async def create_notary_profile(
     )
     
     await db.notary_profiles.insert_one(profile.dict())
+    
+    # Send application submitted email
+    background_tasks.add_task(
+        email_service.send_application_submitted_email,
+        email=current_user.email,
+        full_name=current_user.full_name or profile_data.full_name or current_user.email.split('@')[0]
+    )
+    logger.info(f"Application submitted email queued for {current_user.email}")
+    
     return profile
 
 
