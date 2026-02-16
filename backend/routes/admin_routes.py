@@ -361,6 +361,7 @@ async def get_pending_applications(
 @router.post("/notaries/{notary_id}/approve")
 async def approve_notary_application(
     notary_id: str,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user)
 ):
     """Approve a notary application"""
@@ -391,6 +392,17 @@ async def approve_notary_application(
         {"id": notary["user_id"]},
         {"$set": {"role": "notary", "updated_at": datetime.now(timezone.utc)}}
     )
+    
+    # Get user email for notification
+    user = await db.users.find_one({"id": notary["user_id"]}, {"_id": 0, "email": 1, "full_name": 1})
+    if user:
+        background_tasks.add_task(
+            email_service.send_application_approved_email,
+            email=user.get("email"),
+            full_name=user.get("full_name", "Notary"),
+            commission_number=notary.get("commission_number")
+        )
+        logger.info(f"Approval email queued for {user.get('email')}")
     
     await log_action(
         action=AuditAction.NOTARY_APPLICATION_APPROVED,
