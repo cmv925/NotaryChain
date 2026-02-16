@@ -158,10 +158,10 @@ class TestNotaryApplicationEmails:
         
         # Create notary profile (triggers submitted email)
         profile_data = {
-            "full_name": new_user_headers["name"],
-            "commission_number": f"NC-2025-{uuid.uuid4().hex[:8]}",
+            "full_legal_name": new_user_headers["name"],
+            "license_number": f"LN-{uuid.uuid4().hex[:8]}",
             "license_state": "California",
-            "license_expiration": "2027-12-31",
+            "commission_expiry": "2027-12-31",
             "ron_certified": True,
             "bio": "Test notary applicant"
         }
@@ -204,10 +204,10 @@ class TestNotaryApplicationEmails:
         user_headers = new_user_headers["headers"]
         
         profile_data = {
-            "full_name": new_user_headers["name"],
-            "commission_number": f"NC-2025-{uuid.uuid4().hex[:8]}",
+            "full_legal_name": new_user_headers["name"],
+            "license_number": f"LN-{uuid.uuid4().hex[:8]}",
             "license_state": "Texas",
-            "license_expiration": "2028-12-31",
+            "commission_expiry": "2028-12-31",
             "ron_certified": False,
             "bio": "Test notary for approval"
         }
@@ -241,10 +241,10 @@ class TestNotaryApplicationEmails:
         user_headers = new_user_headers["headers"]
         
         profile_data = {
-            "full_name": new_user_headers["name"],
-            "commission_number": f"NC-2025-{uuid.uuid4().hex[:8]}",
+            "full_legal_name": new_user_headers["name"],
+            "license_number": f"LN-{uuid.uuid4().hex[:8]}",
             "license_state": "Florida",
-            "license_expiration": "2028-06-30",
+            "commission_expiry": "2028-06-30",
             "ron_certified": True,
             "bio": "Test notary for rejection"
         }
@@ -307,7 +307,9 @@ class TestNotarizationCompleteEmail:
         unique_id = uuid.uuid4().hex[:8]
         
         request_data = {
-            "document_type": "Power of Attorney",
+            "document_name": f"Test Document {unique_id}",
+            "document_type": "power_of_attorney",
+            "notarization_type": "ron",
             "notes": f"Test notarization request for email testing {unique_id}"
         }
         
