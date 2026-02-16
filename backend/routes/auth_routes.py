@@ -1,10 +1,14 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from models import UserCreate, UserLogin, User, Token
 from auth import get_password_hash, verify_password, create_access_token, decode_access_token
+from services.email_service import email_service
 from datetime import timedelta
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/auth", tags=["authentication"])
 security = HTTPBearer()
