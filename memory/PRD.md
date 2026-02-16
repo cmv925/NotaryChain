@@ -531,6 +531,8 @@ HEDERA_PRIVATE_KEY=0x...
 HEDERA_NETWORK=testnet
 STRIPE_API_KEY=sk_test_emergent
 DAILY_API_KEY=your_daily_api_key (get from daily.co dashboard)
+RESEND_API_KEY=re_xxx (for email notifications)
+SENDER_EMAIL=onboarding@resend.dev (or custom domain email)
 ```
 
 ## Potential Enhancements
