@@ -419,6 +419,7 @@ async def approve_notary_application(
 @router.post("/notaries/{notary_id}/reject")
 async def reject_notary_application(
     notary_id: str,
+    background_tasks: BackgroundTasks,
     reason: Optional[str] = None,
     current_user: User = Depends(get_current_user)
 ):
@@ -444,6 +445,17 @@ async def reject_notary_application(
             }
         }
     )
+    
+    # Get user email for notification
+    user = await db.users.find_one({"id": notary["user_id"]}, {"_id": 0, "email": 1, "full_name": 1})
+    if user:
+        background_tasks.add_task(
+            email_service.send_application_rejected_email,
+            email=user.get("email"),
+            full_name=user.get("full_name", "Applicant"),
+            reason=reason
+        )
+        logger.info(f"Rejection email queued for {user.get('email')}")
     
     await log_action(
         action=AuditAction.NOTARY_APPLICATION_REJECTED,
