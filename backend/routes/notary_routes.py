@@ -353,6 +353,7 @@ async def get_request_by_id(
 @router.post("/requests/{request_id}/assign")
 async def assign_request(
     request_id: str,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user)
 ):
     # Check if user is a notary
@@ -402,6 +403,20 @@ async def assign_request(
             })
         except Exception as e:
             logger.error(f"Failed to log assign to HCS: {e}")
+    
+    # Send email notification to user
+    user = await db.users.find_one({"id": request.get("user_id")}, {"_id": 0, "email": 1, "full_name": 1})
+    if user:
+        notary_name = current_user.full_name or notary.get("full_name", "Certified Notary")
+        background_tasks.add_task(
+            email_service.send_request_assigned_email,
+            email=user.get("email"),
+            full_name=user.get("full_name", "User"),
+            request_id=request_id,
+            notary_name=notary_name,
+            document_type=request.get("document_type", "Document")
+        )
+        logger.info(f"Assignment email queued for {user.get('email')}")
     
     return {"success": True, "message": "Request assigned successfully"}
 
