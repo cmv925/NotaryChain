@@ -3,16 +3,20 @@ Admin Dashboard Routes for Notary Platform
 Provides platform management capabilities
 """
 
-from fastapi import APIRouter, HTTPException, Depends, Query
+from fastapi import APIRouter, HTTPException, Depends, Query, BackgroundTasks
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timezone, timedelta
 import uuid
+import logging
 
 from models import User
 from routes.auth_routes import get_current_user
 from routes.audit_routes import log_action, AuditAction, AuditSeverity
+from services.email_service import email_service
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
