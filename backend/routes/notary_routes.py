@@ -490,6 +490,7 @@ async def verify_identity(
 @router.post("/requests/{request_id}/complete")
 async def complete_notarization(
     request_id: str,
+    background_tasks: BackgroundTasks,
     notes: str = "",
     seal_package: bool = True,
     current_user: User = Depends(get_current_user)
@@ -564,6 +565,21 @@ async def complete_notarization(
         except Exception as e:
             logger.error(f"Failed to seal notarization package: {e}")
             package_result = {"error": str(e)}
+    
+    # Send completion email to user
+    user = await db.users.find_one({"id": request.get("user_id")}, {"_id": 0, "email": 1, "full_name": 1})
+    if user:
+        seal_hash = package_result.get("blockchain_seal", {}).get("content_hash") if package_result else None
+        background_tasks.add_task(
+            email_service.send_notarization_complete_email,
+            email=user.get("email"),
+            full_name=user.get("full_name", "User"),
+            request_id=request_id,
+            document_type=request.get("document_type", "Document"),
+            seal_hash=seal_hash,
+            hcs_topic_id=request.get("hcs_topic_id")
+        )
+        logger.info(f"Completion email queued for {user.get('email')}")
     
     return {
         "success": True, 
