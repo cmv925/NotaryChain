@@ -259,6 +259,38 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 
 **Route:** `/admin` - Admin dashboard (admin role required)
 
+### ✅ Phase 11: Email Notifications (COMPLETED - Feb 16, 2026)
+**Features:**
+- Transactional email service using Resend API
+- Non-blocking email delivery via FastAPI BackgroundTasks
+- Professional HTML email templates with NotaryChain branding
+
+**Email Templates (6 types):**
+1. **Welcome Email** - Sent on user registration with platform features overview
+2. **Application Submitted** - Confirmation when notary applies to the platform
+3. **Application Approved** - Notification with congratulations when approved
+4. **Application Rejected** - Notification with rejection reason
+5. **Request Assigned** - User notified when notary accepts their request
+6. **Notarization Complete** - Completion confirmation with blockchain seal info
+
+**API Endpoints:**
+- `GET /api/email/status` - Email service configuration status
+- `POST /api/email/test` - Admin: Test any of the 6 email templates
+- `POST /api/email/send-custom` - Admin: Send custom HTML email
+
+**Integration Points:**
+- `POST /api/auth/signup` - Triggers welcome email
+- `POST /api/notary/profile` - Triggers application submitted email
+- `POST /api/admin/notaries/{id}/approve` - Triggers approval email
+- `POST /api/admin/notaries/{id}/reject` - Triggers rejection email
+- `POST /api/notary/requests/{id}/assign` - Triggers assignment email
+- `POST /api/notary/requests/{id}/complete` - Triggers completion email
+
+**Configuration:**
+- API Key: RESEND_API_KEY in backend/.env
+- Sender: onboarding@resend.dev (test mode) or custom domain
+- Note: Production requires domain verification at resend.com/domains
+
 ## Database Schema
 
 ### users
