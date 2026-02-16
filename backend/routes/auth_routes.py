@@ -48,7 +48,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     return User(**user)
 
 @router.post("/signup", response_model=Token)
-async def signup(user_data: UserCreate):
+async def signup(user_data: UserCreate, background_tasks: BackgroundTasks):
     # Check if user already exists
     existing_user = await db.users.find_one({"email": user_data.email})
     if existing_user:
@@ -67,6 +67,14 @@ async def signup(user_data: UserCreate):
     user_dict["hashed_password"] = get_password_hash(user_data.password)
     
     await db.users.insert_one(user_dict)
+    
+    # Send welcome email in background
+    background_tasks.add_task(
+        email_service.send_welcome_email,
+        email=user.email,
+        full_name=user.full_name or user.email.split('@')[0]
+    )
+    logger.info(f"Welcome email queued for {user.email}")
     
     # Create access token
     access_token = create_access_token(data={"sub": user.email})
