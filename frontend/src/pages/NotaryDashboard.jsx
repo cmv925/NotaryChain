@@ -94,7 +94,7 @@ const NotaryDashboard = () => {
   const handleStartSession = async (requestId) => {
     setProcessingAction(requestId);
     try {
-      await axios.post(`${API}/video/rooms`, { request_id: requestId }, {
+      await axios.post(`${API}/video/rooms`, { notary_request_id: requestId }, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
