@@ -348,6 +348,62 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - `/transactions` - Transaction Orchestrator list page
 - `/transactions/:transactionId` - Transaction Room page
 
+### ✅ Phase 13: Advanced Admin Analytics (COMPLETED - Feb 17, 2026)
+**Features:**
+- Comprehensive analytics dashboard with interactive charts using Recharts
+- Period selector (7/30/90/180/365 days)
+- Summary cards (Total Revenue, New Users, Notarizations, Transactions)
+
+**Charts:**
+1. **Revenue Trends** - Area chart showing Stripe vs Crypto revenue over time
+2. **User Growth** - Line chart with total users and new users per day
+3. **Payment Distribution** - Pie chart showing revenue by payment method
+4. **Notarization Volume** - Bar chart with completed vs pending notarizations
+5. **Top Performing Notaries** - Ranked list with completion counts
+6. **Document Types** - Progress bars showing document type distribution
+7. **Transaction Types** - Progress bars showing transaction type distribution
+
+**API Endpoint:**
+- `GET /api/admin/analytics/comprehensive?days={period}` - Returns all analytics data
+
+### ✅ Phase 14: Notarization Certificate UI (COMPLETED - Feb 17, 2026)
+**Features:**
+- Dedicated certificate page for sealed notarization packages
+- Clean, printable format with print-specific CSS
+- QR code for verification (using qrcode.react)
+- Document information display
+- Participant details (requester and notary)
+- Verification summary (AI Analysis, Biometric, Video Session)
+- Blockchain proof with package hash, HCS topic, explorer link
+- Component integrity hashes
+- Legal statement
+
+**Frontend Route:**
+- `/certificate/:requestId` - Notarization Certificate page
+
+### ✅ Phase 15: Custom Blueprint Creator (COMPLETED - Feb 17, 2026)
+**Features:**
+- Admin-only page for creating custom transaction workflow templates
+- Blueprint details form (name, description, type, duration)
+- Visual step builder with:
+  - Drag-and-drop ordering (up/down arrows)
+  - Step requirements (Document, Signature, Notarization, Payment)
+  - Role assignment per step
+  - Dependency configuration
+  - Estimated duration per step
+- Required roles selector
+- Required documents list
+- AI settings toggle
+- Summary panel
+- Preview dialog
+- Save functionality
+
+**Frontend Route:**
+- `/admin/blueprints/create` - Blueprint Creator page
+
+**API Endpoint:**
+- `POST /api/transactions/blueprints` - Create custom blueprint
+
 ## Database Schema
 
 ### users
