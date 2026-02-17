@@ -59,6 +59,7 @@ app.include_router(audit_routes.router)
 app.include_router(admin_routes.router)
 app.include_router(package_routes.router)
 app.include_router(email_routes.router)
+app.include_router(transaction_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
