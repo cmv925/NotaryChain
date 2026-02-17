@@ -544,7 +544,7 @@ const NotaryDashboard = () => {
                     <TrendingUp className="w-4 h-4 text-green-400" />
                     <span className="text-gray-400 text-sm">Response Time</span>
                   </div>
-                  <span className="text-green-400 font-semibold">< 5 min</span>
+                  <span className="text-green-400 font-semibold">&lt; 5 min</span>
                 </div>
               </CardContent>
             </Card>
