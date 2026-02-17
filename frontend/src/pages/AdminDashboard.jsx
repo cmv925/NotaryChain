@@ -275,6 +275,7 @@ const AdminDashboard = () => {
           <div className="flex gap-2 border-b border-gray-800 overflow-x-auto">
             {[
               { id: 'overview', label: 'Overview', icon: BarChart3 },
+              { id: 'analytics', label: 'Analytics', icon: PieChart },
               { id: 'users', label: 'Users', icon: Users },
               { id: 'notaries', label: 'Notaries', icon: UserCheck },
               { id: 'audit', label: 'Audit Logs', icon: Activity },
@@ -284,6 +285,7 @@ const AdminDashboard = () => {
                 onClick={() => {
                   setActiveTab(tab.id);
                   if (tab.id === 'audit') fetchAuditLogs();
+                  if (tab.id === 'analytics' && !analyticsData) fetchAnalyticsData();
                 }}
                 className={`flex items-center gap-2 px-4 py-3 font-medium transition-all whitespace-nowrap ${
                   activeTab === tab.id
