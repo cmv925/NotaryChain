@@ -32,6 +32,9 @@ const AdminDashboard = () => {
   const [pendingApplications, setPendingApplications] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
   const [revenueData, setRevenueData] = useState(null);
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [analyticsPeriod, setAnalyticsPeriod] = useState(30);
+  const [loadingAnalytics, setLoadingAnalytics] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUserModal, setShowUserModal] = useState(false);
