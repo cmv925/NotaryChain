@@ -30,6 +30,7 @@ audit_routes.set_db(db)
 admin_routes.set_db(db)
 package_routes.set_db(db)
 email_routes.set_db(db)
+transaction_routes.set_db(db)
 
 # Create the main app without a prefix
 app = FastAPI()
