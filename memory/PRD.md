@@ -692,7 +692,7 @@ SENDER_EMAIL=onboarding@resend.dev (or custom domain email)
 - ~~Full HCS topic submission with real consensus timestamps~~ ✅ COMPLETED Feb 15, 2026
 - ~~Stripe payment integration for notary fees~~ ✅ COMPLETED
 - ~~Video conferencing for live RON sessions~~ ✅ COMPLETED
-- Notary-side workflow UI (manage requests, join sessions, approve/reject)
+- ~~Notary-side workflow UI (manage requests, join sessions, approve/reject)~~ ✅ COMPLETED Feb 17, 2026
 - ~~Crypto payment backend logic~~ ✅ COMPLETED
 - ~~Compliance & Audit Logs system~~ ✅ COMPLETED
 - ~~Admin Dashboard~~ ✅ COMPLETED
@@ -704,3 +704,5 @@ SENDER_EMAIL=onboarding@resend.dev (or custom domain email)
 - Real-time WebSocket updates for Transaction Room
 - Mobile-responsive optimizations
 - Multi-language support (i18n)
+- Document preview in request details
+- Notary calendar view for scheduling
