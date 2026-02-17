@@ -19,6 +19,8 @@ import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
 import NotaryVideoSession from './pages/NotaryVideoSession';
 import AdminDashboard from './pages/AdminDashboard';
+import TransactionsPage from './pages/TransactionsPage';
+import TransactionRoom from './pages/TransactionRoom';
 import { Toaster } from './components/ui/toaster';
 
 function App() {
