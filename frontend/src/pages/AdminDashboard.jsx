@@ -5,7 +5,7 @@ import {
   Shield, Users, FileText, TrendingUp, DollarSign,
   CheckCircle, XCircle, Clock, RefreshCw, Search,
   BarChart3, Activity, Wallet, LogOut, ChevronDown,
-  Eye, UserCheck, UserX, Settings, AlertTriangle, PieChart
+  Eye, UserCheck, UserX, Settings, AlertTriangle, PieChart, Plus
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
