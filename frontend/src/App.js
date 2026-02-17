@@ -21,6 +21,7 @@ import NotaryVideoSession from './pages/NotaryVideoSession';
 import AdminDashboard from './pages/AdminDashboard';
 import TransactionsPage from './pages/TransactionsPage';
 import TransactionRoom from './pages/TransactionRoom';
+import NotarizationCertificate from './pages/NotarizationCertificate';
 import { Toaster } from './components/ui/toaster';
 
 function App() {
