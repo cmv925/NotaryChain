@@ -413,6 +413,302 @@ const AdminDashboard = () => {
           </div>
         )}
 
+        {activeTab === 'analytics' && (
+          <div className="space-y-6">
+            {/* Period Selector */}
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <PieChart className="w-6 h-6 text-blue-500" />
+                Platform Analytics
+              </h2>
+              <div className="flex items-center gap-3">
+                <select
+                  value={analyticsPeriod}
+                  onChange={(e) => {
+                    setAnalyticsPeriod(Number(e.target.value));
+                    fetchAnalyticsData(Number(e.target.value));
+                  }}
+                  className="px-3 py-2 rounded-lg bg-[#0a0f1a] border border-gray-700 text-white"
+                >
+                  <option value={7}>Last 7 Days</option>
+                  <option value={30}>Last 30 Days</option>
+                  <option value={90}>Last 90 Days</option>
+                  <option value={180}>Last 6 Months</option>
+                  <option value={365}>Last Year</option>
+                </select>
+                <Button
+                  onClick={() => fetchAnalyticsData()}
+                  disabled={loadingAnalytics}
+                  variant="outline"
+                  className="border-gray-700"
+                >
+                  <RefreshCw className={`w-4 h-4 ${loadingAnalytics ? 'animate-spin' : ''}`} />
+                </Button>
+              </div>
+            </div>
+
+            {loadingAnalytics && !analyticsData ? (
+              <div className="flex items-center justify-center py-20">
+                <RefreshCw className="w-12 h-12 text-blue-500 animate-spin" />
+              </div>
+            ) : analyticsData ? (
+              <>
+                {/* Summary Cards */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <Card className="bg-gradient-to-br from-green-600/20 to-green-600/10 border-green-500/30">
+                    <CardContent className="p-4">
+                      <p className="text-gray-400 text-xs">Total Revenue</p>
+                      <p className="text-2xl font-bold text-white">${analyticsData.summary.total_revenue.toLocaleString()}</p>
+                      <p className="text-xs text-gray-500 mt-1">Last {analyticsPeriod} days</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-gradient-to-br from-blue-600/20 to-blue-600/10 border-blue-500/30">
+                    <CardContent className="p-4">
+                      <p className="text-gray-400 text-xs">New Users</p>
+                      <p className="text-2xl font-bold text-white">{analyticsData.summary.new_users}</p>
+                      <p className="text-xs text-gray-500 mt-1">Last {analyticsPeriod} days</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-gradient-to-br from-purple-600/20 to-purple-600/10 border-purple-500/30">
+                    <CardContent className="p-4">
+                      <p className="text-gray-400 text-xs">Notarizations</p>
+                      <p className="text-2xl font-bold text-white">{analyticsData.summary.total_notarizations}</p>
+                      <p className="text-xs text-green-400 mt-1">{analyticsData.summary.completed_notarizations} completed</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-gradient-to-br from-orange-600/20 to-orange-600/10 border-orange-500/30">
+                    <CardContent className="p-4">
+                      <p className="text-gray-400 text-xs">Transactions</p>
+                      <p className="text-2xl font-bold text-white">{analyticsData.summary.total_transactions}</p>
+                      <p className="text-xs text-gray-500 mt-1">Orchestrator</p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Revenue Trends Chart */}
+                <Card className="bg-[#1a2332] border-gray-800">
+                  <CardContent className="p-6">
+                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5 text-green-500" />
+                      Revenue Trends
+                    </h3>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <AreaChart data={analyticsData.revenue_trends}>
+                        <defs>
+                          <linearGradient id="stripeGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#635BFF" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="#635BFF" stopOpacity={0.1}/>
+                          </linearGradient>
+                          <linearGradient id="cryptoGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#F7931A" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="#F7931A" stopOpacity={0.1}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                        <XAxis dataKey="date" stroke="#666" fontSize={12} tickFormatter={(v) => v.slice(5)} />
+                        <YAxis stroke="#666" fontSize={12} tickFormatter={(v) => `$${v}`} />
+                        <Tooltip 
+                          contentStyle={{ backgroundColor: '#1a2332', border: '1px solid #333', borderRadius: '8px' }}
+                          labelStyle={{ color: '#fff' }}
+                          formatter={(value) => [`$${value}`, '']}
+                        />
+                        <Legend />
+                        <Area type="monotone" dataKey="stripe" name="Stripe" stroke="#635BFF" fill="url(#stripeGradient)" />
+                        <Area type="monotone" dataKey="crypto" name="Crypto" stroke="#F7931A" fill="url(#cryptoGradient)" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* User Growth Chart */}
+                  <Card className="bg-[#1a2332] border-gray-800">
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <Users className="w-5 h-5 text-blue-500" />
+                        User Growth
+                      </h3>
+                      <ResponsiveContainer width="100%" height={250}>
+                        <LineChart data={analyticsData.user_growth}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                          <XAxis dataKey="date" stroke="#666" fontSize={12} tickFormatter={(v) => v.slice(5)} />
+                          <YAxis stroke="#666" fontSize={12} />
+                          <Tooltip 
+                            contentStyle={{ backgroundColor: '#1a2332', border: '1px solid #333', borderRadius: '8px' }}
+                            labelStyle={{ color: '#fff' }}
+                          />
+                          <Line type="monotone" dataKey="total_users" name="Total Users" stroke="#3B82F6" strokeWidth={2} dot={false} />
+                          <Line type="monotone" dataKey="new_users" name="New Users" stroke="#10B981" strokeWidth={2} dot={false} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+
+                  {/* Payment Distribution Pie Chart */}
+                  <Card className="bg-[#1a2332] border-gray-800">
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <Wallet className="w-5 h-5 text-orange-500" />
+                        Payment Distribution
+                      </h3>
+                      {analyticsData.payment_distribution.some(p => p.value > 0) ? (
+                        <ResponsiveContainer width="100%" height={250}>
+                          <RechartsPie>
+                            <Pie
+                              data={analyticsData.payment_distribution.filter(p => p.value > 0)}
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={60}
+                              outerRadius={90}
+                              paddingAngle={5}
+                              dataKey="value"
+                              label={({ name, value }) => `${name}: $${value}`}
+                              labelLine={{ stroke: '#666' }}
+                            >
+                              {analyticsData.payment_distribution.filter(p => p.value > 0).map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                            </Pie>
+                            <Tooltip 
+                              contentStyle={{ backgroundColor: '#1a2332', border: '1px solid #333', borderRadius: '8px' }}
+                              formatter={(value) => [`$${value}`, 'Revenue']}
+                            />
+                          </RechartsPie>
+                        </ResponsiveContainer>
+                      ) : (
+                        <div className="h-[250px] flex items-center justify-center text-gray-500">
+                          No payment data available
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  {/* Notarization Volume Chart */}
+                  <Card className="bg-[#1a2332] border-gray-800">
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <FileText className="w-5 h-5 text-purple-500" />
+                        Notarization Volume
+                      </h3>
+                      <ResponsiveContainer width="100%" height={250}>
+                        <BarChart data={analyticsData.notarization_volume}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                          <XAxis dataKey="date" stroke="#666" fontSize={12} tickFormatter={(v) => v.slice(5)} />
+                          <YAxis stroke="#666" fontSize={12} />
+                          <Tooltip 
+                            contentStyle={{ backgroundColor: '#1a2332', border: '1px solid #333', borderRadius: '8px' }}
+                            labelStyle={{ color: '#fff' }}
+                          />
+                          <Legend />
+                          <Bar dataKey="completed" name="Completed" fill="#10B981" radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="pending" name="Pending" fill="#F59E0B" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+
+                  {/* Top Notaries */}
+                  <Card className="bg-[#1a2332] border-gray-800">
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <UserCheck className="w-5 h-5 text-green-500" />
+                        Top Performing Notaries
+                      </h3>
+                      {analyticsData.top_notaries.length > 0 ? (
+                        <div className="space-y-3">
+                          {analyticsData.top_notaries.slice(0, 5).map((notary, idx) => (
+                            <div key={notary.notary_id} className="flex items-center justify-between p-3 bg-[#0a0f1a] rounded-lg">
+                              <div className="flex items-center gap-3">
+                                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                                  idx === 0 ? 'bg-yellow-500 text-black' :
+                                  idx === 1 ? 'bg-gray-400 text-black' :
+                                  idx === 2 ? 'bg-orange-600 text-white' :
+                                  'bg-gray-700 text-white'
+                                }`}>
+                                  {idx + 1}
+                                </span>
+                                <div>
+                                  <p className="text-white font-medium">{notary.name || 'Unknown'}</p>
+                                  <p className="text-gray-500 text-xs">{notary.email}</p>
+                                </div>
+                              </div>
+                              <span className="text-green-400 font-bold">{notary.completed_notarizations}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 text-center py-8">No notary activity data</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Document & Transaction Types */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <Card className="bg-[#1a2332] border-gray-800">
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-bold text-white mb-4">Document Types</h3>
+                      {analyticsData.document_types.length > 0 ? (
+                        <div className="space-y-2">
+                          {analyticsData.document_types.map((doc, idx) => (
+                            <div key={idx} className="flex items-center justify-between">
+                              <span className="text-gray-400">{doc.name}</span>
+                              <div className="flex items-center gap-3">
+                                <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
+                                  <div 
+                                    className="h-full bg-purple-500 rounded-full"
+                                    style={{ width: `${(doc.count / analyticsData.document_types[0].count) * 100}%` }}
+                                  />
+                                </div>
+                                <span className="text-white font-medium w-8 text-right">{doc.count}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 text-center py-8">No document data</p>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-[#1a2332] border-gray-800">
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-bold text-white mb-4">Transaction Types</h3>
+                      {analyticsData.transaction_types.length > 0 ? (
+                        <div className="space-y-2">
+                          {analyticsData.transaction_types.map((tx, idx) => (
+                            <div key={idx} className="flex items-center justify-between">
+                              <span className="text-gray-400">{tx.name}</span>
+                              <div className="flex items-center gap-3">
+                                <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
+                                  <div 
+                                    className="h-full bg-blue-500 rounded-full"
+                                    style={{ width: `${(tx.count / analyticsData.transaction_types[0].count) * 100}%` }}
+                                  />
+                                </div>
+                                <span className="text-white font-medium w-8 text-right">{tx.count}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 text-center py-8">No transaction data</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+              </>
+            ) : (
+              <Card className="bg-[#1a2332] border-gray-800">
+                <CardContent className="p-12 text-center">
+                  <PieChart className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400">Click refresh to load analytics data</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
+
         {activeTab === 'users' && (
           <Card className="bg-[#1a2332] border-gray-800">
             <CardContent className="p-6">
