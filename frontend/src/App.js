@@ -104,6 +104,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/certificate/:requestId"
+              element={
+                <ProtectedRoute>
+                  <NotarizationCertificate />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         <Toaster />
