@@ -5,13 +5,17 @@ import {
   Shield, Users, FileText, TrendingUp, DollarSign,
   CheckCircle, XCircle, Clock, RefreshCw, Search,
   BarChart3, Activity, Wallet, LogOut, ChevronDown,
-  Eye, UserCheck, UserX, Settings, AlertTriangle
+  Eye, UserCheck, UserX, Settings, AlertTriangle, PieChart
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
+import {
+  LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart as RechartsPie, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
