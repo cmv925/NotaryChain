@@ -73,6 +73,8 @@ class TransactionOrchestratorService:
         }
         
         await self.db.transaction_blueprints.insert_one(blueprint)
+        # Remove MongoDB _id before returning
+        blueprint.pop("_id", None)
         return blueprint
     
     async def get_blueprint(self, blueprint_id: str) -> Optional[dict]:
