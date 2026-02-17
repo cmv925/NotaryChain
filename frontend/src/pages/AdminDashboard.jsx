@@ -184,6 +184,15 @@ const AdminDashboard = () => {
             </div>
             <div className="flex items-center gap-4">
               <Button
+                onClick={() => navigate('/admin/blueprints/create')}
+                variant="outline"
+                size="sm"
+                className="border-green-600/50 text-green-400 hover:bg-green-600/20"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Blueprint
+              </Button>
+              <Button
                 onClick={fetchDashboardData}
                 variant="ghost"
                 size="sm"
