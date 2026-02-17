@@ -87,6 +87,22 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/transactions"
+              element={
+                <ProtectedRoute>
+                  <TransactionsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/transactions/:transactionId"
+              element={
+                <ProtectedRoute>
+                  <TransactionRoom />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         <Toaster />
