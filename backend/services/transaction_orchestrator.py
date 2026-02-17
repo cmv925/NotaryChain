@@ -53,11 +53,13 @@ class TransactionOrchestratorService:
             }
             steps.append(step_obj)
         
+        created_at = datetime.now(timezone.utc)
+        
         blueprint = {
             "id": str(uuid.uuid4()),
             "name": blueprint_data["name"],
             "description": blueprint_data.get("description", ""),
-            "transaction_type": blueprint_data["transaction_type"],
+            "transaction_type": blueprint_data.get("transaction_type", "custom"),
             "version": "1.0",
             "is_active": True,
             "is_system": False,
@@ -69,12 +71,13 @@ class TransactionOrchestratorService:
             "auto_reminders": True,
             "deadline_enforcement": True,
             "created_by": user_id,
-            "created_at": datetime.now(timezone.utc)
+            "created_at": created_at
         }
         
         await self.db.transaction_blueprints.insert_one(blueprint)
-        # Remove MongoDB _id before returning
+        # Remove MongoDB _id and convert datetime before returning
         blueprint.pop("_id", None)
+        blueprint["created_at"] = created_at.isoformat()
         return blueprint
     
     async def get_blueprint(self, blueprint_id: str) -> Optional[dict]:
