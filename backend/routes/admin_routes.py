@@ -664,3 +664,208 @@ async def seed_admin_user():
         "password": "Admin123!",
         "note": "Please change the password immediately after first login"
     }
+
+
+@router.get("/analytics/comprehensive")
+async def get_comprehensive_analytics(
+    days: int = Query(30, ge=7, le=365),
+    current_user: User = Depends(get_current_user)
+):
+    """Get comprehensive analytics data for charts"""
+    await check_admin(current_user)
+    
+    now = datetime.now(timezone.utc)
+    start_date = now - timedelta(days=days)
+    
+    # Generate date range
+    date_range = []
+    for i in range(days):
+        d = now - timedelta(days=days - 1 - i)
+        date_range.append(d.strftime("%Y-%m-%d"))
+    
+    # === User Growth Over Time ===
+    user_growth_pipeline = [
+        {"$match": {"created_at": {"$gte": start_date}}},
+        {"$group": {
+            "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$created_at"}},
+            "new_users": {"$sum": 1}
+        }},
+        {"$sort": {"_id": 1}}
+    ]
+    user_growth_raw = await db.users.aggregate(user_growth_pipeline).to_list(365)
+    user_growth_map = {d["_id"]: d["new_users"] for d in user_growth_raw}
+    
+    # Total users count up to each date
+    total_users_before = await db.users.count_documents({"created_at": {"$lt": start_date}})
+    user_growth = []
+    cumulative = total_users_before
+    for date in date_range:
+        new_count = user_growth_map.get(date, 0)
+        cumulative += new_count
+        user_growth.append({"date": date, "new_users": new_count, "total_users": cumulative})
+    
+    # === Revenue Trends ===
+    # Stripe revenue
+    stripe_pipeline = [
+        {"$match": {"status": "paid", "created_at": {"$gte": start_date}}},
+        {"$group": {
+            "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$created_at"}},
+            "amount": {"$sum": "$amount"}
+        }},
+        {"$sort": {"_id": 1}}
+    ]
+    stripe_raw = await db.payments.aggregate(stripe_pipeline).to_list(365)
+    stripe_map = {d["_id"]: d["amount"] / 100 for d in stripe_raw}  # Convert cents to dollars
+    
+    # Crypto revenue
+    crypto_pipeline = [
+        {"$match": {"status": "confirmed", "created_at": {"$gte": start_date}}},
+        {"$group": {
+            "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$created_at"}},
+            "amount": {"$sum": "$usd_amount"}
+        }},
+        {"$sort": {"_id": 1}}
+    ]
+    crypto_raw = await db.crypto_payments.aggregate(crypto_pipeline).to_list(365)
+    crypto_map = {d["_id"]: d["amount"] for d in crypto_raw}
+    
+    revenue_trends = []
+    total_stripe = 0
+    total_crypto = 0
+    for date in date_range:
+        stripe_amt = stripe_map.get(date, 0)
+        crypto_amt = crypto_map.get(date, 0)
+        total_stripe += stripe_amt
+        total_crypto += crypto_amt
+        revenue_trends.append({
+            "date": date,
+            "stripe": round(stripe_amt, 2),
+            "crypto": round(crypto_amt, 2),
+            "total": round(stripe_amt + crypto_amt, 2)
+        })
+    
+    # === Notarization Volume ===
+    notarization_pipeline = [
+        {"$match": {"created_at": {"$gte": start_date}}},
+        {"$group": {
+            "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$created_at"}},
+            "count": {"$sum": 1},
+            "completed": {"$sum": {"$cond": [{"$eq": ["$status", "completed"]}, 1, 0]}}
+        }},
+        {"$sort": {"_id": 1}}
+    ]
+    notarization_raw = await db.notarization_requests.aggregate(notarization_pipeline).to_list(365)
+    notarization_map = {d["_id"]: {"count": d["count"], "completed": d["completed"]} for d in notarization_raw}
+    
+    notarization_volume = []
+    for date in date_range:
+        data = notarization_map.get(date, {"count": 0, "completed": 0})
+        notarization_volume.append({
+            "date": date,
+            "total": data["count"],
+            "completed": data["completed"],
+            "pending": data["count"] - data["completed"]
+        })
+    
+    # === Transaction Activity (Transaction Orchestrator) ===
+    transaction_pipeline = [
+        {"$match": {"created_at": {"$gte": start_date}}},
+        {"$group": {
+            "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$created_at"}},
+            "count": {"$sum": 1}
+        }},
+        {"$sort": {"_id": 1}}
+    ]
+    transaction_raw = await db.transactions.aggregate(transaction_pipeline).to_list(365)
+    transaction_map = {d["_id"]: d["count"] for d in transaction_raw}
+    
+    transaction_activity = []
+    for date in date_range:
+        transaction_activity.append({
+            "date": date,
+            "transactions": transaction_map.get(date, 0)
+        })
+    
+    # === Payment Distribution (Pie Chart) ===
+    total_stripe_revenue = sum(r["stripe"] for r in revenue_trends)
+    total_crypto_revenue = sum(r["crypto"] for r in revenue_trends)
+    
+    # Get crypto by type
+    crypto_by_type = await db.crypto_payments.aggregate([
+        {"$match": {"status": "confirmed", "created_at": {"$gte": start_date}}},
+        {"$group": {"_id": "$crypto_type", "amount": {"$sum": "$usd_amount"}, "count": {"$sum": 1}}}
+    ]).to_list(10)
+    
+    payment_distribution = [
+        {"name": "Stripe (Card)", "value": round(total_stripe_revenue, 2), "color": "#635BFF"}
+    ]
+    for ct in crypto_by_type:
+        payment_distribution.append({
+            "name": ct["_id"].upper() if ct["_id"] else "Other Crypto",
+            "value": round(ct["amount"], 2),
+            "color": "#F7931A" if ct["_id"] == "btc" else "#627EEA" if ct["_id"] == "eth" else "#2775CA"
+        })
+    
+    # === Notary Activity (Top Notaries) ===
+    notary_activity_pipeline = [
+        {"$match": {"status": "completed", "notary_id": {"$ne": None}}},
+        {"$group": {"_id": "$notary_id", "completed_count": {"$sum": 1}}},
+        {"$sort": {"completed_count": -1}},
+        {"$limit": 10}
+    ]
+    top_notaries_raw = await db.notarization_requests.aggregate(notary_activity_pipeline).to_list(10)
+    
+    top_notaries = []
+    for n in top_notaries_raw:
+        notary_profile = await db.notary_profiles.find_one({"user_id": n["_id"]})
+        user = await db.users.find_one({"id": n["_id"]})
+        if notary_profile or user:
+            top_notaries.append({
+                "notary_id": n["_id"],
+                "name": notary_profile.get("full_name") if notary_profile else (user.get("full_name") if user else "Unknown"),
+                "email": user.get("email") if user else "N/A",
+                "completed_notarizations": n["completed_count"]
+            })
+    
+    # === Document Types Distribution ===
+    doc_type_pipeline = [
+        {"$match": {"created_at": {"$gte": start_date}}},
+        {"$group": {"_id": "$document_type", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}},
+        {"$limit": 10}
+    ]
+    doc_types_raw = await db.notarization_requests.aggregate(doc_type_pipeline).to_list(10)
+    document_types = [{"name": d["_id"] or "Unspecified", "count": d["count"]} for d in doc_types_raw]
+    
+    # === Transaction Types Distribution ===
+    tx_type_pipeline = [
+        {"$match": {"created_at": {"$gte": start_date}}},
+        {"$group": {"_id": "$transaction_type", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}}
+    ]
+    tx_types_raw = await db.transactions.aggregate(tx_type_pipeline).to_list(10)
+    transaction_types = [{"name": (t["_id"] or "custom").replace("_", " ").title(), "count": t["count"]} for t in tx_types_raw]
+    
+    # === Summary Stats ===
+    summary = {
+        "period_days": days,
+        "total_revenue": round(total_stripe_revenue + total_crypto_revenue, 2),
+        "stripe_revenue": round(total_stripe_revenue, 2),
+        "crypto_revenue": round(total_crypto_revenue, 2),
+        "new_users": sum(u["new_users"] for u in user_growth),
+        "total_notarizations": sum(n["total"] for n in notarization_volume),
+        "completed_notarizations": sum(n["completed"] for n in notarization_volume),
+        "total_transactions": sum(t["transactions"] for t in transaction_activity)
+    }
+    
+    return {
+        "summary": summary,
+        "user_growth": user_growth,
+        "revenue_trends": revenue_trends,
+        "notarization_volume": notarization_volume,
+        "transaction_activity": transaction_activity,
+        "payment_distribution": payment_distribution,
+        "top_notaries": top_notaries,
+        "document_types": document_types,
+        "transaction_types": transaction_types
+    }
