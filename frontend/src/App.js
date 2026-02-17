@@ -113,6 +113,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/admin/blueprints/create"
+              element={
+                <ProtectedRoute>
+                  <BlueprintCreator />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         <Toaster />
