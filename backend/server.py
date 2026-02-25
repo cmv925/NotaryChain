@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 # Import route modules
-from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes, notary_professional_routes, gdpr_routes, infra_routes
+from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes, notary_professional_routes, gdpr_routes, infra_routes, ws_routes
 from middleware.security import setup_security, health_check, limiter
 from services.notification_service import set_db as set_notification_db, set_ws_manager
 from services.ws_manager import ws_manager
@@ -40,6 +40,7 @@ subscription_routes.set_db(db)
 notary_professional_routes.set_db(db)
 gdpr_routes.set_db(db)
 infra_routes.set_db(db)
+ws_routes.set_db(db)
 set_notification_db(db)
 set_ws_manager(ws_manager)
 
@@ -95,6 +96,7 @@ app.include_router(subscription_routes.router)
 app.include_router(notary_professional_routes.router)
 app.include_router(gdpr_routes.router)
 app.include_router(infra_routes.router)
+app.include_router(ws_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
