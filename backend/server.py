@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 # Import route modules
-from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes, notary_professional_routes, gdpr_routes, infra_routes, ws_routes, api_key_routes, public_api_routes, ron_compliance_routes
+from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes, notary_professional_routes, gdpr_routes, infra_routes, ws_routes, api_key_routes, public_api_routes, ron_compliance_routes, webhook_routes
 from middleware.security import setup_security, health_check, limiter
 from services.notification_service import set_db as set_notification_db, set_ws_manager
 from services.ws_manager import ws_manager
@@ -44,6 +44,12 @@ ws_routes.set_db(db)
 api_key_routes.set_db(db)
 public_api_routes.set_db(db)
 ron_compliance_routes.set_db(db)
+webhook_routes.set_db(db)
+
+# Webhook service needs db too
+from services import webhook_service
+webhook_service.set_db(db)
+
 set_notification_db(db)
 
 # Initialize notification service WS manager
@@ -106,6 +112,7 @@ app.include_router(ws_routes.router)
 app.include_router(api_key_routes.router)
 app.include_router(public_api_routes.router)
 app.include_router(ron_compliance_routes.router)
+app.include_router(webhook_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
