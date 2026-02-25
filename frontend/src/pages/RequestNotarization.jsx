@@ -221,12 +221,14 @@ const RequestNotarization = () => {
               uploading={uploading}
               analysisResult={analysisResult}
               canProceedToStep2={canProceedToStep2}
+              templateData={templateData}
               onFileSelect={handleFileSelect}
               onRemoveFile={handleRemoveFile}
               onDocTypeChange={handleChange}
               onAnalyze={handleAnalyzeDocument}
               onShowPdfPreview={() => setShowPdfPreview(true)}
               onProceedToStep2={() => setCurrentStep(2)}
+              onBrowseTemplates={() => navigate('/templates')}
             />
           )}
 
