@@ -546,10 +546,7 @@ class TestWebhookDeliveryDetails:
     @pytest.fixture(autouse=True)
     def setup(self):
         """Setup auth token"""
-        response = requests.post(f"{BASE_URL}/api/auth/login", json=DEMO_USER)
-        assert response.status_code == 200
-        data = response.json()
-        self.token = data.get("access_token")
+        self.token = get_cached_token(DEMO_USER["email"], DEMO_USER["password"])
         self.headers = {"Authorization": f"Bearer {self.token}"}
         self.created_webhook_ids = []
         
