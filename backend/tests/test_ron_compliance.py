@@ -409,26 +409,20 @@ class TestRONValidationLogging:
     def setup_auth(self):
         """Login as admin and demo user"""
         # Admin login
-        admin_resp = requests.post(f"{BASE_URL}/api/auth/login", json={
-            "email": ADMIN_EMAIL,
-            "password": ADMIN_PASSWORD
-        })
-        if admin_resp.status_code == 200:
-            self.admin_token = admin_resp.json().get("access_token")
+        admin_token = get_token(ADMIN_EMAIL, ADMIN_PASSWORD, "admin")
+        if admin_token:
+            self.admin_token = admin_token
             self.admin_headers = {"Authorization": f"Bearer {self.admin_token}"}
         else:
-            pytest.skip(f"Admin login failed")
+            pytest.skip("Admin login failed")
 
         # Demo user login
-        demo_resp = requests.post(f"{BASE_URL}/api/auth/login", json={
-            "email": DEMO_EMAIL,
-            "password": DEMO_PASSWORD
-        })
-        if demo_resp.status_code == 200:
-            self.demo_token = demo_resp.json().get("access_token")
+        demo_token = get_token(DEMO_EMAIL, DEMO_PASSWORD, "demo")
+        if demo_token:
+            self.demo_token = demo_token
             self.demo_headers = {"Authorization": f"Bearer {self.demo_token}"}
         else:
-            pytest.skip(f"Demo login failed")
+            pytest.skip("Demo login failed")
 
     def test_validation_is_logged_to_activity(self):
         """Validation requests should appear in activity log"""
