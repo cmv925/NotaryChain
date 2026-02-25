@@ -46,17 +46,21 @@ class EmailService:
             # Run sync SDK in thread to keep FastAPI non-blocking
             result = await asyncio.to_thread(resend.Emails.send, params)
             logger.info(f"Email sent to {to_email}: {subject}")
+            task_manager.complete_job(job_id, {"email_id": result.get("id"), "to": to_email})
             return {
                 "success": True,
                 "email_id": result.get("id"),
-                "to": to_email
+                "to": to_email,
+                "job_id": job_id
             }
         except Exception as e:
             logger.error(f"Failed to send email to {to_email}: {str(e)}")
+            task_manager.fail_job(job_id, str(e))
             return {
                 "success": False,
                 "error": str(e),
-                "to": to_email
+                "to": to_email,
+                "job_id": job_id
             }
     
     # ===== User Authentication Emails =====
