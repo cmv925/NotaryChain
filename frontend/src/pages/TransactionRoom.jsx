@@ -264,41 +264,41 @@ export default function TransactionRoom() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#1a1a2e] to-[#16213e] border-b border-[#333] px-6 py-4">
+      <div className="bg-gradient-to-r from-[#1a1a2e] to-[#16213e] border-b border-[#333] px-4 sm:px-6 py-4">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={() => navigate('/transactions')}
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-white flex-shrink-0"
               >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
+                <ArrowLeft className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Back</span>
               </Button>
-              <div>
-                <h1 className="text-2xl font-bold">{transaction.name}</h1>
-                <div className="flex items-center gap-3 mt-1">
-                  <Badge className={`${statusColors[transaction.status]} text-white`}>
+              <div className="min-w-0">
+                <h1 className="text-lg sm:text-2xl font-bold truncate">{transaction.name}</h1>
+                <div className="flex items-center gap-2 sm:gap-3 mt-1">
+                  <Badge className={`${statusColors[transaction.status]} text-white text-xs`}>
                     {transaction.status.replace(/_/g, ' ').toUpperCase()}
                   </Badge>
-                  <span className="text-gray-400 text-sm">
+                  <span className="text-gray-400 text-xs sm:text-sm hidden sm:inline">
                     {transaction.transaction_type.replace(/_/g, ' ')}
                   </span>
                 </div>
               </div>
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={fetchRoomData}
                 className="border-[#333]"
               >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh
+                <RefreshCw className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Refresh</span>
               </Button>
 
               {/* Connection Status */}
