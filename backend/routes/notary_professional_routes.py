@@ -4,6 +4,7 @@ Digital Journal, Commission Tracking, Seal Management
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Query, UploadFile, File
+from fastapi.responses import FileResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional
 from datetime import datetime, timezone, timedelta
