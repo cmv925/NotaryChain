@@ -47,10 +47,20 @@ setup_security(app)
 # Create a router with the /api prefix for legacy routes
 api_router = APIRouter(prefix="/api")
 
-# Add legacy health check route
+# Health check endpoints
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "NotaryChain API", "version": "1.0.0", "status": "operational"}
+
+@api_router.get("/health")
+async def api_health():
+    """Comprehensive health check endpoint"""
+    return await health_check()
+
+@app.get("/health")
+async def root_health():
+    """Root health check for load balancers"""
+    return await health_check()
 
 # Include the router in the main app
 app.include_router(api_router)
