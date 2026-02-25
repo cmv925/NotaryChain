@@ -486,9 +486,16 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
   - Navbar: Hamburger menu at md breakpoint (768px) with full mobile navigation
   - Dashboard: Responsive header with collapsing buttons, stacking stats cards
   - SecuritySettings: Responsive header
+  - NotaryDashboard: Responsive stat cards (2-col mobile, 3-col tablet, 5-col desktop), header collapses
+  - AdminDashboard: Responsive stat cards (2-col mobile, 4-col tablet, 5-col desktop), header collapses
+  - TransactionRoom: Horizontally scrollable tabs on mobile, responsive header
+  - RequestNotarization: Responsive progress steps, form padding
+  - LoginPage: Responsive card padding, mobile-friendly layout
   - All dashboard headers: Compact button layout on mobile
 - **PDF Preview Integration:**
   - PDFPreview and PDFPreviewButton reusable components available for document viewing
+  - Integrated into RequestNotarization: Preview button appears for PDF files during upload
+  - Full-screen modal with page navigation, zoom, download, text/annotation layer support
 
 **New Backend Files:**
 - `services/notification_service.py` - Notification creation and WebSocket broadcasting
