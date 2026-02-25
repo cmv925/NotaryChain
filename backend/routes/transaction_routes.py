@@ -370,6 +370,15 @@ async def complete_task(
             new_status="completed",
             user_id=current_user.id
         )
+
+        # Broadcast task update via WebSocket
+        await ws_manager.broadcast(transaction_id, {
+            "type": "task_updated",
+            "task": _serialize(task),
+            "completed_by": current_user.email,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+
         return {"message": "Task completed", "task": task}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
