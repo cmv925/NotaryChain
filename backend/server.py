@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 # Import route modules
-from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes
+from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes, notary_professional_routes, gdpr_routes
 from middleware.security import setup_security, health_check, limiter
 from services.notification_service import set_db as set_notification_db, set_ws_manager
 from services.ws_manager import ws_manager
@@ -37,6 +37,8 @@ transaction_routes.set_db(db)
 twofa_routes.set_db(db)
 notification_routes.set_db(db)
 subscription_routes.set_db(db)
+notary_professional_routes.set_db(db)
+gdpr_routes.set_db(db)
 set_notification_db(db)
 set_ws_manager(ws_manager)
 
@@ -89,6 +91,8 @@ app.include_router(twofa_routes.router)
 app.include_router(jobs_routes.router)
 app.include_router(notification_routes.router)
 app.include_router(subscription_routes.router)
+app.include_router(notary_professional_routes.router)
+app.include_router(gdpr_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -148,6 +152,11 @@ async def create_indexes():
         # Subscriptions
         await db.subscriptions.create_index([("user_id", 1), ("status", 1)])
         await db.subscription_payments.create_index("session_id", unique=True)
+
+        # Notary journal & seals
+        await db.notary_journal.create_index([("notary_id", 1), ("created_at", -1)])
+        await db.notary_seals.create_index("notary_id")
+        await db.deletion_requests.create_index([("user_id", 1), ("status", 1)])
 
         logger.info("Database indexes created/verified successfully")
     except Exception as e:
