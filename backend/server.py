@@ -41,6 +41,8 @@ notary_professional_routes.set_db(db)
 gdpr_routes.set_db(db)
 infra_routes.set_db(db)
 ws_routes.set_db(db)
+api_key_routes.set_db(db)
+public_api_routes.set_db(db)
 set_notification_db(db)
 
 # Initialize notification service WS manager
@@ -100,6 +102,8 @@ app.include_router(notary_professional_routes.router)
 app.include_router(gdpr_routes.router)
 app.include_router(infra_routes.router)
 app.include_router(ws_routes.router)
+app.include_router(api_key_routes.router)
+app.include_router(public_api_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
