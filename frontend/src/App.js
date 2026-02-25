@@ -23,6 +23,7 @@ import TransactionsPage from './pages/TransactionsPage';
 import TransactionRoom from './pages/TransactionRoom';
 import NotarizationCertificate from './pages/NotarizationCertificate';
 import BlueprintCreator from './pages/BlueprintCreator';
+import SecuritySettings from './pages/SecuritySettings';
 import { Toaster } from './components/ui/toaster';
 
 function App() {
@@ -118,6 +119,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <BlueprintCreator />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/security"
+              element={
+                <ProtectedRoute>
+                  <SecuritySettings />
                 </ProtectedRoute>
               }
             />
