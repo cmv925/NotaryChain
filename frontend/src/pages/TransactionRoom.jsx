@@ -696,10 +696,15 @@ export default function TransactionRoom() {
               
               {/* Message Input */}
               <div className="p-4 border-t border-[#333]">
+                {typingUsers.length > 0 && (
+                  <div className="text-xs text-gray-500 mb-2 italic" data-testid="typing-indicator">
+                    {typingUsers.join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
+                  </div>
+                )}
                 <form onSubmit={sendMessage} className="flex gap-2">
                   <Input
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
+                    onChange={(e) => { setNewMessage(e.target.value); sendTyping(); }}
                     placeholder="Type a message..."
                     className="flex-1 bg-[#0d1b2a] border-[#333] text-white"
                     disabled={!current_participant?.can_send_messages}
