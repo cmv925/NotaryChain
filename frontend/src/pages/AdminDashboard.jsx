@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useWS } from '../contexts/WebSocketContext';
 import {
   Shield, Users, FileText, TrendingUp, DollarSign,
   CheckCircle, XCircle, Clock, RefreshCw, Search,
@@ -23,6 +24,7 @@ const API = `${BACKEND_URL}/api`;
 
 const AdminDashboard = () => {
   const { token, logout } = useAuth();
+  const { subscribe } = useWS();
   const navigate = useNavigate();
   
   const [activeTab, setActiveTab] = useState('overview');
@@ -46,6 +48,14 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  // Real-time: auto-refresh admin dashboard on platform events
+  useEffect(() => {
+    const unsub1 = subscribe('notary_queue_update', () => fetchDashboardData());
+    const unsub2 = subscribe('request_assigned', () => fetchDashboardData());
+    const unsub3 = subscribe('request_completed', () => fetchDashboardData());
+    return () => { unsub1(); unsub2(); unsub3(); };
+  }, [subscribe]);
 
   const fetchDashboardData = async () => {
     setLoading(true);
