@@ -151,6 +151,16 @@ const Dashboard = () => {
                 <span className="hidden lg:inline">API</span>
               </Button>
               <Button
+                onClick={() => navigate('/organizations')}
+                variant="outline"
+                size="sm"
+                className="border-gray-700 text-gray-300 hover:text-white hover:border-teal-500 hidden sm:flex"
+                data-testid="org-button"
+              >
+                <Building2 className="w-4 h-4 sm:mr-2" />
+                <span className="hidden lg:inline">Org</span>
+              </Button>
+              <Button
                 onClick={handleLogout}
                 variant="outline"
                 size="sm"
