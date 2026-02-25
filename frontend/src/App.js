@@ -34,6 +34,8 @@ import RONComplianceDashboard from './pages/RONComplianceDashboard';
 import TemplateLibrary from './pages/TemplateLibrary';
 import TemplateWizard from './pages/TemplateWizard';
 import OrganizationPage from './pages/OrganizationPage';
+import MyDrafts from './pages/MyDrafts';
+import SharedDraftViewer from './pages/SharedDraftViewer';
 import ErrorBoundary from './components/ErrorBoundary';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { Toaster } from './components/ui/toaster';
