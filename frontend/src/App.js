@@ -180,6 +180,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/developers"
+              element={
+                <ProtectedRoute>
+                  <DeveloperPage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         </WebSocketProvider>
