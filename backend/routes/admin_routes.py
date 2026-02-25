@@ -413,6 +413,16 @@ async def approve_notary_application(
         user=current_user,
         severity=AuditSeverity.INFO
     )
+
+    # Send in-app notification
+    background_tasks.add_task(
+        create_notification,
+        user_id=notary.get("user_id"),
+        title="Application Approved",
+        message="Your notary application has been approved! You can now accept notarization requests.",
+        notif_type="success",
+        link="/notary/dashboard"
+    )
     
     return {"message": "Notary application approved", "notary_id": notary_id}
 
