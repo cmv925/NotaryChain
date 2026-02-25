@@ -474,6 +474,179 @@ const DeveloperPage = () => {
             </Card>
           </div>
         )}
+
+        {activeTab === 'webhooks' && (
+          <div className="space-y-6">
+            {/* Create Webhook */}
+            <Card className="bg-[#1a2332] border-gray-800" data-testid="create-webhook-card">
+              <CardContent className="p-6">
+                <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+                  <Plus className="w-5 h-5 text-[#00d4aa]" /> Register Webhook
+                </h2>
+                <div className="space-y-3">
+                  <Input
+                    value={newWebhookUrl}
+                    onChange={e => setNewWebhookUrl(e.target.value)}
+                    placeholder="https://your-app.com/webhooks/notarychain"
+                    className="bg-[#0d1b2a] border-gray-700 text-white"
+                    data-testid="webhook-url-input"
+                  />
+                  <Input
+                    value={newWebhookDesc}
+                    onChange={e => setNewWebhookDesc(e.target.value)}
+                    placeholder="Description (optional)"
+                    className="bg-[#0d1b2a] border-gray-700 text-white"
+                  />
+                  <div>
+                    <p className="text-gray-400 text-xs mb-2">Events to subscribe:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {['seal.created', 'document.verified', 'request.completed', 'request.assigned', 'request.created'].map(evt => (
+                        <button
+                          key={evt}
+                          onClick={() => toggleWebhookEvent(evt)}
+                          className={`px-3 py-1 rounded-full text-xs font-mono transition-colors ${
+                            newWebhookEvents.includes(evt)
+                              ? 'bg-[#00d4aa]/20 text-[#00d4aa] border border-[#00d4aa]/30'
+                              : 'bg-[#0d1b2a] text-gray-500 border border-gray-700'
+                          }`}
+                          data-testid={`event-toggle-${evt}`}
+                        >
+                          {evt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <Button onClick={handleCreateWebhook} disabled={loading} className="bg-[#00d4aa] hover:bg-[#00b894] text-black" data-testid="create-webhook-btn">
+                    <Plus className="w-4 h-4 mr-1" /> Register Webhook
+                  </Button>
+                </div>
+
+                {createdWebhook && (
+                  <div className="mt-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-4" data-testid="new-webhook-secret">
+                    <p className="text-emerald-300 text-sm font-medium mb-2 flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4" /> Webhook created! Store the signing secret:
+                    </p>
+                    <div className="flex items-center gap-2 bg-[#0d1b2a] rounded-lg px-3 py-2">
+                      <code className="text-[#00d4aa] text-xs font-mono flex-1 break-all">{createdWebhook.secret}</code>
+                      <button onClick={() => copyToClipboard(createdWebhook.secret)} className="text-gray-400 hover:text-white">
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <p className="text-gray-500 text-xs mt-2">Use this secret to verify webhook signatures via HMAC-SHA256.</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Webhooks List */}
+            <Card className="bg-[#1a2332] border-gray-800" data-testid="webhooks-list">
+              <CardContent className="p-6">
+                <h3 className="text-white font-semibold mb-4">Your Webhooks ({webhooks.length})</h3>
+                {webhooks.length === 0 ? (
+                  <p className="text-gray-500 text-sm text-center py-6">No webhooks registered yet.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {webhooks.map(wh => (
+                      <div key={wh.id} className={`bg-[#0d1b2a] rounded-lg border ${wh.active ? 'border-gray-700' : 'border-red-500/20 opacity-60'}`} data-testid={`webhook-row-${wh.id}`}>
+                        <button
+                          onClick={() => { setExpandedWebhook(expandedWebhook === wh.id ? null : wh.id); if (expandedWebhook !== wh.id) fetchWebhookDetails(wh.id); }}
+                          className="w-full p-4 text-left hover:bg-white/5 transition-colors"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <Zap className={`w-4 h-4 flex-shrink-0 ${wh.active ? 'text-[#00d4aa]' : 'text-red-400'}`} />
+                              <div className="min-w-0">
+                                <p className="text-white text-sm truncate">{wh.url}</p>
+                                <p className="text-gray-500 text-xs">{wh.events?.join(', ')}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {!wh.active && <Badge className="bg-red-500/20 text-red-400 text-[10px]">Disabled</Badge>}
+                              {wh.disabled_reason === '10 consecutive failures' && <Badge className="bg-orange-500/20 text-orange-400 text-[10px]">Auto-disabled</Badge>}
+                              {expandedWebhook === wh.id ? <ChevronDown className="w-4 h-4 text-gray-500" /> : <ChevronRight className="w-4 h-4 text-gray-500" />}
+                            </div>
+                          </div>
+                        </button>
+
+                        {expandedWebhook === wh.id && webhookDetails && (
+                          <div className="px-4 pb-4 border-t border-gray-800 space-y-4">
+                            {/* Actions */}
+                            <div className="flex gap-2 pt-3">
+                              <Button size="sm" onClick={() => handleTestWebhook(wh.id)} className="bg-blue-600 hover:bg-blue-700 text-white text-xs h-7" data-testid={`test-webhook-${wh.id}`}>
+                                <Send className="w-3 h-3 mr-1" /> Test
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => handleToggleWebhook(wh.id)} className="border-gray-600 text-gray-300 text-xs h-7" data-testid={`toggle-webhook-${wh.id}`}>
+                                {wh.active ? <ToggleRight className="w-3 h-3 mr-1" /> : <ToggleLeft className="w-3 h-3 mr-1" />}
+                                {wh.active ? 'Disable' : 'Enable'}
+                              </Button>
+                              <Button size="sm" variant="ghost" onClick={() => handleDeleteWebhook(wh.id)} className="text-red-400 hover:text-red-300 hover:bg-red-500/10 text-xs h-7 ml-auto" data-testid={`delete-webhook-${wh.id}`}>
+                                <Trash2 className="w-3 h-3 mr-1" /> Delete
+                              </Button>
+                            </div>
+
+                            {/* Stats */}
+                            {webhookDetails.stats && (
+                              <div className="grid grid-cols-4 gap-2">
+                                {[
+                                  { label: 'Total', value: webhookDetails.stats.total_deliveries },
+                                  { label: 'Success', value: webhookDetails.stats.successful, color: 'text-emerald-400' },
+                                  { label: 'Failed', value: webhookDetails.stats.failed, color: 'text-red-400' },
+                                  { label: 'Rate', value: `${webhookDetails.stats.success_rate}%`, color: 'text-[#00d4aa]' },
+                                ].map(s => (
+                                  <div key={s.label} className="bg-[#1a2332] rounded p-2 text-center">
+                                    <p className={`text-lg font-bold ${s.color || 'text-white'}`}>{s.value}</p>
+                                    <p className="text-gray-500 text-[10px]">{s.label}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Recent Deliveries */}
+                            <div>
+                              <p className="text-gray-400 text-xs mb-2">Recent Deliveries</p>
+                              {webhookDetails.deliveries?.length === 0 ? (
+                                <p className="text-gray-600 text-xs">No deliveries yet</p>
+                              ) : (
+                                <div className="space-y-1 max-h-48 overflow-y-auto">
+                                  {webhookDetails.deliveries?.map(d => (
+                                    <div key={d.id} className="flex items-center gap-2 py-1.5 border-b border-gray-800 last:border-0 text-xs">
+                                      {d.success ? <CheckCircle className="w-3 h-3 text-emerald-500 flex-shrink-0" /> : <XCircle className="w-3 h-3 text-red-400 flex-shrink-0" />}
+                                      <span className="text-gray-300 font-mono">{d.event}</span>
+                                      <span className={`${d.success ? 'text-emerald-400' : 'text-red-400'}`}>{d.status_code || 'err'}</span>
+                                      <span className="text-gray-500">#{d.attempt}</span>
+                                      <span className="text-gray-600 ml-auto">{new Date(d.timestamp).toLocaleString()}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Signature Verification Guide */}
+            <Card className="bg-[#1a2332] border-gray-800">
+              <CardContent className="p-6">
+                <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-blue-400" /> Verifying Webhook Signatures
+                </h3>
+                <p className="text-gray-400 text-sm mb-3">Each webhook delivery includes an <code className="bg-[#0d1b2a] px-1.5 py-0.5 rounded text-[#00d4aa] text-xs">X-Webhook-Signature</code> header with an HMAC-SHA256 signature.</p>
+                <pre className="bg-[#0d1b2a] rounded-lg p-4 text-xs text-gray-300 overflow-x-auto font-mono">{`import hmac, hashlib
+
+def verify_signature(payload, signature, secret):
+    expected = hmac.new(
+        secret.encode(), payload.encode(), hashlib.sha256
+    ).hexdigest()
+    return hmac.compare_digest(f"sha256={expected}", signature)`}</pre>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
