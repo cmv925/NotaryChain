@@ -15,6 +15,7 @@ from models import User
 from routes.auth_routes import get_current_user
 from routes.audit_routes import log_action, AuditAction, AuditSeverity
 from services.email_service import email_service
+from routes.notification_routes import create_notification
 
 logger = logging.getLogger(__name__)
 
