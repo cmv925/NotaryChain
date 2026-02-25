@@ -118,6 +118,7 @@ app.include_router(ron_compliance_routes.router)
 app.include_router(webhook_routes.router)
 app.include_router(template_routes.router)
 app.include_router(organization_routes.router)
+app.include_router(draft_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
