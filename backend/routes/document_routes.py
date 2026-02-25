@@ -1,10 +1,14 @@
 from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi.responses import FileResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import List
 from models import DocumentSeal, DocumentSealCreate, DocumentSealResponse, User
 from routes.auth_routes import get_current_user
+import os
 
 router = APIRouter(prefix="/api/documents", tags=["documents"])
+
+UPLOAD_DIR = "/tmp/notary_uploads"
 
 # This will be injected from main server.py
 db: AsyncIOMotorDatabase = None
