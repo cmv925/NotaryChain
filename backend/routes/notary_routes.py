@@ -622,6 +622,16 @@ async def complete_notarization(
         notif_type="success",
         link=f"/certificate/{request_id}"
     )
+
+    # Broadcast completion event to user and all notaries
+    try:
+        notary_ids = await get_notary_user_ids()
+        await broadcast_event("request_completed", {
+            "request_id": request_id,
+            "document_type": request.get("document_type"),
+        }, target_user_ids=[request.get("user_id")] + notary_ids)
+    except Exception as e:
+        logger.debug(f"Broadcast failed: {e}")
     
     return {
         "success": True, 
