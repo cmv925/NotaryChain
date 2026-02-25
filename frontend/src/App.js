@@ -29,10 +29,12 @@ import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import NotaryJournal from './pages/NotaryJournal';
 import DigitalSeal from './pages/DigitalSeal';
 import CompliancePage from './pages/CompliancePage';
+import ErrorBoundary from './components/ErrorBoundary';
 import { Toaster } from './components/ui/toaster';
 
 function App() {
   return (
+    <ErrorBoundary>
     <div className="App">
       <AuthProvider>
         <BrowserRouter>
@@ -180,6 +182,7 @@ function App() {
         <Toaster />
       </AuthProvider>
     </div>
+    </ErrorBoundary>
   );
 }
 
