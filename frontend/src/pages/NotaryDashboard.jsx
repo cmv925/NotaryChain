@@ -568,6 +568,24 @@ const NotaryDashboard = () => {
                 <Button
                   variant="outline"
                   className="w-full justify-start border-[#333] text-gray-300 hover:text-white"
+                  onClick={() => navigate('/notary/journal')}
+                  data-testid="notary-journal-link"
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  Notary Journal
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start border-[#333] text-gray-300 hover:text-white"
+                  onClick={() => navigate('/notary/seal')}
+                  data-testid="digital-seal-link"
+                >
+                  <Shield className="w-4 h-4 mr-2" />
+                  Digital Seal
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start border-[#333] text-gray-300 hover:text-white"
                   onClick={() => setActiveTab('pending')}
                 >
                   <FileText className="w-4 h-4 mr-2" />
