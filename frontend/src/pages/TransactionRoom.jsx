@@ -67,10 +67,45 @@ export default function TransactionRoom() {
   const [aiRecommendations, setAiRecommendations] = useState(null);
   const [loadingAi, setLoadingAi] = useState(false);
   const [settling, setSettling] = useState(false);
+  const [typingUsers, setTypingUsers] = useState([]);
+  const typingTimeoutRef = useRef({});
+
+  // WebSocket handler
+  const handleWsEvent = useCallback((event) => {
+    if (event.type === 'new_message') {
+      setRoomData(prev => {
+        if (!prev) return prev;
+        const msgs = [...(prev.messages || [])];
+        // Avoid duplicates
+        if (!msgs.find(m => m.id === event.message?.id)) {
+          msgs.push(event.message);
+        }
+        return { ...prev, messages: msgs };
+      });
+    } else if (event.type === 'task_updated') {
+      // Refresh room data to get updated tasks and progress
+      fetchRoomData();
+    } else if (event.type === 'typing') {
+      setTypingUsers(prev => {
+        if (!prev.includes(event.user_name)) return [...prev, event.user_name];
+        return prev;
+      });
+      // Clear typing after 3s
+      clearTimeout(typingTimeoutRef.current[event.user_id]);
+      typingTimeoutRef.current[event.user_id] = setTimeout(() => {
+        setTypingUsers(prev => prev.filter(n => n !== event.user_name));
+      }, 3000);
+    } else if (event.type === 'presence') {
+      setRoomData(prev => prev ? { ...prev, online_users: event.online_users || [] } : prev);
+    }
+  }, []);
+
+  const { connected, onlineUsers, sendTyping } = useTransactionWebSocket(transactionId, token, handleWsEvent);
 
   useEffect(() => {
     fetchRoomData();
-    const interval = setInterval(fetchRoomData, 30000); // Refresh every 30s
+    // Fallback polling at 60s (WebSocket handles real-time)
+    const interval = setInterval(fetchRoomData, 60000);
     return () => clearInterval(interval);
   }, [transactionId]);
 
