@@ -102,6 +102,70 @@ const DeveloperPage = () => {
     }
   };
 
+  const handleCreateWebhook = async () => {
+    if (!newWebhookUrl.trim()) {
+      toast({ title: 'URL Required', variant: 'destructive' });
+      return;
+    }
+    if (newWebhookEvents.length === 0) {
+      toast({ title: 'Select at least one event', variant: 'destructive' });
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API}/developer/webhooks`, {
+        url: newWebhookUrl, events: newWebhookEvents, description: newWebhookDesc
+      }, { headers });
+      setCreatedWebhook(res.data);
+      setNewWebhookUrl('');
+      setNewWebhookDesc('');
+      fetchWebhooks();
+      toast({ title: 'Webhook Created' });
+    } catch (err) {
+      toast({ title: 'Error', description: err.response?.data?.detail || 'Failed', variant: 'destructive' });
+    }
+    setLoading(false);
+  };
+
+  const handleDeleteWebhook = async (id) => {
+    try {
+      await axios.delete(`${API}/developer/webhooks/${id}`, { headers });
+      toast({ title: 'Webhook Deleted' });
+      setExpandedWebhook(null);
+      setWebhookDetails(null);
+      fetchWebhooks();
+    } catch {
+      toast({ title: 'Error', variant: 'destructive' });
+    }
+  };
+
+  const handleTestWebhook = async (id) => {
+    try {
+      await axios.post(`${API}/developer/webhooks/${id}/test`, {}, { headers });
+      toast({ title: 'Test Event Sent', description: 'Check deliveries for the result' });
+      setTimeout(() => fetchWebhookDetails(id), 2000);
+    } catch {
+      toast({ title: 'Error', variant: 'destructive' });
+    }
+  };
+
+  const handleToggleWebhook = async (id) => {
+    try {
+      const res = await axios.post(`${API}/developer/webhooks/${id}/toggle`, {}, { headers });
+      toast({ title: res.data.active ? 'Webhook Enabled' : 'Webhook Disabled' });
+      fetchWebhooks();
+      if (webhookDetails?.id === id) fetchWebhookDetails(id);
+    } catch {
+      toast({ title: 'Error', variant: 'destructive' });
+    }
+  };
+
+  const toggleWebhookEvent = (evt) => {
+    setNewWebhookEvents(prev =>
+      prev.includes(evt) ? prev.filter(e => e !== evt) : [...prev, evt]
+    );
+  };
+
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
     toast({ title: 'Copied!' });
