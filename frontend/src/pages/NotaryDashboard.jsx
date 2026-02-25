@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useWS } from '../contexts/WebSocketContext';
 import {
   Shield, FileText, Clock, CheckCircle, Video, User, Calendar,
   TrendingUp, LogOut, XCircle, Eye, Copy, RefreshCw, AlertTriangle,
@@ -22,6 +23,7 @@ const API = `${BACKEND_URL}/api`;
 
 const NotaryDashboard = () => {
   const { user, logout, token } = useAuth();
+  const { subscribe } = useWS();
   const navigate = useNavigate();
   
   const [stats, setStats] = useState(null);
@@ -41,6 +43,14 @@ const NotaryDashboard = () => {
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  // Real-time: auto-refresh when new requests arrive or are assigned/completed
+  useEffect(() => {
+    const unsub1 = subscribe('notary_queue_update', () => fetchDashboardData());
+    const unsub2 = subscribe('request_assigned', () => fetchDashboardData());
+    const unsub3 = subscribe('request_completed', () => fetchDashboardData());
+    return () => { unsub1(); unsub2(); unsub3(); };
+  }, [subscribe]);
 
   const fetchDashboardData = async () => {
     try {
