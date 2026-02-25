@@ -201,6 +201,7 @@ const AdminDashboard = () => {
               >
                 <RefreshCw className="w-4 h-4" />
               </Button>
+              <NotificationBell token={token} />
               <Button
                 onClick={handleLogout}
                 variant="outline"
