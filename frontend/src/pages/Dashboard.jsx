@@ -15,6 +15,7 @@ const API = `${BACKEND_URL}/api`;
 
 const Dashboard = () => {
   const { user, logout, token } = useAuth();
+  const { subscribe } = useWS();
   const navigate = useNavigate();
   const [stats, setStats] = useState({ total_seals: 0, recent_seals: 0 });
   const [documents, setDocuments] = useState([]);
@@ -25,6 +26,13 @@ const Dashboard = () => {
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  // Auto-refresh dashboard when real-time events arrive
+  useEffect(() => {
+    const unsub1 = subscribe('request_assigned', () => fetchDashboardData());
+    const unsub2 = subscribe('request_completed', () => fetchDashboardData());
+    return () => { unsub1(); unsub2(); };
+  }, [subscribe]);
 
   const fetchDashboardData = async () => {
     try {
