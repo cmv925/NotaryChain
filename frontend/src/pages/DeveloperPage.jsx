@@ -55,8 +55,23 @@ const DeveloperPage = () => {
     } catch {}
   }, [token]);
 
+  const fetchWebhooks = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API}/developer/webhooks`, { headers });
+      setWebhooks(res.data.webhooks || []);
+    } catch {}
+  }, [token]);
+
+  const fetchWebhookDetails = useCallback(async (id) => {
+    try {
+      const res = await axios.get(`${API}/developer/webhooks/${id}`, { headers });
+      setWebhookDetails(res.data);
+    } catch {}
+  }, [token]);
+
   useEffect(() => {
     if (token && activeTab === 'keys') { fetchKeys(); fetchUsage(); }
+    if (token && activeTab === 'webhooks') { fetchWebhooks(); }
   }, [token, activeTab]);
 
   const handleCreateKey = async () => {
