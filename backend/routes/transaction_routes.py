@@ -657,6 +657,17 @@ async def get_job_status(
 
 # ============ HELPER FUNCTIONS ============
 
+def _serialize(obj):
+    """Serialize datetime objects for JSON"""
+    if isinstance(obj, dict):
+        return {k: _serialize(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_serialize(v) for v in obj]
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    return obj
+
+
 async def _send_transaction_invite_email(
     email: str,
     name: str,
