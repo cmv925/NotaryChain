@@ -837,6 +837,25 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - `backend/routes/public_api_routes.py` — Public API v1 endpoints
 - `frontend/src/pages/DeveloperPage.jsx` — Developer Portal page
 
+### ✅ Phase 26: RON Compliance Engine (COMPLETED - Feb 25, 2026)
+**Features:**
+- **RON Rules Database**: 51 US jurisdictions (50 states + DC) with status (full/limited/pending/prohibited), effective dates, ID requirements, witness rules, recording mandates, document restrictions, max signers
+- **Compliance Validator**: Validates notarization requests against state rules — checks RON authorization, document type restrictions, signer limits, biometric requirements. Logs all validations.
+- **RON Compliance Dashboard** (`/admin/ron-compliance`): 3-tab admin view with stats cards (98% coverage), searchable/filterable state grid with expandable rule details, violations list, and activity log with pass rate
+
+**API Endpoints:**
+- `GET /api/compliance/ron/states` — All states + stats (public)
+- `GET /api/compliance/ron/states/{code}` — Specific state rules (public)
+- `POST /api/compliance/ron/validate` — Validate request (auth required)
+- `GET /api/compliance/ron/stats` — Coverage statistics (public)
+- `GET /api/compliance/ron/violations` — Violation logs (admin)
+- `GET /api/compliance/ron/activity` — All activity + summary (admin)
+
+**New Files:**
+- `backend/services/ron_compliance_service.py` — State rules + validation engine
+- `backend/routes/ron_compliance_routes.py` — Compliance API endpoints
+- `frontend/src/pages/RONComplianceDashboard.jsx` — Admin compliance dashboard
+
 **Frontend Components:**
 - `components/ErrorBoundary.jsx` — Error boundary with fallback UI
 
