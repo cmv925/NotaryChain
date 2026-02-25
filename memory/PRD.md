@@ -405,6 +405,36 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - `POST /api/transactions/blueprints` - Create custom blueprint
 
 ### ✅ Phase 16: Enhanced Notary Workflow UI (COMPLETED - Feb 17, 2026)
+
+### ✅ Phase 17: Security Hardening (COMPLETED - Feb 25, 2026)
+**Features:**
+- **Two-Factor Authentication (TOTP):**
+  - Enable/disable 2FA via authenticator app (Google Authenticator, Authy, etc.)
+  - QR code generation for easy setup
+  - 10 single-use backup codes
+  - Backup code regeneration with TOTP verification
+  - 2FA-aware login flow with 5-minute temp token for verification step
+  - Auto-submit on 6-digit entry, paste support
+  - Dedicated Security Settings page (`/settings/security`)
+- **Security Headers Middleware:**
+  - CSP, X-Frame-Options, X-Content-Type-Options, X-XSS-Protection
+  - HSTS, Referrer-Policy, Permissions-Policy
+  - Cache-Control headers for sensitive data
+- **Rate Limiting:**
+  - Auth endpoints: 10/minute (login), 5/minute (signup)
+  - AI endpoints: 20/minute
+  - Blockchain endpoints: 30/minute
+  - Default: 100/minute
+- **Request Logging Middleware:** IP tracking and response time headers
+- **Database Indexes:** Optimized queries across users, document_seals, notarization_requests, notary_applications, transactions, audit_logs
+- **Input Sanitization:** Email validation, password strength rules, string sanitization
+- **Health Check:** Comprehensive `/api/health` endpoint checking MongoDB, Hedera, Stripe, Daily, Resend
+
+**Frontend Routes:**
+- `/settings/security` - Security Settings page with 2FA management
+
+**API Endpoints:**
+- See "Two-Factor Authentication (2FA)" section in API Endpoints Summary
 **Features:**
 - Completely redesigned Notary Dashboard with professional workstation UI
 - Three main tabs: Available Requests, My Requests, History
