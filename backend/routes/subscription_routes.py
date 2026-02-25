@@ -21,6 +21,7 @@ from emergentintegrations.payments.stripe.checkout import (
 from models import User
 from routes.auth_routes import get_current_user
 from services.notification_service import create_notification
+from services.cache_service import cache_service
 
 logger = logging.getLogger(__name__)
 
@@ -129,11 +130,16 @@ class SubscriptionResponse(BaseModel):
 
 @router.get("/plans")
 async def get_plans():
-    """Get all available subscription plans"""
-    return {
+    """Get all available subscription plans (cached 5min)"""
+    cached = cache_service.get("plans", "all_plans")
+    if cached:
+        return cached
+    result = {
         "plans": list(PLANS.values()),
         "currency": "USD",
     }
+    cache_service.set("plans", "all_plans", result)
+    return result
 
 
 @router.get("/current")
