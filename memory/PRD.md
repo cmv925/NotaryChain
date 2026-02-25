@@ -749,6 +749,17 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - `GET /api/auth/2fa/status` - Get 2FA status
 - `POST /api/auth/2fa/regenerate-backup-codes` - Regenerate backup codes
 
+### Notifications
+- `GET /api/notifications/` - List user notifications (paginated, filterable by unread)
+- `GET /api/notifications/unread-count` - Get unread notification count
+- `POST /api/notifications/{id}/read` - Mark single notification as read
+- `POST /api/notifications/read-all` - Mark all notifications as read
+- `DELETE /api/notifications/{id}` - Delete a notification
+
+### Background Jobs
+- `GET /api/jobs/` - List recent background jobs
+- `GET /api/jobs/{id}` - Get specific job status
+
 ### AI Analysis
 - `POST /api/ai/analyze-document` - AI document analysis
 - `POST /api/ai/verify-biometric` - Biometric verification
