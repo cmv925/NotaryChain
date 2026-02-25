@@ -253,7 +253,7 @@ const Dashboard = () => {
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 flex-wrap flex-shrink-0 ml-2">
                           <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                             request.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
                             request.status === 'in_session' ? 'bg-green-500/20 text-green-400' :
