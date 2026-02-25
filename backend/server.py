@@ -47,6 +47,7 @@ ron_compliance_routes.set_db(db)
 webhook_routes.set_db(db)
 template_routes.set_db(db)
 organization_routes.set_db(db)
+draft_routes.set_db(db)
 
 # Webhook service needs db too
 from services import webhook_service
