@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 # Import route modules
-from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes
+from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes
 from middleware.security import setup_security, health_check, limiter
 
 ROOT_DIR = Path(__file__).parent
@@ -33,6 +33,7 @@ package_routes.set_db(db)
 email_routes.set_db(db)
 transaction_routes.set_db(db)
 twofa_routes.set_db(db)
+notification_routes.set_db(db)
 
 # Create the main app without a prefix
 app = FastAPI(
@@ -81,6 +82,7 @@ app.include_router(email_routes.router)
 app.include_router(transaction_routes.router)
 app.include_router(twofa_routes.router)
 app.include_router(jobs_routes.router)
+app.include_router(notification_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -132,6 +134,10 @@ async def create_indexes():
         await db.audit_logs.create_index("user_id")
         await db.audit_logs.create_index("timestamp")
         await db.audit_logs.create_index("action")
+
+        # Notifications
+        await db.notifications.create_index([("user_id", 1), ("created_at", -1)])
+        await db.notifications.create_index([("user_id", 1), ("read", 1)])
 
         logger.info("Database indexes created/verified successfully")
     except Exception as e:
