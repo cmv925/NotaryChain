@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 # Import route modules
-from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes
+from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes
 from middleware.security import setup_security, health_check, limiter
 
 ROOT_DIR = Path(__file__).parent
@@ -80,6 +80,7 @@ app.include_router(package_routes.router)
 app.include_router(email_routes.router)
 app.include_router(transaction_routes.router)
 app.include_router(twofa_routes.router)
+app.include_router(jobs_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
