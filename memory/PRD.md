@@ -451,7 +451,11 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
   status: string (active/disabled/suspended),
   created_at: datetime,
   last_login: datetime,
-  is_active: boolean
+  is_active: boolean,
+  two_factor_enabled: boolean,
+  two_factor_secret: string (encrypted TOTP secret),
+  two_factor_backup_codes: string[] (10 single-use codes),
+  two_factor_enabled_at: datetime
 }
 ```
 
@@ -619,6 +623,7 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - [x] **Notarization Certificate UI** - Printable certificate with QR code ✅ COMPLETED Feb 17, 2026
 - [x] **Custom Blueprint Creator** - Admin UI for creating workflow templates ✅ COMPLETED Feb 17, 2026
 - [x] **Enhanced Notary Workflow UI** - Redesigned Notary Dashboard with workstation UI ✅ COMPLETED Feb 17, 2026
+- [x] **Security Hardening (2FA/TOTP)** - Two-factor authentication, security headers, rate limiting, DB indexes ✅ COMPLETED Feb 25, 2026
 
 ## Admin Access
 - **Email:** admin@notarychain.com
@@ -640,8 +645,16 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 
 ### Authentication
 - `POST /api/auth/signup` - Register new user
-- `POST /api/auth/login` - Login and get token
-- `GET /api/auth/me` - Get current user
+- `POST /api/auth/login` - Login and get token (returns requires_2fa + temp_token if 2FA enabled)
+- `POST /api/auth/login/2fa` - Complete 2FA login with TOTP code
+- `GET /api/auth/me` - Get current user (includes two_factor_enabled)
+
+### Two-Factor Authentication (2FA)
+- `POST /api/auth/2fa/enable` - Start 2FA setup (returns secret, QR code, backup codes)
+- `POST /api/auth/2fa/verify-setup` - Verify and activate 2FA
+- `POST /api/auth/2fa/disable` - Disable 2FA (requires password + TOTP)
+- `GET /api/auth/2fa/status` - Get 2FA status
+- `POST /api/auth/2fa/regenerate-backup-codes` - Regenerate backup codes
 
 ### AI Analysis
 - `POST /api/ai/analyze-document` - AI document analysis
