@@ -812,6 +812,31 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - `NotaryDashboard.jsx` — Subscribes to notary_queue_update, request_assigned, request_completed
 - `AdminDashboard.jsx` — Subscribes to all platform events
 
+### ✅ Phase 25: Public REST API (Enterprise) (COMPLETED - Feb 25, 2026)
+**Features:**
+- **API Key Management**: Generate, list, revoke API keys (max 5 per user, SHA256 hashed storage, prefix-only display)
+- **Public API v1**: Rate-limited endpoints for third-party integrations authenticated via `X-API-Key` header
+- **API Usage Tracking**: Per-key call logging, usage counts, recent activity feed
+- **Developer Portal** (`/developers`): Interactive docs with API Reference tab (6 endpoints with expand/collapse, example requests/responses, copy-to-clipboard) and API Keys management tab
+- **Scope Enforcement**: `read`, `seal`, `verify` scopes per key
+
+**API Endpoints:**
+- `POST /api/developer/keys` — Create API key (returns raw key once)
+- `GET /api/developer/keys` — List user's keys
+- `DELETE /api/developer/keys/{id}` — Revoke key
+- `GET /api/developer/usage` — Usage stats + recent activity
+- `GET /api/v1/status` — Public status (no auth)
+- `POST /api/v1/seal` — Seal document hash on Hedera blockchain
+- `POST /api/v1/verify` — Verify document hash
+- `GET /api/v1/seals` — List seals (pagination)
+- `GET /api/v1/seals/{id}` — Get specific seal
+- `GET /api/v1/requests` — List notarization requests (filter by status)
+
+**New Files:**
+- `backend/routes/api_key_routes.py` — Key management + auth dependency
+- `backend/routes/public_api_routes.py` — Public API v1 endpoints
+- `frontend/src/pages/DeveloperPage.jsx` — Developer Portal page
+
 **Frontend Components:**
 - `components/ErrorBoundary.jsx` — Error boundary with fallback UI
 
