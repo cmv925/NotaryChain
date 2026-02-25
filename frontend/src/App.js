@@ -26,6 +26,9 @@ import BlueprintCreator from './pages/BlueprintCreator';
 import SecuritySettings from './pages/SecuritySettings';
 import SubscriptionPage from './pages/SubscriptionPage';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
+import NotaryJournal from './pages/NotaryJournal';
+import DigitalSeal from './pages/DigitalSeal';
+import CompliancePage from './pages/CompliancePage';
 import { Toaster } from './components/ui/toaster';
 
 function App() {
@@ -145,6 +148,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <SubscriptionSuccess />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/notary/journal"
+              element={
+                <ProtectedRoute>
+                  <NotaryJournal />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/notary/seal"
+              element={
+                <ProtectedRoute>
+                  <DigitalSeal />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/compliance"
+              element={
+                <ProtectedRoute>
+                  <CompliancePage />
                 </ProtectedRoute>
               }
             />
