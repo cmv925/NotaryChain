@@ -22,6 +22,19 @@ TEST_WEBHOOK_URL = "https://httpbin.org/post"
 # Valid webhook events
 VALID_EVENTS = ["seal.created", "document.verified", "request.completed", "request.assigned", "request.created"]
 
+# Module-level token cache to avoid rate limits
+_token_cache = {}
+
+def get_cached_token(email, password):
+    """Get cached token or login and cache it"""
+    cache_key = email
+    if cache_key not in _token_cache:
+        response = requests.post(f"{BASE_URL}/api/auth/login", json={"email": email, "password": password})
+        if response.status_code != 200:
+            raise Exception(f"Login failed: {response.text}")
+        _token_cache[cache_key] = response.json().get("access_token")
+    return _token_cache[cache_key]
+
 
 class TestWebhookSystem:
     """Webhook CRUD and functionality tests"""
