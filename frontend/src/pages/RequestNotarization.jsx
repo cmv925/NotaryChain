@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -14,6 +14,8 @@ const API = `${BACKEND_URL}/api`;
 const RequestNotarization = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const templateData = location.state;
 
   // Step management: 1=upload & analyze, 2=biometric verification, 3=form submission
   const [currentStep, setCurrentStep] = useState(1);
@@ -28,14 +30,24 @@ const RequestNotarization = () => {
   // Biometric verification state
   const [verificationResult, setVerificationResult] = useState(null);
 
-  // Form state
-  const [formData, setFormData] = useState({
-    document_name: '',
-    document_type: 'general',
-    notarization_type: 'ron',
-    scheduled_time: '',
-    signers: [{ name: '', email: '' }],
-    notes: '',
+  // Form state — pre-fill from template if navigated from TemplateLibrary
+  const [formData, setFormData] = useState(() => {
+    const base = {
+      document_name: '',
+      document_type: 'general',
+      notarization_type: 'ron',
+      scheduled_time: '',
+      signers: [{ name: '', email: '' }],
+      notes: '',
+    };
+    if (templateData?.fromTemplate) {
+      base.document_name = templateData.templateName || '';
+      base.document_type = templateData.documentType || 'general';
+      // Pre-fill signers slots based on template
+      const needed = templateData.signersNeeded || 1;
+      base.signers = Array.from({ length: needed }, () => ({ name: '', email: '' }));
+    }
+    return base;
   });
   const [loading, setLoading] = useState(false);
   const [showPdfPreview, setShowPdfPreview] = useState(false);
