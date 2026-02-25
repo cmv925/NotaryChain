@@ -111,9 +111,9 @@ const LoginPage = () => {
     <div className="min-h-screen bg-[#0f1825]">
       <Navbar />
       
-      <div className="pt-32 pb-24 flex items-center justify-center">
+      <div className="pt-24 sm:pt-32 pb-16 sm:pb-24 flex items-center justify-center px-4">
         <Card className="w-full max-w-md bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800" data-testid="login-card">
-          <CardContent className="p-8">
+          <CardContent className="p-6 sm:p-8">
             {!show2FA ? (
               <>
                 <div className="text-center mb-8">
