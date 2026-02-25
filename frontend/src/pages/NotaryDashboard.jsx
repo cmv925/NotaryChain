@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
 import { Progress } from '../components/ui/progress';
+import { NotificationBell } from '../components/NotificationBell';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
 
