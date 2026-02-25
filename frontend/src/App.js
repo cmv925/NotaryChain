@@ -198,6 +198,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/templates"
+              element={
+                <ProtectedRoute>
+                  <TemplateLibrary />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         </WebSocketProvider>
