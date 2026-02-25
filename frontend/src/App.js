@@ -31,6 +31,7 @@ import DigitalSeal from './pages/DigitalSeal';
 import CompliancePage from './pages/CompliancePage';
 import DeveloperPage from './pages/DeveloperPage';
 import RONComplianceDashboard from './pages/RONComplianceDashboard';
+import TemplateLibrary from './pages/TemplateLibrary';
 import ErrorBoundary from './components/ErrorBoundary';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { Toaster } from './components/ui/toaster';
