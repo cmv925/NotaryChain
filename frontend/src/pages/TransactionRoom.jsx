@@ -300,6 +300,30 @@ export default function TransactionRoom() {
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Refresh
               </Button>
+
+              {/* Connection Status */}
+              <div className="flex items-center gap-1.5" data-testid="ws-status">
+                {connected ? (
+                  <Wifi className="h-4 w-4 text-green-400" />
+                ) : (
+                  <WifiOff className="h-4 w-4 text-red-400" />
+                )}
+                <span className={`text-xs ${connected ? 'text-green-400' : 'text-red-400'}`}>
+                  {connected ? 'Live' : 'Offline'}
+                </span>
+              </div>
+
+              {/* Online Users Dots */}
+              {(roomData?.online_users?.length > 0 || onlineUsers.length > 0) && (
+                <div className="flex items-center gap-1" data-testid="online-users-indicator">
+                  {(roomData?.online_users || onlineUsers).slice(0, 5).map((_, i) => (
+                    <Circle key={i} className="h-2.5 w-2.5 text-green-400 fill-green-400" />
+                  ))}
+                  <span className="text-xs text-gray-400 ml-1">
+                    {(roomData?.online_users || onlineUsers).length} online
+                  </span>
+                </div>
+              )}
               
               {isOwner && transaction.status === 'draft' && (
                 <Button onClick={startTransaction} className="bg-[#00d4aa] text-black hover:bg-[#00b894]">
