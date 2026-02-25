@@ -99,3 +99,39 @@ logger = logging.getLogger(__name__)
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
+
+
+@app.on_event("startup")
+async def create_indexes():
+    """Create database indexes for query performance"""
+    try:
+        # Users collection
+        await db.users.create_index("email", unique=True)
+        await db.users.create_index("role")
+
+        # Document seals
+        await db.document_seals.create_index("user_id")
+        await db.document_seals.create_index("timestamp")
+
+        # Notarization requests
+        await db.notarization_requests.create_index("user_id")
+        await db.notarization_requests.create_index("notary_id")
+        await db.notarization_requests.create_index("status")
+        await db.notarization_requests.create_index([("status", 1), ("created_at", -1)])
+
+        # Notary applications
+        await db.notary_applications.create_index("user_id")
+        await db.notary_applications.create_index("status")
+
+        # Transactions
+        await db.transactions.create_index("ownerId")
+        await db.transactions.create_index("status")
+
+        # Audit logs
+        await db.audit_logs.create_index("user_id")
+        await db.audit_logs.create_index("timestamp")
+        await db.audit_logs.create_index("action")
+
+        logger.info("Database indexes created/verified successfully")
+    except Exception as e:
+        logger.warning(f"Index creation warning: {e}")
