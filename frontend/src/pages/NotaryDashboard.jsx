@@ -254,17 +254,17 @@ const NotaryDashboard = () => {
     <div className="min-h-screen bg-[#0a0a0a]">
       {/* Header */}
       <header className="bg-gradient-to-r from-[#1a1a2e] to-[#16213e] border-b border-[#333]">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-                <Shield className="w-8 h-8 text-[#00d4aa]" />
-                <span className="text-xl font-bold text-white">
+                <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-[#00d4aa]" />
+                <span className="text-lg sm:text-xl font-bold text-white">
                   Notary<span className="text-[#00d4aa]">Chain</span>
                 </span>
               </div>
-              <span className="text-gray-600">|</span>
-              <div className="flex items-center gap-2">
+              <span className="text-gray-600 hidden sm:inline">|</span>
+              <div className="hidden sm:flex items-center gap-2">
                 <Briefcase className="w-5 h-5 text-[#00d4aa]" />
                 <span className="text-[#00d4aa] font-semibold">Notary Workstation</span>
               </div>
