@@ -1,6 +1,6 @@
 """
-Background Task Manager
-Track and manage async background jobs with status reporting
+Background Task Manager (Enhanced)
+Track and manage async background jobs with retry, priority, timeout, and structured logging
 """
 
 import logging
@@ -18,16 +18,34 @@ class JobStatus(str, Enum):
     RUNNING = "running"
     COMPLETED = "completed"
     FAILED = "failed"
+    RETRYING = "retrying"
+
+
+class JobPriority(int, Enum):
+    LOW = 0
+    NORMAL = 1
+    HIGH = 2
+    CRITICAL = 3
 
 
 class BackgroundTaskManager:
-    """Manages background jobs with status tracking"""
+    """Manages background jobs with status tracking, retry logic, and timeout handling."""
 
     def __init__(self):
         self.jobs: Dict[str, dict] = {}
-        self._max_history = 200  # Keep last N completed jobs
+        self._max_history = 200
+        self._default_max_retries = 3
+        self._default_timeout = 300  # 5 min
 
-    def create_job(self, job_type: str, description: str = "", metadata: dict = None) -> str:
+    def create_job(
+        self,
+        job_type: str,
+        description: str = "",
+        metadata: dict = None,
+        priority: JobPriority = JobPriority.NORMAL,
+        max_retries: int = None,
+        timeout: int = None,
+    ) -> str:
         job_id = str(uuid.uuid4())
         self.jobs[job_id] = {
             "id": job_id,
@@ -38,11 +56,16 @@ class BackgroundTaskManager:
             "result": None,
             "error": None,
             "metadata": metadata or {},
+            "priority": priority,
+            "retry_count": 0,
+            "max_retries": max_retries if max_retries is not None else self._default_max_retries,
+            "timeout": timeout or self._default_timeout,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "started_at": None,
             "completed_at": None,
         }
         self._cleanup_old_jobs()
+        logger.info(f"Job created: {job_id} type={job_type} priority={priority}")
         return job_id
 
     def start_job(self, job_id: str):
@@ -62,21 +85,34 @@ class BackgroundTaskManager:
             self.jobs[job_id]["progress"] = 100
             self.jobs[job_id]["result"] = result
             self.jobs[job_id]["completed_at"] = datetime.now(timezone.utc).isoformat()
+            logger.info(f"Job completed: {job_id}")
 
     def fail_job(self, job_id: str, error: str):
         if job_id in self.jobs:
-            self.jobs[job_id]["status"] = JobStatus.FAILED
-            self.jobs[job_id]["error"] = error
-            self.jobs[job_id]["completed_at"] = datetime.now(timezone.utc).isoformat()
+            job = self.jobs[job_id]
+            job["error"] = error
+
+            if job["retry_count"] < job["max_retries"]:
+                job["status"] = JobStatus.RETRYING
+                job["retry_count"] += 1
+                logger.warning(f"Job {job_id} failed (attempt {job['retry_count']}/{job['max_retries']}): {error}")
+                return True  # Indicates retry should happen
+            else:
+                job["status"] = JobStatus.FAILED
+                job["completed_at"] = datetime.now(timezone.utc).isoformat()
+                logger.error(f"Job {job_id} permanently failed after {job['retry_count']} retries: {error}")
+                return False  # No more retries
 
     def get_job(self, job_id: str) -> Optional[dict]:
         return self.jobs.get(job_id)
 
-    def get_user_jobs(self, job_type: str = None) -> list:
+    def get_user_jobs(self, job_type: str = None, status: str = None) -> list:
         jobs = list(self.jobs.values())
         if job_type:
             jobs = [j for j in jobs if j["type"] == job_type]
-        return sorted(jobs, key=lambda j: j["created_at"], reverse=True)[:50]
+        if status:
+            jobs = [j for j in jobs if j["status"] == status]
+        return sorted(jobs, key=lambda j: (j.get("priority", 1), j["created_at"]), reverse=True)[:50]
 
     def _cleanup_old_jobs(self):
         if len(self.jobs) > self._max_history:
@@ -88,17 +124,47 @@ class BackgroundTaskManager:
             for jid, _ in completed[:to_remove]:
                 del self.jobs[jid]
 
-    async def run_async(self, job_id: str, coro: Callable):
-        """Run an async coroutine as a tracked background job"""
-        self.start_job(job_id)
-        try:
-            result = await coro
-            self.complete_job(job_id, result)
-            return result
-        except Exception as e:
-            self.fail_job(job_id, str(e))
-            logger.error(f"Background job {job_id} failed: {e}")
-            raise
+    async def run_async(self, job_id: str, coro_factory: Callable, *args, **kwargs):
+        """Run an async callable as a tracked background job with retry and timeout.
+
+        Args:
+            job_id: The tracked job ID
+            coro_factory: An async function (NOT an awaitable) that will be called on each attempt
+        """
+        job = self.jobs.get(job_id)
+        if not job:
+            return
+
+        while True:
+            self.start_job(job_id)
+            try:
+                result = await asyncio.wait_for(
+                    coro_factory(*args, **kwargs),
+                    timeout=job["timeout"],
+                )
+                self.complete_job(job_id, result)
+                return result
+            except asyncio.TimeoutError:
+                should_retry = self.fail_job(job_id, f"Timed out after {job['timeout']}s")
+                if not should_retry:
+                    return None
+                await asyncio.sleep(min(2 ** job["retry_count"], 30))  # Exponential backoff
+            except Exception as e:
+                should_retry = self.fail_job(job_id, str(e))
+                if not should_retry:
+                    return None
+                await asyncio.sleep(min(2 ** job["retry_count"], 30))
+
+    def stats(self) -> dict:
+        status_counts = {}
+        for j in self.jobs.values():
+            s = j["status"]
+            status_counts[s] = status_counts.get(s, 0) + 1
+        return {
+            "total_jobs": len(self.jobs),
+            "by_status": status_counts,
+            "max_history": self._max_history,
+        }
 
 
 # Singleton
