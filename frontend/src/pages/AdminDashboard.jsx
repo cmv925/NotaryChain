@@ -10,6 +10,7 @@ import {
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Input } from '../components/ui/input';
+import { NotificationBell } from '../components/NotificationBell';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
 import {
