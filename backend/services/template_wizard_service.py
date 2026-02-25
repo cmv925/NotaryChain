@@ -209,7 +209,6 @@ async def ai_suggest_field(
             "Be concise and formal. Only return the field value — no explanations, "
             "no quotes, no markdown. Match the tone of official legal documents."
         ),
-        model="gemini-2.0-flash",
     )
 
     prompt = (
