@@ -885,7 +885,7 @@ async def get_comprehensive_analytics(
         "total_transactions": sum(t["transactions"] for t in transaction_activity)
     }
     
-    return {
+    result = {
         "summary": summary,
         "user_growth": user_growth,
         "revenue_trends": revenue_trends,
@@ -896,3 +896,5 @@ async def get_comprehensive_analytics(
         "document_types": document_types,
         "transaction_types": transaction_types
     }
+    cache_service.set("stats", cache_key, result)
+    return result
