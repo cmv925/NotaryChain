@@ -9,7 +9,8 @@ import { NotificationBell } from '../components/NotificationBell';
 import {
   ArrowLeft, Key, Plus, Trash2, Copy, Eye, EyeOff,
   Code, Shield, Zap, CheckCircle, Clock, AlertCircle,
-  ChevronDown, ChevronRight, ExternalLink, Activity
+  ChevronDown, ChevronRight, ExternalLink, Activity,
+  Webhook, Send, ToggleLeft, ToggleRight, XCircle
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
