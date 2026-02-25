@@ -310,16 +310,14 @@ class TestDashboardEndpoints:
 class TestBroadcastEventIntegration:
     """Integration tests for broadcast_event function"""
     
-    @pytest.fixture
-    def demo_token(self):
-        response = requests.post(f"{BASE_URL}/api/auth/login", json=DEMO_USER)
-        if response.status_code == 200:
-            return response.json().get("access_token")
-        pytest.skip("Could not get demo user token")
-    
     @pytest.mark.asyncio
-    async def test_ws_receives_events_structure(self, demo_token):
+    async def test_ws_receives_events_structure(self):
         """Test that WS connection is ready to receive events"""
+        response = requests.post(f"{BASE_URL}/api/auth/login", json=DEMO_USER)
+        if response.status_code != 200:
+            pytest.skip("Could not get demo user token")
+        demo_token = response.json().get("access_token")
+        
         try:
             async with websockets.connect(WS_URL, close_timeout=5) as ws:
                 # Authenticate
