@@ -269,7 +269,8 @@ const NotaryDashboard = () => {
                 <span className="text-[#00d4aa] font-semibold">Notary Workstation</span>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <NotificationBell token={token} />
               <Button
                 onClick={fetchDashboardData}
                 variant="ghost"
@@ -283,7 +284,7 @@ const NotaryDashboard = () => {
                 onClick={() => navigate('/dashboard')}
                 variant="outline"
                 size="sm"
-                className="border-[#333] text-gray-300 hover:text-white"
+                className="border-[#333] text-gray-300 hover:text-white hidden sm:flex"
               >
                 User View
               </Button>
