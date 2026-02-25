@@ -1047,6 +1047,15 @@ const RequestNotarization = () => {
       </div>
 
       <Footer />
+
+      {/* PDF Preview Modal */}
+      {showPdfPreview && selectedFile && selectedFile.type === 'application/pdf' && (
+        <PDFPreview
+          fileUrl={URL.createObjectURL(selectedFile)}
+          fileName={selectedFile.name}
+          onClose={() => setShowPdfPreview(false)}
+        />
+      )}
     </div>
   );
 };
