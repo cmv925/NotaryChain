@@ -48,6 +48,7 @@ const RequestNotarization = () => {
     notes: '',
   });
   const [loading, setLoading] = useState(false);
+  const [showPdfPreview, setShowPdfPreview] = useState(false);
 
   const documentTypes = [
     { value: 'general', label: 'General Document' },
