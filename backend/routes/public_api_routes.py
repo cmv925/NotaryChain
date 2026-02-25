@@ -125,6 +125,15 @@ async def seal_document(
 
     await _log_api_call(user_id, key_doc["id"], "/v1/seal", "POST", 200)
 
+    # Trigger webhook
+    import asyncio
+    asyncio.create_task(trigger_event(user_id, "seal.created", {
+        "seal_id": seal_id,
+        "document_name": body.document_name,
+        "document_hash": body.document_hash,
+        "topic_id": seal_doc.get("topic_id"),
+    }))
+
     return {
         "seal_id": seal_id,
         "document_hash": body.document_hash,
