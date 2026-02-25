@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="12" failures="1" skipped="0" tests="25" time="7.868" timestamp="2026-02-25T03:17:35.736560+00:00" hostname="agent-env-af53be46-b928-4056-bf49-5b99728dc071"><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestAuthentication" name="test_health_check" time="0.187" /><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestAuthentication" name="test_login_demo_user" time="0.446" /><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestAuthentication" name="test_login_notary_user" time="0.336" /><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestAuthentication" name="test_login_admin_user" time="0.336" /><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestGDPRPrivacy" name="test_get_privacy_settings" time="0.469"><failure message="AssertionError: Missing key: data_sharing&#10;assert 'data_sharing' in {'analytics_tracking': False, 'marketing_emails': True}">backend/tests/test_phase_bc_notary_gdpr.py:80: in test_get_privacy_settings
+    assert key in settings, f"Missing key: {key}"
+E   AssertionError: Missing key: data_sharing
+E   assert 'data_sharing' in {'analytics_tracking': False, 'marketing_emails': True}</failure></testcase><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestGDPRPrivacy" name="test_update_privacy_settings" time="0.712" /><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestGDPRPrivacy" name="test_privacy_requires_auth" time="0.110" /><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestGDPRDataExport" name="test_data_export" time="0.515" /><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestGDPRDataExport" name="test_export_requires_auth" time="0.119" /><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestGDPRDeletionRequest" name="test_deletion_status" time="0.481" /><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestGDPRDeletionRequest" name="test_deletion_request_wrong_password" time="0.696" /><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestGDPRDeletionRequest" name="test_deletion_request_and_cancel" time="1.179" /><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestGDPRDeletionRequest" name="test_cancel_without_request" time="0.614" /><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestNotaryJournal" name="test_journal_get_entries" time="0.117"><error message="failed on setup with &quot;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/test_phase_bc_notary_gdpr.py:259: in admin_headers
+    assert response.status_code == 200
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestNotaryJournal" name="test_journal_get_stats" time="0.136"><error message="failed on setup with &quot;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/test_phase_bc_notary_gdpr.py:259: in admin_headers
+    assert response.status_code == 200
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestNotaryJournal" name="test_journal_create_entry" time="0.108"><error message="failed on setup with &quot;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/test_phase_bc_notary_gdpr.py:259: in admin_headers
+    assert response.status_code == 200
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestNotaryJournal" name="test_journal_search" time="0.142"><error message="failed on setup with &quot;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/test_phase_bc_notary_gdpr.py:259: in admin_headers
+    assert response.status_code == 200
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestNotaryJournal" name="test_journal_pagination" time="0.200"><error message="failed on setup with &quot;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/test_phase_bc_notary_gdpr.py:259: in admin_headers
+    assert response.status_code == 200
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestDigitalSeals" name="test_get_seals" time="0.105"><error message="failed on setup with &quot;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/test_phase_bc_notary_gdpr.py:351: in admin_headers
+    assert response.status_code == 200
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestDigitalSeals" name="test_upload_seal" time="0.105"><error message="failed on setup with &quot;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/test_phase_bc_notary_gdpr.py:351: in admin_headers
+    assert response.status_code == 200
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestDigitalSeals" name="test_upload_invalid_file_type" time="0.100"><error message="failed on setup with &quot;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/test_phase_bc_notary_gdpr.py:351: in admin_headers
+    assert response.status_code == 200
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestDigitalSeals" name="test_seal_lifecycle" time="0.121"><error message="failed on setup with &quot;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/test_phase_bc_notary_gdpr.py:351: in admin_headers
+    assert response.status_code == 200
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestDigitalSeals" name="test_seal_file_access" time="0.112"><error message="failed on setup with &quot;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/test_phase_bc_notary_gdpr.py:351: in admin_headers
+    assert response.status_code == 200
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestDigitalSeals" name="test_seal_not_found" time="0.117"><error message="failed on setup with &quot;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/test_phase_bc_notary_gdpr.py:351: in admin_headers
+    assert response.status_code == 200
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="backend.tests.test_phase_bc_notary_gdpr.TestNotaryCommission" name="test_get_commission_info" time="0.112"><error message="failed on setup with &quot;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/test_phase_bc_notary_gdpr.py:517: in admin_headers
+    assert response.status_code == 200
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase></testsuite></testsuites>
