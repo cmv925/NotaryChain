@@ -259,3 +259,75 @@ async def preview_template(template_id: str, current_user: dict = Depends(get_cu
         "estimated_time": template["estimated_time"],
         "notarization_required": template["notarization_required"],
     }
+
+
+class GeneratePDFRequest(BaseModel):
+    field_values: Dict[str, str]
+
+
+class AISuggestRequest(BaseModel):
+    field_label: str
+    field_name: str
+    existing_values: Dict[str, str] = {}
+
+
+@router.post("/{template_id}/generate")
+async def generate_template_pdf(
+    template_id: str,
+    body: GeneratePDFRequest,
+    current_user: dict = Depends(get_current_user),
+):
+    """Generate a formatted PDF from filled template fields."""
+    template = await db.templates.find_one({"id": template_id}, {"_id": 0})
+    if not template:
+        raise HTTPException(status_code=404, detail="Template not found")
+
+    from services.template_wizard_service import generate_pdf
+
+    try:
+        filepath = generate_pdf(template, body.field_values)
+    except Exception as e:
+        logger.error(f"PDF generation failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate PDF")
+
+    # Track generation
+    await db.templates.update_one({"id": template_id}, {"$inc": {"usage_count": 1}})
+
+    filename = os.path.basename(filepath)
+    return FileResponse(
+        filepath,
+        media_type="application/pdf",
+        filename=f"{template['name'].replace(' ', '_')}.pdf",
+        headers={"X-Generated-File": filename},
+    )
+
+
+@router.post("/{template_id}/ai-suggest")
+async def ai_suggest(
+    template_id: str,
+    body: AISuggestRequest,
+    current_user: dict = Depends(get_current_user),
+):
+    """Use AI to suggest content for a template field."""
+    template = await db.templates.find_one({"id": template_id}, {"_id": 0})
+    if not template:
+        raise HTTPException(status_code=404, detail="Template not found")
+
+    api_key = os.environ.get("EMERGENT_LLM_KEY", "")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="AI service not configured")
+
+    from services.template_wizard_service import ai_suggest_field
+
+    try:
+        suggestion = await ai_suggest_field(
+            api_key=api_key,
+            template_name=template["name"],
+            field_label=body.field_label,
+            field_context={},
+            existing_values=body.existing_values,
+        )
+        return {"suggestion": suggestion}
+    except Exception as e:
+        logger.error(f"AI suggestion failed: {e}")
+        raise HTTPException(status_code=500, detail="AI suggestion failed")
