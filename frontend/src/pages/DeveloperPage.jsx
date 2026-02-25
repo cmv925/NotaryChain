@@ -32,6 +32,15 @@ const DeveloperPage = () => {
   const [showKey, setShowKey] = useState(false);
   const [expandedEndpoint, setExpandedEndpoint] = useState(null);
 
+  // Webhook state
+  const [webhooks, setWebhooks] = useState([]);
+  const [newWebhookUrl, setNewWebhookUrl] = useState('');
+  const [newWebhookEvents, setNewWebhookEvents] = useState(['seal.created', 'document.verified', 'request.completed']);
+  const [newWebhookDesc, setNewWebhookDesc] = useState('');
+  const [createdWebhook, setCreatedWebhook] = useState(null);
+  const [expandedWebhook, setExpandedWebhook] = useState(null);
+  const [webhookDetails, setWebhookDetails] = useState(null);
+
   const fetchKeys = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/developer/keys`, { headers });
