@@ -545,8 +545,114 @@ async def get_transaction_room(
         "tasks": tasks,
         "messages": messages,
         "documents": documents,
-        "current_participant": {k: v for k, v in participant.items() if k != "_id"}
+        "current_participant": {k: v for k, v in participant.items() if k != "_id"},
+        "online_users": ws_manager.get_online_users(transaction_id)
     }
+
+
+# ============ WEBSOCKET ============
+
+@router.websocket("/{transaction_id}/ws")
+async def websocket_endpoint(websocket: WebSocket, transaction_id: str):
+    """WebSocket for real-time transaction room updates"""
+    # Authenticate via query param token
+    token = websocket.query_params.get("token")
+    if not token:
+        await websocket.close(code=4001, reason="Missing token")
+        return
+
+    payload = decode_access_token(token)
+    if not payload:
+        await websocket.close(code=4001, reason="Invalid token")
+        return
+
+    email = payload.get("sub")
+    user = await db.users.find_one({"email": email}, {"_id": 0, "id": 1, "email": 1, "full_name": 1})
+    if not user:
+        await websocket.close(code=4001, reason="User not found")
+        return
+
+    # Verify participant
+    participant = await db.transaction_participants.find_one({
+        "transaction_id": transaction_id,
+        "user_id": user["id"]
+    })
+    if not participant:
+        await websocket.close(code=4003, reason="Not a participant")
+        return
+
+    user_name = participant.get("name", user.get("full_name", email))
+    user_id = user["id"]
+
+    await ws_manager.connect(websocket, transaction_id, user_id, user_name)
+
+    # Send initial presence list
+    try:
+        await websocket.send_json({
+            "type": "presence",
+            "event": "connected",
+            "online_users": ws_manager.get_online_users(transaction_id),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+    except Exception:
+        pass
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            try:
+                msg = json.loads(data)
+                msg_type = msg.get("type")
+
+                if msg_type == "ping":
+                    await websocket.send_json({"type": "pong"})
+
+                elif msg_type == "typing":
+                    await ws_manager.broadcast(transaction_id, {
+                        "type": "typing",
+                        "user_id": user_id,
+                        "user_name": user_name,
+                        "timestamp": datetime.now(timezone.utc).isoformat()
+                    }, exclude_user=user_id)
+
+            except json.JSONDecodeError:
+                pass
+    except WebSocketDisconnect:
+        ws_manager.disconnect(transaction_id, user_id, user_name)
+        await ws_manager.broadcast(transaction_id, {
+            "type": "presence",
+            "event": "user_left",
+            "user_id": user_id,
+            "user_name": user_name,
+            "online_users": ws_manager.get_online_users(transaction_id),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+    except Exception as e:
+        logger.error(f"WS error for {user_id} in room {transaction_id}: {e}")
+        ws_manager.disconnect(transaction_id, user_id, user_name)
+
+
+# ============ BACKGROUND JOBS ============
+
+@router.get("/jobs/status")
+async def get_job_statuses(
+    job_type: Optional[str] = None,
+    current_user: User = Depends(get_current_user)
+):
+    """Get background job statuses"""
+    return {"jobs": task_manager.get_user_jobs(job_type)}
+
+
+@router.get("/jobs/{job_id}")
+async def get_job_status(
+    job_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get a specific job status"""
+    job = task_manager.get_job(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return job
 
 
 # ============ HELPER FUNCTIONS ============
