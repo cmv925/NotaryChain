@@ -10,7 +10,7 @@ from models import User
 from routes.auth_routes import get_current_user
 from services.hedera_service import hedera_service
 from services.email_service import email_service
-from routes.notification_routes import create_notification
+from services.notification_service import create_notification
 from datetime import datetime, timezone
 import logging
 import uuid
