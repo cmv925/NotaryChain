@@ -41,7 +41,7 @@ def sign_payload(payload: str, secret: str) -> str:
 
 async def trigger_event(user_id: str, event_type: str, data: dict):
     """Find all active webhooks for a user+event and dispatch deliveries"""
-    if not db:
+    if db is None:
         return
 
     webhooks = await db.webhooks.find({
