@@ -435,6 +435,41 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 
 **API Endpoints:**
 - See "Two-Factor Authentication (2FA)" section in API Endpoints Summary
+
+### ✅ Phase 18: Production Infrastructure (COMPLETED - Feb 25, 2026)
+**Features:**
+- **WebSocket Real-time Collaboration:**
+  - Transaction Room live connection via `/api/transactions/{id}/ws`
+  - Real-time message delivery (no polling required for new messages)
+  - Typing indicators across participants
+  - User presence tracking (online/offline dots per participant)
+  - Connection status indicator (Live/Offline) in UI
+  - Auto-reconnect with 3-second delay on disconnect
+  - Ping/pong keepalive (25s interval)
+  - Graceful join/leave broadcasts
+  - Reduced polling from 30s to 60s (WebSocket handles real-time)
+- **Background Job Processing:**
+  - In-memory task manager with status tracking (pending → running → completed/failed)
+  - Job lifecycle tracking: create, start, progress updates, completion/failure
+  - Email sending tracked as background jobs with job IDs
+  - API endpoints: `GET /api/jobs/`, `GET /api/jobs/{id}`
+  - Auto-cleanup of old completed jobs (200 max history)
+- **PDF Document Preview:**
+  - In-app PDF viewing using react-pdf v10.4.0 with pdfjs-dist v5.4.296
+  - Full-screen modal with page navigation, zoom controls
+  - Download button, text layer, annotation layer support
+  - PDFPreview and PDFPreviewButton reusable components
+  - Authenticated file serving at `GET /api/documents/files/{filename}`
+  - Path traversal protection on file serving
+
+**New Backend Services:**
+- `services/ws_manager.py` - WebSocket connection manager (singleton)
+- `services/task_manager.py` - Background task manager (singleton)
+- `routes/jobs_routes.py` - Background jobs API
+
+**Frontend Components:**
+- `hooks/useTransactionWebSocket.js` - WebSocket hook for Transaction Room
+- `components/PDFPreview.jsx` - PDF preview modal and button components
 **Features:**
 - Completely redesigned Notary Dashboard with professional workstation UI
 - Three main tabs: Available Requests, My Requests, History
