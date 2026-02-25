@@ -30,6 +30,7 @@ import NotaryJournal from './pages/NotaryJournal';
 import DigitalSeal from './pages/DigitalSeal';
 import CompliancePage from './pages/CompliancePage';
 import ErrorBoundary from './components/ErrorBoundary';
+import { WebSocketProvider } from './contexts/WebSocketContext';
 import { Toaster } from './components/ui/toaster';
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
     <ErrorBoundary>
     <div className="App">
       <AuthProvider>
+        <WebSocketProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -179,6 +181,7 @@ function App() {
             />
           </Routes>
         </BrowserRouter>
+        </WebSocketProvider>
         <Toaster />
       </AuthProvider>
     </div>
