@@ -503,6 +503,47 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 
 **Frontend Components:**
 - `components/NotificationBell.jsx` - Bell icon with badge and dropdown
+
+### ✅ Phase 20: Stripe Subscription Tiers (COMPLETED - Feb 25, 2026)
+**Features:**
+- **3 Subscription Plans:**
+  - Starter (Free): 3 notarizations/mo, 5 AI analyses, 1 transaction, 100MB storage
+  - Professional ($29/mo): 25 notarizations/mo, 50 AI analyses, 10 transactions, 1GB storage, video sessions, blockchain sealing
+  - Enterprise ($99/mo): Unlimited notarizations/AI/transactions, 10GB storage, priority support, transaction orchestrator, custom blueprints
+- **Stripe Checkout Integration:**
+  - Create checkout sessions via emergentintegrations library
+  - Payment success polling with auto-activation
+  - Subscription cancellation (active until period end)
+- **Usage Tracking:**
+  - Real-time usage counting from MongoDB per billing period
+  - Visual progress bars with limit-reached indicators
+  - "Upgrade" prompts when limits exceeded
+- **Subscription Management Page:**
+  - Current plan display with status badge
+  - Usage breakdown with progress bars
+  - Plan features list
+  - Upgrade and cancel buttons
+- **Pricing Page:**
+  - Dynamic plan comparison grid
+  - "Most Popular" badge on Professional
+  - "Current Plan" indicator when logged in
+  - Responsive layout (stacked cards on mobile)
+
+**Frontend Routes:**
+- `/pricing` - Public pricing page (updated with dynamic plans)
+- `/subscription` - Subscription management (authenticated)
+- `/subscription/success` - Payment success polling page
+
+**API Endpoints:**
+- `GET /api/subscriptions/plans` - List all plans (public)
+- `GET /api/subscriptions/current` - Current subscription with usage
+- `GET /api/subscriptions/usage` - Detailed usage per resource
+- `POST /api/subscriptions/checkout` - Create Stripe checkout session
+- `GET /api/subscriptions/checkout/status/{session_id}` - Poll payment status
+- `POST /api/subscriptions/cancel` - Cancel subscription
+
+**Backend Files:**
+- `routes/subscription_routes.py` - Subscription CRUD, checkout, plan limits
 **Features:**
 - Completely redesigned Notary Dashboard with professional workstation UI
 - Three main tabs: Available Requests, My Requests, History
@@ -724,6 +765,7 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - [x] **Security Hardening (2FA/TOTP)** - Two-factor authentication, security headers, rate limiting, DB indexes ✅ COMPLETED Feb 25, 2026
 - [x] **Production Infrastructure** - WebSockets, background jobs, PDF preview ✅ COMPLETED Feb 25, 2026
 - [x] **Real-time Notifications & Mobile Polish** - Notification bell, mobile responsiveness ✅ COMPLETED Feb 25, 2026
+- [x] **Stripe Subscription Tiers** - 3-tier pricing, checkout, usage tracking, plan management ✅ COMPLETED Feb 25, 2026
 
 ## Admin Access
 - **Email:** admin@notarychain.com
