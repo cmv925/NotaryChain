@@ -218,7 +218,7 @@ const Dashboard = () => {
         {/* Quick Actions */}
         <div className="mb-6 sm:mb-8">
           <h3 className="text-lg sm:text-xl font-semibold text-white mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <Button
               onClick={() => navigate('/demo')}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-6 text-lg justify-start"
@@ -237,6 +237,17 @@ const Dashboard = () => {
               <div className="text-left">
                 <div className="font-semibold">Request Notarization</div>
                 <div className="text-sm text-green-200">Full notary service</div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => navigate('/templates')}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-6 text-lg justify-start"
+              data-testid="templates-button"
+            >
+              <BookOpen className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Templates</div>
+                <div className="text-sm text-purple-200">Pre-built legal docs</div>
               </div>
             </Button>
             <Button
