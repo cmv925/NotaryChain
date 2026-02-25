@@ -184,6 +184,10 @@ const TemplateWizard = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
 
+  // Read draft query param
+  const searchParams = new URLSearchParams(window.location.search);
+  const draftParam = searchParams.get('draft');
+
   const [template, setTemplate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [fieldValues, setFieldValues] = useState({});
@@ -192,7 +196,7 @@ const TemplateWizard = () => {
   const [generatedPdfUrl, setGeneratedPdfUrl] = useState(null);
 
   // Draft state
-  const [draftId, setDraftId] = useState(null);
+  const [draftId, setDraftId] = useState(draftParam || null);
   const [draftVersion, setDraftVersion] = useState(0);
   const [savingDraft, setSavingDraft] = useState(false);
   const [shareToken, setShareToken] = useState(null);
@@ -210,10 +214,27 @@ const TemplateWizard = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTemplate(res.data);
-      // Initialize field values
-      const init = {};
-      (res.data.fields || []).forEach((f) => { init[f.name] = ''; });
-      setFieldValues(init);
+
+      // If loading from a draft, get draft data
+      if (draftParam) {
+        try {
+          const draftRes = await axios.get(`${API}/drafts/${draftParam}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setFieldValues(draftRes.data.field_values || {});
+          setDraftVersion(draftRes.data.version);
+          setShareToken(draftRes.data.share_token);
+        } catch {
+          // Draft not found, initialize fresh
+          const init = {};
+          (res.data.fields || []).forEach((f) => { init[f.name] = ''; });
+          setFieldValues(init);
+        }
+      } else {
+        const init = {};
+        (res.data.fields || []).forEach((f) => { init[f.name] = ''; });
+        setFieldValues(init);
+      }
     } catch (error) {
       toast({ title: 'Error', description: 'Template not found', variant: 'destructive' });
       navigate('/templates');
