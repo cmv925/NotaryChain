@@ -301,9 +301,9 @@ const NotaryDashboard = () => {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {/* Quick Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
           <Card className="bg-gradient-to-br from-green-600/20 to-green-600/5 border-green-500/30">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
