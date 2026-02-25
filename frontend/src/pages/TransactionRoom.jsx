@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -9,8 +9,10 @@ import { Progress } from '../components/ui/progress';
 import { 
   Users, CheckCircle2, Clock, AlertTriangle, Send, 
   FileText, MessageSquare, Sparkles, Shield, ChevronRight,
-  Play, PauseCircle, ArrowLeft, RefreshCw, Lock, Unlock
+  Play, PauseCircle, ArrowLeft, RefreshCw, Lock, Unlock,
+  Wifi, WifiOff, Circle
 } from 'lucide-react';
+import { useTransactionWebSocket } from '../hooks/useTransactionWebSocket';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
