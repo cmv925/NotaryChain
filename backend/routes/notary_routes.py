@@ -633,6 +633,17 @@ async def complete_notarization(
         }, target_user_ids=[request.get("user_id")] + notary_ids)
     except Exception as e:
         logger.debug(f"Broadcast failed: {e}")
+
+    # Trigger webhook for request owner
+    try:
+        import asyncio
+        asyncio.create_task(trigger_webhook(request.get("user_id"), "request.completed", {
+            "request_id": request_id,
+            "document_type": request.get("document_type"),
+            "status": "completed",
+        }))
+    except Exception as e:
+        logger.debug(f"Webhook trigger failed: {e}")
     
     return {
         "success": True, 
