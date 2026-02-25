@@ -39,6 +39,7 @@ notification_routes.set_db(db)
 subscription_routes.set_db(db)
 notary_professional_routes.set_db(db)
 gdpr_routes.set_db(db)
+infra_routes.set_db(db)
 set_notification_db(db)
 set_ws_manager(ws_manager)
 
