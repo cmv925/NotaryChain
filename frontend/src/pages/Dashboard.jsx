@@ -83,39 +83,42 @@ const Dashboard = () => {
     <div className="min-h-screen bg-[#0f1825]">
       {/* Header */}
       <header className="bg-[#1a2332] border-b border-gray-800">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <div className="flex items-center gap-2" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
-                <Shield className="w-8 h-8 text-blue-500" />
-                <span className="text-xl font-bold text-white">
+                <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-blue-500" />
+                <span className="text-lg sm:text-xl font-bold text-white">
                   Notary<span className="text-blue-500">Chain</span>
                 </span>
               </div>
-              <span className="text-gray-400">|</span>
-              <span className="text-gray-400">Dashboard</span>
+              <span className="text-gray-400 hidden sm:inline">|</span>
+              <span className="text-gray-400 hidden sm:inline">Dashboard</span>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="text-white font-semibold">{user?.full_name}</div>
-                <div className="text-gray-400 text-sm">{user?.email}</div>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="text-right hidden sm:block">
+                <div className="text-white font-semibold text-sm">{user?.full_name}</div>
+                <div className="text-gray-400 text-xs">{user?.email}</div>
               </div>
-              <Button
-                onClick={handleLogout}
-                variant="outline"
-                className="border-gray-700 text-gray-300 hover:text-white hover:border-red-500"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
-              </Button>
+              <NotificationBell token={token} />
               <Button
                 onClick={() => navigate('/settings/security')}
                 variant="outline"
-                className="border-gray-700 text-gray-300 hover:text-white hover:border-blue-500"
+                size="sm"
+                className="border-gray-700 text-gray-300 hover:text-white hover:border-blue-500 hidden sm:flex"
                 data-testid="security-settings-button"
               >
-                <Settings className="w-4 h-4 mr-2" />
-                Security
+                <Settings className="w-4 h-4 sm:mr-2" />
+                <span className="hidden lg:inline">Security</span>
+              </Button>
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                size="sm"
+                className="border-gray-700 text-gray-300 hover:text-white hover:border-red-500"
+              >
+                <LogOut className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Logout</span>
               </Button>
             </div>
           </div>
