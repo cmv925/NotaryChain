@@ -41,7 +41,14 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
       });
-      const { access_token } = response.data;
+      const data = response.data;
+
+      // 2FA required - return temp token for second step
+      if (data.requires_2fa) {
+        return { success: false, requires_2fa: true, temp_token: data.temp_token };
+      }
+
+      const { access_token } = data;
       localStorage.setItem('token', access_token);
       setToken(access_token);
       return { success: true };
@@ -49,6 +56,24 @@ export const AuthProvider = ({ children }) => {
       return {
         success: false,
         error: error.response?.data?.detail || 'Login failed',
+      };
+    }
+  };
+
+  const verify2FA = async (tempToken, code) => {
+    try {
+      const response = await axios.post(`${API}/auth/login/2fa`, {
+        temp_token: tempToken,
+        code,
+      });
+      const { access_token } = response.data;
+      localStorage.setItem('token', access_token);
+      setToken(access_token);
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.detail || 'Verification failed',
       };
     }
   };
@@ -83,9 +108,11 @@ export const AuthProvider = ({ children }) => {
     loading,
     token,
     login,
+    verify2FA,
     signup,
     logout,
     isAuthenticated: !!user,
+    refreshUser: fetchUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
