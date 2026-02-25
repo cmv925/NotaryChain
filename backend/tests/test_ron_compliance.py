@@ -168,15 +168,12 @@ class TestRONValidationEndpoint:
     @pytest.fixture(autouse=True)
     def setup_auth(self):
         """Login and get demo user token"""
-        response = requests.post(f"{BASE_URL}/api/auth/login", json={
-            "email": DEMO_EMAIL,
-            "password": DEMO_PASSWORD
-        })
-        if response.status_code == 200:
-            self.token = response.json().get("access_token")
+        token = get_token(DEMO_EMAIL, DEMO_PASSWORD)
+        if token:
+            self.token = token
             self.headers = {"Authorization": f"Bearer {self.token}"}
         else:
-            pytest.skip(f"Login failed: {response.status_code}")
+            pytest.skip("Demo user login failed")
 
     def test_validate_florida_affidavit_compliant(self):
         """FL affidavit should be compliant (full RON state)"""
