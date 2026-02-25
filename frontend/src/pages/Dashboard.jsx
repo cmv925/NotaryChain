@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useWS } from '../contexts/WebSocketContext';
-import { Shield, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp, Settings, CreditCard, Lock } from 'lucide-react';
+import { Shield, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp, Settings, CreditCard, Lock, Code } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { toast } from '../hooks/use-toast';
@@ -139,6 +139,16 @@ const Dashboard = () => {
               >
                 <Lock className="w-4 h-4 sm:mr-2" />
                 <span className="hidden lg:inline">Privacy</span>
+              </Button>
+              <Button
+                onClick={() => navigate('/developers')}
+                variant="outline"
+                size="sm"
+                className="border-gray-700 text-gray-300 hover:text-white hover:border-purple-500 hidden sm:flex"
+                data-testid="developer-button"
+              >
+                <Code className="w-4 h-4 sm:mr-2" />
+                <span className="hidden lg:inline">API</span>
               </Button>
               <Button
                 onClick={handleLogout}
