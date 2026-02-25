@@ -277,6 +277,17 @@ async def create_notarization_request(
     
     await db.notarization_requests.insert_one(request_dict)
     
+    # Broadcast to notaries that a new request is available
+    try:
+        notary_ids = await get_notary_user_ids()
+        await broadcast_event("notary_queue_update", {
+            "action": "new_request",
+            "request_id": request.id,
+            "document_type": request_data.document_type,
+        }, target_user_ids=notary_ids)
+    except Exception as e:
+        logger.debug(f"Broadcast failed: {e}")
+    
     # Return augmented response
     return NotarizationRequest(**{**request.dict(), "hcs_topic_id": hcs_topic_id})
 
