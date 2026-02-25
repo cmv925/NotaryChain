@@ -181,8 +181,8 @@ const TemplateLibrary = () => {
   const [previewTemplate, setPreviewTemplate] = useState(null);
 
   useEffect(() => {
-    fetchTemplates();
-  }, [activeCategory, searchQuery]);
+    if (token) fetchTemplates();
+  }, [activeCategory, searchQuery, token]);
 
   const fetchTemplates = async () => {
     try {
