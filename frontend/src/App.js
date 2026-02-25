@@ -207,6 +207,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/templates/:templateId/fill"
+              element={
+                <ProtectedRoute>
+                  <TemplateWizard />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         </WebSocketProvider>
