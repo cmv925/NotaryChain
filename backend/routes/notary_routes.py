@@ -418,6 +418,16 @@ async def assign_request(
             document_type=request.get("document_type", "Document")
         )
         logger.info(f"Assignment email queued for {user.get('email')}")
+
+    # In-app notification
+    background_tasks.add_task(
+        create_notification,
+        user_id=request.get("user_id"),
+        title="Notary Assigned",
+        message=f"A certified notary has been assigned to your {request.get('document_type', 'document')} request.",
+        notif_type="info",
+        link=f"/session/{request_id}"
+    )
     
     return {"success": True, "message": "Request assigned successfully"}
 
