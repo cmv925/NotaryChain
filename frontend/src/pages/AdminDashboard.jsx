@@ -171,27 +171,27 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-[#0f1825]">
       {/* Header */}
       <header className="bg-[#1a2332] border-b border-gray-800">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-                <Shield className="w-8 h-8 text-blue-500" />
-                <span className="text-xl font-bold text-white">
+                <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-blue-500" />
+                <span className="text-lg sm:text-xl font-bold text-white">
                   Notary<span className="text-blue-500">Chain</span>
                 </span>
               </div>
-              <span className="text-gray-400">|</span>
-              <span className="text-red-400 font-semibold">Admin Dashboard</span>
+              <span className="text-gray-400 hidden sm:inline">|</span>
+              <span className="text-red-400 font-semibold hidden sm:inline">Admin Dashboard</span>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <Button
                 onClick={() => navigate('/admin/blueprints/create')}
                 variant="outline"
                 size="sm"
-                className="border-green-600/50 text-green-400 hover:bg-green-600/20"
+                className="border-green-600/50 text-green-400 hover:bg-green-600/20 hidden sm:flex"
               >
-                <Plus className="w-4 h-4 mr-1" />
-                Blueprint
+                <Plus className="w-4 h-4 sm:mr-1" />
+                <span className="hidden lg:inline">Blueprint</span>
               </Button>
               <Button
                 onClick={fetchDashboardData}
@@ -205,17 +205,18 @@ const AdminDashboard = () => {
               <Button
                 onClick={handleLogout}
                 variant="outline"
+                size="sm"
                 className="border-gray-700 text-gray-300 hover:text-white"
               >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
+                <LogOut className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Logout</span>
               </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Stats Overview */}
         {stats && (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
