@@ -196,6 +196,11 @@ async def create_indexes():
         await db.org_invites.create_index("token", unique=True)
         await db.org_invites.create_index([("org_id", 1), ("email", 1)])
 
+        # Template Drafts
+        await db.template_drafts.create_index("id", unique=True)
+        await db.template_drafts.create_index("user_id")
+        await db.template_drafts.create_index("share_token", sparse=True)
+
         # Seed default templates
         await template_routes.seed_templates()
 
