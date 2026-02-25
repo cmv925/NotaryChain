@@ -4,11 +4,13 @@ Pre-built legal document templates for quick notarization requests.
 """
 
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import FileResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from typing import Optional
+from typing import Optional, Dict, List
 from datetime import datetime, timezone
 from pydantic import BaseModel
 import uuid
+import os
 import logging
 
 from routes.auth_routes import get_current_user
