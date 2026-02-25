@@ -45,6 +45,7 @@ api_key_routes.set_db(db)
 public_api_routes.set_db(db)
 ron_compliance_routes.set_db(db)
 webhook_routes.set_db(db)
+template_routes.set_db(db)
 
 # Webhook service needs db too
 from services import webhook_service
@@ -113,6 +114,7 @@ app.include_router(api_key_routes.router)
 app.include_router(public_api_routes.router)
 app.include_router(ron_compliance_routes.router)
 app.include_router(webhook_routes.router)
+app.include_router(template_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
