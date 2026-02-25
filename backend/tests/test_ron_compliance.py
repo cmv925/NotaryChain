@@ -16,6 +16,28 @@ ADMIN_PASSWORD = "Admin123!"
 DEMO_EMAIL = "demo@test.com"
 DEMO_PASSWORD = "Demo123!"
 
+# Module-level token cache to avoid rate limits
+_token_cache = {}
+
+
+def get_token(email, password, cache_key=None):
+    """Get token with caching to avoid rate limits"""
+    cache_key = cache_key or email
+    if cache_key in _token_cache:
+        return _token_cache[cache_key]
+    
+    response = requests.post(f"{BASE_URL}/api/auth/login", json={
+        "email": email,
+        "password": password
+    })
+    if response.status_code == 200:
+        token = response.json().get("access_token")
+        _token_cache[cache_key] = token
+        return token
+    elif response.status_code == 429:
+        pytest.skip("Rate limited on login - please wait and retry")
+    return None
+
 
 class TestRONPublicEndpoints:
     """Public endpoints that don't require authentication"""
