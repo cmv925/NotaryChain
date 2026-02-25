@@ -204,6 +204,16 @@ const AdminDashboard = () => {
                 <span className="hidden lg:inline">Blueprint</span>
               </Button>
               <Button
+                onClick={() => navigate('/admin/ron-compliance')}
+                variant="outline"
+                size="sm"
+                className="border-blue-600/50 text-blue-400 hover:bg-blue-600/20 hidden sm:flex"
+                data-testid="ron-compliance-btn"
+              >
+                <Shield className="w-4 h-4 sm:mr-1" />
+                <span className="hidden lg:inline">RON Compliance</span>
+              </Button>
+              <Button
                 onClick={fetchDashboardData}
                 variant="ghost"
                 size="sm"
