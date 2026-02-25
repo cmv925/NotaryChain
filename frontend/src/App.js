@@ -226,6 +226,22 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/my-drafts"
+              element={
+                <ProtectedRoute>
+                  <MyDrafts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/drafts/shared/:shareToken"
+              element={
+                <ProtectedRoute>
+                  <SharedDraftViewer />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         </WebSocketProvider>
