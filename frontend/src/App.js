@@ -24,6 +24,8 @@ import TransactionRoom from './pages/TransactionRoom';
 import NotarizationCertificate from './pages/NotarizationCertificate';
 import BlueprintCreator from './pages/BlueprintCreator';
 import SecuritySettings from './pages/SecuritySettings';
+import SubscriptionPage from './pages/SubscriptionPage';
+import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import { Toaster } from './components/ui/toaster';
 
 function App() {
