@@ -153,16 +153,52 @@ def init_sentry(app: FastAPI):
                     FastApiIntegration(),
                     StarletteIntegration(),
                 ],
-                traces_sample_rate=0.1,  # 10% of transactions
-                profiles_sample_rate=0.1,
+                traces_sample_rate=float(os.environ.get("SENTRY_TRACES_RATE", "0.1")),
+                profiles_sample_rate=float(os.environ.get("SENTRY_PROFILES_RATE", "0.1")),
                 environment=os.environ.get("ENVIRONMENT", "development"),
-                send_default_pii=False,  # Don't send PII by default
+                release=os.environ.get("APP_VERSION", "1.1.0"),
+                send_default_pii=False,
+                before_send=_sentry_before_send,
             )
             logger.info("Sentry error tracking initialized")
+            return True
         except Exception as e:
             logger.warning(f"Failed to initialize Sentry: {e}")
     else:
         logger.info("Sentry DSN not configured, error tracking disabled")
+    return False
+
+
+def _sentry_before_send(event, hint):
+    """Filter / enrich Sentry events before sending."""
+    # Scrub sensitive fields
+    if "request" in event and "headers" in event["request"]:
+        headers = event["request"]["headers"]
+        for key in list(headers.keys()):
+            if key.lower() in ("authorization", "cookie", "x-api-key"):
+                headers[key] = "[Filtered]"
+    # Drop noisy 404 errors
+    if event.get("exception"):
+        values = event["exception"].get("values", [])
+        for exc in values:
+            if exc.get("type") == "HTTPException" and "404" in str(exc.get("value", "")):
+                return None
+    return event
+
+
+def capture_sentry_error(error: Exception, context: dict = None):
+    """Safely capture an error to Sentry with optional context."""
+    try:
+        import sentry_sdk
+        if context:
+            with sentry_sdk.push_scope() as scope:
+                for k, v in context.items():
+                    scope.set_extra(k, v)
+                sentry_sdk.capture_exception(error)
+        else:
+            sentry_sdk.capture_exception(error)
+    except Exception:
+        pass  # Sentry not configured
 
 
 # ============ HEALTH CHECK ============
