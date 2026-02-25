@@ -229,8 +229,8 @@ const Dashboard = () => {
                       className="bg-[#0a0f1a] rounded-lg p-4 border border-gray-800 hover:border-blue-500/50 transition-all"
                     >
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                          <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
                             request.status === 'pending' ? 'bg-yellow-500/20' :
                             request.status === 'in_session' ? 'bg-green-500/20' :
                             request.status === 'completed' ? 'bg-blue-500/20' :
