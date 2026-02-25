@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Check, CheckCheck, X, ExternalLink } from 'lucide-react';
-import { Button } from './ui/button';
+import { Bell, CheckCheck, X, ExternalLink } from 'lucide-react';
+import { useWS } from '../contexts/WebSocketContext';
 import axios from 'axios';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export function NotificationBell({ token }) {
   const navigate = useNavigate();
+  const { subscribe } = useWS();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -31,13 +32,27 @@ export function NotificationBell({ token }) {
     setLoading(false);
   }, [token]);
 
+  // Initial load + fallback polling at 60s (WebSocket handles real-time)
   useEffect(() => {
     if (token) {
       fetchUnreadCount();
-      const interval = setInterval(fetchUnreadCount, 30000);
+      const interval = setInterval(fetchUnreadCount, 60000);
       return () => clearInterval(interval);
     }
   }, [token, fetchUnreadCount]);
+
+  // Subscribe to real-time notifications via WebSocket
+  useEffect(() => {
+    const unsub = subscribe('notification', (msg) => {
+      const notif = msg.notification;
+      if (notif) {
+        setUnreadCount(prev => prev + 1);
+        // Prepend to list if dropdown is open
+        setNotifications(prev => [notif, ...prev].slice(0, 15));
+      }
+    });
+    return unsub;
+  }, [subscribe]);
 
   useEffect(() => {
     if (isOpen) fetchNotifications();
@@ -103,7 +118,7 @@ export function NotificationBell({ token }) {
         <Bell className="h-5 w-5" />
         {unreadCount > 0 && (
           <span
-            className="absolute -top-0.5 -right-0.5 h-5 min-w-[20px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center"
+            className="absolute -top-0.5 -right-0.5 h-5 min-w-[20px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse"
             data-testid="notification-badge"
           >
             {unreadCount > 99 ? '99+' : unreadCount}
@@ -116,16 +131,11 @@ export function NotificationBell({ token }) {
           className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-[#1a2332] border border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden"
           data-testid="notification-dropdown"
         >
-          {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700">
             <h3 className="text-white font-semibold text-sm">Notifications</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
-                <button
-                  onClick={markAllAsRead}
-                  className="text-xs text-blue-400 hover:text-blue-300"
-                  data-testid="mark-all-read"
-                >
+                <button onClick={markAllAsRead} className="text-xs text-blue-400 hover:text-blue-300" data-testid="mark-all-read">
                   <CheckCheck className="h-4 w-4" />
                 </button>
               )}
@@ -135,7 +145,6 @@ export function NotificationBell({ token }) {
             </div>
           </div>
 
-          {/* List */}
           <div className="max-h-80 overflow-y-auto">
             {loading ? (
               <div className="py-8 text-center text-gray-500 text-sm">Loading...</div>
@@ -160,18 +169,12 @@ export function NotificationBell({ token }) {
                     }`} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <p className={`text-sm font-medium truncate ${
-                          notif.read ? 'text-gray-400' : 'text-white'
-                        }`}>
+                        <p className={`text-sm font-medium truncate ${notif.read ? 'text-gray-400' : 'text-white'}`}>
                           {notif.title}
                         </p>
-                        <span className="text-[10px] text-gray-500 flex-shrink-0">
-                          {timeAgo(notif.created_at)}
-                        </span>
+                        <span className="text-[10px] text-gray-500 flex-shrink-0">{timeAgo(notif.created_at)}</span>
                       </div>
-                      <p className={`text-xs mt-0.5 line-clamp-2 ${
-                        notif.read ? 'text-gray-500' : 'text-gray-400'
-                      }`}>
+                      <p className={`text-xs mt-0.5 line-clamp-2 ${notif.read ? 'text-gray-500' : 'text-gray-400'}`}>
                         {notif.message}
                       </p>
                       {notif.link && (
