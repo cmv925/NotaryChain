@@ -36,6 +36,8 @@ email_routes.set_db(db)
 transaction_routes.set_db(db)
 twofa_routes.set_db(db)
 notification_routes.set_db(db)
+set_notification_db(db)
+set_ws_manager(ws_manager)
 
 # Create the main app without a prefix
 app = FastAPI(
