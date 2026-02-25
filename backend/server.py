@@ -32,9 +32,17 @@ admin_routes.set_db(db)
 package_routes.set_db(db)
 email_routes.set_db(db)
 transaction_routes.set_db(db)
+twofa_routes.set_db(db)
 
 # Create the main app without a prefix
-app = FastAPI()
+app = FastAPI(
+    title="NotaryChain API",
+    description="Enterprise-grade digital notarization platform with AI and blockchain",
+    version="1.0.0"
+)
+
+# Setup security middleware (rate limiting, headers, logging, sentry)
+setup_security(app)
 
 # Create a router with the /api prefix for legacy routes
 api_router = APIRouter(prefix="/api")
