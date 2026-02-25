@@ -171,6 +171,14 @@ async def verify_document(
             "message": "No seal found for this document hash",
         }
 
+    # Trigger webhook
+    import asyncio
+    asyncio.create_task(trigger_event(user_doc["id"], "document.verified", {
+        "document_hash": body.document_hash,
+        "verified": True,
+        "seal_id": seal.get("id"),
+    }))
+
     return {
         "verified": True,
         "seal_id": seal.get("id"),
