@@ -456,6 +456,46 @@ const TemplateWizard = () => {
             <p className="text-gray-400 text-sm">{template.description}</p>
           </div>
 
+          {/* Draft Action Bar */}
+          <div className="mb-4 flex items-center gap-2 flex-wrap" data-testid="draft-action-bar">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSaveDraft}
+              disabled={savingDraft || filledCount === 0}
+              className="border-gray-700 text-gray-300 hover:text-white hover:border-blue-500"
+              data-testid="save-draft-btn"
+            >
+              {savingDraft ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Save className="w-3.5 h-3.5 mr-1.5" />}
+              {draftId ? 'Update Draft' : 'Save as Draft'}
+            </Button>
+            {draftId && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleShareDraft(false)}
+                  className="border-gray-700 text-gray-300 hover:text-white hover:border-purple-500"
+                  data-testid="share-draft-btn"
+                >
+                  <Share2 className="w-3.5 h-3.5 mr-1.5" /> Share
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleShowRevisions}
+                  className="border-gray-700 text-gray-300 hover:text-white hover:border-amber-500"
+                  data-testid="revisions-btn"
+                >
+                  <History className="w-3.5 h-3.5 mr-1.5" /> History ({draftVersion} rev{draftVersion !== 1 ? 's' : ''})
+                </Button>
+              </>
+            )}
+            {draftId && (
+              <span className="text-gray-600 text-xs ml-auto">Draft v{draftVersion}</span>
+            )}
+          </div>
+
           {/* Progress bar */}
           <div className="mb-6 flex items-center gap-3">
             <Progress value={(filledCount / totalCount) * 100} className="flex-1 h-2" />
