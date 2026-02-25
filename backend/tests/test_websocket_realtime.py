@@ -292,8 +292,13 @@ class TestDashboardEndpoints:
         assert "total_seals" in data
         print(f"✓ Dashboard stats: total_seals={data.get('total_seals')}, recent_seals={data.get('recent_seals')}")
     
-    def test_admin_stats_endpoint(self, admin_token):
+    def test_admin_stats_endpoint(self):
         """Test admin dashboard stats endpoint"""
+        response = requests.post(f"{BASE_URL}/api/auth/login", json=ADMIN_USER)
+        if response.status_code != 200:
+            pytest.skip("Could not get admin user token")
+        admin_token = response.json().get("access_token")
+        
         headers = {"Authorization": f"Bearer {admin_token}"}
         response = requests.get(f"{BASE_URL}/api/admin/stats", headers=headers)
         assert response.status_code == 200
