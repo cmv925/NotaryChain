@@ -560,9 +560,9 @@ class TestSSOConfiguration:
             assert data["sso_enabled"] == True
             assert data["sso_config"]["sso_provider"] == "oidc"
             assert data["sso_config"]["sso_client_id"] == "test-client-id"
-            # Secret should be masked
+            # Secret should be masked (shows *** + last 4 chars)
             assert "***" in data["sso_config"]["sso_client_secret"]
-            assert "12345" in data["sso_config"]["sso_client_secret"]
+            assert data["sso_config"]["sso_client_secret"].endswith("2345")
             
             print(f"SSO config updated successfully")
     
