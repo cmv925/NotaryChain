@@ -591,6 +591,16 @@ async def complete_notarization(
             hcs_topic_id=request.get("hcs_topic_id")
         )
         logger.info(f"Completion email queued for {user.get('email')}")
+
+    # In-app notification
+    background_tasks.add_task(
+        create_notification,
+        user_id=request.get("user_id"),
+        title="Notarization Complete",
+        message=f"Your {request.get('document_type', 'document')} has been notarized and sealed on the blockchain.",
+        notif_type="success",
+        link=f"/certificate/{request_id}"
+    )
     
     return {
         "success": True, 
