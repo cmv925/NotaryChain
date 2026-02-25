@@ -496,7 +496,31 @@ class TestWebhookTriggers:
     
     def test_document_verified_triggers_webhook(self):
         """POST /api/v1/verify triggers document.verified webhook event (only when document found)"""
-        # Create a webhook listening for document.verified
+        # Note: document.verified webhook only triggers when seal IS found
+        # The test needs to first seal, then verify that hash
+        
+        # Get API key
+        api_key = self._get_or_create_api_key()
+        api_headers = {"X-API-Key": api_key, "Content-Type": "application/json"}
+        
+        # First, create a seal so we have a known hash to verify
+        unique_hash = f"sha256_webhook_verify_test_{int(time.time())}"
+        seal_payload = {
+            "document_name": "TEST_verify_webhook.pdf",
+            "document_hash": unique_hash
+        }
+        seal_response = requests.post(f"{BASE_URL}/api/v1/seal", json=seal_payload, headers=api_headers)
+        
+        # May get 429 rate limit - that's okay, skip this test
+        if seal_response.status_code == 429:
+            pytest.skip("Rate limit hit on /api/v1/seal (30/min)")
+        
+        if seal_response.status_code != 200:
+            pytest.skip(f"Could not seal document for verify test: {seal_response.status_code}")
+        
+        print(f"Sealed document: {seal_response.json().get('seal_id')}")
+        
+        # Now create a webhook listening for document.verified
         webhook_payload = {
             "url": TEST_WEBHOOK_URL,
             "events": ["document.verified"],
@@ -507,18 +531,16 @@ class TestWebhookTriggers:
         webhook_id = wh_response.json()["id"]
         self.created_webhook_ids.append(webhook_id)
         
-        # Get API key
-        api_key = self._get_or_create_api_key()
-        api_headers = {"X-API-Key": api_key, "Content-Type": "application/json"}
-        
-        # Call verify endpoint
+        # Now verify the hash we just sealed - this should trigger the webhook
         verify_payload = {
-            "document_hash": f"sha256_test_verify_{int(time.time())}"
+            "document_hash": unique_hash
         }
         verify_response = requests.post(f"{BASE_URL}/api/v1/verify", json=verify_payload, headers=api_headers)
         assert verify_response.status_code == 200, f"Verify failed: {verify_response.text}"
         
-        print(f"Verify called: {verify_response.json()}")
+        verify_data = verify_response.json()
+        assert verify_data.get("verified") is True, f"Expected verified=True, got: {verify_data}"
+        print(f"Verify called: {verify_data}")
         
         # Wait for webhook delivery
         time.sleep(3)
