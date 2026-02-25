@@ -104,6 +104,16 @@ async def signup(request: Request, user_data: UserCreate, background_tasks: Back
         email=user.email,
         full_name=user.full_name or user.email.split('@')[0]
     )
+
+    # Welcome notification
+    background_tasks.add_task(
+        create_notif,
+        user_id=user.id,
+        title="Welcome to NotaryChain",
+        message="Your account is ready. Start by sealing your first document or requesting a notarization.",
+        notif_type="success",
+        link="/dashboard"
+    )
     logger.info(f"Welcome email queued for {user.email}")
     
     # Create access token
