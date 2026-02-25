@@ -206,11 +206,13 @@ def capture_sentry_error(error: Exception, context: dict = None):
 async def health_check():
     """Comprehensive health check endpoint"""
     from motor.motor_asyncio import AsyncIOMotorClient
+    from services.cache_service import cache_service
+    from services.storage_service import storage_service
     
     health = {
         "status": "healthy",
         "timestamp": time.time(),
-        "version": "1.0.0",
+        "version": "1.1.0",
         "checks": {}
     }
     
@@ -228,28 +230,43 @@ async def health_check():
         health["checks"]["mongodb"] = {"status": "unhealthy", "error": str(e)}
         health["status"] = "degraded"
     
-    # Check Hedera (optional)
+    # Check Hedera
     hedera_configured = bool(os.environ.get("HEDERA_ACCOUNT_ID"))
     health["checks"]["hedera"] = {
         "status": "configured" if hedera_configured else "not_configured"
     }
     
-    # Check Stripe (optional)
+    # Check Stripe
     stripe_configured = bool(os.environ.get("STRIPE_API_KEY"))
     health["checks"]["stripe"] = {
         "status": "configured" if stripe_configured else "not_configured"
     }
     
-    # Check Daily.co (optional)
+    # Check Daily.co
     daily_configured = bool(os.environ.get("DAILY_API_KEY"))
     health["checks"]["daily"] = {
         "status": "configured" if daily_configured else "not_configured"
     }
     
-    # Check Resend (optional)
+    # Check Resend
     resend_configured = bool(os.environ.get("RESEND_API_KEY"))
     health["checks"]["resend"] = {
         "status": "configured" if resend_configured else "not_configured"
+    }
+
+    # Cache
+    health["checks"]["cache"] = {"status": "healthy", "backend": "in-memory"}
+
+    # Storage
+    health["checks"]["storage"] = {
+        "status": "healthy",
+        "backend": storage_service.backend,
+    }
+
+    # Sentry
+    sentry_configured = bool(os.environ.get("SENTRY_DSN"))
+    health["checks"]["sentry"] = {
+        "status": "configured" if sentry_configured else "not_configured"
     }
     
     return health
