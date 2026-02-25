@@ -16,6 +16,7 @@ from routes.auth_routes import get_current_user
 from routes.audit_routes import log_action, AuditAction, AuditSeverity
 from services.email_service import email_service
 from services.notification_service import create_notification
+from services.cache_service import cache_service
 
 logger = logging.getLogger(__name__)
 
