@@ -191,6 +191,15 @@ const TemplateWizard = () => {
   const [aiLoadingField, setAiLoadingField] = useState(null);
   const [generatedPdfUrl, setGeneratedPdfUrl] = useState(null);
 
+  // Draft state
+  const [draftId, setDraftId] = useState(null);
+  const [draftVersion, setDraftVersion] = useState(0);
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [shareToken, setShareToken] = useState(null);
+  const [showRevisions, setShowRevisions] = useState(false);
+  const [revisions, setRevisions] = useState([]);
+  const [showShareModal, setShowShareModal] = useState(false);
+
   useEffect(() => {
     if (token && templateId) fetchTemplate();
   }, [token, templateId]);
