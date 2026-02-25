@@ -346,10 +346,10 @@ const DeveloperPage = () => {
                       <div key={k.id} className={`bg-[#0d1b2a] rounded-lg p-4 border ${k.revoked ? 'border-red-500/20 opacity-60' : 'border-gray-700'}`} data-testid={`key-row-${k.id}`}>
                         <div className="flex items-center justify-between flex-wrap gap-2">
                           <div>
-                            <p className="text-white font-medium text-sm flex items-center gap-2">
+                            <div className="text-white font-medium text-sm flex items-center gap-2">
                               <Key className="w-4 h-4 text-[#00d4aa]" /> {k.name}
                               {k.revoked && <Badge className="bg-red-500/20 text-red-400 text-[10px]">Revoked</Badge>}
-                            </p>
+                            </div>
                             <p className="text-gray-500 text-xs mt-1 font-mono">{k.key_prefix}••••••••••</p>
                           </div>
                           <div className="flex items-center gap-3 text-xs text-gray-500">
