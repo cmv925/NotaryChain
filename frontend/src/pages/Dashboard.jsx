@@ -161,6 +161,16 @@ const Dashboard = () => {
                 <span className="hidden lg:inline">Org</span>
               </Button>
               <Button
+                onClick={() => navigate('/my-drafts')}
+                variant="outline"
+                size="sm"
+                className="border-gray-700 text-gray-300 hover:text-white hover:border-amber-500 hidden sm:flex"
+                data-testid="drafts-button"
+              >
+                <Save className="w-4 h-4 sm:mr-2" />
+                <span className="hidden lg:inline">Drafts</span>
+              </Button>
+              <Button
                 onClick={handleLogout}
                 variant="outline"
                 size="sm"
