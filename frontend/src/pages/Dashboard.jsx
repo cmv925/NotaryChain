@@ -102,6 +102,16 @@ const Dashboard = () => {
               </div>
               <NotificationBell token={token} />
               <Button
+                onClick={() => navigate('/subscription')}
+                variant="outline"
+                size="sm"
+                className="border-gray-700 text-gray-300 hover:text-white hover:border-purple-500 hidden sm:flex"
+                data-testid="subscription-button"
+              >
+                <CreditCard className="w-4 h-4 sm:mr-2" />
+                <span className="hidden lg:inline">Plan</span>
+              </Button>
+              <Button
                 onClick={() => navigate('/settings/security')}
                 variant="outline"
                 size="sm"
