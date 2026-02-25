@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Shield, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp } from 'lucide-react';
+import { Shield, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp, Settings } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { toast } from '../hooks/use-toast';
@@ -106,6 +106,15 @@ const Dashboard = () => {
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
+              </Button>
+              <Button
+                onClick={() => navigate('/settings/security')}
+                variant="outline"
+                className="border-gray-700 text-gray-300 hover:text-white hover:border-blue-500"
+                data-testid="security-settings-button"
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                Security
               </Button>
             </div>
           </div>
