@@ -89,3 +89,31 @@ async def get_user_stats(
         "recent_seals": recent_seals,
         "user_since": current_user.created_at
     }
+
+
+@router.get("/files/{filename}")
+async def serve_document_file(
+    filename: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Serve an uploaded document file (authenticated access)"""
+    # Sanitize filename to prevent path traversal
+    safe_name = os.path.basename(filename)
+    file_path = os.path.join(UPLOAD_DIR, safe_name)
+
+    if not os.path.isfile(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    # Determine content type
+    ext = os.path.splitext(safe_name)[1].lower()
+    content_types = {
+        '.pdf': 'application/pdf',
+        '.doc': 'application/msword',
+        '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+    }
+    media_type = content_types.get(ext, 'application/octet-stream')
+
+    return FileResponse(file_path, media_type=media_type, filename=safe_name)
