@@ -325,3 +325,23 @@ async def delete_seal(
 
     await db.notary_seals.delete_one({"id": seal_id})
     return {"success": True}
+
+
+@router.get("/seals/{seal_id}/file")
+async def get_seal_file(
+    seal_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Serve a seal image file"""
+    seal = await db.notary_seals.find_one({"id": seal_id, "notary_id": current_user.id})
+    if not seal:
+        raise HTTPException(status_code=404, detail="Seal not found")
+
+    filepath = os.path.join(UPLOAD_DIR, seal.get("filename", ""))
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    media_types = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".svg": "image/svg+xml"}
+    media_type = media_types.get(seal.get("file_type", ""), "application/octet-stream")
+    return FileResponse(filepath, media_type=media_type)
+
