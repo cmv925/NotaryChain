@@ -147,20 +147,23 @@ const SecuritySettings = () => {
     <div className="min-h-screen bg-[#0f1825]">
       {/* Header */}
       <header className="bg-[#1a2332] border-b border-gray-800">
-        <div className="max-w-4xl mx-auto px-6 py-4">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white" data-testid="back-to-dashboard">
-                <ArrowLeft className="w-5 h-5 mr-2" /> Dashboard
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white" data-testid="back-to-dashboard">
+                <ArrowLeft className="w-5 h-5 sm:mr-2" /> <span className="hidden sm:inline">Dashboard</span>
               </Button>
-              <span className="text-gray-600">|</span>
-              <h1 className="text-white font-semibold flex items-center gap-2">
+              <span className="text-gray-600 hidden sm:inline">|</span>
+              <h1 className="text-white font-semibold flex items-center gap-2 text-sm sm:text-base">
                 <Shield className="w-5 h-5 text-blue-500" /> Security Settings
               </h1>
             </div>
-            <div className="text-right">
-              <div className="text-white font-semibold text-sm">{user?.full_name}</div>
-              <div className="text-gray-400 text-xs">{user?.email}</div>
+            <div className="flex items-center gap-3">
+              <NotificationBell token={token} />
+              <div className="text-right hidden sm:block">
+                <div className="text-white font-semibold text-sm">{user?.full_name}</div>
+                <div className="text-gray-400 text-xs">{user?.email}</div>
+              </div>
             </div>
           </div>
         </div>
