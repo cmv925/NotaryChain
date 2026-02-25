@@ -422,6 +422,14 @@ async def send_message(
         message_type=message_data.get("type", "text"),
         attachments=message_data.get("attachments")
     )
+
+    # Broadcast new message via WebSocket
+    await ws_manager.broadcast(transaction_id, {
+        "type": "new_message",
+        "message": _serialize(message),
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+
     return message
 
 
