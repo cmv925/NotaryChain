@@ -789,6 +789,29 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - `services/storage_service.py` — S3/local unified storage
 - `routes/infra_routes.py` — Infrastructure management API
 
+### ✅ Phase 24: Real-time Collaboration Expansion (P2) (COMPLETED - Feb 25, 2026)
+**Features:**
+- **Global WebSocket Channel** (`/api/ws/global`): JWT-authenticated WebSocket for all users with auto-reconnect (3s), ping/pong keepalive (25s), multi-tab support
+- **Real-time Notifications**: NotificationBell receives instant push via WebSocket (60s polling fallback)
+- **Live Dashboard Updates**: User, Notary, and Admin dashboards auto-refresh on platform events
+- **Notary Queue Updates**: New requests appear in notary queue in real-time without refresh
+- **Event Broadcasting**: `broadcast_event` system sends `notary_queue_update`, `request_assigned`, `request_completed` events
+
+**New Backend Files:**
+- `routes/ws_routes.py` — Global WebSocket endpoint with JWT auth
+- Enhanced `services/ws_manager.py` — Global user channels (push_to_user, push_to_role, broadcast_global)
+- Enhanced `services/notification_service.py` — broadcast_event, get_notary_user_ids
+
+**New Frontend Files:**
+- `hooks/useGlobalWebSocket.js` — WS hook with subscribe pattern, auto-reconnect
+- `contexts/WebSocketContext.jsx` — App-wide WS provider via useWS hook
+
+**Updated Frontend Pages:**
+- `NotificationBell.jsx` — WS-powered with instant notification delivery
+- `Dashboard.jsx` — Subscribes to request_assigned, request_completed
+- `NotaryDashboard.jsx` — Subscribes to notary_queue_update, request_assigned, request_completed
+- `AdminDashboard.jsx` — Subscribes to all platform events
+
 **Frontend Components:**
 - `components/ErrorBoundary.jsx` — Error boundary with fallback UI
 
