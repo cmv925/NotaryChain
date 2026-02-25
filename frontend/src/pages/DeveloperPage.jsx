@@ -254,6 +254,7 @@ const DeveloperPage = () => {
           {[
             { id: 'docs', label: 'API Reference', icon: Code },
             { id: 'keys', label: 'API Keys', icon: Key },
+            { id: 'webhooks', label: 'Webhooks', icon: Zap },
           ].map(tab => (
             <button
               key={tab.id}
