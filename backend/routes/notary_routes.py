@@ -11,6 +11,7 @@ from routes.auth_routes import get_current_user
 from services.hedera_service import hedera_service
 from services.email_service import email_service
 from services.notification_service import create_notification, broadcast_event, get_notary_user_ids
+from services.webhook_service import trigger_event as trigger_webhook
 from datetime import datetime, timezone
 import logging
 import uuid
