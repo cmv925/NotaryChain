@@ -495,7 +495,7 @@ class TestWebhookTriggers:
         print(f"seal.created webhook triggered successfully: status={seal_delivery.get('status_code')}")
     
     def test_document_verified_triggers_webhook(self):
-        """POST /api/v1/verify triggers document.verified webhook event"""
+        """POST /api/v1/verify triggers document.verified webhook event (only when document found)"""
         # Create a webhook listening for document.verified
         webhook_payload = {
             "url": TEST_WEBHOOK_URL,
