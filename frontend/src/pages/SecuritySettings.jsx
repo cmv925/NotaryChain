@@ -5,6 +5,7 @@ import { Shield, ShieldCheck, ShieldOff, Copy, ArrowLeft, RefreshCw, KeyRound, E
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card, CardContent } from '../components/ui/card';
+import { NotificationBell } from '../components/NotificationBell';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
 
