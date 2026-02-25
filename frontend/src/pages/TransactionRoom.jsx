@@ -620,33 +620,41 @@ export default function TransactionRoom() {
           <div className="space-y-4">
             <h2 className="text-xl font-bold">Participants ({participants.length})</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {participants.map((participant) => (
-                <Card key={participant.id} className="bg-[#1a1a2e] border-[#333]">
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-full bg-[#333] flex items-center justify-center text-2xl">
-                        {roleIcons[participant.role] || '👤'}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-white truncate">{participant.name}</h3>
-                        <p className="text-gray-400 text-sm truncate">{participant.email}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge className="bg-[#333] text-gray-300 text-xs">
-                            {participant.role}
-                          </Badge>
-                          <Badge className={`${
-                            participant.status === 'joined' ? 'bg-green-500/20 text-green-400' :
-                            participant.status === 'invited' ? 'bg-yellow-500/20 text-yellow-400' :
-                            'bg-gray-500/20 text-gray-400'
-                          } text-xs`}>
-                            {participant.status}
-                          </Badge>
+              {participants.map((participant) => {
+                const isOnline = (roomData?.online_users || onlineUsers).includes(participant.user_id);
+                return (
+                  <Card key={participant.id} className="bg-[#1a1a2e] border-[#333]">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <div className="h-12 w-12 rounded-full bg-[#333] flex items-center justify-center text-2xl">
+                            {roleIcons[participant.role] || '\u{1F464}'}
+                          </div>
+                          {isOnline && (
+                            <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-[#1a1a2e]" data-testid={`online-dot-${participant.id}`} />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-white truncate">{participant.name}</h3>
+                          <p className="text-gray-400 text-sm truncate">{participant.email}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge className="bg-[#333] text-gray-300 text-xs">
+                              {participant.role}
+                            </Badge>
+                            <Badge className={`${
+                              participant.status === 'joined' ? 'bg-green-500/20 text-green-400' :
+                              participant.status === 'invited' ? 'bg-yellow-500/20 text-yellow-400' :
+                              'bg-gray-500/20 text-gray-400'
+                            } text-xs`}>
+                              {participant.status}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         )}
