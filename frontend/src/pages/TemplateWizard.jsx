@@ -247,6 +247,105 @@ const TemplateWizard = () => {
     }
   };
 
+  // --- Draft Handlers ---
+  const handleSaveDraft = async () => {
+    setSavingDraft(true);
+    try {
+      if (draftId) {
+        // Update existing draft
+        const res = await axios.put(`${API}/drafts/${draftId}`, {
+          field_values: fieldValues,
+          name: `${template.name} - Draft`,
+        }, { headers: { Authorization: `Bearer ${token}` } });
+        setDraftVersion(res.data.version);
+        toast({ title: 'Draft Saved', description: `Version ${res.data.version}` });
+      } else {
+        // Create new draft
+        const res = await axios.post(`${API}/drafts/`, {
+          template_id: templateId,
+          template_name: template.name,
+          field_values: fieldValues,
+        }, { headers: { Authorization: `Bearer ${token}` } });
+        setDraftId(res.data.id);
+        setDraftVersion(res.data.version);
+        setShareToken(res.data.share_token);
+        toast({ title: 'Draft Saved', description: 'You can resume this draft anytime.' });
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to save draft', variant: 'destructive' });
+    } finally {
+      setSavingDraft(false);
+    }
+  };
+
+  const handleShareDraft = async (allowEdit) => {
+    if (!draftId) {
+      toast({ title: 'Save First', description: 'Please save as draft before sharing.', variant: 'destructive' });
+      return;
+    }
+    try {
+      const res = await axios.post(`${API}/drafts/${draftId}/share`, {
+        allow_edit: allowEdit,
+      }, { headers: { Authorization: `Bearer ${token}` } });
+      setShareToken(res.data.share_token);
+      setShowShareModal(true);
+      toast({ title: 'Share Link Created', description: allowEdit ? 'Recipients can edit this draft.' : 'View-only link created.' });
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to create share link', variant: 'destructive' });
+    }
+  };
+
+  const handleRevokeShare = async () => {
+    try {
+      await axios.delete(`${API}/drafts/${draftId}/share`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setShareToken(null);
+      setShowShareModal(false);
+      toast({ title: 'Revoked', description: 'Share link has been revoked.' });
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to revoke', variant: 'destructive' });
+    }
+  };
+
+  const handleShowRevisions = async () => {
+    if (!draftId) return;
+    try {
+      const res = await axios.get(`${API}/drafts/${draftId}/revisions`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setRevisions(res.data.revisions);
+      setShowRevisions(true);
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to load revisions', variant: 'destructive' });
+    }
+  };
+
+  const handleRestoreRevision = async (version) => {
+    try {
+      await axios.post(`${API}/drafts/${draftId}/revisions/${version}/restore`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Reload draft
+      const res = await axios.get(`${API}/drafts/${draftId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setFieldValues(res.data.field_values);
+      setDraftVersion(res.data.version);
+      setShowRevisions(false);
+      toast({ title: 'Restored', description: `Restored to version ${version}` });
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to restore', variant: 'destructive' });
+    }
+  };
+
+  const copyShareLink = () => {
+    const link = `${window.location.origin}/drafts/shared/${shareToken}`;
+    navigator.clipboard.writeText(link);
+    toast({ title: 'Copied!', description: 'Share link copied to clipboard.' });
+  };
+
+
   const handleGeneratePdf = async () => {
     // Validate required fields
     const missing = (template?.fields || []).filter(
