@@ -180,6 +180,13 @@ async def create_indexes():
         await db.notary_seals.create_index("notary_id")
         await db.deletion_requests.create_index([("user_id", 1), ("status", 1)])
 
+        # Templates
+        await db.templates.create_index("id", unique=True)
+        await db.templates.create_index("category")
+
+        # Seed default templates
+        await template_routes.seed_templates()
+
         logger.info("Database indexes created/verified successfully")
     except Exception as e:
         logger.warning(f"Index creation warning: {e}")
