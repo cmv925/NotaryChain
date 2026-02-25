@@ -439,6 +439,16 @@ async def assign_request(
         notif_type="info",
         link=f"/session/{request_id}"
     )
+
+    # Broadcast request assigned to user and all notaries
+    try:
+        notary_ids = await get_notary_user_ids()
+        await broadcast_event("request_assigned", {
+            "request_id": request_id,
+            "notary_id": current_user.id,
+        }, target_user_ids=[request.get("user_id")] + notary_ids)
+    except Exception as e:
+        logger.debug(f"Broadcast failed: {e}")
     
     return {"success": True, "message": "Request assigned successfully"}
 
