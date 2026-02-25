@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import BiometricVerification from '../components/BiometricVerification';
+import { PDFPreview } from '../components/PDFPreview';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -12,7 +13,7 @@ import { Progress } from '../components/ui/progress';
 import { 
   FileText, Calendar, Users, ArrowRight, Upload, 
   CheckCircle, AlertTriangle, XCircle, Camera, 
-  Shield, Loader2, Eye, RefreshCw, ArrowLeft
+  Shield, Loader2, Eye, RefreshCw, ArrowLeft, Maximize2
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
