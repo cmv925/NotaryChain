@@ -5,6 +5,7 @@ import { Shield, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { toast } from '../hooks/use-toast';
+import { NotificationBell } from '../components/NotificationBell';
 import BlockchainAuditTrail from '../components/BlockchainAuditTrail';
 import axios from 'axios';
 
