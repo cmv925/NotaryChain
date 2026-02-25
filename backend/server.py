@@ -42,6 +42,10 @@ gdpr_routes.set_db(db)
 infra_routes.set_db(db)
 ws_routes.set_db(db)
 set_notification_db(db)
+    
+    # Initialize notification service WS manager
+    from services.ws_manager import ws_manager
+    set_ws_manager(ws_manager)
 set_ws_manager(ws_manager)
 
 # Create the main app without a prefix
