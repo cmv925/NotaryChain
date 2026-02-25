@@ -348,13 +348,13 @@ const RequestNotarization = () => {
     <div className="min-h-screen bg-[#0f1825]">
       <Navbar />
 
-      <div className="pt-32 pb-24">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white mb-4">
+      <div className="pt-24 sm:pt-32 pb-16 sm:pb-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2 sm:mb-4">
               Request Notarization
             </h1>
-            <p className="text-gray-400 text-lg">
+            <p className="text-gray-400 text-sm sm:text-lg">
               AI-powered document analysis with biometric verification
             </p>
           </div>
