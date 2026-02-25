@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from models import UserCreate, UserLogin, User, Token
 from auth import get_password_hash, verify_password, create_access_token, decode_access_token
 from services.email_service import email_service
+from middleware.security import limiter, validate_password, sanitize_email
 from datetime import timedelta
 import os
 import logging
