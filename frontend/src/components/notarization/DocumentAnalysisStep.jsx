@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { Card, CardContent } from '../ui/card';
-import { FileText, Upload, Eye, Loader2, Maximize2 } from 'lucide-react';
+import { FileText, Upload, Eye, Loader2, Maximize2, BookOpen, CheckCircle } from 'lucide-react';
 import { AnalysisResults } from './AnalysisResults';
 
 const DOCUMENT_TYPES = [
@@ -21,12 +21,14 @@ export const DocumentAnalysisStep = ({
   uploading,
   analysisResult,
   canProceedToStep2,
+  templateData,
   onFileSelect,
   onRemoveFile,
   onDocTypeChange,
   onAnalyze,
   onShowPdfPreview,
   onProceedToStep2,
+  onBrowseTemplates,
 }) => (
   <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800" data-testid="step-1-card">
     <CardContent className="p-8">
@@ -34,6 +36,36 @@ export const DocumentAnalysisStep = ({
         <FileText className="w-6 h-6 text-blue-500" />
         Step 1: Document Analysis
       </h2>
+
+      {/* Template Banner */}
+      {templateData?.fromTemplate ? (
+        <div className="mb-6 p-4 rounded-lg bg-blue-500/10 border border-blue-500/30" data-testid="template-active-banner">
+          <div className="flex items-center gap-2 mb-1">
+            <CheckCircle className="w-4 h-4 text-blue-400" />
+            <span className="text-blue-400 font-medium text-sm">Template Applied</span>
+          </div>
+          <p className="text-gray-300 text-sm">
+            Using <strong className="text-white">{templateData.templateName}</strong> template.
+            Document type and signer slots have been pre-filled. Upload your document below.
+          </p>
+        </div>
+      ) : (
+        <div className="mb-6 p-3 rounded-lg bg-[#0a0f1a] border border-gray-800 flex items-center justify-between" data-testid="template-suggestion-banner">
+          <div className="flex items-center gap-2 text-sm text-gray-400">
+            <BookOpen className="w-4 h-4 text-purple-400" />
+            <span>Need a starting point? Browse our template library.</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onBrowseTemplates}
+            className="text-purple-400 hover:text-purple-300 text-sm px-3"
+            data-testid="browse-templates-btn"
+          >
+            Browse Templates
+          </Button>
+        </div>
+      )}
 
       {/* Document Type Selection */}
       <div className="mb-6">
