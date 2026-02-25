@@ -190,8 +190,9 @@ const TemplateLibrary = () => {
       if (activeCategory) params.append('category', activeCategory);
       if (searchQuery) params.append('search', searchQuery);
 
-      const res = await axios.get(`${API}/templates?${params.toString()}`, {
+      const res = await axios.get(`${API}/templates/`, {
         headers: { Authorization: `Bearer ${token}` },
+        params: Object.fromEntries(params),
       });
       setTemplates(res.data.templates);
       setCategories(res.data.categories);
