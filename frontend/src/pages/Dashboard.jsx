@@ -122,6 +122,16 @@ const Dashboard = () => {
                 <span className="hidden lg:inline">Security</span>
               </Button>
               <Button
+                onClick={() => navigate('/compliance')}
+                variant="outline"
+                size="sm"
+                className="border-gray-700 text-gray-300 hover:text-white hover:border-green-500 hidden sm:flex"
+                data-testid="compliance-button"
+              >
+                <Lock className="w-4 h-4 sm:mr-2" />
+                <span className="hidden lg:inline">Privacy</span>
+              </Button>
+              <Button
                 onClick={handleLogout}
                 variant="outline"
                 size="sm"
