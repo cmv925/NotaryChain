@@ -21,6 +21,7 @@ from services.email_service import email_service
 from services.ws_manager import ws_manager
 from services.task_manager import task_manager
 from auth import decode_access_token
+from routes.notification_routes import create_notification
 
 logger = logging.getLogger(__name__)
 
