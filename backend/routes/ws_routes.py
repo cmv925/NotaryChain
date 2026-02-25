@@ -41,10 +41,12 @@ async def global_websocket(websocket: WebSocket):
             return
 
         # Validate token
-        from routes.auth_routes import decode_token
+        from auth import decode_access_token
         token = data["token"]
         try:
-            payload = decode_token(token)
+            payload = decode_access_token(token)
+            if not payload:
+                raise ValueError("Invalid token")
             email = payload.get("sub")
         except Exception:
             await websocket.send_json({"type": "error", "message": "Invalid token"})
