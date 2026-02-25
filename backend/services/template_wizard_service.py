@@ -222,5 +222,5 @@ async def ai_suggest_field(
         "Keep it concise, formal, and legally sound."
     )
 
-    response = await chat.send_message(UserMessage(message=prompt))
-    return response.text.strip()
+    response = await chat.send_message(UserMessage(text=prompt))
+    return response.strip()
