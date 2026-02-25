@@ -216,6 +216,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/organizations"
+              element={
+                <ProtectedRoute>
+                  <OrganizationPage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         </WebSocketProvider>
