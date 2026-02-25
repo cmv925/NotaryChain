@@ -186,6 +186,14 @@ async def create_indexes():
         await db.templates.create_index("id", unique=True)
         await db.templates.create_index("category")
 
+        # Organizations
+        await db.organizations.create_index("id", unique=True)
+        await db.organizations.create_index("slug", unique=True)
+        await db.org_members.create_index([("org_id", 1), ("user_id", 1)], unique=True)
+        await db.org_members.create_index("user_id")
+        await db.org_invites.create_index("token", unique=True)
+        await db.org_invites.create_index([("org_id", 1), ("email", 1)])
+
         # Seed default templates
         await template_routes.seed_templates()
 
