@@ -151,6 +151,16 @@ async def list_my_organizations(current_user: dict = Depends(get_current_user)):
     return {"organizations": orgs}
 
 
+@router.get("/my/invites")
+async def my_pending_invites(current_user: dict = Depends(get_current_user)):
+    """List pending invites for the current user."""
+    invites = await db.org_invites.find(
+        {"email": current_user.email, "status": "pending"}, {"_id": 0}
+    ).to_list(50)
+    return {"invites": invites}
+
+
+
 @router.get("/{org_id}")
 async def get_organization(org_id: str, current_user: dict = Depends(get_current_user)):
     """Get organization details (members only)."""
