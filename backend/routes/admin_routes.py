@@ -477,6 +477,16 @@ async def reject_notary_application(
         metadata={"reason": reason},
         severity=AuditSeverity.WARNING
     )
+
+    # Send in-app notification
+    background_tasks.add_task(
+        create_notification,
+        user_id=notary.get("user_id"),
+        title="Application Update",
+        message=f"Your notary application has been reviewed. {reason or 'Please contact support for details.'}",
+        notif_type="warning",
+        link="/notary/onboarding"
+    )
     
     return {"message": "Notary application rejected", "notary_id": notary_id}
 
