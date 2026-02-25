@@ -49,9 +49,21 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     return User(**user)
 
 @router.post("/signup", response_model=Token)
-async def signup(user_data: UserCreate, background_tasks: BackgroundTasks):
+@limiter.limit("5/minute")
+async def signup(request: Request, user_data: UserCreate, background_tasks: BackgroundTasks):
+    # Sanitize email
+    try:
+        clean_email = sanitize_email(user_data.email)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    
+    # Validate password strength
+    is_valid, message = validate_password(user_data.password)
+    if not is_valid:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
+    
     # Check if user already exists
-    existing_user = await db.users.find_one({"email": user_data.email})
+    existing_user = await db.users.find_one({"email": clean_email})
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -60,7 +72,7 @@ async def signup(user_data: UserCreate, background_tasks: BackgroundTasks):
     
     # Create new user
     user = User(
-        email=user_data.email,
+        email=clean_email,
         full_name=user_data.full_name
     )
     
@@ -83,9 +95,19 @@ async def signup(user_data: UserCreate, background_tasks: BackgroundTasks):
     return Token(access_token=access_token)
 
 @router.post("/login", response_model=Token)
-async def login(user_data: UserLogin):
+@limiter.limit("10/minute")
+async def login(request: Request, user_data: UserLogin):
+    # Sanitize email
+    try:
+        clean_email = sanitize_email(user_data.email)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password"
+        )
+    
     # Find user
-    user = await db.users.find_one({"email": user_data.email})
+    user = await db.users.find_one({"email": clean_email})
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
