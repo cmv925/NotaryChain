@@ -189,6 +189,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/admin/ron-compliance"
+              element={
+                <ProtectedRoute>
+                  <RONComplianceDashboard />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         </WebSocketProvider>
