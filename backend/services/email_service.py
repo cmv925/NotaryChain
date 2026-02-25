@@ -10,6 +10,7 @@ import resend
 from typing import Optional
 from datetime import datetime
 from dotenv import load_dotenv
+from services.task_manager import task_manager
 
 load_dotenv()
 
@@ -30,7 +31,10 @@ class EmailService:
         subject: str,
         html_content: str
     ) -> dict:
-        """Send an email using Resend API (non-blocking)"""
+        """Send an email using Resend API (non-blocking) with job tracking"""
+        job_id = task_manager.create_job("email", f"Sending email: {subject} to {to_email}")
+        task_manager.start_job(job_id)
+
         params = {
             "from": f"{APP_NAME} <{SENDER_EMAIL}>",
             "to": [to_email],
