@@ -42,12 +42,9 @@ class TestWebhookSystem:
     @pytest.fixture(autouse=True)
     def setup(self):
         """Setup auth token for tests"""
-        # Login to get token
-        response = requests.post(f"{BASE_URL}/api/auth/login", json=DEMO_USER)
-        assert response.status_code == 200, f"Login failed: {response.text}"
-        data = response.json()
-        self.token = data.get("access_token")
-        assert self.token, "No access_token in login response"
+        # Use cached token to avoid rate limits
+        self.token = get_cached_token(DEMO_USER["email"], DEMO_USER["password"])
+        assert self.token, "No access_token"
         self.headers = {"Authorization": f"Bearer {self.token}"}
         
         # Track created webhooks for cleanup
