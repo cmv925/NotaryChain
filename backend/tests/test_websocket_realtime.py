@@ -337,16 +337,14 @@ class TestBroadcastEventIntegration:
 class TestWebSocketMultipleConnections:
     """Test WebSocket supports multiple connections per user (multi-tab)"""
     
-    @pytest.fixture
-    def demo_token(self):
-        response = requests.post(f"{BASE_URL}/api/auth/login", json=DEMO_USER)
-        if response.status_code == 200:
-            return response.json().get("access_token")
-        pytest.skip("Could not get demo user token")
-    
     @pytest.mark.asyncio
-    async def test_multiple_tabs_same_user(self, demo_token):
+    async def test_multiple_tabs_same_user(self):
         """Test that same user can connect from multiple tabs"""
+        response = requests.post(f"{BASE_URL}/api/auth/login", json=DEMO_USER)
+        if response.status_code != 200:
+            pytest.skip("Could not get demo user token")
+        demo_token = response.json().get("access_token")
+        
         try:
             # Open first connection
             async with websockets.connect(WS_URL, close_timeout=5) as ws1:
