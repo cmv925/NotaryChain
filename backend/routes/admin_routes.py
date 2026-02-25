@@ -693,8 +693,13 @@ async def get_comprehensive_analytics(
     days: int = Query(30, ge=7, le=365),
     current_user: User = Depends(get_current_user)
 ):
-    """Get comprehensive analytics data for charts"""
+    """Get comprehensive analytics data for charts (cached 1min)"""
     await check_admin(current_user)
+
+    cache_key = f"comprehensive_{days}"
+    cached = cache_service.get("stats", cache_key)
+    if cached:
+        return cached
     
     now = datetime.now(timezone.utc)
     start_date = now - timedelta(days=days)
