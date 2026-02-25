@@ -436,13 +436,4 @@ async def update_sso_config(org_id: str, body: SSOConfigRequest, current_user: d
 
     return {"message": "SSO configuration updated"}
 
-
-# --- Pending Invites for Current User ---
-
-@router.get("/my/invites")
-async def my_pending_invites(current_user: dict = Depends(get_current_user)):
-    """List pending invites for the current user."""
-    invites = await db.org_invites.find(
-        {"email": current_user.email, "status": "pending"}, {"_id": 0}
-    ).to_list(50)
-    return {"invites": invites}
+# (moved to before /{org_id} routes)
