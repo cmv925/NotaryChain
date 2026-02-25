@@ -10,7 +10,8 @@ import { Card, CardContent } from '../components/ui/card';
 import { Progress } from '../components/ui/progress';
 import {
   FileText, ArrowRight, ArrowLeft, Sparkles, Download,
-  Loader2, CheckCircle, AlertCircle, Send,
+  Loader2, CheckCircle, AlertCircle, Send, Save, Share2,
+  History, Link, Copy, Clock, X,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
