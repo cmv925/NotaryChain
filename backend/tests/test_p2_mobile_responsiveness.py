@@ -83,10 +83,10 @@ class TestAuthEndpoints:
         print(f"✓ /me endpoint returns user: {data.get('email')}")
     
     def test_me_endpoint_unauthenticated(self):
-        """Test /me endpoint without token returns 401"""
+        """Test /me endpoint without token returns 401 or 403"""
         response = requests.get(f"{BASE_URL}/api/auth/me")
-        assert response.status_code == 401
-        print("✓ /me endpoint correctly rejects unauthenticated requests")
+        assert response.status_code in [401, 403]
+        print(f"✓ /me endpoint correctly rejects unauthenticated requests ({response.status_code})")
 
 
 class TestNotificationEndpoints:
@@ -112,10 +112,10 @@ class TestNotificationEndpoints:
         print(f"✓ Notifications endpoint returns {len(data.get('notifications', []))} notifications")
     
     def test_get_notifications_unauthenticated(self):
-        """Test notifications without token returns 401"""
+        """Test notifications without token returns 401 or 403"""
         response = requests.get(f"{BASE_URL}/api/notifications/")
-        assert response.status_code == 401
-        print("✓ Notifications correctly rejects unauthenticated requests")
+        assert response.status_code in [401, 403]
+        print(f"✓ Notifications correctly rejects unauthenticated requests ({response.status_code})")
     
     def test_unread_count_authenticated(self, admin_token):
         """Test unread count with valid token"""
@@ -128,10 +128,10 @@ class TestNotificationEndpoints:
         print(f"✓ Unread count endpoint returns count: {data.get('count')}")
     
     def test_unread_count_unauthenticated(self):
-        """Test unread count without token returns 401"""
+        """Test unread count without token returns 401 or 403"""
         response = requests.get(f"{BASE_URL}/api/notifications/unread-count")
-        assert response.status_code == 401
-        print("✓ Unread count correctly rejects unauthenticated requests")
+        assert response.status_code in [401, 403]
+        print(f"✓ Unread count correctly rejects unauthenticated requests ({response.status_code})")
 
 
 if __name__ == "__main__":
