@@ -856,6 +856,27 @@ Create a pixel-perfect clone of https://nortary-chain.vercel.app/ with additiona
 - `backend/routes/ron_compliance_routes.py` — Compliance API endpoints
 - `frontend/src/pages/RONComplianceDashboard.jsx` — Admin compliance dashboard
 
+### ✅ Phase 27: Webhook System (COMPLETED - Feb 25, 2026)
+**Features:**
+- **Webhook Registration**: Register URLs with event subscriptions, HMAC-SHA256 signing secret (max 10 per user)
+- **Webhook Delivery**: Background async delivery via httpx, 5 retries with exponential backoff (5s→1h), delivery logging, auto-disable after 10 consecutive failures
+- **Webhook Events**: `seal.created`, `document.verified`, `request.completed`, `request.assigned`, `request.created`
+- **Webhook Management**: Test, toggle enable/disable, delete with delivery cleanup
+- **Signature Verification**: HMAC-SHA256 via `X-Webhook-Signature` header, Python verification guide in docs
+- **Developer Portal Webhooks Tab**: Register form with URL/events/description, expandable webhook cards with delivery history, stats, test/toggle/delete actions
+
+**API Endpoints:**
+- `POST /api/developer/webhooks` — Register webhook (returns secret once)
+- `GET /api/developer/webhooks` — List webhooks (secret hidden)
+- `GET /api/developer/webhooks/{id}` — Details + deliveries + stats
+- `DELETE /api/developer/webhooks/{id}` — Delete + cleanup
+- `POST /api/developer/webhooks/{id}/test` — Send test.ping event
+- `POST /api/developer/webhooks/{id}/toggle` — Enable/disable
+
+**New Files:**
+- `backend/services/webhook_service.py` — Delivery engine with HMAC, retry, auto-disable
+- `backend/routes/webhook_routes.py` — Webhook CRUD + test + toggle
+
 **Frontend Components:**
 - `components/ErrorBoundary.jsx` — Error boundary with fallback UI
 
