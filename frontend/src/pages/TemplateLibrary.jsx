@@ -204,18 +204,9 @@ const TemplateLibrary = () => {
   };
 
   const handleUseTemplate = (template) => {
-    // Navigate to request-notarization with template data as state
-    navigate('/request-notarization', {
-      state: {
-        fromTemplate: true,
-        templateId: template.id,
-        templateName: template.name,
-        documentType: template.document_type,
-        signersNeeded: template.signers_needed,
-        templateFields: template.fields,
-      },
-    });
-    toast({ title: 'Template Selected', description: `Starting with "${template.name}" template` });
+    // Navigate to the template wizard for form-fill
+    navigate(`/templates/${template.id}/fill`);
+    setPreviewTemplate(null);
   };
 
   return (
