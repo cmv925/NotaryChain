@@ -441,17 +441,32 @@ const RequestNotarization = () => {
                         <p className="text-gray-400 text-sm">
                           {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                         </p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedFile(null);
-                            setAnalysisResult(null);
-                          }}
-                          className="border-gray-600 text-gray-300"
-                        >
-                          Remove
-                        </Button>
+                        <div className="flex items-center justify-center gap-2">
+                          {selectedFile.type === 'application/pdf' && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setShowPdfPreview(true)}
+                              className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                              data-testid="preview-pdf-btn"
+                            >
+                              <Maximize2 className="w-4 h-4 mr-1" />
+                              Preview
+                            </Button>
+                          )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedFile(null);
+                              setAnalysisResult(null);
+                              setShowPdfPreview(false);
+                            }}
+                            className="border-gray-600 text-gray-300"
+                          >
+                            Remove
+                          </Button>
+                        </div>
                       </div>
                     ) : (
                       <label className="cursor-pointer block">
