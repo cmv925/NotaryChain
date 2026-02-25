@@ -9,6 +9,9 @@ import websockets
 import json
 import os
 
+# Configure pytest-asyncio
+pytest_plugins = ('pytest_asyncio',)
+
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://notary-pro-demo.preview.emergentagent.com').rstrip('/')
 WS_URL = BASE_URL.replace('https://', 'wss://').replace('http://', 'ws://') + '/api/ws/global'
 
