@@ -376,34 +376,23 @@ class TestVaultDownload:
 class TestVaultUpdateDocument:
     """Test document metadata update (admin only)"""
     
-    @pytest.fixture(scope="class")
-    def admin_token(self):
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=ADMIN_USER)
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def org_id(self, admin_token):
-        res = requests.get(f"{BASE_URL}/api/organizations/", 
-                          headers={"Authorization": f"Bearer {admin_token}"})
-        return res.json()["organizations"][0]["id"]
-    
-    @pytest.fixture(scope="class")
-    def doc_id(self, admin_token, org_id):
-        """Upload a test document for update testing"""
+    def test_update_document_metadata(self):
+        """PUT /api/vault/{org_id}/documents/{doc_id} - update metadata"""
+        token = get_admin_token()
+        org_id = get_org_id(token)
+        
+        # Upload test document
         file_content = b"TEST_UPDATE_DOC"
         files = {"file": ("TEST_update.txt", io.BytesIO(file_content), "text/plain")}
-        data = {"name": "TEST_Update Original", "category": "other"}
         
-        res = requests.post(
+        upload_res = requests.post(
             f"{BASE_URL}/api/vault/{org_id}/documents",
-            headers={"Authorization": f"Bearer {admin_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             files=files,
-            data=data
+            data={"name": "TEST_Update Original", "category": "other"}
         )
-        return res.json()["id"]
-    
-    def test_update_document_metadata(self, admin_token, org_id, doc_id):
-        """PUT /api/vault/{org_id}/documents/{doc_id} - update metadata"""
+        doc_id = upload_res.json()["id"]
+        
         update_data = {
             "name": "TEST_Updated Name",
             "category": "financial",
@@ -413,7 +402,7 @@ class TestVaultUpdateDocument:
         
         res = requests.put(
             f"{BASE_URL}/api/vault/{org_id}/documents/{doc_id}",
-            headers={"Authorization": f"Bearer {admin_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             json=update_data
         )
         assert res.status_code == 200, f"Update failed: {res.text}"
@@ -425,19 +414,34 @@ class TestVaultUpdateDocument:
         assert doc["description"] == "Updated description"
         print(f"Updated document: {doc['name']}")
     
-    def test_update_adds_audit_entry(self, admin_token, org_id, doc_id):
+    def test_update_adds_audit_entry(self):
         """Update adds 'updated' audit entry"""
+        token = get_admin_token()
+        org_id = get_org_id(token)
+        
+        # Upload test document
+        file_content = b"TEST_UPDATE_AUDIT"
+        files = {"file": ("TEST_audit_update.txt", io.BytesIO(file_content), "text/plain")}
+        
+        upload_res = requests.post(
+            f"{BASE_URL}/api/vault/{org_id}/documents",
+            headers={"Authorization": f"Bearer {token}"},
+            files=files,
+            data={"name": "TEST_Update Audit"}
+        )
+        doc_id = upload_res.json()["id"]
+        
         # Update
         requests.put(
             f"{BASE_URL}/api/vault/{org_id}/documents/{doc_id}",
-            headers={"Authorization": f"Bearer {admin_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             json={"name": "TEST_Audit Check"}
         )
         
         # Get document
         res = requests.get(
             f"{BASE_URL}/api/vault/{org_id}/documents/{doc_id}",
-            headers={"Authorization": f"Bearer {admin_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         
         audit = res.json()["audit_trail"]
