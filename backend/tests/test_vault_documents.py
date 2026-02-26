@@ -647,22 +647,14 @@ class TestVaultAuditTrail:
 class TestVaultCleanup:
     """Cleanup TEST_ prefixed documents"""
     
-    @pytest.fixture(scope="class")
-    def admin_token(self):
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=ADMIN_USER)
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def org_id(self, admin_token):
-        res = requests.get(f"{BASE_URL}/api/organizations/", 
-                          headers={"Authorization": f"Bearer {admin_token}"})
-        return res.json()["organizations"][0]["id"]
-    
-    def test_cleanup_test_documents(self, admin_token, org_id):
+    def test_cleanup_test_documents(self):
         """Delete all TEST_ prefixed documents"""
+        token = get_admin_token()
+        org_id = get_org_id(token)
+        
         res = requests.get(
             f"{BASE_URL}/api/vault/{org_id}/documents",
-            headers={"Authorization": f"Bearer {admin_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             params={"search": "TEST_"}
         )
         
@@ -673,7 +665,7 @@ class TestVaultCleanup:
                 if doc["name"].startswith("TEST_"):
                     del_res = requests.delete(
                         f"{BASE_URL}/api/vault/{org_id}/documents/{doc['id']}",
-                        headers={"Authorization": f"Bearer {admin_token}"}
+                        headers={"Authorization": f"Bearer {token}"}
                     )
                     if del_res.status_code == 200:
                         deleted += 1
