@@ -96,20 +96,11 @@ class TestVaultStats:
 class TestVaultUpload:
     """Test document upload (admin only)"""
     
-    @pytest.fixture(scope="class")
-    def admin_token(self):
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=ADMIN_USER)
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def org_id(self, admin_token):
-        res = requests.get(f"{BASE_URL}/api/organizations/", 
-                          headers={"Authorization": f"Bearer {admin_token}"})
-        return res.json()["organizations"][0]["id"]
-    
-    def test_upload_document_admin(self, admin_token, org_id):
+    def test_upload_document_admin(self):
         """POST /api/vault/{org_id}/documents - upload document (admin)"""
-        # Create test file content
+        token = get_admin_token()
+        org_id = get_org_id(token)
+        
         file_content = b"TEST_VAULT_DOCUMENT_CONTENT"
         files = {"file": ("TEST_vault_doc.txt", io.BytesIO(file_content), "text/plain")}
         data = {
@@ -121,7 +112,7 @@ class TestVaultUpload:
         
         res = requests.post(
             f"{BASE_URL}/api/vault/{org_id}/documents",
-            headers={"Authorization": f"Bearer {admin_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             files=files,
             data=data
         )
@@ -135,18 +126,18 @@ class TestVaultUpload:
         assert doc["description"] == "Test document uploaded by automation"
         assert doc["file_size"] == len(file_content)
         print(f"Uploaded document: {doc['id']}")
-        
-        # Store doc_id for cleanup
-        return doc["id"]
     
-    def test_upload_with_default_name(self, admin_token, org_id):
+    def test_upload_with_default_name(self):
         """POST /api/vault/{org_id}/documents - upload uses filename as default name"""
+        token = get_admin_token()
+        org_id = get_org_id(token)
+        
         file_content = b"TEST_DEFAULT_NAME_FILE"
         files = {"file": ("TEST_my_default.pdf", io.BytesIO(file_content), "application/pdf")}
         
         res = requests.post(
             f"{BASE_URL}/api/vault/{org_id}/documents",
-            headers={"Authorization": f"Bearer {admin_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             files=files,
             data={}  # No name provided
         )
