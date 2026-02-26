@@ -203,6 +203,12 @@ async def create_indexes():
         await db.template_drafts.create_index("user_id")
         await db.template_drafts.create_index("share_token", sparse=True)
 
+        # Vault
+        await db.vault_documents.create_index("id", unique=True)
+        await db.vault_documents.create_index([("org_id", 1), ("created_at", -1)])
+        await db.vault_documents.create_index([("org_id", 1), ("category", 1)])
+        await db.vault_audit.create_index([("document_id", 1), ("timestamp", -1)])
+
         # Seed default templates
         await template_routes.seed_templates()
 
