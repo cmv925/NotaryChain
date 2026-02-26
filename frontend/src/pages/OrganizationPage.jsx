@@ -10,10 +10,11 @@ import { Card, CardContent } from '../components/ui/card';
 import {
   Building2, Users, Plus, Settings, Shield, Mail, Crown,
   UserPlus, X, ChevronRight, Loader2, Check, Trash2,
-  Key, Globe, Lock,
+  Key, Globe, Lock, FolderOpen,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
+import { OrgVault } from '../components/OrgVault';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
