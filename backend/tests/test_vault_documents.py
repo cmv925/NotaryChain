@@ -152,21 +152,13 @@ class TestVaultUpload:
 class TestVaultList:
     """Test document listing and filtering"""
     
-    @pytest.fixture(scope="class")
-    def demo_token(self):
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=DEMO_USER)
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def org_id(self, demo_token):
-        res = requests.get(f"{BASE_URL}/api/organizations/", 
-                          headers={"Authorization": f"Bearer {demo_token}"})
-        return res.json()["organizations"][0]["id"]
-    
-    def test_list_documents(self, demo_token, org_id):
+    def test_list_documents(self):
         """GET /api/vault/{org_id}/documents - list all documents"""
+        token = get_demo_token()
+        org_id = get_org_id(token)
+        
         res = requests.get(f"{BASE_URL}/api/vault/{org_id}/documents",
-                          headers={"Authorization": f"Bearer {demo_token}"})
+                          headers={"Authorization": f"Bearer {token}"})
         assert res.status_code == 200, f"List failed: {res.text}"
         
         data = res.json()
@@ -177,11 +169,14 @@ class TestVaultList:
         assert isinstance(data["documents"], list)
         print(f"Listed {data['total']} documents")
     
-    def test_filter_by_category(self, demo_token, org_id):
+    def test_filter_by_category(self):
         """GET /api/vault/{org_id}/documents?category=contracts - filter by category"""
+        token = get_demo_token()
+        org_id = get_org_id(token)
+        
         res = requests.get(
             f"{BASE_URL}/api/vault/{org_id}/documents",
-            headers={"Authorization": f"Bearer {demo_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             params={"category": "contracts"}
         )
         assert res.status_code == 200, f"Filter failed: {res.text}"
@@ -192,11 +187,14 @@ class TestVaultList:
             assert doc["category"] == "contracts"
         print(f"Filtered {data['total']} contracts")
     
-    def test_search_by_name(self, demo_token, org_id):
+    def test_search_by_name(self):
         """GET /api/vault/{org_id}/documents?search=TEST - search by name/description"""
+        token = get_demo_token()
+        org_id = get_org_id(token)
+        
         res = requests.get(
             f"{BASE_URL}/api/vault/{org_id}/documents",
-            headers={"Authorization": f"Bearer {demo_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             params={"search": "TEST"}
         )
         assert res.status_code == 200, f"Search failed: {res.text}"
