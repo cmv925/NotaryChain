@@ -582,25 +582,17 @@ class TestVaultRoleBasedAccess:
 class TestVaultAuditTrail:
     """Test audit trail tracking"""
     
-    @pytest.fixture(scope="class")
-    def admin_token(self):
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=ADMIN_USER)
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def org_id(self, admin_token):
-        res = requests.get(f"{BASE_URL}/api/organizations/", 
-                          headers={"Authorization": f"Bearer {admin_token}"})
-        return res.json()["organizations"][0]["id"]
-    
-    def test_audit_trail_tracks_upload(self, admin_token, org_id):
+    def test_audit_trail_tracks_upload(self):
         """Audit trail records 'uploaded' action"""
+        token = get_admin_token()
+        org_id = get_org_id(token)
+        
         file_content = b"TEST_AUDIT_UPLOAD"
         files = {"file": ("TEST_audit.txt", io.BytesIO(file_content), "text/plain")}
         
         upload_res = requests.post(
             f"{BASE_URL}/api/vault/{org_id}/documents",
-            headers={"Authorization": f"Bearer {admin_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             files=files,
             data={"name": "TEST_Audit Trail"}
         )
@@ -609,7 +601,7 @@ class TestVaultAuditTrail:
         # Get document to check audit
         res = requests.get(
             f"{BASE_URL}/api/vault/{org_id}/documents/{doc_id}",
-            headers={"Authorization": f"Bearer {admin_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         
         audit = res.json()["audit_trail"]
@@ -621,14 +613,17 @@ class TestVaultAuditTrail:
         assert "timestamp" in entry
         print(f"Upload audit: {entry['user_email']} at {entry['timestamp']}")
     
-    def test_audit_entry_fields(self, admin_token, org_id):
+    def test_audit_entry_fields(self):
         """Audit entries have required fields"""
+        token = get_admin_token()
+        org_id = get_org_id(token)
+        
         file_content = b"TEST_AUDIT_FIELDS"
         files = {"file": ("TEST_fields.txt", io.BytesIO(file_content), "text/plain")}
         
         upload_res = requests.post(
             f"{BASE_URL}/api/vault/{org_id}/documents",
-            headers={"Authorization": f"Bearer {admin_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             files=files,
             data={"name": "TEST_Fields Check"}
         )
@@ -636,7 +631,7 @@ class TestVaultAuditTrail:
         
         res = requests.get(
             f"{BASE_URL}/api/vault/{org_id}/documents/{doc_id}",
-            headers={"Authorization": f"Bearer {admin_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         
         audit = res.json()["audit_trail"]
