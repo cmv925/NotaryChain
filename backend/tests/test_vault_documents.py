@@ -299,39 +299,24 @@ class TestVaultDocumentDetail:
 class TestVaultDownload:
     """Test document download"""
     
-    @pytest.fixture(scope="class")
-    def demo_token(self):
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=DEMO_USER)
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def admin_token(self):
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=ADMIN_USER)
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def org_id(self, demo_token):
-        res = requests.get(f"{BASE_URL}/api/organizations/", 
-                          headers={"Authorization": f"Bearer {demo_token}"})
-        return res.json()["organizations"][0]["id"]
-    
-    @pytest.fixture(scope="class")
-    def doc_id(self, admin_token, org_id):
-        """Upload a test document for download testing"""
+    def test_download_document(self):
+        """GET /api/vault/{org_id}/documents/{doc_id}/download - download file"""
+        token = get_admin_token()
+        org_id = get_org_id(token)
+        
+        # Upload test document first
         file_content = b"TEST_DOWNLOAD_CONTENT_12345"
         files = {"file": ("TEST_download.txt", io.BytesIO(file_content), "text/plain")}
-        data = {"name": "TEST_Download Doc"}
         
-        res = requests.post(
+        upload_res = requests.post(
             f"{BASE_URL}/api/vault/{org_id}/documents",
-            headers={"Authorization": f"Bearer {admin_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             files=files,
-            data=data
+            data={"name": "TEST_Download Doc"}
         )
-        return res.json()["id"]
-    
-    def test_download_document(self, demo_token, org_id, doc_id):
-        """GET /api/vault/{org_id}/documents/{doc_id}/download - download file"""
+        doc_id = upload_res.json()["id"]
+        
+        demo_token = get_demo_token()
         res = requests.get(
             f"{BASE_URL}/api/vault/{org_id}/documents/{doc_id}/download",
             headers={"Authorization": f"Bearer {demo_token}"}
@@ -340,8 +325,25 @@ class TestVaultDownload:
         assert len(res.content) > 0
         print(f"Downloaded {len(res.content)} bytes")
     
-    def test_download_increments_count(self, demo_token, org_id, doc_id):
+    def test_download_increments_count(self):
         """Download increases download_count and adds audit entry"""
+        token = get_admin_token()
+        org_id = get_org_id(token)
+        
+        # Upload test document
+        file_content = b"TEST_DOWNLOAD_COUNT"
+        files = {"file": ("TEST_dl_count.txt", io.BytesIO(file_content), "text/plain")}
+        
+        upload_res = requests.post(
+            f"{BASE_URL}/api/vault/{org_id}/documents",
+            headers={"Authorization": f"Bearer {token}"},
+            files=files,
+            data={"name": "TEST_Download Count"}
+        )
+        doc_id = upload_res.json()["id"]
+        
+        demo_token = get_demo_token()
+        
         # Get initial count
         res1 = requests.get(
             f"{BASE_URL}/api/vault/{org_id}/documents/{doc_id}",
