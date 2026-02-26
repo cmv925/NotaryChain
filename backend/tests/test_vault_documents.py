@@ -453,26 +453,18 @@ class TestVaultUpdateDocument:
 class TestVaultDeleteDocument:
     """Test document deletion (admin only)"""
     
-    @pytest.fixture(scope="class")
-    def admin_token(self):
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=ADMIN_USER)
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def org_id(self, admin_token):
-        res = requests.get(f"{BASE_URL}/api/organizations/", 
-                          headers={"Authorization": f"Bearer {admin_token}"})
-        return res.json()["organizations"][0]["id"]
-    
-    def test_delete_document(self, admin_token, org_id):
+    def test_delete_document(self):
         """DELETE /api/vault/{org_id}/documents/{doc_id} - delete document"""
+        token = get_admin_token()
+        org_id = get_org_id(token)
+        
         # First upload a document
         file_content = b"TEST_DELETE_ME"
         files = {"file": ("TEST_delete.txt", io.BytesIO(file_content), "text/plain")}
         
         upload_res = requests.post(
             f"{BASE_URL}/api/vault/{org_id}/documents",
-            headers={"Authorization": f"Bearer {admin_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             files=files,
             data={"name": "TEST_To Be Deleted"}
         )
@@ -481,7 +473,7 @@ class TestVaultDeleteDocument:
         # Delete the document
         res = requests.delete(
             f"{BASE_URL}/api/vault/{org_id}/documents/{doc_id}",
-            headers={"Authorization": f"Bearer {admin_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert res.status_code == 200, f"Delete failed: {res.text}"
         assert "message" in res.json()
@@ -489,16 +481,19 @@ class TestVaultDeleteDocument:
         # Verify deleted
         get_res = requests.get(
             f"{BASE_URL}/api/vault/{org_id}/documents/{doc_id}",
-            headers={"Authorization": f"Bearer {admin_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert get_res.status_code == 404
         print("Document deleted successfully")
     
-    def test_delete_nonexistent_returns_404(self, admin_token, org_id):
+    def test_delete_nonexistent_returns_404(self):
         """DELETE non-existent document returns 404"""
+        token = get_admin_token()
+        org_id = get_org_id(token)
+        
         res = requests.delete(
             f"{BASE_URL}/api/vault/{org_id}/documents/nonexistent-id-999",
-            headers={"Authorization": f"Bearer {admin_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert res.status_code == 404
         print("404 returned for non-existent document delete")
