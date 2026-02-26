@@ -8,12 +8,42 @@ import pytest
 import requests
 import os
 import io
+import time
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL')
 
 # Test credentials
 DEMO_USER = {"email": "demo@test.com", "password": "Demo123!"}  # Org Owner
 ADMIN_USER = {"email": "admin@notarychain.com", "password": "Admin123!"}  # Org Admin
+
+# Module-level cache for tokens
+_cached_tokens = {}
+
+
+def get_demo_token():
+    """Get or cache demo user token"""
+    if "demo" not in _cached_tokens:
+        res = requests.post(f"{BASE_URL}/api/auth/login", json=DEMO_USER)
+        _cached_tokens["demo"] = res.json().get("access_token")
+    return _cached_tokens["demo"]
+
+
+def get_admin_token():
+    """Get or cache admin user token"""
+    if "admin" not in _cached_tokens:
+        time.sleep(0.5)  # Rate limit avoidance
+        res = requests.post(f"{BASE_URL}/api/auth/login", json=ADMIN_USER)
+        _cached_tokens["admin"] = res.json().get("access_token")
+    return _cached_tokens["admin"]
+
+
+def get_org_id(token):
+    """Get org_id using token"""
+    if "org_id" not in _cached_tokens:
+        res = requests.get(f"{BASE_URL}/api/organizations/", 
+                          headers={"Authorization": f"Bearer {token}"})
+        _cached_tokens["org_id"] = res.json()["organizations"][0]["id"]
+    return _cached_tokens["org_id"]
 
 
 class TestVaultSetup:
