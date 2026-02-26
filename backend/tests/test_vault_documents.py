@@ -74,21 +74,13 @@ class TestVaultSetup:
 class TestVaultStats:
     """Test vault statistics endpoint"""
     
-    @pytest.fixture(scope="class")
-    def demo_token(self):
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=DEMO_USER)
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def org_id(self, demo_token):
-        res = requests.get(f"{BASE_URL}/api/organizations/", 
-                          headers={"Authorization": f"Bearer {demo_token}"})
-        return res.json()["organizations"][0]["id"]
-    
-    def test_get_vault_stats(self, demo_token, org_id):
+    def test_get_vault_stats(self):
         """GET /api/vault/{org_id}/stats - get vault statistics"""
+        token = get_demo_token()
+        org_id = get_org_id(token)
+        
         res = requests.get(f"{BASE_URL}/api/vault/{org_id}/stats",
-                          headers={"Authorization": f"Bearer {demo_token}"})
+                          headers={"Authorization": f"Bearer {token}"})
         assert res.status_code == 200, f"Stats request failed: {res.text}"
         
         data = res.json()
