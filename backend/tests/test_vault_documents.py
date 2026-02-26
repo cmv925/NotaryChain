@@ -502,54 +502,46 @@ class TestVaultDeleteDocument:
 class TestVaultRoleBasedAccess:
     """Test role-based access control"""
     
-    @pytest.fixture(scope="class")
-    def demo_token(self):
-        """Demo user (owner)"""
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=DEMO_USER)
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def admin_token(self):
-        """Admin user"""
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=ADMIN_USER)
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def org_id(self, demo_token):
-        res = requests.get(f"{BASE_URL}/api/organizations/", 
-                          headers={"Authorization": f"Bearer {demo_token}"})
-        return res.json()["organizations"][0]["id"]
-    
-    def test_owner_can_upload(self, demo_token, org_id):
+    def test_owner_can_upload(self):
         """Owner (demo user) can upload documents"""
+        token = get_demo_token()
+        org_id = get_org_id(token)
+        
         file_content = b"TEST_OWNER_UPLOAD"
         files = {"file": ("TEST_owner.txt", io.BytesIO(file_content), "text/plain")}
         
         res = requests.post(
             f"{BASE_URL}/api/vault/{org_id}/documents",
-            headers={"Authorization": f"Bearer {demo_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             files=files,
             data={"name": "TEST_Owner Upload"}
         )
         assert res.status_code == 200, f"Owner upload failed: {res.text}"
         print("Owner can upload - PASS")
     
-    def test_admin_can_upload(self, admin_token, org_id):
+    def test_admin_can_upload(self):
         """Admin can upload documents"""
+        token = get_admin_token()
+        org_id = get_org_id(token)
+        
         file_content = b"TEST_ADMIN_UPLOAD"
         files = {"file": ("TEST_admin.txt", io.BytesIO(file_content), "text/plain")}
         
         res = requests.post(
             f"{BASE_URL}/api/vault/{org_id}/documents",
-            headers={"Authorization": f"Bearer {admin_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             files=files,
             data={"name": "TEST_Admin Upload"}
         )
         assert res.status_code == 200, f"Admin upload failed: {res.text}"
         print("Admin can upload - PASS")
     
-    def test_member_can_view_and_download(self, demo_token, admin_token, org_id):
+    def test_member_can_view_and_download(self):
         """Member (non-admin) can view and download"""
+        admin_token = get_admin_token()
+        demo_token = get_demo_token()
+        org_id = get_org_id(admin_token)
+        
         # Upload with admin
         file_content = b"TEST_MEMBER_ACCESS"
         files = {"file": ("TEST_member_access.txt", io.BytesIO(file_content), "text/plain")}
@@ -577,8 +569,11 @@ class TestVaultRoleBasedAccess:
         assert download_res.status_code == 200
         print("Member can view and download - PASS")
     
-    def test_unauthorized_access_returns_401(self, org_id):
+    def test_unauthorized_access_returns_401(self):
         """No auth token returns 401 or 403"""
+        token = get_demo_token()
+        org_id = get_org_id(token)
+        
         res = requests.get(f"{BASE_URL}/api/vault/{org_id}/documents")
         assert res.status_code in [401, 403, 422]
         print(f"Unauthorized access blocked: {res.status_code}")
