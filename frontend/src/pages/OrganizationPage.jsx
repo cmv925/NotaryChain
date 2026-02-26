@@ -390,6 +390,7 @@ const OrganizationPage = () => {
 
   const TABS = [
     { id: 'members', label: 'Members', icon: Users },
+    { id: 'vault', label: 'Vault', icon: FolderOpen },
     { id: 'invites', label: 'Invites', icon: Mail },
     { id: 'sso', label: 'SSO', icon: Key },
     { id: 'settings', label: 'Settings', icon: Settings },
