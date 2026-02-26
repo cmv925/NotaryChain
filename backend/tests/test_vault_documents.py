@@ -206,39 +206,25 @@ class TestVaultList:
 class TestVaultDocumentDetail:
     """Test document detail with audit trail"""
     
-    @pytest.fixture(scope="class")
-    def demo_token(self):
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=DEMO_USER)
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def admin_token(self):
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=ADMIN_USER)
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def org_id(self, demo_token):
-        res = requests.get(f"{BASE_URL}/api/organizations/", 
-                          headers={"Authorization": f"Bearer {demo_token}"})
-        return res.json()["organizations"][0]["id"]
-    
-    @pytest.fixture(scope="class")
-    def doc_id(self, admin_token, org_id):
-        """Upload a test document for detail testing"""
+    def test_get_document_detail(self):
+        """GET /api/vault/{org_id}/documents/{doc_id} - get document detail"""
+        token = get_admin_token()
+        org_id = get_org_id(token)
+        
+        # Upload test document first
         file_content = b"TEST_DETAIL_DOCUMENT"
         files = {"file": ("TEST_detail_doc.txt", io.BytesIO(file_content), "text/plain")}
         data = {"name": "TEST_Detail Document", "category": "legal"}
         
-        res = requests.post(
+        upload_res = requests.post(
             f"{BASE_URL}/api/vault/{org_id}/documents",
-            headers={"Authorization": f"Bearer {admin_token}"},
+            headers={"Authorization": f"Bearer {token}"},
             files=files,
             data=data
         )
-        return res.json()["id"]
-    
-    def test_get_document_detail(self, demo_token, org_id, doc_id):
-        """GET /api/vault/{org_id}/documents/{doc_id} - get document detail"""
+        doc_id = upload_res.json()["id"]
+        
+        demo_token = get_demo_token()
         res = requests.get(
             f"{BASE_URL}/api/vault/{org_id}/documents/{doc_id}",
             headers={"Authorization": f"Bearer {demo_token}"}
@@ -255,8 +241,25 @@ class TestVaultDocumentDetail:
         assert isinstance(doc["audit_trail"], list)
         print(f"Document detail: {doc['name']}, audit entries: {len(doc['audit_trail'])}")
     
-    def test_view_increments_count_and_adds_audit(self, demo_token, org_id, doc_id):
+    def test_view_increments_count_and_adds_audit(self):
         """GET document increases view_count and adds audit entry"""
+        token = get_admin_token()
+        org_id = get_org_id(token)
+        
+        # Upload test document
+        file_content = b"TEST_VIEW_COUNT"
+        files = {"file": ("TEST_view.txt", io.BytesIO(file_content), "text/plain")}
+        
+        upload_res = requests.post(
+            f"{BASE_URL}/api/vault/{org_id}/documents",
+            headers={"Authorization": f"Bearer {token}"},
+            files=files,
+            data={"name": "TEST_View Count"}
+        )
+        doc_id = upload_res.json()["id"]
+        
+        demo_token = get_demo_token()
+        
         # Get initial view count
         res1 = requests.get(
             f"{BASE_URL}/api/vault/{org_id}/documents/{doc_id}",
@@ -280,11 +283,14 @@ class TestVaultDocumentDetail:
         assert len(viewed_entries) > 0, "No 'viewed' audit entry found"
         print(f"View count: {new_view_count}, viewed audit entries: {len(viewed_entries)}")
     
-    def test_document_not_found(self, demo_token, org_id):
+    def test_document_not_found(self):
         """GET /api/vault/{org_id}/documents/{invalid_id} - returns 404"""
+        token = get_demo_token()
+        org_id = get_org_id(token)
+        
         res = requests.get(
             f"{BASE_URL}/api/vault/{org_id}/documents/invalid-doc-id-12345",
-            headers={"Authorization": f"Bearer {demo_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert res.status_code == 404
         print("404 returned for invalid document ID")
