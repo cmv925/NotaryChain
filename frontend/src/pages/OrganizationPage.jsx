@@ -585,6 +585,11 @@ const OrganizationPage = () => {
                         <SSOSettings orgId={selectedOrg.id} myRole={selectedOrg.my_role} token={token} />
                       )}
 
+                      {/* Vault Tab */}
+                      {activeTab === 'vault' && (
+                        <OrgVault orgId={selectedOrg.id} myRole={selectedOrg.my_role} token={token} />
+                      )}
+
                       {/* Settings Tab */}
                       {activeTab === 'settings' && (
                         <div data-testid="settings-tab">
