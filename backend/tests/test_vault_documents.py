@@ -49,44 +49,24 @@ def get_org_id(token):
 class TestVaultSetup:
     """Setup: get auth tokens and org_id"""
     
-    @pytest.fixture(scope="class")
-    def demo_token(self):
-        """Get demo user token (org owner)"""
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=DEMO_USER)
-        assert res.status_code == 200, f"Demo login failed: {res.text}"
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def admin_token(self):
-        """Get admin user token (org admin)"""
-        res = requests.post(f"{BASE_URL}/api/auth/login", json=ADMIN_USER)
-        assert res.status_code == 200, f"Admin login failed: {res.text}"
-        return res.json()["access_token"]
-    
-    @pytest.fixture(scope="class")
-    def org_id(self, demo_token):
-        """Get first organization ID"""
-        res = requests.get(f"{BASE_URL}/api/organizations/", 
-                          headers={"Authorization": f"Bearer {demo_token}"})
-        assert res.status_code == 200, f"Failed to get orgs: {res.text}"
-        orgs = res.json()["organizations"]
-        assert len(orgs) > 0, "No organizations found for demo user"
-        return orgs[0]["id"]
-    
-    def test_demo_login(self, demo_token):
+    def test_demo_login(self):
         """Test demo user login"""
-        assert demo_token is not None
-        assert len(demo_token) > 0
-        print(f"Demo user token obtained: {demo_token[:20]}...")
+        token = get_demo_token()
+        assert token is not None
+        assert len(token) > 0
+        print(f"Demo user token obtained: {token[:20]}...")
     
-    def test_admin_login(self, admin_token):
+    def test_admin_login(self):
         """Test admin user login"""
-        assert admin_token is not None
-        assert len(admin_token) > 0
-        print(f"Admin user token obtained: {admin_token[:20]}...")
+        token = get_admin_token()
+        assert token is not None
+        assert len(token) > 0
+        print(f"Admin user token obtained: {token[:20]}...")
     
-    def test_org_exists(self, org_id):
+    def test_org_exists(self):
         """Test organization exists"""
+        token = get_demo_token()
+        org_id = get_org_id(token)
         assert org_id is not None
         print(f"Organization ID: {org_id}")
 
