@@ -145,7 +145,7 @@ async def list_documents(
             {"description": {"$regex": search, "$options": "i"}},
         ]
     if tag:
-        query["tags": tag]
+        query["tags"] = tag
 
     docs = await db.vault_documents.find(query, {"_id": 0}).sort("created_at", -1).to_list(200)
     categories_used = await db.vault_documents.distinct("category", {"org_id": org_id})
