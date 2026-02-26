@@ -239,10 +239,10 @@ async def update_document(
         changes.append(f"category → {body.category}")
     if body.tags is not None:
         update["tags"] = body.tags
-        changes.append(f"tags updated")
+        changes.append("tags updated")
     if body.description is not None:
         update["description"] = body.description
-        changes.append(f"description updated")
+        changes.append("description updated")
 
     await db.vault_documents.update_one({"id": doc_id}, {"$set": update})
     await _add_audit_entry(doc_id, "updated", current_user.email, current_user.id, "; ".join(changes))
