@@ -74,6 +74,7 @@ class NotarizationRequest(BaseModel):
     notes: str = ""
     hcs_topic_id: Optional[str] = None  # Hedera Consensus Service topic for audit trail
     hcs_topic_explorer: Optional[str] = None  # HashScan explorer URL for the topic
+    expires_at: Optional[str] = None  # ISO date for document expiry tracking
     created_at: datetime = Field(default_factory=datetime.utcnow)
     completed_at: Optional[datetime] = None
 
