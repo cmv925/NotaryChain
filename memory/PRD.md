@@ -44,6 +44,14 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **Frontend:** `SSOLoginPage.jsx` — Multi-step SSO login (email discovery → org selection → mock IdP authorize → complete)
 - Enterprise SSO button on login page, SSO settings tab on org page
 
+### Permission-based UI Rendering — COMPLETED (Feb 28, 2026)
+- **Backend:** `GET /api/organizations/{org_id}/my-permissions` — returns current user's effective permissions, base_role, custom_role, source
+- **Frontend Hook:** `usePermissions(orgId)` — fetches and caches user's RBAC permissions with helpers: `hasPermission()`, `hasAny()`, `hasAll()`
+- **Frontend Component:** `<PermissionGate>` — conditionally renders children based on permissions (single, any-of, all-of modes). Shows lock indicator when `showLock=true`
+- **Applied across Organization page:** Tabs filtered by permissions (owner=6 tabs, default member=2 tabs), Invite/Remove/Role management buttons gated, Vault upload/delete gated, Settings delete gated
+- **OrgVault:** Upload/delete actions gated by `vault:upload`/`vault:delete` permissions
+- **Settings tab:** Shows user's effective permissions summary with count and source badge
+
 ### Organization Document Vault — COMPLETED
 Upload, search, filter, role-based access, audit trail
 
