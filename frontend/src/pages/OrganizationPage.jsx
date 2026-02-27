@@ -16,6 +16,8 @@ import { toast } from '../hooks/use-toast';
 import axios from 'axios';
 import { OrgVault } from '../components/OrgVault';
 import RBACManagement from '../components/RBACManagement';
+import PermissionGate from '../components/PermissionGate';
+import { usePermissions } from '../hooks/usePermissions';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
