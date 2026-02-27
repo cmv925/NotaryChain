@@ -527,6 +527,21 @@ const NotaryDashboard = () => {
                   ))
                 )
               )}
+
+              {activeTab === 'schedule' && (
+                <div data-testid="schedule-tab-content">
+                  <Card className="bg-[#1a1a2e] border-[#333] mb-4">
+                    <CardContent className="p-4">
+                      <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
+                        <CalendarClock className="w-5 h-5 text-amber-400" />
+                        Booking Availability
+                      </h2>
+                      <p className="text-gray-400 text-sm mb-4">Set your weekly schedule and manage blocked dates. Clients can book sessions from the Marketplace.</p>
+                      <NotaryAvailabilitySettings token={token} />
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
             </div>
           </div>
 
