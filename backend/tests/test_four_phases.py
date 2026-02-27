@@ -147,9 +147,11 @@ class TestPhase2BiometricPassport(TestAuthSetup):
     def test_generate_passport_no_verifications_returns_400(self, headers):
         """POST /api/biometric-passport/generate without verifications returns 400"""
         # This tests the error case when session has no biometric verifications
+        # Need to use form-data correctly with the auth header only
+        auth_header = {"Authorization": headers["Authorization"]}
         response = requests.post(
             f"{BASE_URL}/api/biometric-passport/generate",
-            headers=headers,
+            headers=auth_header,
             data={"session_id": "test-nonexistent-session-123"}
         )
         assert response.status_code == 400, f"Expected 400, got {response.status_code}: {response.text}"
