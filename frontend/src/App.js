@@ -363,6 +363,38 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/reminders"
+              element={
+                <ProtectedRoute>
+                  <RemindersPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/approvals"
+              element={
+                <ProtectedRoute>
+                  <ApprovalsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/doc-compare"
+              element={
+                <ProtectedRoute>
+                  <DocComparePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/branding"
+              element={
+                <ProtectedRoute>
+                  <BrandingPage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         </WebSocketProvider>
