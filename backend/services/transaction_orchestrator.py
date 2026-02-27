@@ -518,6 +518,25 @@ class TransactionOrchestratorService:
         if new_status == "completed":
             await self._check_and_unblock_tasks(task["transaction_id"], task_id)
         
+        # Emit timeline event
+        now = datetime.now(timezone.utc).isoformat()
+        if new_status == "completed":
+            await _emit_timeline(task["transaction_id"], {
+                "type": "task", "category": "tasks", "icon": "check-circle",
+                "title": f'Task Completed: {task["name"]}',
+                "description": f'Completed by: {user_id}',
+                "timestamp": now, "severity": "success",
+                "metadata": {"task_id": task_id},
+            })
+        elif new_status == "in_progress":
+            await _emit_timeline(task["transaction_id"], {
+                "type": "task", "category": "tasks", "icon": "play",
+                "title": f'Task Started: {task["name"]}',
+                "description": task.get("description", "")[:100],
+                "timestamp": now, "severity": "info",
+                "metadata": {"task_id": task_id},
+            })
+
         return await self.db.transaction_tasks.find_one({"id": task_id}, {"_id": 0})
     
     async def _update_transaction_progress(self, transaction_id: str):
