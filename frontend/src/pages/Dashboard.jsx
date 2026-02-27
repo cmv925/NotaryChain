@@ -645,6 +645,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+      <OnboardingTour />
     </div>
   );
 };
