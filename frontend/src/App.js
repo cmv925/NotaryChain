@@ -271,6 +271,22 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/book/:notaryId"
+              element={
+                <ProtectedRoute>
+                  <BookingCalendar />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-bookings"
+              element={
+                <ProtectedRoute>
+                  <MyBookings />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         </WebSocketProvider>
