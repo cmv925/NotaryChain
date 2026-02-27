@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useWS } from '../contexts/WebSocketContext';
-import { Shield, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp, Settings, CreditCard, Lock, Code, BookOpen, Building2, Save, CalendarClock, Layers, Users } from 'lucide-react';
+import { Shield, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp, Settings, CreditCard, Lock, Code, BookOpen, Building2, Save, CalendarClock, Layers, Users, Wand2, FileSearch } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { toast } from '../hooks/use-toast';
@@ -316,6 +316,42 @@ const Dashboard = () => {
               <div className="text-left">
                 <div className="font-semibold">My Bookings</div>
                 <div className="text-sm text-teal-300">View appointments</div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => navigate('/ai-generator')}
+              variant="outline"
+              className="border-2 border-purple-500 text-purple-400 hover:bg-purple-500/10 px-6 py-6 text-lg justify-start"
+              data-testid="ai-generator-button"
+            >
+              <Wand2 className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">AI Doc Generator</div>
+                <div className="text-sm text-purple-300">Create docs with AI</div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => navigate('/ai-summarizer')}
+              variant="outline"
+              className="border-2 border-emerald-500 text-emerald-400 hover:bg-emerald-500/10 px-6 py-6 text-lg justify-start"
+              data-testid="ai-summarizer-button"
+            >
+              <FileSearch className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">AI Summarizer</div>
+                <div className="text-sm text-emerald-300">Summarize any document</div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => navigate('/video-witness')}
+              variant="outline"
+              className="border-2 border-rose-500 text-rose-400 hover:bg-rose-500/10 px-6 py-6 text-lg justify-start"
+              data-testid="video-witness-button"
+            >
+              <Video className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Video Witness</div>
+                <div className="text-sm text-rose-300">Record verification video</div>
               </div>
             </Button>
           </div>
