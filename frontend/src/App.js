@@ -61,6 +61,7 @@ import { Toaster } from './components/ui/toaster';
 function App() {
   return (
     <ErrorBoundary>
+    <ThemeProvider>
     <div className="App">
       <AuthProvider>
         <WebSocketProvider>
@@ -402,6 +403,7 @@ function App() {
         <Toaster />
       </AuthProvider>
     </div>
+    </ThemeProvider>
     </ErrorBoundary>
   );
 }
