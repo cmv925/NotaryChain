@@ -380,6 +380,12 @@ const Dashboard = () => {
                               )}
                             </Button>
                           )}
+                          <SetExpiryButton
+                            requestId={request.id}
+                            currentExpiry={request.expires_at}
+                            token={token}
+                            onUpdate={fetchDashboardData}
+                          />
                         </div>
                       </div>
                     </div>
