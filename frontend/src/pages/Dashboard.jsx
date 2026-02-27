@@ -285,6 +285,9 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Document Expiry Tracker */}
+        <ExpiryWidget token={token} />
+
         {/* Notary Requests Section */}
         {notaryRequests.length > 0 && (
           <Card className="bg-[#1a2332] border-gray-800 mb-8">
