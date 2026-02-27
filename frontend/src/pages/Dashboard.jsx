@@ -282,6 +282,30 @@ const Dashboard = () => {
                 <div className="text-sm text-purple-300">Join our network</div>
               </div>
             </Button>
+            <Button
+              onClick={() => navigate('/bulk-notarization')}
+              variant="outline"
+              className="border-2 border-cyan-500 text-cyan-400 hover:bg-cyan-500/10 px-6 py-6 text-lg justify-start"
+              data-testid="bulk-notarization-button"
+            >
+              <Layers className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Bulk Notarization</div>
+                <div className="text-sm text-cyan-300">Multiple docs at once</div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => navigate('/marketplace')}
+              variant="outline"
+              className="border-2 border-amber-500 text-amber-400 hover:bg-amber-500/10 px-6 py-6 text-lg justify-start"
+              data-testid="marketplace-button"
+            >
+              <Users className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Find Notaries</div>
+                <div className="text-sm text-amber-300">Browse marketplace</div>
+              </div>
+            </Button>
           </div>
         </div>
 
