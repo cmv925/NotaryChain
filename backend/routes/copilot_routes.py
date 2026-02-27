@@ -122,7 +122,6 @@ Respond with a JSON object:
             api_key=EMERGENT_KEY,
             session_id=f"copilot_{body.request_id}_{datetime.now().timestamp()}",
             system_message="You are a professional notary AI assistant. Always respond with valid JSON only.",
-            model="gemini-2.0-flash",
         )
         response = await chat.send_message(UserMessage(message=prompt))
         text = response.message.strip()
@@ -214,7 +213,6 @@ Fill what you can from the data. Leave blanks for unknowns."""
             api_key=EMERGENT_KEY,
             session_id=f"journal_{body.request_id}_{datetime.now().timestamp()}",
             system_message="You are a notary journal assistant. Respond with valid JSON only.",
-            model="gemini-2.0-flash",
         )
         response = await chat.send_message(UserMessage(message=prompt))
         text = response.message.strip()

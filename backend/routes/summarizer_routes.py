@@ -98,7 +98,6 @@ Return as JSON:
             api_key=EMERGENT_KEY,
             session_id=f"summarize_{current_user.id}_{datetime.now().timestamp()}",
             system_message="You are a document analysis expert. Respond with valid JSON only.",
-            model="gemini-2.0-flash",
         )
         response = await chat.send_message(
             UserMessage(

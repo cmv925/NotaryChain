@@ -108,7 +108,6 @@ Make the document thorough, legally sound, and professionally written. Use [BLAN
             api_key=EMERGENT_KEY,
             session_id=f"docgen_{current_user.id}_{datetime.now().timestamp()}",
             system_message="You are a professional legal document generator. Always respond with valid JSON only.",
-            model="gemini-2.0-flash",
         )
         response = await chat.send_message(UserMessage(message=prompt))
         text = response.message.strip()
@@ -164,7 +163,6 @@ Return the complete updated document in the same JSON format. Make the requested
             api_key=EMERGENT_KEY,
             session_id=f"refine_{body.generation_id}_{datetime.now().timestamp()}",
             system_message="You are a professional legal document editor. Always respond with valid JSON only.",
-            model="gemini-2.0-flash",
         )
         response = await chat.send_message(UserMessage(message=prompt))
         text = response.message.strip()
