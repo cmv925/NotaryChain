@@ -351,6 +351,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/timeline/:transactionId"
+              element={
+                <ProtectedRoute>
+                  <TransactionTimeline />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         </WebSocketProvider>
