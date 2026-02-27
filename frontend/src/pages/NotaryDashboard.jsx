@@ -694,6 +694,12 @@ const NotaryDashboard = () => {
           request={selectedRequest}
           aiAnalysis={aiAnalysis}
           loadingAi={loadingAi}
+          copilotData={copilotData}
+          loadingCopilot={loadingCopilot}
+          onRunCopilot={() => fetchCopilotAnalysis(selectedRequest.id)}
+          journalPrefill={journalPrefill}
+          loadingJournal={loadingJournal}
+          onPrefillJournal={() => fetchJournalPrefill(selectedRequest.id)}
           onClose={() => { setShowModal(false); setSelectedRequest(null); }}
           onAccept={() => handleAssignRequest(selectedRequest.id)}
           onStartSession={() => handleStartSession(selectedRequest.id)}
