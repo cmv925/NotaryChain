@@ -239,7 +239,7 @@ const Dashboard = () => {
         {/* Quick Actions */}
         <div className="mb-6 sm:mb-8">
           <h3 className="text-lg sm:text-xl font-semibold text-white mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             <Button
               onClick={() => navigate('/demo')}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-6 text-lg justify-start"
