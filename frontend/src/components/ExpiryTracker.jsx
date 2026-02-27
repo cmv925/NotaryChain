@@ -109,7 +109,19 @@ export function ExpiryWidget({ token }) {
                     {doc.document_type} &middot; {doc.status}
                   </p>
                 </div>
-                <div className="text-right flex-shrink-0">
+                <div className="text-right flex-shrink-0 flex items-center gap-2">
+                  {(doc.expiry_status === 'expired' || doc.expiry_status === 'critical') && (
+                    <Button
+                      onClick={(e) => { e.stopPropagation(); handleRenew(doc.id, doc.document_name); }}
+                      size="sm"
+                      className="bg-green-600/80 hover:bg-green-600 text-white text-[10px] h-6 px-2"
+                      disabled={renewingId === doc.id}
+                      data-testid={`renew-btn-${doc.id}`}
+                    >
+                      <RefreshCw className={`w-3 h-3 mr-0.5 ${renewingId === doc.id ? 'animate-spin' : ''}`} />
+                      Renew
+                    </Button>
+                  )}
                   <span className={`text-xs font-semibold ${cfg.color}`}>
                     {doc.days_remaining !== null && doc.days_remaining !== undefined
                       ? doc.days_remaining < 0
