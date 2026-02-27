@@ -3,7 +3,7 @@ Subscription Plans and Tier Management
 Handles Stripe subscription checkout, plan limits, and subscription lifecycle
 """
 
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, Query
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 from typing import Optional
