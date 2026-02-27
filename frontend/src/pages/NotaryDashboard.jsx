@@ -427,11 +427,13 @@ const NotaryDashboard = () => {
                     data-testid={`${tab.id}-tab`}
                   >
                     {tab.label}
+                    {tab.count !== null && (
                     <span className={`text-xs px-1.5 py-0.5 rounded-full ${
                       activeTab === tab.id ? `bg-${tab.color}-500/30` : 'bg-gray-700'
                     }`}>
                       {tab.count}
                     </span>
+                    )}
                   </button>
                 ))}
               </div>
