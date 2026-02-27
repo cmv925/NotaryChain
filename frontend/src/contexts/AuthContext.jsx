@@ -103,11 +103,17 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const loginWithToken = (accessToken) => {
+    localStorage.setItem('token', accessToken);
+    setToken(accessToken);
+  };
+
   const value = {
     user,
     loading,
     token,
     login,
+    loginWithToken,
     verify2FA,
     signup,
     logout,
