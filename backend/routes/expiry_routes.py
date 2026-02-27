@@ -195,3 +195,53 @@ async def get_expiry_dashboard(
     }
 
     return {"documents": results, "summary": summary}
+
+
+
+@router.post("/requests/{request_id}/renew")
+async def renew_request(
+    request_id: str,
+    current_user: User = Depends(get_current_user),
+):
+    """Create a new notarization request pre-filled from an existing (expired/expiring) request."""
+    original = await db.notarization_requests.find_one(
+        {"id": request_id, "user_id": current_user.id}, {"_id": 0}
+    )
+    if not original:
+        raise HTTPException(status_code=404, detail="Request not found")
+
+    # Create a new request with same details
+    new_req = NotarizationRequest(
+        user_id=current_user.id,
+        document_name=original.get("document_name", "Renewed Document"),
+        document_type=original.get("document_type", "other"),
+        notarization_type=original.get("notarization_type", "ron"),
+        signers=original.get("signers", []),
+        notes=f"Renewed from request {request_id[:8]}... | {original.get('notes', '')}",
+    )
+
+    # Create HCS topic
+    hcs_topic_id = None
+    hcs_explorer = None
+    try:
+        result = await hedera_service.create_topic(
+            memo=f"Notarization: {new_req.document_type}"
+        )
+        if result.get("success"):
+            hcs_topic_id = result["topic_id"]
+            hcs_explorer = result.get("explorer_url")
+    except Exception as e:
+        logger.warning(f"HCS topic creation failed for renewal: {e}")
+
+    req_dict = new_req.dict()
+    req_dict["hcs_topic_id"] = hcs_topic_id
+    req_dict["hcs_topic_explorer"] = hcs_explorer
+
+    await db.notarization_requests.insert_one(req_dict)
+    req_dict.pop("_id", None)
+
+    return {
+        "message": "Request renewed successfully",
+        "new_request": req_dict,
+        "original_request_id": request_id,
+    }
