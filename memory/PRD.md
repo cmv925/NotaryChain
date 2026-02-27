@@ -147,6 +147,29 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 
 **Testing:** 100% backend (24/24), 100% frontend
 
+### Transaction Timeline Visualization — COMPLETED (Feb 27, 2026)
+
+**Backend** (`timeline_routes.py`)
+- GET /api/timeline/{transaction_id}: Aggregates events from 13+ MongoDB collections
+- Sources: transaction creation, participant joins, task starts/completions, document uploads, AI analyses, copilot analyses, remediations, biometric passports, biometric verifications, conductor guidance, evidence packages, blockchain settlements, witness recordings
+- Events have: type, category (7 types), icon, title, description, timestamp, severity, sequence number, metadata
+- Sorted chronologically (newest first), grouped by date
+
+**Frontend** (`TransactionTimeline.jsx`)
+- Forensic-style vertical timeline with gradient line
+- Category-colored icon nodes (lifecycle=blue, people=violet, tasks=amber, documents=cyan, AI=pink, verification=emerald, blockchain=orange)
+- Filter bar with 7 category toggles + Clear button
+- Stats strip showing event counts per category
+- Date grouping headers
+- Expandable event cards with full metadata details (event#, type, timestamp, all metadata fields)
+- Severity dots (green=success, amber=warning, red=error, blue=info)
+
+**Integration:**
+- Transaction Room: Timeline button in header (data-testid='timeline-btn')
+- Route: /timeline/:transactionId
+
+**Testing:** 100% backend (14/14), 100% frontend
+
 ## Architecture
 ```
 /app
@@ -166,6 +189,7 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 ```
 
 ## Key API Endpoints (New)
+- `/api/timeline/{transaction_id}` — Transaction Timeline events
 - `/api/remediation/analyze|apply-clauses|history|{id}` — AI Document Remediation
 - `/api/biometric-passport/generate|my|{id}|verify/{id}|session/{id}` — Biometric Passport
 - `/api/conductor/guide|chat|status/{id}` — AI Conductor
