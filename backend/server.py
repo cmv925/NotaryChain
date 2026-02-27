@@ -57,6 +57,10 @@ bulk_routes.set_db(db)
 marketplace_routes.set_db(db)
 embed_routes.set_db(db)
 booking_routes.set_db(db)
+copilot_routes.set_db(db)
+ai_generator_routes.set_db(db)
+summarizer_routes.set_db(db)
+witness_routes.set_db(db)
 
 # Webhook service needs db too
 from services import webhook_service
