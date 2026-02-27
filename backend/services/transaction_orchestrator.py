@@ -403,7 +403,7 @@ class TransactionOrchestratorService:
                 logger.error(f"Failed to log participant add to HCS: {e}")
         
         return {k: v for k, v in participant.items() if k != "_id"}
-    
+
     async def get_participants(self, transaction_id: str) -> List[dict]:
         """Get all participants for a transaction"""
         participants = await self.db.transaction_participants.find(
