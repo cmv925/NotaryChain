@@ -403,6 +403,68 @@ class EmailService:
     # ===== Notarization Request Emails =====
     
     @staticmethod
+    async def send_expiry_notification_email(
+        email: str,
+        full_name: str,
+        document_name: str,
+        expiry_label: str,
+        is_expired: bool = False,
+    ) -> dict:
+        """Send notification when a document is nearing expiry or has expired"""
+        if is_expired:
+            badge_class = "expired-badge"
+            badge_text = "EXPIRED"
+            heading = "Your Document Has Expired"
+            body_text = f'Your document <span class="highlight">"{document_name}"</span> has expired. Please renew or re-notarize it to maintain its validity.'
+            badge_bg = "#ff6b6b"
+        else:
+            badge_class = "warning-badge"
+            badge_text = f"EXPIRES IN {expiry_label.upper()}"
+            heading = "Document Expiring Soon"
+            body_text = f'Your document <span class="highlight">"{document_name}"</span> will expire in <strong>{expiry_label}</strong>. Please take action before it becomes invalid.'
+            badge_bg = "#ffd700"
+
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{ font-family: 'Segoe UI', Arial, sans-serif; background: #0a0a0a; color: #ffffff; margin: 0; padding: 0; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 40px 20px; }}
+                .header {{ text-align: center; margin-bottom: 40px; }}
+                .logo {{ font-size: 28px; font-weight: bold; color: #00d4aa; }}
+                .content {{ background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 16px; padding: 40px; border: 1px solid #333; }}
+                .badge {{ display: inline-block; background: {badge_bg}; color: #000; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 20px; }}
+                h1 {{ color: #ffffff; margin: 0 0 20px 0; font-size: 24px; }}
+                p {{ color: #b0b0b0; line-height: 1.8; margin: 0 0 16px 0; }}
+                .highlight {{ color: #00d4aa; font-weight: 600; }}
+                .footer {{ text-align: center; margin-top: 40px; color: #666; font-size: 12px; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div class="logo">NotaryChain</div>
+                </div>
+                <div class="content">
+                    <span class="badge">{badge_text}</span>
+                    <h1>{heading}</h1>
+                    <p>Hi {full_name},</p>
+                    <p>{body_text}</p>
+                    <p>Log in to your dashboard to manage your documents and set up renewals.</p>
+                </div>
+                <div class="footer">
+                    <p>&copy; {datetime.now().year} NotaryChain. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        subject = f"Document {'Expired' if is_expired else 'Expiring Soon'}: {document_name}"
+        return await EmailService.send_email(to_email=email, subject=subject, html_content=html)
+
+    @staticmethod
     async def send_request_assigned_email(
         email: str,
         full_name: str,
