@@ -8,7 +8,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '../hooks/use-toast';
 import { useAuth } from '../contexts/AuthContext';
-import { ShieldCheck, ArrowLeft } from 'lucide-react';
+import { ShieldCheck, ArrowLeft, KeyRound } from 'lucide-react';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -181,6 +181,17 @@ const LoginPage = () => {
                       Sign up
                     </button>
                   </p>
+                </div>
+
+                <div className="mt-4 pt-4 border-t border-gray-800">
+                  <button
+                    onClick={() => navigate('/sso/login')}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-purple-500/30 bg-purple-500/5 text-purple-400 hover:bg-purple-500/10 hover:border-purple-500/50 transition-all text-sm font-medium"
+                    data-testid="sso-login-link"
+                  >
+                    <KeyRound className="w-4 h-4" />
+                    Sign in with Enterprise SSO
+                  </button>
                 </div>
               </>
             ) : (
