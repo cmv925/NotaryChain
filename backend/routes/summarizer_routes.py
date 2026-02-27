@@ -101,11 +101,11 @@ Return as JSON:
         )
         response = await chat.send_message(
             UserMessage(
-                message=prompt,
-                files=[FileContentWithMimeType(content=file_path, mime_type=mime_type)],
+                text=prompt,
+                file_contents=[FileContentWithMimeType(mime_type=mime_type, file_path=file_path)],
             )
         )
-        text = response.message.strip()
+        text = response.text.strip()
         if text.startswith("```"):
             text = text.split("\n", 1)[1].rsplit("```", 1)[0]
         result = json.loads(text)
