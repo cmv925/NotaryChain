@@ -363,3 +363,45 @@ async def get_effective_permissions(
 
     # Default member permissions
     return {"permissions": ["documents:view", "vault:view", "members:view", "templates:view"], "source": "default_member"}
+
+
+
+@router.get("/{org_id}/my-permissions")
+async def get_my_permissions(org_id: str, current_user: dict = Depends(get_current_user)):
+    """Get the current user's effective permissions for this organization."""
+    membership = await _get_membership(org_id, current_user.id)
+    if not membership:
+        raise HTTPException(status_code=403, detail="Not a member of this organization")
+
+    base_role = membership["role"]
+
+    # Owner and admin have all permissions
+    if base_role in ("owner", "admin"):
+        return {
+            "permissions": PERMISSION_KEYS,
+            "base_role": base_role,
+            "custom_role": None,
+            "source": base_role,
+        }
+
+    # Check custom role
+    custom_role_id = membership.get("custom_role_id")
+    custom_role_name = None
+    if custom_role_id:
+        role = await db.rbac_roles.find_one({"id": custom_role_id, "org_id": org_id}, {"_id": 0})
+        if role:
+            custom_role_name = role["name"]
+            return {
+                "permissions": role.get("permissions", []),
+                "base_role": base_role,
+                "custom_role": custom_role_name,
+                "source": custom_role_name,
+            }
+
+    # Default member permissions
+    return {
+        "permissions": ["documents:view", "vault:view", "members:view", "templates:view"],
+        "base_role": base_role,
+        "custom_role": None,
+        "source": "default_member",
+    }
