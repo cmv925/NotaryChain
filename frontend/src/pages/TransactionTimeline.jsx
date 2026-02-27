@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent } from '../components/ui/card';
@@ -9,7 +9,7 @@ import {
   Rocket, UserCheck, Mail, Play, CheckCircle,
   FileText, Brain, Sparkles, ShieldAlert, Fingerprint,
   ScanFace, Wand2, Package, Shield, Video, MessageSquare,
-  ChevronDown
+  ChevronDown, Radio, Wifi, WifiOff
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
