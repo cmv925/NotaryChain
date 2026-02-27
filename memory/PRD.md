@@ -170,6 +170,30 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 
 **Testing:** 100% backend (14/14), 100% frontend
 
+### Real-Time Timeline Event Streaming — COMPLETED (Feb 27, 2026)
+
+**Backend WebSocket** (`ws_manager.py`, `ws_routes.py`)
+- WSS endpoint: `/api/ws/timeline/{transaction_id}`
+- Auth flow: client sends `{type:"auth", token}` → server responds `{type:"connected", transaction_id, user_id, viewers}`
+- Access control: rejects invalid tokens (4001), non-participants (4003)
+- Ping/pong keepalive for connection stability
+- `emit_timeline_event()` broadcasts to all connected timeline viewers
+
+**Event Emission Points** (`transaction_orchestrator.py`)
+- Task started/completed → emits task event with severity info/success
+- Participant invited/joined → emits people event
+- Blockchain settlement → emits blockchain event with hash
+- All emissions via `_emit_timeline()` helper (fire-and-forget, non-blocking)
+
+**Frontend Live Updates** (`TransactionTimeline.jsx`)
+- Auto-connects to WSS on page load with JWT auth
+- Green "Live" indicator when connected, auto-reconnect (exponential backoff, max 5 retries)
+- New events appear at top with green ring highlight + animated "LIVE" badge
+- Live event counter badge with pulse animation
+- Supports multiple concurrent viewers
+
+**Testing:** WS auth PASS, multiple viewers PASS, ping/pong PASS, access control PASS, 100% frontend
+
 ## Architecture
 ```
 /app
