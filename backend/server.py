@@ -61,6 +61,10 @@ copilot_routes.set_db(db)
 ai_generator_routes.set_db(db)
 summarizer_routes.set_db(db)
 witness_routes.set_db(db)
+remediation_routes.set_db(db)
+biometric_passport_routes.set_db(db)
+conductor_routes.set_db(db)
+evidence_package_routes.set_db(db)
 
 # Webhook service needs db too
 from services import webhook_service
@@ -148,6 +152,10 @@ app.include_router(copilot_routes.router)
 app.include_router(ai_generator_routes.router)
 app.include_router(summarizer_routes.router)
 app.include_router(witness_routes.router)
+app.include_router(remediation_routes.router)
+app.include_router(biometric_passport_routes.router)
+app.include_router(conductor_routes.router)
+app.include_router(evidence_package_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
