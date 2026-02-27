@@ -38,6 +38,7 @@ import MyDrafts from './pages/MyDrafts';
 import SharedDraftViewer from './pages/SharedDraftViewer';
 import BulkNotarization from './pages/BulkNotarization';
 import NotaryMarketplace from './pages/NotaryMarketplace';
+import WhiteLabelPage from './pages/WhiteLabelPage';
 import ErrorBoundary from './components/ErrorBoundary';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { Toaster } from './components/ui/toaster';
