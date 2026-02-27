@@ -29,50 +29,50 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 Upload, search, filter, role-based access, audit trail
 
 ### Document Expiry Notifications — COMPLETED (Feb 27, 2026)
-- Expiry date management on notarization requests (set/update/remove)
-- Background service with threshold-based notifications (30/7/1/0 days)
-- Email + in-app notifications
-- Dashboard widget with urgency sorting
+Expiry date management, background checker, email + in-app notifications, dashboard widget
 
 ### Real-time Collaboration Expansion — COMPLETED (Feb 27, 2026)
-- WebSocket presence tracking per draft room
-- Cursor/typing indicators, live field edit broadcasting
-- PresenceBar and FieldCollabIndicator components
-- Conflict warnings for remote edits
+WebSocket presence tracking, cursor/typing indicators, live co-editing
 
 ### Revenue & Conversion Enhancements — COMPLETED (Feb 27, 2026)
+- Phase 1: Document Renewal Workflow (one-click renew)
+- Phase 2: Bulk Notarization (batch creation, management)
+- Phase 3: Notary Marketplace with Reviews (search, profiles, ratings)
+- Phase 4: Subscription Usage Enhancement (usage analytics)
+- Phase 5: White-Label Embed (config management, embed snippets)
 
-**Phase 1: Document Renewal Workflow**
-- POST `/api/expiry/requests/{id}/renew` creates new request pre-filled from original
-- Renew button on expired/critical docs in Expiry Tracker widget
-- Testing: 100%
+### Notary Booking Calendar — COMPLETED (Feb 27, 2026)
 
-**Phase 2: Bulk Notarization**
-- Full CRUD at `/api/bulk/batches` (create, list, detail, delete)
-- Multi-document batch creation (1-20 docs per batch)
-- Batch status tracking with completion progress
-- Frontend: `/bulk-notarization` page with batch management
-- Testing: 100%
+**Backend:** `booking_routes.py`
+- Notary availability management: weekly schedule (day/start/end), session duration, break time
+- Blocked dates management (CRUD)
+- Intelligent slot generation: generates available time slots accounting for weekly schedule, blocked dates, existing bookings, and past time filtering
+- Full booking CRUD: create (also creates linked notarization request with HCS topic), list user/notary bookings
+- Booking lifecycle: pending → confirmed → completed / cancelled
+- Confirm/cancel/complete actions with proper role/status checks
+- Email + in-app notifications for bookings (new, confirmed, cancelled)
+- Duplicate slot prevention (409 Conflict)
 
-**Phase 3: Notary Marketplace with Reviews**
-- Public notary search at `/api/marketplace/notaries` with filters (state, specialization, RON, rating sort)
-- Notary profile pages with ratings, reviews, completed counts
-- Review CRUD requiring completed notarization validation
-- Frontend: `/marketplace` page with search, filters, cards, and profile detail
-- Testing: 100%
+**Frontend:**
+- `BookingCalendar.jsx` — Interactive month-view calendar with:
+  - Visual available/unavailable date indicators
+  - Time slot grid on date selection
+  - Booking form with document details
+  - Success confirmation with booking details
+- `MyBookings.jsx` — User booking management with:
+  - Upcoming/Past sections
+  - Status filters (All, Pending, Confirmed, Completed, Cancelled)
+  - Join Session button for confirmed bookings (links to video)
+  - Cancel button for active bookings
+- `NotaryAvailabilitySettings.jsx` — Notary schedule management:
+  - Add/remove weekly time slots (day, start, end)
+  - Session duration and break time configuration
+  - Blocked dates management (add/remove)
+- Marketplace integration: "Book a Session" button on notary profiles
+- Dashboard: "My Bookings" quick action button
+- NotaryDashboard: "Schedule" tab with availability settings
 
-**Phase 4: Subscription Usage Enhancement**
-- `/api/subscriptions/usage/history` returns 6-month usage analytics
-- Monthly breakdown of notarizations, AI analyses, and seals
-- Testing: 100%
-
-**Phase 5: White-Label / Embeddable Widget**
-- Full CRUD at `/api/embed/configs` for embed configurations
-- Public endpoint `/api/embed/public/{key}` for widget config
-- Embed snippet generation with custom branding
-- Toggle active/disabled, usage tracking
-- Frontend: `/white-label` page with config management
-- Testing: 100%
+**Testing:** 97% backend (28/29 — 1 intermittent HCS timeout), 100% frontend
 
 ## Architecture
 ```
@@ -80,28 +80,24 @@ Upload, search, filter, role-based access, audit trail
 ├── backend/
 │   ├── routes/ (auth, admin, notary, ai, blockchain, payment, subscription,
 │   │           template, organization, draft, vault, public_api, webhook,
-│   │           expiry, draft_collab, bulk, marketplace, embed, etc.)
+│   │           expiry, draft_collab, bulk, marketplace, embed, booking)
 │   ├── services/ (cache, email, notification, orchestrator, storage,
 │   │             task_manager, webhook, template_wizard, expiry)
 │   └── server.py
 └── frontend/src/
-    ├── components/ (notarization/, ui/, OrgVault, ExpiryTracker,
-    │               CollaborationPresence, BiometricVerification, etc.)
-    ├── contexts/ (AuthContext, WebSocketContext)
-    ├── hooks/ (useGlobalWebSocket, useDraftCollaboration, etc.)
+    ├── components/ (NotaryAvailabilitySettings, ExpiryTracker,
+    │               CollaborationPresence, NotificationBell, etc.)
     ├── pages/ (Dashboard, BulkNotarization, NotaryMarketplace,
-    │          WhiteLabelPage, TemplateLibrary, TemplateWizard, etc.)
+    │          WhiteLabelPage, BookingCalendar, MyBookings, etc.)
     └── App.js
 ```
 
-## Key API Endpoints
-- `/api/expiry/requests/{id}/renew` — Renewal workflow
-- `/api/bulk/batches` — Batch CRUD
-- `/api/marketplace/notaries` — Public notary search
-- `/api/marketplace/reviews` — Review CRUD
-- `/api/embed/configs` — Embed config management
-- `/api/embed/public/{key}` — Public widget config
-- `/api/subscriptions/usage/history` — Usage analytics
+## Key API Endpoints (New)
+- `/api/bookings/availability` — Notary schedule CRUD
+- `/api/bookings/blocked-dates` — Blocked date management
+- `/api/bookings/slots/{notary_id}?date=YYYY-MM-DD` — Available time slots
+- `/api/bookings` — Booking CRUD (POST create, GET my/notary)
+- `/api/bookings/{id}/confirm|cancel|complete` — Booking actions
 
 ## Upcoming Tasks
 - **P1: Cloud Integration** — Migrate to AWS S3 (awaiting user credentials)
@@ -109,5 +105,12 @@ Upload, search, filter, role-based access, audit trail
 ## Future/Backlog
 - Full SSO integration (SAML/OIDC)
 - Enterprise Features Expansion
-- Recurring Notarization Subscriptions with discounted per-doc rates
-- Additional marketplace features (notary availability calendar, booking)
+- Recurring notarization subscriptions with per-doc discounts
+- Additional marketplace features (notary availability calendar on public site)
+
+## Test Credentials
+| Role | Email | Password |
+|---|---|---|
+| Admin | admin@notarychain.com | Admin123! |
+| User | demo@test.com | Demo123! |
+| Notary | notarytest@test.com | Test123! |
