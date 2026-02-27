@@ -108,6 +108,45 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 
 **Testing:** 100% backend (22/22), 100% frontend
 
+### AI Transaction Orchestrator™ Enhancement — COMPLETED (Feb 27, 2026)
+
+**Phase 1: AI Document Remediation** (`remediation_routes.py`, `DocumentRemediation.jsx`)
+- POST /api/remediation/analyze: AI analyzes document text, identifies missing legal clauses, weak language, risk areas
+- Returns: overall_risk_score, missing_clauses with severity + suggested_text, weak_language, risk_areas, compliance_notes
+- POST /api/remediation/apply-clauses: Applies selected clauses into document via AI insertion
+- GET /api/remediation/history: User's remediation history
+- Frontend: Document type selector, text input, clause selection with checkboxes, remediated output viewer
+
+**Phase 2: Biometric Passport** (`biometric_passport_routes.py`, `BiometricPassportPage.jsx`)
+- POST /api/biometric-passport/generate: Synthesizes facial + voiceprint + liveness into unified credential
+- Weighted composite scoring (facial 45%, voiceprint 30%, liveness 25%)
+- Cryptographic hash of all biometric data for tamper-proof verification
+- GET /api/biometric-passport/verify/{id}: Public integrity verification endpoint
+- Passport validity: 90 days, requires facial + 1 other modality minimum
+- Frontend: Session ID input, passport list with verify buttons, modality breakdown
+
+**Phase 3: AI Conductor Mode** (`conductor_routes.py`, `AIConductorPage.jsx`)
+- POST /api/conductor/guide: LLM-powered personalized step-by-step guidance per participant role
+- Returns: greeting, current_status_summary, next_steps with urgency/estimated_time/tips, blockers, timeline_estimate
+- POST /api/conductor/chat: Interactive Q&A about transaction context
+- GET /api/conductor/status/{id}: Per-participant progress overview
+- Frontend: Guidance panel with step cards + real-time chat panel with suggested questions
+
+**Phase 4: Evidence Package** (`evidence_package_routes.py`, `EvidencePackagePage.jsx`)
+- POST /api/evidence-package/generate/{id}: Compiles forensic-grade evidence bundle
+- Bundles: transaction metadata, participants, tasks, documents, AI analyses, remediations, biometric passports, witness recordings, communication records, blockchain proof
+- SHA-256 integrity hash + component-level hashes for granular verification
+- Auto-generated at settlement (integrated into transaction settle flow)
+- GET /api/evidence-package/verify/{id}: Public package integrity verification
+- Frontend: Collapsible sections for each evidence category, hash display, blockchain explorer link
+
+**Integration Points:**
+- Dashboard: Quick action buttons for Doc Remediation + Biometric Passport
+- Transaction Room header: AI Conductor + Evidence Package buttons
+- Settlement flow: Auto-generates evidence package on blockchain settlement
+
+**Testing:** 100% backend (24/24), 100% frontend
+
 ## Architecture
 ```
 /app
@@ -127,6 +166,10 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 ```
 
 ## Key API Endpoints (New)
+- `/api/remediation/analyze|apply-clauses|history|{id}` — AI Document Remediation
+- `/api/biometric-passport/generate|my|{id}|verify/{id}|session/{id}` — Biometric Passport
+- `/api/conductor/guide|chat|status/{id}` — AI Conductor
+- `/api/evidence-package/generate/{id}|{id}|verify/{id}` — Evidence Package
 - `/api/ai-copilot/analyze` — AI Co-pilot analysis
 - `/api/ai-copilot/prefill-journal` — Journal auto-fill
 - `/api/ai-generator/types|generate|refine|my-documents|documents/:id` — AI Doc Generator
