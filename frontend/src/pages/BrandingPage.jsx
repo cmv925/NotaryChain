@@ -18,7 +18,7 @@ export default function BrandingPage() {
 
   const fetchBranding = useCallback(async () => {
     try {
-      const res = await fetch(`${API}/api/branding`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(`${API}/api/branding/`, { headers: { Authorization: `Bearer ${token}` } });
       setBranding(await res.json());
     } catch { /* ignore */ }
     setLoading(false);
