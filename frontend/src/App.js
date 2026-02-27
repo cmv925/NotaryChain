@@ -261,6 +261,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/white-label"
+              element={
+                <ProtectedRoute>
+                  <WhiteLabelPage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         </WebSocketProvider>
