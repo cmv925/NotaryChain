@@ -174,11 +174,18 @@ const SharedDraftViewer = () => {
                 {Object.entries(fieldValues).map(([key, value]) => (
                   <div key={key}>
                     <Label className="text-gray-300 text-sm capitalize">{key.replace(/_/g, ' ')}</Label>
+                    <FieldCollabIndicator
+                      fieldName={key}
+                      cursors={collab.cursors}
+                      typingUsers={collab.typingUsers}
+                      currentUserId={user?.id}
+                    />
                     {draft.allow_edit ? (
                       value && value.length > 100 ? (
                         <textarea
                           value={value}
                           onChange={(e) => handleFieldChange(key, e.target.value)}
+                          onFocus={() => handleFieldFocus(key)}
                           rows={3}
                           className="w-full mt-1 bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white text-sm focus:border-blue-500 focus:outline-none resize-none"
                           data-testid={`shared-field-${key}`}
@@ -187,6 +194,7 @@ const SharedDraftViewer = () => {
                         <Input
                           value={value}
                           onChange={(e) => handleFieldChange(key, e.target.value)}
+                          onFocus={() => handleFieldFocus(key)}
                           className="bg-[#0a0f1a] border-gray-700 text-white mt-1"
                           data-testid={`shared-field-${key}`}
                         />
