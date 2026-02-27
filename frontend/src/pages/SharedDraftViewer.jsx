@@ -21,13 +21,18 @@ const API = `${BACKEND_URL}/api`;
 
 const SharedDraftViewer = () => {
   const { shareToken } = useParams();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const navigate = useNavigate();
   const [draft, setDraft] = useState(null);
   const [loading, setLoading] = useState(true);
   const [fieldValues, setFieldValues] = useState({});
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [conflictWarning, setConflictWarning] = useState(null);
+  const typingTimeouts = useRef({});
+
+  // Real-time collaboration - connect using draft ID once loaded
+  const collab = useDraftCollaboration(draft?.id, token);
 
   useEffect(() => {
     if (token && shareToken) fetchSharedDraft();
