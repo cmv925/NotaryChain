@@ -1012,7 +1012,170 @@ const RequestDetailModal = ({
             </div>
           </div>
 
-          {/* AI Analysis */}
+          {/* AI Co-pilot */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-white font-semibold flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                AI Co-pilot
+              </h3>
+              <Button
+                onClick={onRunCopilot}
+                disabled={loadingCopilot}
+                size="sm"
+                className="bg-amber-600/80 hover:bg-amber-600 text-white text-xs"
+                data-testid="run-copilot-btn"
+              >
+                {loadingCopilot ? <RefreshCw className="w-3 h-3 mr-1 animate-spin" /> : <Brain className="w-3 h-3 mr-1" />}
+                {copilotData ? 'Re-analyze' : 'Analyze Request'}
+              </Button>
+            </div>
+
+            {loadingCopilot && (
+              <div className="bg-[#0d1b2a] rounded-lg p-6 text-center">
+                <RefreshCw className="w-6 h-6 text-amber-400 animate-spin mx-auto mb-2" />
+                <p className="text-gray-400 text-sm">AI Co-pilot is analyzing...</p>
+              </div>
+            )}
+
+            {copilotData && !loadingCopilot && (
+              <div className="space-y-3">
+                {/* Summary + Risk */}
+                <div className="bg-[#0d1b2a] rounded-lg p-4">
+                  <p className="text-gray-300 text-sm mb-3">{copilotData.summary}</p>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5">
+                      <Gauge className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-400 text-xs">Readiness:</span>
+                      <span className="text-white text-xs font-bold">{copilotData.readiness_score ?? '-'}/100</span>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                      copilotData.risk_level === 'low' ? 'bg-green-500/15 text-green-400' :
+                      copilotData.risk_level === 'medium' ? 'bg-amber-500/15 text-amber-400' :
+                      'bg-red-500/15 text-red-400'
+                    }`}>
+                      {copilotData.risk_level?.toUpperCase()} RISK
+                    </span>
+                  </div>
+                </div>
+
+                {/* Key Highlights */}
+                {copilotData.key_highlights?.length > 0 && (
+                  <div className="bg-[#0d1b2a] rounded-lg p-3">
+                    <h4 className="text-white text-xs font-semibold mb-2">Key Highlights</h4>
+                    <div className="space-y-1.5">
+                      {copilotData.key_highlights.map((h, i) => (
+                        <div key={i} className="flex items-center justify-between text-xs">
+                          <span className="text-gray-400">{h.label}</span>
+                          <span className={`font-medium ${
+                            h.status === 'ok' ? 'text-green-400' :
+                            h.status === 'warning' ? 'text-amber-400' : 'text-red-400'
+                          }`}>{h.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Inconsistency Flags */}
+                {copilotData.inconsistency_flags?.length > 0 && (
+                  <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
+                    <h4 className="text-red-400 text-xs font-semibold mb-2 flex items-center gap-1.5">
+                      <ShieldAlert className="w-3.5 h-3.5" /> Flags ({copilotData.inconsistency_flags.length})
+                    </h4>
+                    <div className="space-y-2">
+                      {copilotData.inconsistency_flags.map((f, i) => (
+                        <div key={i} className="text-xs">
+                          <div className="flex items-center gap-1.5 mb-0.5">
+                            <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
+                              f.severity === 'high' ? 'bg-red-500/20 text-red-400' :
+                              f.severity === 'medium' ? 'bg-amber-500/20 text-amber-400' :
+                              'bg-blue-500/20 text-blue-400'
+                            }`}>{f.severity?.toUpperCase()}</span>
+                            <span className="text-gray-300">{f.description}</span>
+                          </div>
+                          {f.recommendation && <p className="text-gray-500 ml-6">{f.recommendation}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Checklist */}
+                {copilotData.checklist?.length > 0 && (
+                  <div className="bg-[#0d1b2a] rounded-lg p-3">
+                    <h4 className="text-white text-xs font-semibold mb-2 flex items-center gap-1.5">
+                      <ClipboardList className="w-3.5 h-3.5 text-blue-400" /> Pre-Notarization Checklist
+                    </h4>
+                    <div className="space-y-1">
+                      {copilotData.checklist.map((c, i) => (
+                        <div key={i} className="flex items-start gap-2 text-xs">
+                          {c.completed
+                            ? <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 flex-shrink-0" />
+                            : <XCircle className="w-3.5 h-3.5 text-gray-600 mt-0.5 flex-shrink-0" />}
+                          <span className={c.completed ? 'text-gray-300' : 'text-gray-500'}>{c.item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Recommendations */}
+                {copilotData.recommendations?.length > 0 && (
+                  <div className="bg-[#0d1b2a] rounded-lg p-3">
+                    <h4 className="text-white text-xs font-semibold mb-2">Recommendations</h4>
+                    {copilotData.recommendations.map((r, i) => (
+                      <p key={i} className="text-gray-400 text-xs mb-1 flex gap-1.5">
+                        <span className="text-amber-400">&#8226;</span> {r}
+                      </p>
+                    ))}
+                  </div>
+                )}
+
+                {/* Journal Prefill */}
+                <div className="bg-blue-500/5 border border-blue-500/20 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-blue-400 text-xs font-semibold flex items-center gap-1.5">
+                      <BookOpen className="w-3.5 h-3.5" /> E-Journal Prefill
+                    </h4>
+                    <Button
+                      onClick={onPrefillJournal}
+                      disabled={loadingJournal}
+                      size="sm"
+                      variant="ghost"
+                      className="text-blue-400 hover:text-blue-300 text-[10px] h-6 px-2"
+                      data-testid="prefill-journal-btn"
+                    >
+                      {loadingJournal ? <RefreshCw className="w-3 h-3 animate-spin" /> : 'Generate'}
+                    </Button>
+                  </div>
+                  {loadingJournal && <p className="text-gray-500 text-xs">Generating...</p>}
+                  {journalPrefill && !loadingJournal && (
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      {Object.entries(journalPrefill).filter(([k]) => k !== '_id').map(([key, val]) => (
+                        <div key={key}>
+                          <span className="text-gray-500 capitalize">{key.replace(/_/g, ' ')}:</span>
+                          <span className="text-white ml-1">{String(val) || '-'}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {!journalPrefill && !loadingJournal && (
+                    <p className="text-gray-500 text-[11px]">Click Generate to auto-fill journal entry fields from request data.</p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {!copilotData && !loadingCopilot && (
+              <div className="bg-[#0d1b2a] rounded-lg p-4 text-center">
+                <Sparkles className="w-8 h-8 text-gray-600 mx-auto mb-2" />
+                <p className="text-gray-500 text-sm">Click "Analyze Request" to get AI-powered insights</p>
+              </div>
+            )}
+          </div>
+
+          {/* AI Document Analysis (legacy) */}
           <div>
             <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
               <Brain className="w-4 h-4 text-purple-500" />
