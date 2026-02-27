@@ -7,9 +7,10 @@ import {
   TrendingUp, LogOut, XCircle, Eye, Copy, RefreshCw, AlertTriangle,
   DollarSign, Star, Award, BarChart3, Filter, Search, ChevronRight,
   Brain, ScanFace, Link2, ExternalLink, Download, Play, History,
-  MessageSquare, Bell, Settings, Briefcase
+  MessageSquare, Bell, Settings, Briefcase, CalendarClock
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import NotaryAvailabilitySettings from '../components/NotaryAvailabilitySettings';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
