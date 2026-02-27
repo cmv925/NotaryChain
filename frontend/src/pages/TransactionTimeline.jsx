@@ -351,6 +351,9 @@ export default function TransactionTimeline() {
                                 <h4 className="text-white text-sm font-medium truncate">{ev.title}</h4>
                               </div>
                               <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+                                {ev._live && (
+                                  <Badge className="bg-green-500/15 text-green-400 text-[8px] animate-pulse">LIVE</Badge>
+                                )}
                                 <Badge variant="outline" className={`text-[9px] border-0 ${catCfg.color}/10 ${catCfg.text}`}>
                                   {catCfg.label}
                                 </Badge>
