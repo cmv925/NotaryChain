@@ -32,7 +32,7 @@ def set_dependencies(database, notif_svc, email_svc):
 
 async def _check_expiring_documents():
     """Scan documents with expiry dates and notify users at threshold boundaries."""
-    if not db:
+    if db is None:
         return
 
     now = datetime.now(timezone.utc)
