@@ -41,6 +41,9 @@ import NotaryMarketplace from './pages/NotaryMarketplace';
 import WhiteLabelPage from './pages/WhiteLabelPage';
 import BookingCalendar from './pages/BookingCalendar';
 import MyBookings from './pages/MyBookings';
+import AIDocumentGenerator from './pages/AIDocumentGenerator';
+import AIDocumentSummarizer from './pages/AIDocumentSummarizer';
+import VideoWitness from './pages/VideoWitness';
 import ErrorBoundary from './components/ErrorBoundary';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { Toaster } from './components/ui/toaster';
@@ -284,6 +287,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <MyBookings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ai-generator"
+              element={
+                <ProtectedRoute>
+                  <AIDocumentGenerator />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ai-summarizer"
+              element={
+                <ProtectedRoute>
+                  <AIDocumentSummarizer />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/video-witness"
+              element={
+                <ProtectedRoute>
+                  <VideoWitness />
                 </ProtectedRoute>
               }
             />
