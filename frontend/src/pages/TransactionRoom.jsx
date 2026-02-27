@@ -351,6 +351,28 @@ export default function TransactionRoom() {
                   )}
                 </Button>
               )}
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(`/conductor/${transactionId}`)}
+                className="border-violet-500/50 text-violet-400 hover:bg-violet-500/10"
+                data-testid="conductor-btn"
+              >
+                <Sparkles className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">AI Conductor</span>
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(`/evidence-package/${transactionId}`)}
+                className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10"
+                data-testid="evidence-pkg-btn"
+              >
+                <Shield className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Evidence</span>
+              </Button>
             </div>
           </div>
           
