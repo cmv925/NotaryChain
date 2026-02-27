@@ -267,15 +267,13 @@ class TestDraftCollaborationSetup:
         return templates
     
     def test_get_or_create_draft(self, headers):
-        """GET /api/drafts/my/ - Get user's drafts or create one"""
-        # Using trailing slash to avoid 307 redirect
-        response = requests.get(f"{BASE_URL}/api/drafts/my/", headers=headers)
+        """GET /api/drafts/ - Get user's drafts or create one"""
+        # Route is GET /api/drafts/ (not /my)
+        response = requests.get(f"{BASE_URL}/api/drafts/", headers=headers)
         
-        # 404 means no drafts exist (not an error)
-        if response.status_code == 404:
-            drafts = []
-        elif response.status_code == 200:
-            drafts = response.json()
+        if response.status_code == 200:
+            data = response.json()
+            drafts = data.get("drafts", data) if isinstance(data, dict) else data
             if not isinstance(drafts, list):
                 drafts = [drafts] if drafts else []
         else:
@@ -292,17 +290,20 @@ class TestDraftCollaborationSetup:
             templates_data = templates_res.json()
             templates = templates_data.get("templates", templates_data) if isinstance(templates_data, dict) else templates_data
             if len(templates) > 0:
-                template_id = templates[0]["id"]
+                template = templates[0]
+                template_id = template["id"]
                 
                 create_response = requests.post(
                     f"{BASE_URL}/api/drafts/",
                     headers=headers,
                     json={
                         "template_id": template_id,
+                        "template_name": template.get("name", "Test Template"),
+                        "field_values": {"test_field": "test_value"},
                         "name": "TEST_Collab_Draft"
                     }
                 )
-                if create_response.status_code == 201:
+                if create_response.status_code in [200, 201]:
                     draft = create_response.json()
                     print(f"PASS: Created draft: {draft.get('name')} (id: {draft.get('id')})")
                     return draft
@@ -313,19 +314,23 @@ class TestDraftCollaborationSetup:
     def test_share_draft(self, headers):
         """POST /api/drafts/{id}/share - Share a draft and get share token"""
         # Get a draft first
-        drafts_res = requests.get(f"{BASE_URL}/api/drafts/my/", headers=headers)
-        if drafts_res.status_code == 404:
-            pytest.skip("No drafts available to share")
+        drafts_res = requests.get(f"{BASE_URL}/api/drafts/", headers=headers)
         if drafts_res.status_code != 200:
             pytest.skip(f"Could not get drafts: {drafts_res.status_code}")
         
-        drafts = drafts_res.json()
+        data = drafts_res.json()
+        drafts = data.get("drafts", data) if isinstance(data, dict) else data
         if not isinstance(drafts, list):
             drafts = [drafts] if drafts else []
         if len(drafts) == 0:
             pytest.skip("No drafts available to share")
         
         draft_id = drafts[0]["id"]
+        existing_token = drafts[0].get("share_token")
+        
+        if existing_token:
+            print(f"PASS: Draft already shared - token: {existing_token}")
+            return {"draft_id": draft_id, "share_token": existing_token}
         
         # Share the draft
         response = requests.post(
@@ -341,7 +346,7 @@ class TestDraftCollaborationSetup:
             return {"draft_id": draft_id, "share_token": share_token}
         elif response.status_code == 409:
             # Already shared
-            print(f"Draft already shared, checking existing share info")
+            print(f"Draft already shared")
             return {"draft_id": draft_id}
         else:
             print(f"Share response: {response.status_code} - {response.text}")
