@@ -161,7 +161,7 @@ class TestApprovalWorkflows:
             ]
         }
         res = requests.post(
-            f"{BASE_URL}/api/approvals",
+            f"{BASE_URL}/api/approvals/",
             headers={
                 "Authorization": f"Bearer {demo_token}",
                 "Content-Type": "application/json"
@@ -242,14 +242,14 @@ class TestApprovalWorkflows:
             ]
         }
         create_res = requests.post(
-            f"{BASE_URL}/api/approvals",
+            f"{BASE_URL}/api/approvals/",
             headers={
                 "Authorization": f"Bearer {demo_token}",
                 "Content-Type": "application/json"
             },
             json=payload
         )
-        assert create_res.status_code == 200
+        assert create_res.status_code == 200, f"Expected 200, got {create_res.status_code}: {create_res.text}"
         approval_id = create_res.json()["id"]
         
         # Reject it
