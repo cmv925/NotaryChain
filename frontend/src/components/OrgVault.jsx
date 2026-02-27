@@ -271,7 +271,7 @@ const DocDetailModal = ({ doc, orgId, token, isAdmin, onClose, onDeleted }) => {
 };
 
 // --- Main Vault Component ---
-export const OrgVault = ({ orgId, myRole, token }) => {
+export const OrgVault = ({ orgId, myRole, token, userPerms = [] }) => {
   const [docs, setDocs] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -282,6 +282,8 @@ export const OrgVault = ({ orgId, myRole, token }) => {
   const [selectedDoc, setSelectedDoc] = useState(null);
 
   const isAdmin = myRole === 'owner' || myRole === 'admin';
+  const canUpload = userPerms.includes('vault:upload') || isAdmin;
+  const canDelete = userPerms.includes('vault:delete') || isAdmin;
 
   useEffect(() => {
     fetchDocs();
@@ -355,7 +357,7 @@ export const OrgVault = ({ orgId, myRole, token }) => {
             data-testid="vault-search"
           />
         </div>
-        {isAdmin && (
+        {canUpload && (
           <Button onClick={() => setShowUpload(true)} className="bg-blue-600 hover:bg-blue-700 text-white" data-testid="vault-upload-trigger">
             <Upload className="w-4 h-4 mr-2" /> Upload
           </Button>
@@ -395,7 +397,7 @@ export const OrgVault = ({ orgId, myRole, token }) => {
         <div className="text-center py-12" data-testid="vault-empty">
           <FolderOpen className="w-10 h-10 text-gray-600 mx-auto mb-2" />
           <p className="text-gray-400 text-sm">No documents in the vault yet.</p>
-          {isAdmin && <p className="text-gray-500 text-xs mt-1">Upload your first document to get started.</p>}
+          {canUpload && <p className="text-gray-500 text-xs mt-1">Upload your first document to get started.</p>}
         </div>
       ) : (
         <div className="space-y-2" data-testid="vault-docs-list">
@@ -446,7 +448,7 @@ export const OrgVault = ({ orgId, myRole, token }) => {
           doc={selectedDoc}
           orgId={orgId}
           token={token}
-          isAdmin={isAdmin}
+          isAdmin={canDelete}
           onClose={() => setSelectedDoc(null)}
           onDeleted={() => { setSelectedDoc(null); fetchDocs(); fetchStats(); }}
         />
