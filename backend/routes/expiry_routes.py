@@ -12,6 +12,8 @@ import logging
 
 from models import User
 from routes.auth_routes import get_current_user
+from models_notary import NotarizationRequest
+from services.hedera_service import hedera_service
 
 logger = logging.getLogger(__name__)
 
