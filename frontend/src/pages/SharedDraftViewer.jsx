@@ -149,7 +149,24 @@ const SharedDraftViewer = () => {
           </div>
 
           <h1 className="text-2xl font-bold text-white mb-1" data-testid="shared-draft-title">{draft.name}</h1>
-          <p className="text-gray-400 text-sm mb-6">Template: {draft.template_name} &bull; Version {draft.version}</p>
+          <p className="text-gray-400 text-sm mb-4">Template: {draft.template_name} &bull; Version {draft.version}</p>
+
+          {/* Collaboration Presence Bar */}
+          <div className="mb-4">
+            <PresenceBar
+              users={collab.users}
+              connected={collab.connected}
+              currentUserId={user?.id}
+            />
+          </div>
+
+          {/* Conflict Warning */}
+          {conflictWarning && (
+            <div className="mb-4 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center gap-2 animate-in fade-in" data-testid="conflict-warning">
+              <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
+              <span className="text-amber-300 text-sm">{conflictWarning}</span>
+            </div>
+          )}
 
           <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800">
             <CardContent className="p-6">
