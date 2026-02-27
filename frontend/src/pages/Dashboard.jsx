@@ -390,6 +390,54 @@ const Dashboard = () => {
                 <div className="text-sm text-cyan-300">Multi-modal identity</div>
               </div>
             </Button>
+            <Button
+              onClick={() => navigate('/reminders')}
+              variant="outline"
+              className="border-2 border-yellow-500 text-yellow-400 hover:bg-yellow-500/10 px-6 py-6 text-lg justify-start"
+              data-testid="reminders-button"
+            >
+              <Bell className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Reminders</div>
+                <div className="text-sm text-yellow-300">Alerts & calendar</div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => navigate('/approvals')}
+              variant="outline"
+              className="border-2 border-blue-500 text-blue-400 hover:bg-blue-500/10 px-6 py-6 text-lg justify-start"
+              data-testid="approvals-button"
+            >
+              <UserCheck className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Approvals</div>
+                <div className="text-sm text-blue-300">Multi-step workflows</div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => navigate('/doc-compare')}
+              variant="outline"
+              className="border-2 border-orange-500 text-orange-400 hover:bg-orange-500/10 px-6 py-6 text-lg justify-start"
+              data-testid="doc-compare-button"
+            >
+              <GitCompareArrows className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Doc Compare</div>
+                <div className="text-sm text-orange-300">AI diff analysis</div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => navigate('/branding')}
+              variant="outline"
+              className="border-2 border-pink-500 text-pink-400 hover:bg-pink-500/10 px-6 py-6 text-lg justify-start"
+              data-testid="branding-button"
+            >
+              <Palette className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Branding</div>
+                <div className="text-sm text-pink-300">Custom appearance</div>
+              </div>
+            </Button>
           </div>
         </div>
 
