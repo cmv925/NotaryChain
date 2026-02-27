@@ -131,6 +131,7 @@ app.include_router(organization_routes.router)
 app.include_router(draft_routes.router)
 app.include_router(vault_routes.router)
 app.include_router(expiry_routes.router)
+app.include_router(draft_collab_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
