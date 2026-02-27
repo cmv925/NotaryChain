@@ -414,6 +414,7 @@ const NotaryDashboard = () => {
                   { id: 'pending', label: 'Available', count: pendingRequests.length, color: 'purple' },
                   { id: 'assigned', label: 'My Requests', count: assignedRequests.length, color: 'blue' },
                   { id: 'history', label: 'History', count: completedRequests.length, color: 'green' },
+                  { id: 'schedule', label: 'Schedule', count: null, color: 'amber' },
                 ].map((tab) => (
                   <button
                     key={tab.id}
