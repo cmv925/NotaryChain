@@ -373,6 +373,17 @@ export default function TransactionRoom() {
                 <Shield className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Evidence</span>
               </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(`/timeline/${transactionId}`)}
+                className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                data-testid="timeline-btn"
+              >
+                <Clock className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Timeline</span>
+              </Button>
             </div>
           </div>
           
