@@ -74,6 +74,40 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 
 **Testing:** 97% backend (28/29 — 1 intermittent HCS timeout), 100% frontend
 
+### AI & Video Features — COMPLETED (Feb 27, 2026)
+
+**1. AI Co-pilot for Notaries** (`copilot_routes.py`)
+- POST /api/ai-copilot/analyze: Analyzes notarization request data via Gemini AI
+- Returns: summary, key highlights, inconsistency flags, risk level, readiness score, checklist, recommendations
+- POST /api/ai-copilot/prefill-journal: Auto-fills notary e-journal fields from request data
+- Integrated into NotaryDashboard RequestDetailModal with dedicated copilot panel
+
+**2. AI Document Generator** (`ai_generator_routes.py`, `AIDocumentGenerator.jsx`)
+- Generate legal documents from natural language descriptions
+- 8 document types: Bill of Sale, Will, Lease, NDA, Promissory Note, Contractor Agreement, Liability Waiver, Affidavit
+- Iterative refinement: generate → review → refine with feedback
+- Full history: my-documents listing, individual document retrieval
+
+**3. AI Document Summarizer** (`summarizer_routes.py`, `AIDocumentSummarizer.jsx`)
+- Upload any document (PDF, images, TXT, DOC) for instant AI summary
+- 3 detail levels: brief, standard, detailed
+- Extracts: key terms, parties, dates, obligations, notable clauses, complexity level
+- Full history with retrieval
+
+**4. Video Witness Recording** (`witness_routes.py`, `VideoWitness.jsx`)
+- Browser-based video recording with webcam/microphone
+- 2 verification types: Standard (30s, 5 steps) and Enhanced (60s, 6 steps)
+- Upload to server with notary notification
+- Notary review workflow: pending → under_review → approved/rejected
+- Recording history with status tracking
+
+**Frontend Integration:**
+- Dashboard: Quick action buttons for AI Generator, AI Summarizer, Video Witness
+- Routes: /ai-generator, /ai-summarizer, /video-witness
+- NotaryDashboard: AI Co-pilot panel in request detail modal
+
+**Testing:** 100% backend (22/22), 100% frontend
+
 ## Architecture
 ```
 /app
@@ -93,6 +127,11 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 ```
 
 ## Key API Endpoints (New)
+- `/api/ai-copilot/analyze` — AI Co-pilot analysis
+- `/api/ai-copilot/prefill-journal` — Journal auto-fill
+- `/api/ai-generator/types|generate|refine|my-documents|documents/:id` — AI Doc Generator
+- `/api/ai-summarizer/summarize|history|history/:id` — AI Summarizer
+- `/api/video-witness/instructions|upload|my|request/:id|review/pending|review/:id` — Video Witness
 - `/api/bookings/availability` — Notary schedule CRUD
 - `/api/bookings/blocked-dates` — Blocked date management
 - `/api/bookings/slots/{notary_id}?date=YYYY-MM-DD` — Available time slots
@@ -100,13 +139,21 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - `/api/bookings/{id}/confirm|cancel|complete` — Booking actions
 
 ## Upcoming Tasks
-- **P1: Cloud Integration** — Migrate to AWS S3 (awaiting user credentials)
+- **P1: Document Timeline / Activity Feed**
+- **P1: Smart Reminders & Calendar Integration**
+- **P2: Document Comparison / Diff View**
+- **P1: Approval Workflows**
+- **P2: Custom Branding for Organizations**
+- **P2: Role-Based Document Access Controls**
+- **P2: Dark/Light Theme Toggle**
+- **P2: Onboarding Tour for new users**
 
 ## Future/Backlog
+- **Cloud Integration** — Migrate to AWS S3 (awaiting user credentials)
 - Full SSO integration (SAML/OIDC)
 - Enterprise Features Expansion
 - Recurring notarization subscriptions with per-doc discounts
-- Additional marketplace features (notary availability calendar on public site)
+- Additional marketplace features
 
 ## Test Credentials
 | Role | Email | Password |
