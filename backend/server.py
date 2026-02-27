@@ -11,6 +11,7 @@ from routes import auth_routes, document_routes, notary_routes, ai_routes, block
 from middleware.security import setup_security, health_check, limiter
 from services.notification_service import set_db as set_notification_db, set_ws_manager
 from services.ws_manager import ws_manager
+from services import expiry_service
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
