@@ -1,0 +1,72 @@
+{
+  "summary": "Permission-based UI Rendering testing completed. Backend: 15/15 tests PASSED (100%). Frontend: All E2E tests passed - Owner sees all 6 tabs, regular member correctly sees only 2 tabs (Members, Vault) with restricted actions.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Members tab custom role dropdown", "issues": ["React hydration warning: <span> cannot be child of <select>/<option> - cosmetic only, does not affect functionality (carried over from previous iteration)"]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_permission_ui_rendering.py",
+    "/app/test_reports/pytest/pytest_results_permission_ui.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Good: GET /api/organizations/{org_id}/my-permissions returns correct permissions structure with base_role, custom_role, source fields",
+    "Good: Owner gets all 23 permissions with source='owner'",
+    "Good: Default member gets 4 permissions (documents:view, vault:view, members:view, templates:view) with source='default_member'",
+    "Good: Custom role assignment correctly changes effective permissions and source",
+    "Good: Tab filtering works correctly - TABS = ALL_TABS.filter(tab => isAdmin || myPerms.includes(tab.permission))",
+    "Good: PermissionGate component properly hides/shows content based on permissions",
+    "Good: PermissionGate showLock=true correctly shows 'Restricted' lock indicator with Lock icon",
+    "Good: Permission source badge displays correctly showing 'owner', 'default_member', or custom role name",
+    "Good: Role management dropdowns only visible when user has members:manage_roles permission",
+    "Good: Vault upload button gated by vault:upload permission",
+    "Good: usePermissions hook properly caches permissions per org to avoid refetching"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_permission_ui_rendering.py"
+  ],
+  "success_rate": {
+    "backend": "100% (15/15 tests passed)",
+    "frontend": "100% - all permission UI elements working correctly"
+  },
+  "test_credentials": {
+    "admin_user": {"email": "admin@notarychain.com", "password": "Admin123!"},
+    "demo_user": {"email": "demo@test.com", "password": "Demo123!"}
+  },
+  "seed_data_creation": "Invited demo@test.com to TEST_RBAC_SSO Organization as member for testing restricted view",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Permission-based UI rendering fully working. Owner sees all 6 tabs (Members, Roles, Vault, Invites, SSO, Settings). Regular member (default_member role) sees only 2 tabs (Members, Vault). Invite button shows 'Restricted' lock for members without members:invite permission. Role dropdowns only visible to users with members:manage_roles. Settings tab shows permissions summary with count and source (e.g., '23 permissions via owner'). The PermissionGate component supports: permission (single), permissions (any of), allOf (all of) modes.",
+  "features_tested": {
+    "backend": {
+      "GET /api/organizations/{org_id}/my-permissions (owner)": "Returns all 23 permissions with source='owner' - PASS",
+      "GET /api/organizations/{org_id}/my-permissions (member)": "Returns 4 default permissions with source='default_member' - PASS",
+      "Response structure validation": "permissions, base_role, custom_role, source fields present - PASS",
+      "Non-member access": "Returns 403 for users not in org - PASS",
+      "Custom role assignment": "Correctly updates effective permissions - PASS",
+      "System roles verification": "org_admin, editor, viewer have correct permissions - PASS",
+      "Owner access to all endpoints": "members, roles, invites, sso, vault - all 200 - PASS"
+    },
+    "frontend": {
+      "Owner sees all 6 tabs": "Members, Roles, Vault, Invites, SSO, Settings - PASS",
+      "Member sees 2 tabs only": "Members, Vault (filtered by permissions) - PASS",
+      "Invite button (owner)": "Visible and clickable - PASS",
+      "Invite button (member)": "Shows 'Restricted' lock indicator - PASS",
+      "Permission source badge (owner)": "Shows 'owner' - PASS",
+      "Permission source badge (member)": "Shows 'default_member' - PASS",
+      "Role dropdowns (owner)": "Visible for member management - PASS",
+      "Role dropdowns (member)": "Not visible (no manage_roles perm) - PASS",
+      "Vault upload (owner)": "Visible - PASS",
+      "Vault upload (member)": "Not visible (no vault:upload perm) - PASS",
+      "Delete org button (owner)": "Visible in Settings tab - PASS",
+      "Settings permissions summary": "Shows '23 permissions via owner' with badges - PASS"
+    }
+  }
+}
