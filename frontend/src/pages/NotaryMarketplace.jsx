@@ -8,7 +8,7 @@ import { Input } from '../components/ui/input';
 import { Card, CardContent } from '../components/ui/card';
 import {
   Search, Star, MapPin, Shield, Filter, Users, Award,
-  ChevronRight, Loader2, MessageSquare, Video,
+  ChevronRight, Loader2, MessageSquare, Video, Calendar as CalendarIcon,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
