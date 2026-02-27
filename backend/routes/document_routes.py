@@ -59,7 +59,7 @@ async def get_document_seal(
     document = await db.document_seals.find_one({
         "id": document_id,
         "user_id": current_user.id
-    })
+    }, {"_id": 0})
     
     if not document:
         raise HTTPException(
