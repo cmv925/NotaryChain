@@ -194,6 +194,47 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 
 **Testing:** WS auth PASS, multiple viewers PASS, ping/pong PASS, access control PASS, 100% frontend
 
+### 6 Enhancement Features — COMPLETED (Feb 27, 2026)
+
+**1. Smart Reminders & Calendar Integration** (`reminder_routes.py`, `reminder_service.py`, `RemindersPage.jsx`)
+- GET/PUT /api/reminders/preferences: Toggle overdue tasks, upcoming bookings, pending approvals, email notifications
+- GET /api/reminders/calendar/bookings.ics: Export bookings as .ics for Google Calendar/Outlook/Apple
+- GET /api/reminders/calendar/tasks.ics: Export task deadlines as .ics
+- Background service: 30-min interval checks for overdue tasks, 24h upcoming bookings, stale approvals
+- Frontend: Preference toggle switches + calendar export buttons
+
+**2. Approval Workflows** (`approval_routes.py`, `ApprovalsPage.jsx`)
+- POST /api/approvals: Create multi-step approval chain (manager → legal → executive)
+- POST /api/approvals/{id}/action: Approve/reject with comments at each step
+- Auto-advance to next approver, notifications at each step
+- GET /api/approvals/pending: Requests needing my approval
+- GET /api/approvals/my: All my requests (submitted + received)
+- Frontend: Create form with dynamic chain builder, tabs (pending/my), chain visualizer, approve/reject buttons
+
+**3. Document Comparison / Diff View** (`doc_compare_routes.py`, `DocComparePage.jsx`)
+- POST /api/doc-compare/compare: AI-powered diff analysis (changes, legal implications, significance level)
+- Side-by-side input with labels, results show additions (green), deletions (red), modifications (amber)
+- Impact badges, legal implications section, comparison history
+
+**4. Custom Branding** (`branding_routes.py`, `BrandingPage.jsx`)
+- GET/PUT /api/branding: Display name, primary/accent colors, tagline
+- POST /api/branding/logo: Logo upload with preview
+- Live preview with brand colors applied to buttons
+- Applied per-organization when org exists
+
+**5. Dark/Light Theme Toggle** (`ThemeContext.jsx`)
+- CSS variable-based theme system (--bg-primary, --bg-secondary, --text-primary, etc.)
+- data-theme attribute on html element
+- Persisted in localStorage, toggle button in Dashboard header
+
+**6. Onboarding Tour** (`OnboardingTour.jsx`)
+- 5-step guided walkthrough targeting key UI elements by data-testid
+- Auto-shows on first visit (1.5s delay), skip/next/back navigation
+- Progress dots, overlay with highlighted target elements
+- localStorage flag prevents re-showing
+
+**Testing:** 100% backend (19/19), 100% frontend
+
 ## Architecture
 ```
 /app
