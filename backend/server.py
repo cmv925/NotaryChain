@@ -220,6 +220,9 @@ async def create_indexes():
         # Seed default templates
         await template_routes.seed_templates()
 
+        # Start document expiry background checker
+        asyncio.create_task(expiry_service.run_expiry_checker())
+
         logger.info("Database indexes created/verified successfully")
     except Exception as e:
         logger.warning(f"Index creation warning: {e}")
