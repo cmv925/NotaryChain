@@ -658,7 +658,7 @@ const OrganizationPage = () => {
 
                       {/* Vault Tab */}
                       {activeTab === 'vault' && (
-                        <OrgVault orgId={selectedOrg.id} myRole={selectedOrg.my_role} token={token} />
+                        <OrgVault orgId={selectedOrg.id} myRole={selectedOrg.my_role} token={token} userPerms={myPerms} />
                       )}
 
                       {/* Settings Tab */}
@@ -682,13 +682,25 @@ const OrganizationPage = () => {
                               <p className="text-gray-400 text-sm mb-1">Plan</p>
                               <p className="text-white text-sm capitalize">{selectedOrg.plan}</p>
                             </div>
-                            {selectedOrg.my_role === 'owner' && (
-                              <div className="pt-4 border-t border-gray-800">
-                                <Button onClick={handleDeleteOrg} variant="outline" className="border-red-500/50 text-red-400 hover:bg-red-500/10" data-testid="delete-org-btn">
-                                  <Trash2 className="w-4 h-4 mr-2" /> Delete Organization
-                                </Button>
+                            <div className="p-4 bg-[#0a0f1a] rounded-lg border border-gray-800">
+                              <p className="text-gray-400 text-sm mb-1">Your Permissions</p>
+                              <p className="text-white text-sm">{myPerms.length} permissions via <span className="text-blue-400">{permSource}</span></p>
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {myPerms.slice(0, 8).map(p => (
+                                  <span key={p} className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{p}</span>
+                                ))}
+                                {myPerms.length > 8 && <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-gray-500">+{myPerms.length - 8} more</span>}
                               </div>
-                            )}
+                            </div>
+                            <PermissionGate permission="org:settings" userPermissions={myPerms}>
+                              {selectedOrg.my_role === 'owner' && (
+                                <div className="pt-4 border-t border-gray-800">
+                                  <Button onClick={handleDeleteOrg} variant="outline" className="border-red-500/50 text-red-400 hover:bg-red-500/10" data-testid="delete-org-btn">
+                                    <Trash2 className="w-4 h-4 mr-2" /> Delete Organization
+                                  </Button>
+                                </div>
+                              )}
+                            </PermissionGate>
                           </div>
                         </div>
                       )}
