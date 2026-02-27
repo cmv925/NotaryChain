@@ -244,6 +244,22 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/bulk-notarization"
+              element={
+                <ProtectedRoute>
+                  <BulkNotarization />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/marketplace"
+              element={
+                <ProtectedRoute>
+                  <NotaryMarketplace />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         </WebSocketProvider>
