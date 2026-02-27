@@ -200,6 +200,54 @@ async def get_current_subscription(
     }
 
 
+@router.get("/usage/history")
+async def get_usage_history(
+    current_user: User = Depends(get_current_user),
+    months: int = Query(default=6, le=12),
+):
+    """Get monthly usage history for charts and analytics."""
+    now = datetime.now(timezone.utc)
+    history = []
+
+    for i in range(months):
+        # Go back i months
+        month = now.month - i
+        year = now.year
+        while month <= 0:
+            month += 12
+            year -= 1
+        month_start = datetime(year, month, 1, tzinfo=timezone.utc)
+        if month == 12:
+            month_end = datetime(year + 1, 1, 1, tzinfo=timezone.utc)
+        else:
+            month_end = datetime(year, month + 1, 1, tzinfo=timezone.utc)
+
+        notar_count = await db.notarization_requests.count_documents({
+            "user_id": current_user.id,
+            "created_at": {"$gte": month_start, "$lt": month_end}
+        })
+        ai_count = await db.ai_analyses.count_documents({
+            "user_id": current_user.id,
+            "created_at": {"$gte": month_start, "$lt": month_end}
+        })
+        seal_count = await db.document_seals.count_documents({
+            "user_id": current_user.id,
+            "timestamp": {"$gte": month_start, "$lt": month_end}
+        })
+
+        history.append({
+            "month": month_start.strftime("%b %Y"),
+            "month_num": month,
+            "year": year,
+            "notarizations": notar_count,
+            "ai_analyses": ai_count,
+            "seals": seal_count,
+        })
+
+    history.reverse()
+    return {"history": history}
+
+
 # ============ SUBSCRIBE / UPGRADE ============
 
 @router.post("/checkout")
