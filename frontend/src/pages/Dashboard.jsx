@@ -115,6 +115,15 @@ const Dashboard = () => {
               </div>
               <NotificationBell token={token} />
               <Button
+                onClick={toggleTheme}
+                variant="ghost"
+                size="icon"
+                className="text-gray-400 hover:text-white"
+                data-testid="theme-toggle"
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </Button>
+              <Button
                 onClick={() => navigate('/subscription')}
                 variant="outline"
                 size="sm"
