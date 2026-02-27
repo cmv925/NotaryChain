@@ -227,6 +227,15 @@ async def create_indexes():
         # Seed default templates
         await template_routes.seed_templates()
 
+        # Batch notarization indexes
+        await db.notarization_batches.create_index("id", unique=True)
+        await db.notarization_batches.create_index("user_id")
+
+        # Marketplace reviews
+        await db.notary_reviews.create_index("id", unique=True)
+        await db.notary_reviews.create_index("notary_id")
+        await db.notary_reviews.create_index([("user_id", 1), ("request_id", 1)], unique=True)
+
         # Start document expiry background checker
         asyncio.create_task(expiry_service.run_expiry_checker())
 
