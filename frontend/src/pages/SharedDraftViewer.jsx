@@ -69,6 +69,26 @@ const SharedDraftViewer = () => {
   const handleFieldChange = (name, value) => {
     setFieldValues(prev => ({ ...prev, [name]: value }));
     setSaved(false);
+
+    // Send live collaboration updates
+    if (collab.connected && draft?.allow_edit) {
+      collab.sendFieldUpdate(name, value);
+      collab.sendTyping(name, true);
+
+      // Clear previous timeout for this field
+      if (typingTimeouts.current[name]) {
+        clearTimeout(typingTimeouts.current[name]);
+      }
+      typingTimeouts.current[name] = setTimeout(() => {
+        collab.sendTyping(name, false);
+      }, 2000);
+    }
+  };
+
+  const handleFieldFocus = (name) => {
+    if (collab.connected) {
+      collab.sendCursor(name);
+    }
   };
 
   const handleSave = async () => {
