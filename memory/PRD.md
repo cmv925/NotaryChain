@@ -25,6 +25,25 @@ Templates, AI Wizard, PDF generation, Drafts, Sharing, Versioning
 ### Enterprise Features — COMPLETED
 Multi-tenancy, Organizations, Member management, SSO configuration
 
+### Role-Based Access Control (RBAC) — COMPLETED (Feb 27, 2026)
+- **Backend:** `rbac_routes.py` — Full CRUD for custom roles with granular permissions
+- 23 permissions across 7 categories (Documents, Vault, Members, Templates, Approvals, Notarization, Organization)
+- 3 auto-created system roles per org: Organization Admin (all perms), Editor (11 perms), Viewer (5 perms)
+- Custom role creation, editing, deletion (system roles protected from deletion)
+- Role assignment to org members via dedicated endpoints
+- Effective permissions endpoint resolving role inheritance
+- **Frontend:** `RBACManagement.jsx` — Role editor modal with category-grouped permission checkboxes
+- Roles tab in Organization page, custom role dropdown in Members tab
+
+### Full SSO Integration (Mock SAML/OIDC) — COMPLETED (Feb 27, 2026)
+- **Backend:** `sso_routes.py` — Simulated SSO authentication flow
+- Domain-based SSO discovery, session-based flow initiation
+- Mock IdP consent flow with JIT (Just-In-Time) user provisioning
+- Auto-join org on SSO login, audit logging of SSO events
+- SSO configuration testing endpoint for admins
+- **Frontend:** `SSOLoginPage.jsx` — Multi-step SSO login (email discovery → org selection → mock IdP authorize → complete)
+- Enterprise SSO button on login page, SSO settings tab on org page
+
 ### Organization Document Vault — COMPLETED
 Upload, search, filter, role-based access, audit trail
 
@@ -272,7 +291,6 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 
 ## Upcoming Tasks
 - **Cloud Integration** — Migrate to AWS S3 (awaiting user credentials)
-- Full SSO integration (SAML/OIDC)
 
 ## Future/Backlog
 - Enterprise Features Expansion
