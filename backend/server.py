@@ -62,6 +62,11 @@ set_notification_db(db)
 from services.ws_manager import ws_manager
 set_ws_manager(ws_manager)
 
+# Initialize expiry service dependencies
+from services.email_service import email_service
+from services import notification_service as notif_svc_module
+expiry_service.set_dependencies(db, notif_svc_module, email_service)
+
 # Create the main app without a prefix
 app = FastAPI(
     title="NotaryChain API",
