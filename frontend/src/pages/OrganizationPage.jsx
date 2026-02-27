@@ -344,6 +344,8 @@ const OrganizationPage = () => {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [orgRoles, setOrgRoles] = useState([]);
 
+  const { permissions: myPerms, source: permSource, loading: permsLoading, hasPermission, hasAny, refresh: refreshPerms } = usePermissions(selectedOrg?.id, token);
+
   useEffect(() => {
     if (token) fetchOrgs();
   }, [token]);
