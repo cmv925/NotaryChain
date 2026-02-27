@@ -17,7 +17,7 @@ import axios from 'axios';
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const SSOLoginPage = () => {
-  const { login } = useAuth();
+  const { loginWithToken } = useAuth();
   const navigate = useNavigate();
   const [step, setStep] = useState('email'); // email | discover | authorize | complete
   const [email, setEmail] = useState('');
@@ -81,7 +81,7 @@ const SSOLoginPage = () => {
         full_name: fullName || undefined,
       });
       // Store the token
-      login(res.data.access_token);
+      loginWithToken(res.data.access_token);
       toast({
         title: 'SSO Login Successful',
         description: `Authenticated via ${selectedOrg.org_name}`,
