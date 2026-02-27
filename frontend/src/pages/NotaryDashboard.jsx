@@ -230,6 +230,8 @@ const NotaryDashboard = () => {
     setSelectedRequest(request);
     setShowModal(true);
     setAiAnalysis(null);
+    setCopilotData(null);
+    setJournalPrefill(null);
     fetchAiAnalysis(request.id);
   };
 
