@@ -29,7 +29,7 @@ export default function BrandingPage() {
   const save = async () => {
     setSaving(true);
     try {
-      await fetch(`${API}/api/branding`, {
+      await fetch(`${API}/api/branding/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(branding),
