@@ -109,8 +109,8 @@ Make the document thorough, legally sound, and professionally written. Use [BLAN
             session_id=f"docgen_{current_user.id}_{datetime.now().timestamp()}",
             system_message="You are a professional legal document generator. Always respond with valid JSON only.",
         )
-        response = await chat.send_message(UserMessage(text=prompt))
-        text = response.text.strip()
+        text = await chat.send_message(UserMessage(text=prompt))
+        text = text.strip()
         if text.startswith("```"):
             text = text.split("\n", 1)[1].rsplit("```", 1)[0]
         result = json.loads(text)
@@ -164,8 +164,8 @@ Return the complete updated document in the same JSON format. Make the requested
             session_id=f"refine_{body.generation_id}_{datetime.now().timestamp()}",
             system_message="You are a professional legal document editor. Always respond with valid JSON only.",
         )
-        response = await chat.send_message(UserMessage(text=prompt))
-        text = response.text.strip()
+        text = await chat.send_message(UserMessage(text=prompt))
+        text = text.strip()
         if text.startswith("```"):
             text = text.split("\n", 1)[1].rsplit("```", 1)[0]
         result = json.loads(text)
