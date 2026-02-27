@@ -137,6 +137,7 @@ app.include_router(expiry_routes.router)
 app.include_router(draft_collab_routes.router)
 app.include_router(bulk_routes.router)
 app.include_router(marketplace_routes.router)
+app.include_router(embed_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
