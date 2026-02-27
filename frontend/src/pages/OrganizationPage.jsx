@@ -269,7 +269,10 @@ const SSOSettings = ({ orgId, myRole, token }) => {
 };
 
 // --- Member Row with Custom Role Assignment ---
-const MemberRow = ({ member: m, orgId, myRole, isAdmin, token, onRemove, onRoleChange, onAssignCustomRole, roles }) => {
+const MemberRow = ({ member: m, orgId, myRole, isAdmin, token, onRemove, onRoleChange, onAssignCustomRole, roles, userPerms = [] }) => {
+  const canManageRoles = userPerms.includes('members:manage_roles');
+  const canRemove = userPerms.includes('members:remove');
+
   return (
     <div className="flex items-center justify-between p-3 bg-[#0a0f1a] rounded-lg border border-gray-800" data-testid={`member-${m.id}`}>
       <div className="flex items-center gap-3">
@@ -291,7 +294,7 @@ const MemberRow = ({ member: m, orgId, myRole, isAdmin, token, onRemove, onRoleC
       <div className="flex items-center gap-2">
         {m.role === 'owner' ? (
           <span className="flex items-center gap-1 text-xs text-amber-400"><Crown className="w-3 h-3" /> Owner</span>
-        ) : isAdmin && myRole === 'owner' ? (
+        ) : canManageRoles && myRole === 'owner' ? (
           <div className="flex items-center gap-1.5">
             <select
               value={m.role}
@@ -319,8 +322,8 @@ const MemberRow = ({ member: m, orgId, myRole, isAdmin, token, onRemove, onRoleC
             {ROLE_BADGES[m.role]?.label}
           </span>
         )}
-        {isAdmin && m.role !== 'owner' && (
-          <button onClick={() => onRemove(m.id)} className="text-red-400 hover:text-red-300 p-1">
+        {canRemove && m.role !== 'owner' && (
+          <button onClick={() => onRemove(m.id)} className="text-red-400 hover:text-red-300 p-1" data-testid={`remove-member-${m.id}`}>
             <X className="w-3.5 h-3.5" />
           </button>
         )}
