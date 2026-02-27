@@ -10,11 +10,12 @@ import { Card, CardContent } from '../components/ui/card';
 import {
   Building2, Users, Plus, Settings, Shield, Mail, Crown,
   UserPlus, X, ChevronRight, Loader2, Check, Trash2,
-  Key, Globe, Lock, FolderOpen,
+  Key, Globe, Lock, FolderOpen, ShieldCheck,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
 import { OrgVault } from '../components/OrgVault';
+import RBACManagement from '../components/RBACManagement';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -390,6 +391,7 @@ const OrganizationPage = () => {
 
   const TABS = [
     { id: 'members', label: 'Members', icon: Users },
+    { id: 'roles', label: 'Roles', icon: ShieldCheck },
     { id: 'vault', label: 'Vault', icon: FolderOpen },
     { id: 'invites', label: 'Invites', icon: Mail },
     { id: 'sso', label: 'SSO', icon: Key },
