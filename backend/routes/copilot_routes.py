@@ -214,8 +214,8 @@ Fill what you can from the data. Leave blanks for unknowns."""
             session_id=f"journal_{body.request_id}_{datetime.now().timestamp()}",
             system_message="You are a notary journal assistant. Respond with valid JSON only.",
         )
-        response = await chat.send_message(UserMessage(text=prompt))
-        text = response.text.strip()
+        text = await chat.send_message(UserMessage(text=prompt))
+        text = text.strip()
         if text.startswith("```"):
             text = text.split("\n", 1)[1].rsplit("```", 1)[0]
         result = json.loads(text)
