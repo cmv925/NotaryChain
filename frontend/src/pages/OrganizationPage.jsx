@@ -639,11 +639,11 @@ const OrganizationPage = () => {
                                     <p className="text-white text-sm">{inv.email}</p>
                                     <p className="text-gray-500 text-xs">Role: {inv.role} &bull; Invited by {inv.invited_by_name}</p>
                                   </div>
-                                  {isAdmin && (
+                                  <PermissionGate permission="members:invite" userPermissions={myPerms}>
                                     <button onClick={() => handleCancelInvite(inv.id)} className="text-red-400 hover:text-red-300 text-xs flex items-center gap-1">
                                       <X className="w-3 h-3" /> Cancel
                                     </button>
-                                  )}
+                                  </PermissionGate>
                                 </div>
                               ))}
                             </div>
