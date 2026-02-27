@@ -272,6 +272,11 @@ async def create_indexes():
         await db.notary_reviews.create_index("notary_id")
         await db.notary_reviews.create_index([("user_id", 1), ("request_id", 1)], unique=True)
 
+        # RBAC Roles
+        await db.rbac_roles.create_index("id", unique=True)
+        await db.rbac_roles.create_index([("org_id", 1), ("name", 1)], unique=True)
+        await db.rbac_roles.create_index([("org_id", 1), ("system_key", 1)], sparse=True)
+
         # Bookings
         await db.bookings.create_index("id", unique=True)
         await db.bookings.create_index("user_id")
