@@ -213,6 +213,27 @@ export default function TransactionTimeline() {
           </Badge>
         </div>
 
+        {/* Live Status Bar */}
+        <div className="flex items-center justify-between mb-6 px-1">
+          <div className="flex items-center gap-3">
+            <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${
+              wsConnected
+                ? 'bg-green-500/10 text-green-400 ring-1 ring-green-500/20'
+                : 'bg-gray-800/50 text-gray-500'
+            }`} data-testid="ws-status">
+              {wsConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
+              {wsConnected ? 'Live' : 'Connecting...'}
+            </div>
+            {liveEvents.length > 0 && (
+              <Badge className="bg-pink-500/15 text-pink-400 animate-pulse" data-testid="live-count">
+                <Radio className="w-3 h-3 mr-1" />
+                {liveEvents.length} new
+              </Badge>
+            )}
+          </div>
+          <span className="text-gray-600 text-xs">{allEvents.length} total events</span>
+        </div>
+
         {loading && (
           <div className="flex flex-col items-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-blue-400 mb-3" />
