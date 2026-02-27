@@ -36,7 +36,7 @@ async def create_document_seal(
     
     return DocumentSealResponse(**document.dict())
 
-@router.get("/seals", response_model=List[DocumentSealResponse])
+@router.get("/seals")
 async def get_user_document_seals(
     current_user: User = Depends(get_current_user),
     limit: int = 50,
@@ -48,7 +48,17 @@ async def get_user_document_seals(
     
     documents = await cursor.to_list(length=limit)
     
-    return [DocumentSealResponse(**doc) for doc in documents]
+    # Normalize data to handle legacy records
+    results = []
+    for doc in documents:
+        doc["file_name"] = str(doc.get("file_name", doc.get("fileName", "Unknown")))
+        doc["file_size"] = str(doc.get("file_size", doc.get("fileSize", "0")))
+        doc["file_type"] = str(doc.get("file_type", doc.get("fileType", "")))
+        doc["sha256_hash"] = str(doc.get("sha256_hash", doc.get("hash", "")))
+        doc["transaction_id"] = str(doc.get("transaction_id", doc.get("txId", "")))
+        results.append(doc)
+    
+    return results
 
 @router.get("/seals/{document_id}", response_model=DocumentSealResponse)
 async def get_document_seal(
