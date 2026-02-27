@@ -144,6 +144,10 @@ app.include_router(bulk_routes.router)
 app.include_router(marketplace_routes.router)
 app.include_router(embed_routes.router)
 app.include_router(booking_routes.router)
+app.include_router(copilot_routes.router)
+app.include_router(ai_generator_routes.router)
+app.include_router(summarizer_routes.router)
+app.include_router(witness_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
