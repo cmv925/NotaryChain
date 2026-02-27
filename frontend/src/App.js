@@ -48,6 +48,7 @@ import DocumentRemediation from './pages/DocumentRemediation';
 import BiometricPassportPage from './pages/BiometricPassportPage';
 import AIConductorPage from './pages/AIConductorPage';
 import EvidencePackagePage from './pages/EvidencePackagePage';
+import TransactionTimeline from './pages/TransactionTimeline';
 import ErrorBoundary from './components/ErrorBoundary';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { Toaster } from './components/ui/toaster';
