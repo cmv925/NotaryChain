@@ -78,6 +78,11 @@ export default function TransactionTimeline() {
   const [activeFilters, setActiveFilters] = useState(new Set());
   const [showFilters, setShowFilters] = useState(false);
   const [expandedEvent, setExpandedEvent] = useState(null);
+  const [wsConnected, setWsConnected] = useState(false);
+  const [liveEvents, setLiveEvents] = useState([]);
+  const [newEventFlash, setNewEventFlash] = useState(null);
+  const wsRef = useRef(null);
+  const reconnectRef = useRef(null);
 
   const fetchTimeline = useCallback(async () => {
     setLoading(true);
@@ -91,6 +96,74 @@ export default function TransactionTimeline() {
   }, [transactionId, token]);
 
   useEffect(() => { fetchTimeline(); }, [fetchTimeline]);
+
+  // WebSocket connection for live events
+  useEffect(() => {
+    if (!token || !transactionId) return;
+
+    const wsUrl = API.replace('https://', 'wss://').replace('http://', 'ws://');
+    let ws;
+    let retries = 0;
+
+    const connect = () => {
+      ws = new WebSocket(`${wsUrl}/api/ws/timeline/${transactionId}`);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ type: 'auth', token }));
+      };
+
+      ws.onmessage = (evt) => {
+        try {
+          const msg = JSON.parse(evt.data);
+          if (msg.type === 'connected') {
+            setWsConnected(true);
+            retries = 0;
+          } else if (msg.type === 'timeline_event' && msg.event) {
+            const ev = msg.event;
+            // Assign a sequence number
+            ev.sequence = Date.now();
+            ev._live = true;
+            setLiveEvents((prev) => [ev, ...prev]);
+            setNewEventFlash(ev.sequence);
+            setTimeout(() => setNewEventFlash(null), 2000);
+          }
+        } catch { /* ignore */ }
+      };
+
+      ws.onclose = () => {
+        setWsConnected(false);
+        wsRef.current = null;
+        if (retries < 5) {
+          retries++;
+          reconnectRef.current = setTimeout(connect, 2000 * retries);
+        }
+      };
+
+      ws.onerror = () => ws.close();
+    };
+
+    connect();
+
+    return () => {
+      clearTimeout(reconnectRef.current);
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
+      }
+    };
+  }, [token, transactionId]);
+
+  // Keep WS alive with pings
+  useEffect(() => {
+    if (!wsConnected) return;
+    const interval = setInterval(() => {
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify({ type: 'ping' }));
+      }
+    }, 25000);
+    return () => clearInterval(interval);
+  }, [wsConnected]);
 
   const toggleFilter = (cat) => {
     setActiveFilters((prev) => {
