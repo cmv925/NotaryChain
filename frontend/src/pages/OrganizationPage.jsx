@@ -599,15 +599,22 @@ const OrganizationPage = () => {
                         <div data-testid="members-tab">
                           <div className="flex items-center justify-between mb-4">
                             <h3 className="text-white font-semibold">Members ({members.length})</h3>
-                            {isAdmin && (
-                              <Button size="sm" onClick={() => setShowInviteModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white" data-testid="invite-member-btn">
-                                <UserPlus className="w-3.5 h-3.5 mr-1" /> Invite
-                              </Button>
-                            )}
+                            <div className="flex items-center gap-2">
+                              {permSource && (
+                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#1a2332] text-gray-500 border border-gray-800" data-testid="perm-source-badge">
+                                  {permSource}
+                                </span>
+                              )}
+                              <PermissionGate permission="members:invite" userPermissions={myPerms} showLock>
+                                <Button size="sm" onClick={() => setShowInviteModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white" data-testid="invite-member-btn">
+                                  <UserPlus className="w-3.5 h-3.5 mr-1" /> Invite
+                                </Button>
+                              </PermissionGate>
+                            </div>
                           </div>
                           <div className="space-y-2">
                             {members.map((m) => (
-                              <MemberRow key={m.id} member={m} orgId={selectedOrg.id} myRole={selectedOrg.my_role} isAdmin={isAdmin} token={token} onRemove={handleRemoveMember} onRoleChange={handleUpdateRole} onAssignCustomRole={handleAssignCustomRole} roles={orgRoles} />
+                              <MemberRow key={m.id} member={m} orgId={selectedOrg.id} myRole={selectedOrg.my_role} isAdmin={isAdmin} token={token} onRemove={handleRemoveMember} onRoleChange={handleUpdateRole} onAssignCustomRole={handleAssignCustomRole} roles={orgRoles} userPerms={myPerms} />
                             ))}
                           </div>
                         </div>
