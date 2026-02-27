@@ -354,6 +354,30 @@ const Dashboard = () => {
                 <div className="text-sm text-rose-300">Record verification video</div>
               </div>
             </Button>
+            <Button
+              onClick={() => navigate('/document-remediation')}
+              variant="outline"
+              className="border-2 border-amber-500 text-amber-400 hover:bg-amber-500/10 px-6 py-6 text-lg justify-start"
+              data-testid="doc-remediation-button"
+            >
+              <Sparkles className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Doc Remediation</div>
+                <div className="text-sm text-amber-300">Fix missing legal clauses</div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => navigate('/biometric-passport')}
+              variant="outline"
+              className="border-2 border-cyan-500 text-cyan-400 hover:bg-cyan-500/10 px-6 py-6 text-lg justify-start"
+              data-testid="biometric-passport-button"
+            >
+              <Fingerprint className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Biometric Passport</div>
+                <div className="text-sm text-cyan-300">Multi-modal identity</div>
+              </div>
+            </Button>
           </div>
         </div>
 
