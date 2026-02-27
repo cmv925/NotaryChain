@@ -185,7 +185,8 @@ class TestPhase3AIConductor(TestAuthSetup):
             headers=headers,
             json={
                 "name": "TEST_Conductor_Transaction",
-                "transaction_type": "real_estate_purchase",
+                "description": "Test transaction for AI Conductor testing",
+                "transaction_type": "real_estate_closing",
                 "participants": []
             }
         )
