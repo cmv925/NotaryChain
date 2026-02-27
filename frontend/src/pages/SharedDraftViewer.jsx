@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
@@ -9,9 +9,11 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent } from '../components/ui/card';
 import {
   FileText, Share2, Lock, Edit, Save, Loader2, CheckCircle,
-  ArrowRight, Send,
+  ArrowRight, Send, AlertTriangle,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
+import { useDraftCollaboration } from '../hooks/useDraftCollaboration';
+import { PresenceBar, FieldCollabIndicator } from '../components/CollaborationPresence';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
