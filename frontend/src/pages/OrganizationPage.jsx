@@ -279,6 +279,7 @@ const OrganizationPage = () => {
   const [activeTab, setActiveTab] = useState('members');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [orgRoles, setOrgRoles] = useState([]);
 
   useEffect(() => {
     if (token) fetchOrgs();
@@ -312,14 +313,16 @@ const OrganizationPage = () => {
   const selectOrg = async (org) => {
     setSelectedOrg(org);
     try {
-      const [membersRes, invitesRes] = await Promise.all([
+      const [membersRes, invitesRes, rolesRes] = await Promise.all([
         axios.get(`${API}/organizations/${org.id}/members`, { headers: { Authorization: `Bearer ${token}` } }),
         org.my_role === 'owner' || org.my_role === 'admin'
           ? axios.get(`${API}/organizations/${org.id}/invites`, { headers: { Authorization: `Bearer ${token}` } })
           : Promise.resolve({ data: { invites: [] } }),
+        axios.get(`${API}/organizations/${org.id}/roles`, { headers: { Authorization: `Bearer ${token}` } }).catch(() => ({ data: { roles: [] } })),
       ]);
       setMembers(membersRes.data.members);
       setInvites(invitesRes.data.invites);
+      setOrgRoles(rolesRes.data.roles || []);
     } catch { /* ignore */ }
   };
 
