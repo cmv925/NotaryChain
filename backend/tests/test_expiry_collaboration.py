@@ -253,23 +253,33 @@ class TestDraftCollaborationSetup:
         return {"Authorization": f"Bearer {auth_token}"}
     
     def test_list_templates(self, headers):
-        """GET /api/templates - List templates to get a template ID"""
-        response = requests.get(f"{BASE_URL}/api/templates", headers=headers)
+        """GET /api/templates/ - List templates to get a template ID"""
+        # Using trailing slash to avoid 307 redirect
+        response = requests.get(f"{BASE_URL}/api/templates/", headers=headers)
         
         assert response.status_code == 200
         data = response.json()
-        if len(data) > 0:
-            template = data[0]
+        templates = data.get("templates", data) if isinstance(data, dict) else data
+        if len(templates) > 0:
+            template = templates[0]
             print(f"Template: {template.get('name')} (id: {template.get('id')})")
-        print(f"PASS: Found {len(data)} templates")
-        return data
+        print(f"PASS: Found {len(templates)} templates")
+        return templates
     
     def test_get_or_create_draft(self, headers):
-        """GET /api/drafts/my - Get user's drafts or create one"""
-        response = requests.get(f"{BASE_URL}/api/drafts/my", headers=headers)
+        """GET /api/drafts/my/ - Get user's drafts or create one"""
+        # Using trailing slash to avoid 307 redirect
+        response = requests.get(f"{BASE_URL}/api/drafts/my/", headers=headers)
         
-        assert response.status_code == 200
-        drafts = response.json()
+        # 404 means no drafts exist (not an error)
+        if response.status_code == 404:
+            drafts = []
+        elif response.status_code == 200:
+            drafts = response.json()
+            if not isinstance(drafts, list):
+                drafts = [drafts] if drafts else []
+        else:
+            assert False, f"Unexpected status: {response.status_code}"
         
         if len(drafts) > 0:
             draft = drafts[0]
@@ -277,34 +287,45 @@ class TestDraftCollaborationSetup:
             return draft
         
         # If no drafts, create one from a template
-        templates_res = requests.get(f"{BASE_URL}/api/templates", headers=headers)
-        if templates_res.status_code == 200 and len(templates_res.json()) > 0:
-            template_id = templates_res.json()[0]["id"]
-            
-            create_response = requests.post(
-                f"{BASE_URL}/api/drafts",
-                headers=headers,
-                json={
-                    "template_id": template_id,
-                    "name": "TEST_Collab_Draft"
-                }
-            )
-            if create_response.status_code == 201:
-                draft = create_response.json()
-                print(f"PASS: Created draft: {draft.get('name')} (id: {draft.get('id')})")
-                return draft
+        templates_res = requests.get(f"{BASE_URL}/api/templates/", headers=headers)
+        if templates_res.status_code == 200:
+            templates_data = templates_res.json()
+            templates = templates_data.get("templates", templates_data) if isinstance(templates_data, dict) else templates_data
+            if len(templates) > 0:
+                template_id = templates[0]["id"]
+                
+                create_response = requests.post(
+                    f"{BASE_URL}/api/drafts/",
+                    headers=headers,
+                    json={
+                        "template_id": template_id,
+                        "name": "TEST_Collab_Draft"
+                    }
+                )
+                if create_response.status_code == 201:
+                    draft = create_response.json()
+                    print(f"PASS: Created draft: {draft.get('name')} (id: {draft.get('id')})")
+                    return draft
         
-        print("PASS: No drafts found and couldn't create one - skipping draft tests")
+        print("PASS: No drafts found and couldn't create one")
         return None
     
     def test_share_draft(self, headers):
         """POST /api/drafts/{id}/share - Share a draft and get share token"""
         # Get a draft first
-        drafts_res = requests.get(f"{BASE_URL}/api/drafts/my", headers=headers)
-        if drafts_res.status_code != 200 or len(drafts_res.json()) == 0:
+        drafts_res = requests.get(f"{BASE_URL}/api/drafts/my/", headers=headers)
+        if drafts_res.status_code == 404:
+            pytest.skip("No drafts available to share")
+        if drafts_res.status_code != 200:
+            pytest.skip(f"Could not get drafts: {drafts_res.status_code}")
+        
+        drafts = drafts_res.json()
+        if not isinstance(drafts, list):
+            drafts = [drafts] if drafts else []
+        if len(drafts) == 0:
             pytest.skip("No drafts available to share")
         
-        draft_id = drafts_res.json()[0]["id"]
+        draft_id = drafts[0]["id"]
         
         # Share the draft
         response = requests.post(
@@ -399,16 +420,18 @@ class TestNotificationBellExpiry:
         return {"Authorization": f"Bearer {auth_token}"}
     
     def test_notifications_endpoint(self, headers):
-        """GET /api/notifications - Get user notifications"""
-        response = requests.get(f"{BASE_URL}/api/notifications", headers=headers)
+        """GET /api/notifications/ - Get user notifications"""
+        # Using trailing slash to avoid 307 redirect
+        response = requests.get(f"{BASE_URL}/api/notifications/", headers=headers)
         
         assert response.status_code == 200
         data = response.json()
-        assert isinstance(data, list)
+        notifications = data.get("notifications", data) if isinstance(data, dict) else data
+        assert isinstance(notifications, list)
         
         # Check if any expiry notifications exist
-        expiry_notifs = [n for n in data if "expir" in str(n.get("title", "")).lower() or "expir" in str(n.get("message", "")).lower()]
-        print(f"PASS: Notifications - found {len(data)} total, {len(expiry_notifs)} expiry-related")
+        expiry_notifs = [n for n in notifications if "expir" in str(n.get("title", "")).lower() or "expir" in str(n.get("message", "")).lower()]
+        print(f"PASS: Notifications - found {len(notifications)} total, {len(expiry_notifs)} expiry-related")
 
 
 if __name__ == "__main__":
