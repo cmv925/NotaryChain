@@ -174,15 +174,16 @@ export default function TransactionTimeline() {
     });
   };
 
-  const filteredEvents = data?.events?.filter(
+  const allEvents = [...liveEvents, ...(data?.events || [])];
+  const filteredEvents = allEvents.filter(
     (e) => activeFilters.size === 0 || activeFilters.has(e.category)
-  ) || [];
+  );
 
   const dateGroups = groupByDate(filteredEvents);
 
   // Stats
   const catCounts = {};
-  data?.events?.forEach((e) => {
+  allEvents.forEach((e) => {
     catCounts[e.category] = (catCounts[e.category] || 0) + 1;
   });
 
