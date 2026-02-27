@@ -476,14 +476,17 @@ const OrganizationPage = () => {
 
   const isAdmin = selectedOrg?.my_role === 'owner' || selectedOrg?.my_role === 'admin';
 
-  const TABS = [
-    { id: 'members', label: 'Members', icon: Users },
-    { id: 'roles', label: 'Roles', icon: ShieldCheck },
-    { id: 'vault', label: 'Vault', icon: FolderOpen },
-    { id: 'invites', label: 'Invites', icon: Mail },
-    { id: 'sso', label: 'SSO', icon: Key },
-    { id: 'settings', label: 'Settings', icon: Settings },
+  const ALL_TABS = [
+    { id: 'members', label: 'Members', icon: Users, permission: 'members:view' },
+    { id: 'roles', label: 'Roles', icon: ShieldCheck, permission: 'members:manage_roles' },
+    { id: 'vault', label: 'Vault', icon: FolderOpen, permission: 'vault:view' },
+    { id: 'invites', label: 'Invites', icon: Mail, permission: 'members:invite' },
+    { id: 'sso', label: 'SSO', icon: Key, permission: 'org:sso' },
+    { id: 'settings', label: 'Settings', icon: Settings, permission: 'org:settings' },
   ];
+
+  // Filter tabs based on user permissions (owners/admins see everything)
+  const TABS = ALL_TABS.filter(tab => isAdmin || myPerms.includes(tab.permission));
 
   return (
     <div className="min-h-screen bg-[#0f1825]">
