@@ -49,7 +49,9 @@ async def create_approval_request(
 
     # Resolve approver user IDs
     steps = []
-    for i, link in enumerate(sorted(body.approval_chain, key=lambda x: x.get("order", i))):
+    # Sort by order field - use 9999 as default for items without order
+    sorted_chain = sorted(body.approval_chain, key=lambda x: x.get("order", 9999))
+    for i, link in enumerate(sorted_chain):
         email = link.get("approver_email", "")
         user = await db.users.find_one({"email": email}, {"_id": 0, "id": 1, "full_name": 1})
         steps.append({
