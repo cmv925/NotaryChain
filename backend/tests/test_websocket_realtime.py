@@ -12,7 +12,7 @@ import os
 # Configure pytest-asyncio
 pytest_plugins = ('pytest_asyncio',)
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://notarize-dev.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://notary-live.preview.emergentagent.com').rstrip('/')
 WS_URL = BASE_URL.replace('https://', 'wss://').replace('http://', 'ws://') + '/api/ws/global'
 
 # Test credentials
