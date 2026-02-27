@@ -49,6 +49,7 @@ template_routes.set_db(db)
 organization_routes.set_db(db)
 draft_routes.set_db(db)
 vault_routes.set_db(db)
+expiry_routes.set_db(db)
 
 # Webhook service needs db too
 from services import webhook_service
@@ -121,6 +122,7 @@ app.include_router(template_routes.router)
 app.include_router(organization_routes.router)
 app.include_router(draft_routes.router)
 app.include_router(vault_routes.router)
+app.include_router(expiry_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
