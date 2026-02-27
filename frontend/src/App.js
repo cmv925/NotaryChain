@@ -318,6 +318,38 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/document-remediation"
+              element={
+                <ProtectedRoute>
+                  <DocumentRemediation />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/biometric-passport"
+              element={
+                <ProtectedRoute>
+                  <BiometricPassportPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/conductor/:transactionId"
+              element={
+                <ProtectedRoute>
+                  <AIConductorPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/evidence-package/:transactionId"
+              element={
+                <ProtectedRoute>
+                  <EvidencePackagePage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
         </WebSocketProvider>
