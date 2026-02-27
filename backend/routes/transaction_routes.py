@@ -486,6 +486,14 @@ async def settle_transaction(
     try:
         result = await orchestrator.settle_transaction(transaction_id, current_user.id)
         
+        # Auto-generate Evidence Package at settlement
+        from routes.evidence_package_routes import _compile_evidence_package
+        background_tasks.add_task(
+            _compile_evidence_package,
+            transaction_id,
+            current_user.id
+        )
+        
         # Send completion emails to all participants
         participants = await orchestrator.get_participants(transaction_id)
         for p in participants:
