@@ -8,7 +8,7 @@ import requests
 import os
 from datetime import datetime, timedelta
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://notary-ai.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://enterprise-auth-flow.preview.emergentagent.com')
 
 # Test credentials
 DEMO_USER = {"email": "demo@test.com", "password": "Demo123!"}

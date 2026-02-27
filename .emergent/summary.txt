@@ -1,0 +1,166 @@
+<analysis>**original_problem_statement:**
+The user's goal is to build a sophisticated, futuristic notarization platform named NotaryChain. The project began by cloning the UI of a reference application and has since evolved into a feature-rich, enterprise-grade platform.
+
+PRODUCT REQUIREMENTS:
+The platform development has been iterative, with the user requesting batches of advanced features. The most recent completed requests include:
+1.  **AI Co-pilot™ for Notaries:** An intelligent assistant for notaries to review documents.
+2.  **AI Document Generator:** Allows users to create documents from natural language prompts.
+3.  **Standalone AI Document Summarizer:** A utility for summarizing uploaded documents.
+4.  **Video Witness Recording:** Asynchronous video-based identity verification.
+5.  **AI Transaction Orchestrator™:** A complete, end-to-end system for executing high-trust digital transactions by fusing AI analysis, multi-modal biometric verification, guided execution, and immutable blockchain logging.
+6.  **Transaction Timeline Visualization:** A forensic-style visual audit trail for all transaction events.
+7.  **Real-Time Event Streaming:** Live updates for the transaction timeline via WebSockets.
+8.  A suite of engagement and enterprise features including **Smart Reminders**, **Approval Workflows**, **Document Comparison**, **Custom Branding**, **Dark/Light Theme**, and a **New User Onboarding Tour**.
+
+The current user request is to implement the next set of enterprise features: **Role-Based Document Access Controls (RBAC)** and **Full SSO Integration (SAML/OIDC)**.
+
+**User's preferred language**: English
+
+**what currently exists?**
+The application is a mature, full-stack notarization platform built with React, FastAPI, and MongoDB. It features a robust architecture supporting multi-role authentication (user, notary, admin) with 2FA, a complete notary onboarding and vetting workflow, a public REST API, and extensive use of WebSockets for real-time updates (global notifications, live co-editing, and timeline streaming).
+
+The platform includes a wide array of completed features such as AI document analysis (Gemini), biometric verification (face-api.js), blockchain sealing (Hedera), Stripe payments (one-time & subscriptions), live video sessions (Daily.co), document templates, an AI template-filling wizard, organization management, a document vault, document expiry notifications, real-time collaboration, bulk notarization, a notary marketplace, a notary booking calendar, and all the recently added AI and enterprise features listed in the product requirements.
+
+**Last working item**:
+-   **Last item agent was working:** The agent began implementing the next set of enterprise features: **Role-Based Document Access Controls (RBAC)** and **Full SSO Integration (SAML/OIDC)**. The work started with an exploration phase to understand the existing document, user, and organization infrastructure. The agent reviewed  and  to identify key integration points for the new features.
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** both
+-   **User Testing Done:** N
+
+**All Pending/In progress Issue list**:
+There are no pending issues or bugs.
+
+**In progress Task List**:
+-   **Task 1: Implement Enterprise Features (RBAC & SSO)** (P0)
+    -   **Where to resume:** The agent has just started exploring the backend routes. The immediate next steps are:
+        1.  Examine the database schemas for the , , and  collections to devise a data model strategy for storing roles, permissions, and SSO configurations.
+        2.  Plan and create the new backend API endpoints for managing roles/permissions (RBAC) and SSO settings.
+        3.  Implement the core logic in the backend to enforce these new access controls and handle SAML/OIDC authentication flows.
+        4.  Create the corresponding frontend components for organization admins to manage roles and configure SSO.
+    -   **What will be achieved with this?** This will add critical enterprise-grade security and authentication features, significantly increasing the platform's appeal to large corporate clients.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** both
+    -   **Blocked on something:** No.
+
+**Upcoming and Future Tasks**
+
+**Future Tasks:**
+*   **Cloud Integration (Blocked):** Migrate document storage from the local file system to AWS S3. This task is blocked until the user provides the necessary AWS credentials. (P1)
+
+**Completed work in this session**
+-   **AI Co-pilot, Doc Generator, Summarizer, & Video Witness (DONE):** Successfully implemented the four AI/video features, including backend APIs, frontend pages, and integration into the dashboard and notary review modal.
+-   **AI Transaction Orchestrator™ (DONE):** Implemented all four phases:
+    -   Phase 1: AI Document Remediation (clause analysis & suggestions).
+    -   Phase 2: Biometric Passport (unified identity credential).
+    -   Phase 3: AI Conductor Mode (LLM-guided transaction execution).
+    -   Phase 4: Evidence Package at Settlement (automated audit trail generation).
+-   **Transaction Timeline & Real-Time Streaming (DONE):** Created a backend endpoint to aggregate all transaction-related events and a frontend visualization page that streams new events live via a dedicated WebSocket.
+-   **User Engagement & Enterprise Feature Batch (DONE):**
+    -   Smart Reminders & Calendar Integration.
+    -   Approval Workflows.
+    -   Document Comparison / Diff View.
+    -   Custom Branding for Organizations.
+    -   Dark/Light Theme Toggle.
+    -   Onboarding Tour for new users.
+
+**Earlier issues found/mentioned but not fixed**
+-   None.
+
+**Known issue recurrence from previous fork**
+-   None.
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Frontend**: React, React Router, TailwindCSS, Shadcn UI, , , 
+-   **Backend**: FastAPI, MongoDB (Motor), , , , , , 
+-   **Real-time**: WebSockets for global updates, live collaboration, and timeline event streaming.
+-   **Background Jobs:**  for document expiry and smart reminders.
+-   **AI**: Gemini via Emergent LLM Key.
+-   **Architecture**: Modular, service-oriented backend with a feature-rich React SPA frontend.
+
+**key DB schema**
+-   **reminders**: 
+-   **approvals**: 
+-   **organizations**: Extended with  and preparing for .
+-   **transactions**: Now includes a detailed  for timeline generation.
+-   **Preparing for RBAC**: New schemas/fields will be needed for , , and linking them to  and .
+
+**changes in tech stack**
+-   No new technologies were added; existing ones like  and WebSockets were extended for new features.
+
+**All files of reference**
+-   **New Backend Files**: , , , , , , , , , , , , .
+-   **New Frontend Files**: , , , , , , , , , , , , , , .
+-   **Modified Core Files**: , , , , , .
+
+**Areas that need refactoring**:
+-   None identified. The codebase remains modular.
+
+**key api endpoints**
+-   
+-   
+-   
+-   
+-    |  |  | 
+-   
+-    (CRUD)
+-    (CRUD)
+-   
+-   
+-   
+
+**Critical Info for New Agent**
+-   You are starting the implementation of two major enterprise features: Role-Based Access Control (RBAC) and SSO (SAML/OIDC).
+-   Your first task is to continue the exploration phase by analyzing the database schemas to design the data models for these features.
+-   The user has approved this plan. Proceed with planning and then implementing the backend, followed by the frontend.
+-   The AWS S3 migration task remains blocked by the user; do not attempt to work on it.
+-   The project is in excellent health, with all recently added features passing comprehensive tests with 100% success rates. Use the testing agent after completing the implementation of RBAC and SSO.
+
+**documents and test reports created in this job**
+-    (Continuously updated with completed features)
+-   Numerous test reports from successful testing runs are located in .
+
+**Last 10 User Messages and any pending HUMAN messages**
+1.  **User:**  (Status: IN PROGRESS - Approved the plan to start RBAC and SSO).
+2.  **User:**  (Status: IN PROGRESS - Prioritized RBAC/SSO over the blocked S3 task).
+3.  **User:**  (Status: COMPLETED - Approved plan for the batch of 6 engagement/enterprise features).
+4.  **User:**  (Status: COMPLETED - Triggered planning for the next feature batch).
+5.  **User:**  (Status: COMPLETED).
+6.  **User:**  (Status: COMPLETED).
+7.  **User:**  (Status: COMPLETED - Approved plan for AI Transaction Orchestrator).
+8.  **User:**  (Status: COMPLETED).
+9.  **User:**  (Status: COMPLETED).
+10. **User:**  (Status: COMPLETED).
+
+**Project Health Check:**
+-   **Broken:** None
+-   **Mocked:** None
+
+**3rd Party Integrations**
+-   **Google Gemini** — uses Emergent LLM Key.
+-   **Hedera Hashgraph (Testnet)** — uses User API Key.
+-   **Stripe** — uses User API Key (One-time & Subscriptions).
+-   **Daily.co** — uses User API Key.
+-   **Resend** (Email) — uses User API Key.
+-   **CoinGecko** — Public API, no key required.
+-   **TensorFlow.js / face-api.js** — Client-side libraries, no key required.
+-   **Sentry** — uses User-provided DSN.
+
+**Testing status**
+-   **Testing agent used after significant changes**: YES (extensively for all feature batches, with 100% pass rates).
+-   **Troubleshoot agent used after agent stuck in loop**: NO
+-   **Test files created**: Yes, the testing agent created comprehensive test suites.
+-   **Known regressions**: None.
+
+**Credentials to test flow:**
+| Role | Email | Password |
+|---|---|---|
+| **Admin** | admin@notarychain.com | Admin123! |
+| **Regular User** | demo@test.com | Demo123! |
+| **Test Notary Applicant** | notarytest@test.com | Test123! |
+
+**What agent forgot to execute**
+The agent has successfully executed all user requests in the specified order. The only outstanding task (AWS S3) is intentionally blocked by the user.</analysis>

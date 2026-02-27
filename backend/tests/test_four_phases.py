@@ -10,7 +10,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://notary-ai.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://enterprise-auth-flow.preview.emergentagent.com').rstrip('/')
 
 # Test credentials
 TEST_USER = {"email": "demo@test.com", "password": "Demo123!"}
