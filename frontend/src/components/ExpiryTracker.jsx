@@ -18,6 +18,7 @@ const statusConfig = {
 export function ExpiryWidget({ token }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [renewingId, setRenewingId] = useState(null);
   const headers = { Authorization: `Bearer ${token}` };
 
   const fetchExpiry = useCallback(async () => {
@@ -32,6 +33,18 @@ export function ExpiryWidget({ token }) {
   }, [token]);
 
   useEffect(() => { fetchExpiry(); }, [fetchExpiry]);
+
+  const handleRenew = async (docId, docName) => {
+    setRenewingId(docId);
+    try {
+      await axios.post(`${API}/expiry/requests/${docId}/renew`, {}, { headers });
+      toast({ title: 'Renewed', description: `"${docName}" has been renewed as a new request` });
+      fetchExpiry();
+    } catch (e) {
+      toast({ title: 'Error', description: e.response?.data?.detail || 'Failed to renew', variant: 'destructive' });
+    }
+    setRenewingId(null);
+  };
 
   if (loading) return null;
   if (!data || data.documents.length === 0) return null;
