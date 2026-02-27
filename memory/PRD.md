@@ -288,6 +288,16 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - `/api/bookings/slots/{notary_id}?date=YYYY-MM-DD` — Available time slots
 - `/api/bookings` — Booking CRUD (POST create, GET my/notary)
 - `/api/bookings/{id}/confirm|cancel|complete` — Booking actions
+- `/api/organizations/{org_id}/permissions` — List all RBAC permissions
+- `/api/organizations/{org_id}/roles` — RBAC role CRUD (GET/POST)
+- `/api/organizations/{org_id}/roles/{role_id}` — RBAC role update/delete (PUT/DELETE)
+- `/api/organizations/{org_id}/members/{member_id}/custom-role` — Assign/remove custom role (PUT/DELETE)
+- `/api/organizations/{org_id}/members/{member_id}/effective-permissions` — Get effective permissions
+- `/api/sso/discover` — Check SSO availability for email domain
+- `/api/sso/initiate` — Start SSO authentication flow
+- `/api/sso/session/{session_id}` — Get SSO session details
+- `/api/sso/callback` — Complete SSO authentication
+- `/api/sso/test` — Test SSO configuration validity
 
 ## Upcoming Tasks
 - **Cloud Integration** — Migrate to AWS S3 (awaiting user credentials)
