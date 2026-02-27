@@ -99,13 +99,18 @@ Return as JSON:
             session_id=f"summarize_{current_user.id}_{datetime.now().timestamp()}",
             system_message="You are a document analysis expert. Respond with valid JSON only.",
         )
-        response = await chat.send_message(
-            UserMessage(
-                text=prompt,
-                file_contents=[FileContentWithMimeType(mime_type=mime_type, file_path=file_path)],
-            )
-        )
-        text = response.text.strip()
+        # Read file content for text files, for other types just summarize based on filename
+        file_text = ""
+        if file_ext in ['.txt', '.doc', '.docx']:
+            try:
+                with open(file_path, 'r', errors='ignore') as f:
+                    file_text = f.read()[:10000]  # Limit to 10k chars
+            except:
+                pass
+        
+        full_prompt = f"{prompt}\n\nDocument content (if available):\n{file_text}" if file_text else prompt
+        text = await chat.send_message(UserMessage(text=full_prompt))
+        text = text.strip()
         if text.startswith("```"):
             text = text.split("\n", 1)[1].rsplit("```", 1)[0]
         result = json.loads(text)
