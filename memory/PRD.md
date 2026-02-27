@@ -230,18 +230,10 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - `/api/bookings/{id}/confirm|cancel|complete` — Booking actions
 
 ## Upcoming Tasks
-- **P1: Document Timeline / Activity Feed**
-- **P1: Smart Reminders & Calendar Integration**
-- **P2: Document Comparison / Diff View**
-- **P1: Approval Workflows**
-- **P2: Custom Branding for Organizations**
-- **P2: Role-Based Document Access Controls**
-- **P2: Dark/Light Theme Toggle**
-- **P2: Onboarding Tour for new users**
-
-## Future/Backlog
 - **Cloud Integration** — Migrate to AWS S3 (awaiting user credentials)
 - Full SSO integration (SAML/OIDC)
+
+## Future/Backlog
 - Enterprise Features Expansion
 - Recurring notarization subscriptions with per-doc discounts
 - Additional marketplace features
