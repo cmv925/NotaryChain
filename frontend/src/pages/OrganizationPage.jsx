@@ -376,6 +376,25 @@ const OrganizationPage = () => {
     }
   };
 
+  const handleAssignCustomRole = async (memberId, roleId) => {
+    try {
+      if (roleId) {
+        await axios.put(`${API}/organizations/${selectedOrg.id}/members/${memberId}/custom-role`,
+          { role_id: roleId },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } else {
+        await axios.delete(`${API}/organizations/${selectedOrg.id}/members/${memberId}/custom-role`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+      toast({ title: 'Updated', description: 'Custom role updated.' });
+      selectOrg(selectedOrg);
+    } catch (error) {
+      toast({ title: 'Error', description: error.response?.data?.detail || 'Failed', variant: 'destructive' });
+    }
+  };
+
   const handleDeleteOrg = async () => {
     if (!window.confirm('Are you sure? This cannot be undone.')) return;
     try {
