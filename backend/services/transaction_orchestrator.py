@@ -402,6 +402,16 @@ class TransactionOrchestratorService:
             except Exception as e:
                 logger.error(f"Failed to log participant add to HCS: {e}")
         
+        # Emit timeline event
+        await _emit_timeline(transaction_id, {
+            "type": "participant", "category": "people", "icon": "user-check",
+            "title": f'{name} Invited',
+            "description": f'Role: {role}',
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "severity": "info",
+            "metadata": {"email": email, "role": role},
+        })
+
         return {k: v for k, v in participant.items() if k != "_id"}
 
     async def get_participants(self, transaction_id: str) -> List[dict]:
