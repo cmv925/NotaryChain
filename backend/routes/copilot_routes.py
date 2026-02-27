@@ -123,8 +123,8 @@ Respond with a JSON object:
             session_id=f"copilot_{body.request_id}_{datetime.now().timestamp()}",
             system_message="You are a professional notary AI assistant. Always respond with valid JSON only.",
         )
-        response = await chat.send_message(UserMessage(message=prompt))
-        text = response.message.strip()
+        response = await chat.send_message(UserMessage(text=prompt))
+        text = response.text.strip()
         if text.startswith("```"):
             text = text.split("\n", 1)[1].rsplit("```", 1)[0]
 
