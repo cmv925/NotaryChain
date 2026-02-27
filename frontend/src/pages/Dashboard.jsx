@@ -306,6 +306,18 @@ const Dashboard = () => {
                 <div className="text-sm text-amber-300">Browse marketplace</div>
               </div>
             </Button>
+            <Button
+              onClick={() => navigate('/my-bookings')}
+              variant="outline"
+              className="border-2 border-teal-500 text-teal-400 hover:bg-teal-500/10 px-6 py-6 text-lg justify-start"
+              data-testid="my-bookings-button"
+            >
+              <CalendarClock className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">My Bookings</div>
+                <div className="text-sm text-teal-300">View appointments</div>
+              </div>
+            </Button>
           </div>
         </div>
 
