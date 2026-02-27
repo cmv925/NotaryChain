@@ -41,6 +41,10 @@ const NotaryDashboard = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [loadingAi, setLoadingAi] = useState(false);
+  const [copilotData, setCopilotData] = useState(null);
+  const [loadingCopilot, setLoadingCopilot] = useState(false);
+  const [journalPrefill, setJournalPrefill] = useState(null);
+  const [loadingJournal, setLoadingJournal] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
