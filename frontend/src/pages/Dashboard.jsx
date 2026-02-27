@@ -20,6 +20,7 @@ const Dashboard = () => {
   const { user, logout, token } = useAuth();
   const { subscribe } = useWS();
   const navigate = useNavigate();
+  const { theme, toggle: toggleTheme } = useTheme();
   const [stats, setStats] = useState({ total_seals: 0, recent_seals: 0 });
   const [documents, setDocuments] = useState([]);
   const [notaryRequests, setNotaryRequests] = useState([]);
