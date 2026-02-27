@@ -14,6 +14,15 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 logger = logging.getLogger(__name__)
 
 
+async def _emit_timeline(transaction_id: str, event: dict):
+    """Emit a timeline event to all connected viewers (best-effort, non-blocking)."""
+    try:
+        from services.ws_manager import ws_manager
+        await ws_manager.emit_timeline_event(transaction_id, event)
+    except Exception as e:
+        logger.debug(f"Timeline emit failed: {e}")
+
+
 class TransactionOrchestratorService:
     """AI-powered transaction orchestration engine"""
     
