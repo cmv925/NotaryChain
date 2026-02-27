@@ -340,6 +340,8 @@ export default function TransactionTimeline() {
                           <div
                             className={`flex-1 bg-[#0d1b2a] rounded-lg p-3 border transition-all cursor-pointer mb-3 ${
                               isExpanded ? 'border-gray-600' : 'border-gray-800/50 hover:border-gray-700'
+                            } ${ev._live ? 'ring-1 ring-green-500/30 animate-[fadeIn_0.5s_ease-in]' : ''} ${
+                              newEventFlash === ev.sequence ? 'bg-green-500/5' : ''
                             }`}
                             onClick={() => setExpandedEvent(isExpanded ? null : `${gi}-${ei}`)}
                           >
