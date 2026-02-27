@@ -43,7 +43,7 @@ async def get_user_document_seals(
     skip: int = 0
 ):
     # Get user's document seals
-    cursor = db.document_seals.find({"user_id": current_user.id})
+    cursor = db.document_seals.find({"user_id": current_user.id}, {"_id": 0})
     cursor = cursor.sort("timestamp", -1).skip(skip).limit(limit)
     
     documents = await cursor.to_list(length=limit)
