@@ -89,6 +89,37 @@ class ConnectionManager:
     def get_connection_count(self, room_id: str) -> int:
         return len(self.active_connections.get(room_id, {}))
 
+    # ============ TIMELINE ROOM METHODS ============
+
+    async def connect_timeline(self, websocket: WebSocket, transaction_id: str, user_id: str):
+        """Connect a user to a timeline live-stream room"""
+        room_key = f"timeline_{transaction_id}"
+        await websocket.accept()
+        if room_key not in self.active_connections:
+            self.active_connections[room_key] = {}
+            self.presence[room_key] = set()
+        self.active_connections[room_key][user_id] = websocket
+        self.presence[room_key].add(user_id)
+        logger.info(f"WS Timeline: user {user_id} watching transaction {transaction_id}")
+
+    def disconnect_timeline(self, transaction_id: str, user_id: str):
+        room_key = f"timeline_{transaction_id}"
+        if room_key in self.active_connections:
+            self.active_connections[room_key].pop(user_id, None)
+            self.presence.get(room_key, set()).discard(user_id)
+            if not self.active_connections[room_key]:
+                del self.active_connections[room_key]
+                self.presence.pop(room_key, None)
+        logger.info(f"WS Timeline: user {user_id} left transaction {transaction_id}")
+
+    async def emit_timeline_event(self, transaction_id: str, event: dict):
+        """Broadcast a timeline event to all users watching this transaction's timeline"""
+        room_key = f"timeline_{transaction_id}"
+        message = {"type": "timeline_event", "event": event}
+        await self.broadcast(room_key, message)
+        # Also send to the transaction room itself
+        await self.broadcast(transaction_id, message)
+
     # ============ GLOBAL USER CHANNEL METHODS ============
 
     async def connect_global(self, websocket: WebSocket, user_id: str):
