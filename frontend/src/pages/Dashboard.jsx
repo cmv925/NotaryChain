@@ -326,6 +326,7 @@ const Dashboard = () => {
                               {request.document_type} • {new Date(request.created_at).toLocaleDateString()}
                             </p>
                           </div>
+                          <ExpiryBadge request={request} />
                         </div>
                         <div className="flex items-center gap-2 flex-wrap flex-shrink-0 ml-2">
                           <span className={`px-3 py-1 rounded-full text-xs font-medium ${
