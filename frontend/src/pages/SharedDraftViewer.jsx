@@ -38,6 +38,20 @@ const SharedDraftViewer = () => {
     if (token && shareToken) fetchSharedDraft();
   }, [token, shareToken]);
 
+  // Handle remote edits from collaborators
+  useEffect(() => {
+    if (!collab.remoteEdits) return;
+    const { field, value, user_name } = collab.remoteEdits;
+    setFieldValues(prev => {
+      if (prev[field] !== value) {
+        setConflictWarning(`${user_name} updated "${field.replace(/_/g, ' ')}"`);
+        setTimeout(() => setConflictWarning(null), 4000);
+        return { ...prev, [field]: value };
+      }
+      return prev;
+    });
+  }, [collab.remoteEdits]);
+
   const fetchSharedDraft = async () => {
     try {
       const res = await axios.get(`${API}/drafts/shared/${shareToken}`, {
