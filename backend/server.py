@@ -13,6 +13,7 @@ from middleware.security import setup_security, health_check, limiter
 from services.notification_service import set_db as set_notification_db, set_ws_manager
 from services.ws_manager import ws_manager
 from services import expiry_service
+from services import reminder_service
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -85,6 +86,7 @@ set_ws_manager(ws_manager)
 from services.email_service import email_service
 from services import notification_service as notif_svc_module
 expiry_service.set_dependencies(db, notif_svc_module, email_service)
+reminder_service.set_dependencies(db, notif_svc_module)
 
 # Create the main app without a prefix
 app = FastAPI(
@@ -275,6 +277,7 @@ async def create_indexes():
 
         # Start document expiry background checker
         asyncio.create_task(expiry_service.run_expiry_checker())
+        asyncio.create_task(reminder_service.run_reminder_checks())
 
         logger.info("Database indexes created/verified successfully")
     except Exception as e:
