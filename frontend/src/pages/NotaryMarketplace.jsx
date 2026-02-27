@@ -119,6 +119,18 @@ const NotaryMarketplace = () => {
                 </CardContent>
               </Card>
 
+              {/* Book Session Button */}
+              <div className="mb-6">
+                <Button
+                  onClick={() => navigate(`/book/${selectedNotary.notary_id}`)}
+                  className="w-full bg-green-600 hover:bg-green-700 py-6 text-lg"
+                  data-testid="book-session-btn"
+                >
+                  <CalendarIcon className="w-5 h-5 mr-2" />
+                  Book a Session with {selectedNotary.name?.split(' ')[0]}
+                </Button>
+              </div>
+
               {/* Reviews */}
               <h2 className="text-lg font-semibold text-white mb-4">Reviews ({selectedNotary.review_count})</h2>
               {(selectedNotary.reviews || []).length === 0 ? (
