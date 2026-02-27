@@ -55,6 +55,7 @@ expiry_routes.set_db(db)
 draft_collab_routes.set_db(db)
 bulk_routes.set_db(db)
 marketplace_routes.set_db(db)
+embed_routes.set_db(db)
 
 # Webhook service needs db too
 from services import webhook_service
