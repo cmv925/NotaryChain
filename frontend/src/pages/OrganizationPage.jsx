@@ -266,6 +266,67 @@ const SSOSettings = ({ orgId, myRole, token }) => {
   );
 };
 
+// --- Member Row with Custom Role Assignment ---
+const MemberRow = ({ member: m, orgId, myRole, isAdmin, token, onRemove, onRoleChange, onAssignCustomRole, roles }) => {
+  return (
+    <div className="flex items-center justify-between p-3 bg-[#0a0f1a] rounded-lg border border-gray-800" data-testid={`member-${m.id}`}>
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-bold">
+          {(m.full_name || m.email)[0].toUpperCase()}
+        </div>
+        <div>
+          <p className="text-white text-sm font-medium">{m.full_name || m.email}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-gray-500 text-xs">{m.email}</p>
+            {m.custom_role_id && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                {roles.find(r => r.id === m.custom_role_id)?.name || 'Custom Role'}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        {m.role === 'owner' ? (
+          <span className="flex items-center gap-1 text-xs text-amber-400"><Crown className="w-3 h-3" /> Owner</span>
+        ) : isAdmin && myRole === 'owner' ? (
+          <div className="flex items-center gap-1.5">
+            <select
+              value={m.role}
+              onChange={(e) => onRoleChange(m.id, e.target.value)}
+              className="bg-[#1a2332] border border-gray-700 rounded text-xs text-gray-300 px-2 py-1"
+              data-testid={`member-role-select-${m.id}`}
+            >
+              <option value="member">Member</option>
+              <option value="admin">Admin</option>
+            </select>
+            <select
+              value={m.custom_role_id || ''}
+              onChange={(e) => onAssignCustomRole(m.id, e.target.value || null)}
+              className="bg-[#1a2332] border border-gray-700 rounded text-xs text-gray-300 px-2 py-1"
+              data-testid={`member-custom-role-select-${m.id}`}
+            >
+              <option value="">No custom role</option>
+              {roles.map(r => (
+                <option key={r.id} value={r.id}>{r.name}</option>
+              ))}
+            </select>
+          </div>
+        ) : (
+          <span className={`text-xs px-1.5 py-0.5 rounded border ${ROLE_BADGES[m.role]?.color}`}>
+            {ROLE_BADGES[m.role]?.label}
+          </span>
+        )}
+        {isAdmin && m.role !== 'owner' && (
+          <button onClick={() => onRemove(m.id)} className="text-red-400 hover:text-red-300 p-1">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // --- Main Organization Page ---
 const OrganizationPage = () => {
   const { token, user } = useAuth();
