@@ -823,6 +823,16 @@ class TransactionOrchestratorService:
             "settled_at": datetime.now(timezone.utc).isoformat()
         }
 
+        # Emit timeline event for settlement (fire-and-forget)
+        await _emit_timeline(transaction_id, {
+            "type": "settlement", "category": "blockchain", "icon": "shield",
+            "title": "Transaction Settled on Blockchain",
+            "description": f'Hash: {settlement_hash[:24]}...',
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "severity": "success",
+            "metadata": {"hash": settlement_hash, "hcs_topic_id": transaction.get("hcs_topic_id")},
+        })
+
 
 # ============ SYSTEM BLUEPRINTS ============
 
