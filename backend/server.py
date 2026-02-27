@@ -240,6 +240,13 @@ async def create_indexes():
         await db.notary_reviews.create_index("notary_id")
         await db.notary_reviews.create_index([("user_id", 1), ("request_id", 1)], unique=True)
 
+        # Bookings
+        await db.bookings.create_index("id", unique=True)
+        await db.bookings.create_index("user_id")
+        await db.bookings.create_index("notary_id")
+        await db.bookings.create_index([("notary_id", 1), ("date", 1), ("start_time", 1)])
+        await db.notary_availability.create_index("notary_id", unique=True)
+
         # Start document expiry background checker
         asyncio.create_task(expiry_service.run_expiry_checker())
 
