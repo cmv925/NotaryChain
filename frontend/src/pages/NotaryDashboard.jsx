@@ -196,6 +196,36 @@ const NotaryDashboard = () => {
     }
   };
 
+  const fetchCopilotAnalysis = async (requestId) => {
+    setLoadingCopilot(true);
+    setCopilotData(null);
+    try {
+      const response = await axios.post(`${API}/ai-copilot/analyze`, { request_id: requestId }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCopilotData(response.data);
+    } catch (error) {
+      toast({ title: 'Copilot Error', description: 'Failed to get AI analysis', variant: 'destructive' });
+    } finally {
+      setLoadingCopilot(false);
+    }
+  };
+
+  const fetchJournalPrefill = async (requestId) => {
+    setLoadingJournal(true);
+    setJournalPrefill(null);
+    try {
+      const response = await axios.post(`${API}/ai-copilot/prefill-journal`, { request_id: requestId }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setJournalPrefill(response.data);
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to prefill journal', variant: 'destructive' });
+    } finally {
+      setLoadingJournal(false);
+    }
+  };
+
   const handleViewDetails = async (request) => {
     setSelectedRequest(request);
     setShowModal(true);
