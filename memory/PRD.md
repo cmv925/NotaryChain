@@ -330,7 +330,6 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 
 ## Future/Backlog
 - Enterprise Features Expansion
-- Recurring notarization subscriptions with per-doc discounts
 - Additional marketplace features
 
 ## Test Credentials
