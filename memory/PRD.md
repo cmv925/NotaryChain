@@ -52,6 +52,24 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **OrgVault:** Upload/delete actions gated by `vault:upload`/`vault:delete` permissions
 - **Settings tab:** Shows user's effective permissions summary with count and source badge
 
+### Recurring Notarization Subscriptions with Per-Doc Discounts — COMPLETED (Feb 28, 2026)
+- **Backend:** Added `discount_pct` to all subscription plans (Starter=0%, Professional=15%, Enterprise=35%)
+- `GET /api/subscriptions/discount` — returns user's current discount rate and billing-cycle savings
+- `POST /api/subscriptions/calculate-discount` — previews discounted price for any notarization package
+- `POST /api/payments/checkout` — now applies subscription discount server-side to Stripe checkout amount
+- Payment transactions track `original_amount`, `discount_applied`, `discount_pct`, `plan_id`
+- **Frontend:** Pricing page shows per-doc discount badges on Pro and Enterprise plans
+- Subscription page shows discount savings card (discount rate, saved this cycle, docs discounted)
+
+### Activity Audit Log Dashboard — COMPLETED (Feb 28, 2026)
+- **Backend:** `org_activity_routes.py` — Org-scoped activity log system
+- `GET /api/organizations/{org_id}/activity` — paginated, filterable activity logs (action type, days, actor)
+- `GET /api/organizations/{org_id}/activity/stats` — aggregated statistics (by action, by actor, daily trend)
+- `GET /api/organizations/{org_id}/activity/export` — export logs as JSON
+- `log_org_activity()` helper integrated into RBAC routes (role create/update/delete/assign)
+- **Frontend:** `OrgActivityLog.jsx` — full-featured activity dashboard with timeline view, stats panel, search, filters, pagination, and export
+- New "Activity" tab in Organization page (permission-gated by `org:settings`)
+
 ### Organization Document Vault — COMPLETED
 Upload, search, filter, role-based access, audit trail
 
