@@ -520,3 +520,88 @@ async def get_usage(
         results[resource] = await check_plan_limit(current_user.id, resource)
 
     return {"usage": results}
+
+
+
+# ============ PER-DOC DISCOUNT ENDPOINTS ============
+
+@router.get("/discount")
+async def get_my_discount(
+    current_user: User = Depends(get_current_user)
+):
+    """Get the current user's per-document discount based on their subscription tier."""
+    sub = await db.subscriptions.find_one(
+        {"user_id": current_user.id, "status": {"$in": ["active", "trialing"]}},
+        {"_id": 0}
+    )
+
+    plan_id = sub["plan_id"] if sub else "free"
+    plan = PLANS.get(plan_id, PLANS["free"])
+    discount_pct = plan.get("discount_pct", 0)
+
+    # Calculate billing-cycle savings
+    now = datetime.now(timezone.utc)
+    month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+    # Get notarizations this cycle and calculate total saved
+    payments_this_cycle = await db.payment_transactions.find(
+        {
+            "user_id": current_user.id,
+            "created_at": {"$gte": month_start},
+            "payment_status": "paid",
+            "discount_applied": {"$exists": True},
+        },
+        {"_id": 0, "discount_applied": 1, "original_amount": 1, "amount": 1}
+    ).to_list(1000)
+
+    total_saved = sum(p.get("discount_applied", 0) for p in payments_this_cycle)
+    docs_discounted = len(payments_this_cycle)
+
+    return {
+        "plan_id": plan_id,
+        "plan_name": plan["name"],
+        "discount_pct": discount_pct,
+        "total_saved_this_cycle": round(total_saved, 2),
+        "docs_discounted_this_cycle": docs_discounted,
+    }
+
+
+@router.post("/calculate-discount")
+async def calculate_discount(
+    request: dict,
+    current_user: User = Depends(get_current_user)
+):
+    """Calculate the discounted price for a document notarization package."""
+    package_id = request.get("package_id")
+    if not package_id:
+        raise HTTPException(status_code=400, detail="package_id is required")
+
+    from routes.payment_routes import NOTARY_PACKAGES
+    if package_id not in NOTARY_PACKAGES:
+        raise HTTPException(status_code=400, detail="Invalid package")
+
+    package = NOTARY_PACKAGES[package_id]
+    original_price = package["price"]
+
+    sub = await db.subscriptions.find_one(
+        {"user_id": current_user.id, "status": {"$in": ["active", "trialing"]}},
+        {"_id": 0}
+    )
+    plan_id = sub["plan_id"] if sub else "free"
+    plan = PLANS.get(plan_id, PLANS["free"])
+    discount_pct = plan.get("discount_pct", 0)
+
+    discount_amount = round(original_price * discount_pct / 100, 2)
+    final_price = round(original_price - discount_amount, 2)
+
+    return {
+        "package_id": package_id,
+        "package_name": package["name"],
+        "original_price": original_price,
+        "discount_pct": discount_pct,
+        "discount_amount": discount_amount,
+        "final_price": final_price,
+        "plan_id": plan_id,
+        "plan_name": plan["name"],
+        "currency": "USD",
+    }
