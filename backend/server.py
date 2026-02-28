@@ -8,7 +8,7 @@ import logging
 from pathlib import Path
 
 # Import route modules
-from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes, notary_professional_routes, gdpr_routes, infra_routes, ws_routes, api_key_routes, public_api_routes, ron_compliance_routes, webhook_routes, template_routes, organization_routes, draft_routes, vault_routes, expiry_routes, draft_collab_routes, bulk_routes, marketplace_routes, embed_routes, booking_routes, copilot_routes, ai_generator_routes, summarizer_routes, witness_routes, remediation_routes, biometric_passport_routes, conductor_routes, evidence_package_routes, timeline_routes, reminder_routes, approval_routes, doc_compare_routes, branding_routes, rbac_routes, sso_routes
+from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes, notary_professional_routes, gdpr_routes, infra_routes, ws_routes, api_key_routes, public_api_routes, ron_compliance_routes, webhook_routes, template_routes, organization_routes, draft_routes, vault_routes, expiry_routes, draft_collab_routes, bulk_routes, marketplace_routes, embed_routes, booking_routes, copilot_routes, ai_generator_routes, summarizer_routes, witness_routes, remediation_routes, biometric_passport_routes, conductor_routes, evidence_package_routes, timeline_routes, reminder_routes, approval_routes, doc_compare_routes, branding_routes, rbac_routes, sso_routes, org_activity_routes
 from middleware.security import setup_security, health_check, limiter
 from services.notification_service import set_db as set_notification_db, set_ws_manager
 from services.ws_manager import ws_manager
@@ -73,6 +73,7 @@ doc_compare_routes.set_db(db)
 branding_routes.set_db(db)
 rbac_routes.set_db(db)
 sso_routes.set_db(db)
+org_activity_routes.set_db(db)
 
 # Webhook service needs db too
 from services import webhook_service
@@ -172,6 +173,7 @@ app.include_router(doc_compare_routes.router)
 app.include_router(branding_routes.router)
 app.include_router(rbac_routes.router)
 app.include_router(sso_routes.router)
+app.include_router(org_activity_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -276,6 +278,11 @@ async def create_indexes():
         await db.rbac_roles.create_index("id", unique=True)
         await db.rbac_roles.create_index([("org_id", 1), ("name", 1)], unique=True)
         await db.rbac_roles.create_index([("org_id", 1), ("system_key", 1)], sparse=True)
+
+        # Org Activity Logs
+        await db.org_activity_logs.create_index("id", unique=True)
+        await db.org_activity_logs.create_index([("org_id", 1), ("timestamp", -1)])
+        await db.org_activity_logs.create_index([("org_id", 1), ("action", 1)])
 
         # Bookings
         await db.bookings.create_index("id", unique=True)
