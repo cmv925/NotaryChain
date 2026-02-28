@@ -154,6 +154,17 @@ const BiometricVerification = ({ onVerificationComplete, onError }) => {
 
   // Face detection loop
   const startDetection = useCallback(() => {
+    if (demoMode) {
+      // Demo mode: simulate face detection without TensorFlow
+      const simulateDetection = () => {
+        setFaceDetected(true);
+        setConfidenceScore(0.95);
+        setFaceBox({ x: 160, y: 100, width: 320, height: 280 });
+      };
+      simulateDetection();
+      return;
+    }
+
     const detectFaces = async () => {
       if (!videoRef.current || !detectorRef.current || !canvasRef.current) {
         animationRef.current = requestAnimationFrame(detectFaces);
