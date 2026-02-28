@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { Check, Zap, Building2, Crown } from 'lucide-react';
+import { Check, Zap, Building2, Crown, BadgePercent } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
@@ -110,6 +110,13 @@ const PricingPage = () => {
                         <span className="text-4xl font-bold text-white">${plan.price === 0 ? '0' : plan.price}</span>
                         <span className="text-gray-500 text-sm">/{plan.interval}</span>
                       </div>
+                      {plan.discount_pct > 0 && (
+                        <div className="mt-2 flex items-center gap-1.5" data-testid={`discount-badge-${plan.id}`}>
+                          <BadgePercent className={`w-4 h-4 ${accent.text}`} />
+                          <span className={`text-sm font-semibold ${accent.text}`}>{plan.discount_pct}% off</span>
+                          <span className="text-gray-500 text-xs">every document</span>
+                        </div>
+                      )}
                     </div>
 
                     <Button
