@@ -1,0 +1,96 @@
+{
+  "summary": "Subscription Discount and Org Activity Audit Log features testing completed. Backend: 16/16 tests PASSED (100%). Frontend: Pricing page discount badges, Subscription page, and Organization Activity tab all working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Members tab custom role dropdown", "issues": ["React hydration warning: <span> cannot be child of <select>/<option> - cosmetic only, does not affect functionality (carried over from previous iterations)"]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_discount_activity.py",
+    "/app/test_reports/pytest/pytest_results_discount_activity.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Good: GET /api/subscriptions/plans now returns discount_pct field (0, 15, 35) for each plan",
+    "Good: GET /api/subscriptions/discount returns user's plan info, discount_pct, total_saved_this_cycle, docs_discounted_this_cycle",
+    "Good: POST /api/subscriptions/calculate-discount correctly calculates discounted price for any package based on user's subscription tier",
+    "Good: POST /api/payments/checkout applies subscription discount server-side to checkout amount",
+    "Good: GET /api/organizations/{org_id}/activity returns paginated activity logs with action, actor, days filtering",
+    "Good: GET /api/organizations/{org_id}/activity/stats returns aggregated statistics (by_action, by_actor, daily_trend)",
+    "Good: GET /api/organizations/{org_id}/activity/export exports all logs as JSON",
+    "Good: RBAC routes (create/update/delete role, assign role) all call log_org_activity() to record events",
+    "Good: Activity endpoints correctly require admin/owner role (403 for regular members)",
+    "Good: Pricing page shows discount badges ('15% off', '35% off') on Pro and Enterprise cards with BadgePercent icon",
+    "Good: Subscription page conditionally shows discount savings card only when discount_pct > 0 (hidden for free plan)",
+    "Good: Organization Activity tab is permission-gated by 'org:settings' permission",
+    "Good: Activity tab UI has all features: stats panel toggle, export button, search, action filter, days filter, pagination",
+    "Good: Activity timeline shows events with correct icons, actor emails, timestamps, and target info"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_discount_activity.py"
+  ],
+  "success_rate": {
+    "backend": "100% (16/16 tests passed)",
+    "frontend": "100% - all discount and activity features working correctly"
+  },
+  "test_credentials": {
+    "admin_user": {"email": "admin@notarychain.com", "password": "Admin123!"},
+    "demo_user": {"email": "demo@test.com", "password": "Demo123!"}
+  },
+  "seed_data_creation": "Created TEST_* prefixed roles during RBAC activity logging tests (cleaned up after tests). Activity logs from pytest run are visible in Activity tab.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Subscription discount and org activity features fully working. Discount endpoints: plans include discount_pct (0/15/35), /discount shows user's savings, /calculate-discount shows what price would be. Activity endpoints: /activity with filtering/pagination, /stats with aggregations, /export for JSON download. Frontend: Pricing page shows discount badges, Subscription page hides discount card for free plan (correct), Organization page has Activity tab with full UI (stats toggle, export, filters, timeline). Admin user is on free plan so shows 0% discount. Activity tab shows 12+ events from RBAC testing.",
+  "features_tested": {
+    "backend_discount": {
+      "GET /api/subscriptions/plans": "Returns plans with discount_pct field (0, 15, 35) - PASS",
+      "GET /api/subscriptions/discount": "Returns user's discount info (plan_id, discount_pct, savings) - PASS",
+      "POST /api/subscriptions/calculate-discount (valid)": "Returns original_price, discount_amount, final_price - PASS",
+      "POST /api/subscriptions/calculate-discount (all packages)": "Works for all 7 packages - PASS",
+      "POST /api/subscriptions/calculate-discount (invalid)": "Returns 400 for invalid package - PASS",
+      "POST /api/subscriptions/calculate-discount (missing)": "Returns 400 for missing package_id - PASS"
+    },
+    "backend_activity": {
+      "GET /api/organizations/{org_id}/activity": "Returns paginated activity logs - PASS",
+      "Activity log structure": "Has id, org_id, action, actor_id, actor_email, description, timestamp - PASS",
+      "Activity filter by action": "Returns only matching action events - PASS",
+      "Activity filter by days": "Accepts 7, 30, 90 days - PASS",
+      "Activity pagination": "page, page_size work correctly - PASS",
+      "GET /api/organizations/{org_id}/activity/stats": "Returns by_action, by_actor, daily_trend, action_types - PASS",
+      "GET /api/organizations/{org_id}/activity/export": "Returns exportable JSON with record_count - PASS"
+    },
+    "backend_rbac_logging": {
+      "Role creation": "Generates role.created activity log - PASS",
+      "Role update": "Generates role.updated activity log - PASS",
+      "Role deletion": "Generates role.deleted activity log - PASS"
+    },
+    "frontend_pricing": {
+      "Plan cards": "Starter, Pro, Enterprise cards visible - PASS",
+      "Pro discount badge": "Shows '15% off every document' with icon - PASS",
+      "Enterprise discount badge": "Shows '35% off every document' with icon - PASS"
+    },
+    "frontend_subscription": {
+      "Current plan card": "Shows Starter Plan, Free forever, active - PASS",
+      "Discount card visibility": "Hidden for free plan (0% discount) - PASS (correct behavior)",
+      "Usage card": "Shows Notarizations, AI Analyses, Transactions - PASS",
+      "Plan features card": "Shows plan features including 'No per-document discount' - PASS"
+    },
+    "frontend_org_activity": {
+      "Activity tab": "Visible in org tabs (permission-gated) - PASS",
+      "Activity log component": "Renders correctly - PASS",
+      "Toggle stats button": "Shows/hides stats panel - PASS",
+      "Export button": "Present and functional - PASS",
+      "Search input": "Filters activity logs - PASS",
+      "Action filter dropdown": "Filters by action type - PASS",
+      "Days filter dropdown": "Filters by time period - PASS",
+      "Stats panel": "Shows total events, active users, top action, period - PASS",
+      "Activity timeline": "Shows events with icons, descriptions, timestamps - PASS"
+    }
+  }
+}
