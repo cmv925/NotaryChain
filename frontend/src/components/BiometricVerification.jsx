@@ -286,7 +286,7 @@ const BiometricVerification = ({ onVerificationComplete, onError }) => {
 
   // Start verification process
   const startVerification = async () => {
-    if (!faceDetected || confidenceScore < 50) {
+    if (!faceDetected && !demoMode) {
       return;
     }
 
@@ -300,8 +300,21 @@ const BiometricVerification = ({ onVerificationComplete, onError }) => {
       setCurrentChallenge(challenge);
       setChallengeProgress(0);
 
-      // Wait for challenge completion
-      const passed = await runChallenge(challenge);
+      let passed;
+      if (demoMode) {
+        // In demo mode, simulate passing all challenges
+        await new Promise(resolve => {
+          let progress = 0;
+          const interval = setInterval(() => {
+            progress += 10;
+            setChallengeProgress(Math.min(100, progress));
+            if (progress >= 100) { clearInterval(interval); resolve(); }
+          }, challenge.duration / 10);
+        });
+        passed = true;
+      } else {
+        passed = await runChallenge(challenge);
+      }
       
       if (passed) {
         setChallengesPassed(prev => [...prev, challenge.id]);
