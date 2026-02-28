@@ -43,11 +43,13 @@ PLANS = {
         "price": 0.0,
         "interval": "month",
         "description": "For individuals getting started",
+        "discount_pct": 0,
         "features": [
             "3 notarizations per month",
             "Basic document analysis",
             "Email support",
             "Standard processing",
+            "No per-document discount",
         ],
         "limits": {
             "notarizations_per_month": 3,
@@ -65,6 +67,7 @@ PLANS = {
         "price": 29.00,
         "interval": "month",
         "description": "For professionals and small businesses",
+        "discount_pct": 15,
         "features": [
             "25 notarizations per month",
             "AI document analysis",
@@ -72,6 +75,7 @@ PLANS = {
             "Video notarization sessions",
             "Priority support",
             "1 GB document storage",
+            "15% per-document discount",
         ],
         "limits": {
             "notarizations_per_month": 25,
@@ -89,6 +93,7 @@ PLANS = {
         "price": 99.00,
         "interval": "month",
         "description": "For organizations and high-volume users",
+        "discount_pct": 35,
         "features": [
             "Unlimited notarizations",
             "Advanced AI analysis",
@@ -99,6 +104,7 @@ PLANS = {
             "Transaction orchestrator",
             "Custom blueprints",
             "Dedicated account manager",
+            "35% per-document discount",
         ],
         "limits": {
             "notarizations_per_month": 999999,
