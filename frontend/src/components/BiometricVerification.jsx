@@ -1,12 +1,33 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import * as tf from '@tensorflow/tfjs';
-import * as faceDetection from '@tensorflow-models/face-detection';
 import { 
   Camera, CheckCircle, XCircle, AlertTriangle, 
-  Loader2, RefreshCw, Eye, Smile, MoveHorizontal
+  Loader2, RefreshCw, Eye, Smile, MoveHorizontal, ShieldAlert
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
+
+// Dynamic/lazy TensorFlow imports with graceful fallback
+let tf = null;
+let faceDetection = null;
+let tfLoadError = null;
+
+const loadTensorFlow = async () => {
+  if (tf && faceDetection) return true;
+  if (tfLoadError) return false;
+  try {
+    const [tfModule, fdModule] = await Promise.all([
+      import('@tensorflow/tfjs'),
+      import('@tensorflow-models/face-detection'),
+    ]);
+    tf = tfModule;
+    faceDetection = fdModule;
+    return true;
+  } catch (err) {
+    console.warn('TensorFlow unavailable — biometric verification will run in demo mode:', err.message);
+    tfLoadError = err;
+    return false;
+  }
+};
 
 const BiometricVerification = ({ onVerificationComplete, onError }) => {
   const videoRef = useRef(null);
