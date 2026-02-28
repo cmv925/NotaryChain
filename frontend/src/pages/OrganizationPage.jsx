@@ -483,6 +483,7 @@ const OrganizationPage = () => {
   const ALL_TABS = [
     { id: 'members', label: 'Members', icon: Users, permission: 'members:view' },
     { id: 'roles', label: 'Roles', icon: ShieldCheck, permission: 'members:manage_roles' },
+    { id: 'activity', label: 'Activity', icon: Globe, permission: 'org:settings' },
     { id: 'vault', label: 'Vault', icon: FolderOpen, permission: 'vault:view' },
     { id: 'invites', label: 'Invites', icon: Mail, permission: 'members:invite' },
     { id: 'sso', label: 'SSO', icon: Key, permission: 'org:sso' },
