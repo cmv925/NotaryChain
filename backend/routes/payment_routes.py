@@ -101,13 +101,30 @@ async def create_checkout(
     """
     Create a Stripe checkout session for notary services.
     Amount is determined server-side based on package_id - never from frontend.
+    Subscription discounts are automatically applied.
     """
     # Validate package exists
     if request.package_id not in NOTARY_PACKAGES:
         raise HTTPException(status_code=400, detail="Invalid package selected")
     
     package = NOTARY_PACKAGES[request.package_id]
-    amount = package["price"]
+    original_amount = package["price"]
+    
+    # Apply subscription discount
+    discount_pct = 0
+    plan_id = "free"
+    sub = await db.subscriptions.find_one(
+        {"user_id": current_user.id, "status": {"$in": ["active", "trialing"]}},
+        {"_id": 0}
+    )
+    if sub:
+        plan_id = sub.get("plan_id", "free")
+        from routes.subscription_routes import PLANS
+        plan = PLANS.get(plan_id, PLANS.get("free", {}))
+        discount_pct = plan.get("discount_pct", 0)
+    
+    discount_amount = round(original_amount * discount_pct / 100, 2)
+    amount = round(original_amount - discount_amount, 2)
     
     # Get Stripe API key
     api_key = os.environ.get("STRIPE_API_KEY")
@@ -141,7 +158,10 @@ async def create_checkout(
         "package_id": request.package_id,
         "package_name": package["name"],
         "notary_request_id": request.notary_request_id or "",
-        "source": "notarychain_web"
+        "source": "notarychain_web",
+        "discount_pct": str(discount_pct),
+        "original_amount": str(original_amount),
+        "plan_id": plan_id,
     }
     
     try:
@@ -166,12 +186,16 @@ async def create_checkout(
             "user_email": current_user.email,
             "package_id": request.package_id,
             "package_name": package["name"],
+            "original_amount": original_amount,
+            "discount_pct": discount_pct,
+            "discount_applied": discount_amount,
             "amount": amount,
             "currency": "usd",
             "payment_method": request.payment_method,
             "notary_request_id": request.notary_request_id,
             "payment_status": "pending",
             "status": "initiated",
+            "plan_id": plan_id,
             "metadata": metadata,
             "created_at": datetime.now(timezone.utc),
             "updated_at": datetime.now(timezone.utc)
