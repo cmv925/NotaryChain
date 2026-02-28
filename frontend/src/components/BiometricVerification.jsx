@@ -411,6 +411,17 @@ const BiometricVerification = ({ onVerificationComplete, onError }) => {
 
   return (
     <div className="space-y-4">
+      {/* Demo Mode Banner */}
+      {demoMode && (
+        <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center gap-2" data-testid="biometric-demo-banner">
+          <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+          <div>
+            <p className="text-amber-300 text-sm font-medium">Demo Mode</p>
+            <p className="text-amber-400/70 text-xs">Face detection ML model unavailable. Verification runs in simulation mode.</p>
+          </div>
+        </div>
+      )}
+
       {/* Status Header */}
       <div className={`p-3 rounded-lg flex items-center gap-3 ${
         status === 'success' ? 'bg-green-500/10 border border-green-500/30' :
