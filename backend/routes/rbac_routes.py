@@ -228,6 +228,9 @@ async def create_role(org_id: str, body: CreateRoleRequest, current_user: dict =
     await db.rbac_roles.insert_one(role)
     role.pop("_id", None)
     role["member_count"] = 0
+    await log_org_activity(org_id, "role.created", current_user.id, current_user.email,
+        f"Created role '{body.name.strip()}' with {len(body.permissions)} permissions",
+        target_type="role", target_id=role["id"], target_name=body.name.strip())
     return role
 
 
@@ -260,6 +263,9 @@ async def update_role(org_id: str, role_id: str, body: UpdateRoleRequest, curren
     updated = await db.rbac_roles.find_one({"id": role_id}, {"_id": 0})
     count = await db.org_members.count_documents({"org_id": org_id, "custom_role_id": role_id, "status": "active"})
     updated["member_count"] = count
+    await log_org_activity(org_id, "role.updated", current_user.id, current_user.email,
+        f"Updated role '{updated['name']}'",
+        target_type="role", target_id=role_id, target_name=updated["name"])
     return updated
 
 
@@ -282,6 +288,9 @@ async def delete_role(org_id: str, role_id: str, current_user: dict = Depends(ge
     )
 
     await db.rbac_roles.delete_one({"id": role_id})
+    await log_org_activity(org_id, "role.deleted", current_user.id, current_user.email,
+        f"Deleted role '{role['name']}'",
+        target_type="role", target_id=role_id, target_name=role["name"])
     return {"message": "Role deleted", "unassigned_members": True}
 
 
@@ -309,12 +318,18 @@ async def assign_custom_role(
             {"id": member_id},
             {"$set": {"custom_role_id": body.role_id}}
         )
+        await log_org_activity(org_id, "role.assigned", current_user.id, current_user.email,
+            f"Assigned role '{role['name']}' to {member.get('email', 'member')}",
+            target_type="member", target_id=member_id, target_name=member.get("email"))
         return {"message": f"Role '{role['name']}' assigned to member"}
     else:
         await db.org_members.update_one(
             {"id": member_id},
             {"$unset": {"custom_role_id": ""}}
         )
+        await log_org_activity(org_id, "role.assigned", current_user.id, current_user.email,
+            f"Removed custom role from {member.get('email', 'member')}",
+            target_type="member", target_id=member_id, target_name=member.get("email"))
         return {"message": "Custom role removed from member"}
 
 
