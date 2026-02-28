@@ -7,7 +7,7 @@ import { Progress } from '../components/ui/progress';
 import { NotificationBell } from '../components/NotificationBell';
 import {
   Shield, ArrowLeft, Crown, Zap, Building2, CreditCard,
-  BarChart3, AlertTriangle, CheckCircle, XCircle
+  BarChart3, AlertTriangle, CheckCircle, XCircle, BadgePercent
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
@@ -27,9 +27,10 @@ const SubscriptionPage = () => {
   const [subData, setSubData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
+  const [discountInfo, setDiscountInfo] = useState(null);
   const headers = { Authorization: `Bearer ${token}` };
 
-  useEffect(() => { fetchSubscription(); }, []);
+  useEffect(() => { fetchSubscription(); fetchDiscount(); }, []);
 
   const fetchSubscription = async () => {
     try {
@@ -37,6 +38,13 @@ const SubscriptionPage = () => {
       setSubData(res.data);
     } catch { toast({ title: 'Error', description: 'Failed to load subscription', variant: 'destructive' }); }
     finally { setLoading(false); }
+  };
+
+  const fetchDiscount = async () => {
+    try {
+      const res = await axios.get(`${API}/subscriptions/discount`, { headers });
+      setDiscountInfo(res.data);
+    } catch {}
   };
 
   const handleCancel = async () => {
@@ -137,6 +145,33 @@ const SubscriptionPage = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Discount Savings Card */}
+        {discountInfo && discountInfo.discount_pct > 0 && (
+          <Card className="bg-[#1a2332] border-emerald-500/30 border" data-testid="discount-card">
+            <CardContent className="p-6 sm:p-8">
+              <div className="flex items-center gap-2 mb-4">
+                <BadgePercent className="w-5 h-5 text-emerald-400" />
+                <h3 className="text-lg font-bold text-white">Per-Document Discount</h3>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="bg-[#0a0f1a] rounded-lg border border-gray-800 p-4 text-center">
+                  <p className="text-emerald-400 text-3xl font-bold">{discountInfo.discount_pct}%</p>
+                  <p className="text-gray-500 text-xs mt-1">Discount Rate</p>
+                </div>
+                <div className="bg-[#0a0f1a] rounded-lg border border-gray-800 p-4 text-center">
+                  <p className="text-white text-3xl font-bold">${discountInfo.total_saved_this_cycle}</p>
+                  <p className="text-gray-500 text-xs mt-1">Saved This Cycle</p>
+                </div>
+                <div className="bg-[#0a0f1a] rounded-lg border border-gray-800 p-4 text-center">
+                  <p className="text-white text-3xl font-bold">{discountInfo.docs_discounted_this_cycle}</p>
+                  <p className="text-gray-500 text-xs mt-1">Docs Discounted</p>
+                </div>
+              </div>
+              <p className="text-gray-500 text-xs mt-3">Your <span className="text-emerald-400">{discountInfo.plan_name}</span> plan gives you {discountInfo.discount_pct}% off every document notarization.</p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Usage Card */}
         <Card className="bg-[#1a2332] border-gray-800" data-testid="usage-card">
