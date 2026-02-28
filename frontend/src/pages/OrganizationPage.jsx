@@ -630,6 +630,11 @@ const OrganizationPage = () => {
                         <RBACManagement orgId={selectedOrg.id} myRole={selectedOrg.my_role} token={token} />
                       )}
 
+                      {/* Activity Tab */}
+                      {activeTab === 'activity' && (
+                        <OrgActivityLog orgId={selectedOrg.id} token={token} />
+                      )}
+
                       {/* Invites Tab */}
                       {activeTab === 'invites' && (
                         <div data-testid="invites-tab">
