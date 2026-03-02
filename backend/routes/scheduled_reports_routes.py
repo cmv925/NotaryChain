@@ -161,7 +161,7 @@ def _generate_pdf(data: dict, org_id: str) -> str:
     elements = []
 
     # Header
-    elements.append(Paragraph(f"NotaryChain Report", title_style))
+    elements.append(Paragraph("NotaryChain Report", title_style))
     elements.append(Paragraph(f"{data['org_name']} &bull; {data['period_days']}-day period &bull; Generated {datetime.now(timezone.utc).strftime('%B %d, %Y')}", subtitle_style))
     elements.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor('#e0e0e0')))
     elements.append(Spacer(1, 12))
