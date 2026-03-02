@@ -1,0 +1,122 @@
+{
+  "summary": "Organization Webhooks feature testing completed. Backend: 15/15 tests PASSED (100%). Frontend: All E2E tests passed - Webhooks tab visible for admins, create modal works with 11 event type checkboxes, webhook list shows status/events/deliveries, all action buttons (Test, Edit, Toggle, Rotate Secret, Delete) functional, delivery log shows HTTP status codes and attempt counts.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Members tab custom role dropdown", "issues": ["React hydration warning: <span> cannot be child of <select>/<option> - cosmetic only, does not affect functionality (carried over from previous iterations)"]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_org_webhooks.py",
+    "/app/test_reports/pytest/pytest_results_org_webhooks.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Good: GET /api/organizations/{org_id}/webhooks/events returns all 11 supported event types with key, label, category",
+    "Good: POST /api/organizations/{org_id}/webhooks creates webhook with URL, events, description and returns full secret",
+    "Good: URL validation rejects non-http URLs (400)",
+    "Good: Empty events validation rejects empty array (400)",
+    "Good: Invalid events validation rejects unknown event types (400)",
+    "Good: Max 10 webhooks per org limit enforced (400)",
+    "Good: GET /api/organizations/{org_id}/webhooks lists webhooks with secrets masked (first 6 + ... + last 4 chars)",
+    "Good: PUT /api/organizations/{org_id}/webhooks/{id} updates URL, events, is_active, description",
+    "Good: DELETE /api/organizations/{org_id}/webhooks/{id} removes webhook and its deliveries",
+    "Good: POST /api/organizations/{org_id}/webhooks/{id}/test sends test.ping event to webhook URL",
+    "Good: POST /api/organizations/{org_id}/webhooks/{id}/rotate-secret generates new secret and returns it",
+    "Good: GET /api/organizations/{org_id}/webhooks/{id}/deliveries returns delivery log with status, response_status, attempts",
+    "Good: Only admins/owners can manage webhooks (403 for regular members)",
+    "Good: RBAC role.created action fires webhook to subscribed endpoints",
+    "Good: Webhook delivery uses HMAC-SHA256 signing with X-Webhook-Signature header",
+    "Good: 3 retry attempts with exponential backoff for failed deliveries",
+    "Good: Frontend Webhooks tab is permission-gated by org:settings",
+    "Good: Create webhook modal has URL input, description input, and 11 event checkboxes organized by category",
+    "Good: Event categories: Documents (2), Members (3), RBAC (2), Workflows (2), Vault (1), Authentication (1)",
+    "Good: Webhook list shows status indicator (green=active), URL, event count, last delivery status badge",
+    "Good: Expanded webhook shows subscribed event tags, masked secret, created date",
+    "Good: All action buttons present: Test, Edit, Disable/Enable, Rotate Secret, Delete",
+    "Good: Delivery log shows event type (test.ping, role.created), HTTP status code, attempt count"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_org_webhooks.py"
+  ],
+  "success_rate": {
+    "backend": "100% (15/15 tests passed)",
+    "frontend": "100% - all webhook UI features working correctly"
+  },
+  "test_credentials": {
+    "admin_user": {"email": "admin@notarychain.com", "password": "Admin123!"},
+    "demo_user": {"email": "demo@test.com", "password": "Demo123!"}
+  },
+  "seed_data_creation": "Created TEST_* prefixed webhooks and roles during testing (cleaned up after tests). One webhook exists pointing to https://httpbin.org/post with role.created and member.joined events.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Organization Webhooks feature fully working. 11 event types supported: document.notarized, document.uploaded, member.joined, member.removed, member.invited, role.assigned, role.created, approval.created, approval.decided, vault.uploaded, sso.login. Webhooks are org-scoped with max 10 per org. Delivery uses httpx with 10s timeout, 3 retry attempts, exponential backoff. Payload signed with HMAC-SHA256. Frontend Webhooks tab at /organizations shows list with expand/collapse for details, actions, and delivery log. Test webhook sends test.ping event.",
+  "features_tested": {
+    "backend_events": {
+      "GET /api/organizations/{org_id}/webhooks/events": "Returns 11 event types with key, label, category - PASS"
+    },
+    "backend_crud": {
+      "POST create webhook": "Creates with URL, events, description, returns secret - PASS",
+      "Invalid URL rejected": "Returns 400 for non-http URLs - PASS",
+      "Empty events rejected": "Returns 400 for empty events array - PASS",
+      "Invalid events rejected": "Returns 400 for unknown event types - PASS",
+      "Max 10 per org": "Returns 400 when limit exceeded - PASS",
+      "GET list webhooks": "Returns webhooks with masked secrets - PASS",
+      "PUT update webhook": "Updates URL, events, is_active, description - PASS",
+      "DELETE webhook": "Removes webhook and deliveries - PASS"
+    },
+    "backend_actions": {
+      "POST test webhook": "Sends test.ping event, logs delivery - PASS",
+      "POST rotate secret": "Generates and returns new secret - PASS",
+      "GET deliveries": "Returns log with status, response_status, attempts - PASS"
+    },
+    "backend_rbac": {
+      "Admin can manage": "Create, list, delete all work for admins - PASS",
+      "Non-admin rejected": "Returns 403 for regular members - PASS"
+    },
+    "backend_triggers": {
+      "role.created fires webhook": "Creating role sends webhook to subscribed endpoints - PASS"
+    },
+    "frontend_webhooks_tab": {
+      "Tab visibility": "Visible for admins/owners with org:settings permission - PASS",
+      "Webhooks count": "Shows 'Webhooks (1/10)' - PASS",
+      "New Webhook button": "Opens create modal - PASS"
+    },
+    "frontend_create_modal": {
+      "URL input": "Endpoint URL field with placeholder - PASS",
+      "Description input": "Optional description field - PASS",
+      "Event checkboxes": "11 checkboxes organized by category - PASS",
+      "Select all button": "Toggles all events - PASS",
+      "Create button": "Saves webhook - PASS"
+    },
+    "frontend_webhook_list": {
+      "Status indicator": "Green dot for active webhook - PASS",
+      "URL display": "Shows https://httpbin.org/post - PASS",
+      "Event count": "Shows '2 events' - PASS",
+      "Last delivery status": "'delivered' badge - PASS"
+    },
+    "frontend_expanded_details": {
+      "Subscribed events": "Tags showing role.created, member.joined - PASS",
+      "Masked secret": "Shows 0bhk80...qPls - PASS",
+      "Created date": "Shows 3/2/2026 - PASS"
+    },
+    "frontend_action_buttons": {
+      "Test button": "Sends test.ping, shows toast - PASS",
+      "Edit button": "Opens edit modal - PASS",
+      "Disable button": "Toggles active status - PASS",
+      "Rotate Secret button": "Generates new secret - PASS",
+      "Delete button": "Removes webhook with confirm - PASS"
+    },
+    "frontend_delivery_log": {
+      "Event type": "Shows test.ping, role.created - PASS",
+      "HTTP status": "Shows HTTP 200 - PASS",
+      "Attempt count": "Shows '1 attempt' - PASS",
+      "Success icon": "Green checkmark for delivered - PASS"
+    }
+  }
+}
