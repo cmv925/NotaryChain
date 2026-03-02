@@ -19,6 +19,7 @@ import RBACManagement from '../components/RBACManagement';
 import PermissionGate from '../components/PermissionGate';
 import { usePermissions } from '../hooks/usePermissions';
 import OrgActivityLog from '../components/OrgActivityLog';
+import OrgWebhooks from '../components/OrgWebhooks';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
