@@ -13,6 +13,7 @@ import logging
 
 from routes.auth_routes import get_current_user
 from routes.org_activity_routes import log_org_activity
+from routes.org_webhook_routes import fire_org_webhooks
 
 logger = logging.getLogger(__name__)
 
