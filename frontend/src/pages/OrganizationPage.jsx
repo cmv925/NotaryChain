@@ -637,6 +637,11 @@ const OrganizationPage = () => {
                         <OrgActivityLog orgId={selectedOrg.id} token={token} />
                       )}
 
+                      {/* Webhooks Tab */}
+                      {activeTab === 'webhooks' && (
+                        <OrgWebhooks orgId={selectedOrg.id} token={token} />
+                      )}
+
                       {/* Invites Tab */}
                       {activeTab === 'invites' && (
                         <div data-testid="invites-tab">
