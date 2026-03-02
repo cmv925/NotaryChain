@@ -1,0 +1,132 @@
+{
+  "summary": "Scheduled Reports feature testing completed. Backend: 22/22 tests PASSED (100%). Frontend: All E2E tests passed - Reports tab visible for admins, Configure panel with frequency toggle (weekly/monthly), 5 section checkboxes, active/paused toggle, Generate Now creates reports with PDF download, report list with expand/collapse preview showing data snapshot cards.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Members tab custom role dropdown", "issues": ["React hydration warning: <span> cannot be child of <select>/<option> - cosmetic only, does not affect functionality (carried over from previous iterations)"]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_scheduled_reports.py",
+    "/app/test_reports/pytest/pytest_results_scheduled_reports.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Good: GET /api/organizations/{org_id}/reports/sections returns 5 sections (activity, notarizations, members, webhooks, billing) with key, label, description",
+    "Good: POST /api/organizations/{org_id}/reports/config creates/updates config with frequency (weekly/monthly), sections, is_active",
+    "Good: GET /api/organizations/{org_id}/reports/config returns current config or {configured: false}",
+    "Good: Validation: frequency must be weekly/monthly (400 for invalid)",
+    "Good: Validation: sections must be valid keys (400 for invalid)",
+    "Good: Validation: at least one section required (400 for empty)",
+    "Good: POST /api/organizations/{org_id}/reports/generate creates PDF using reportlab and returns report record with data_snapshot",
+    "Good: GET /api/organizations/{org_id}/reports returns paginated list (excludes data_snapshot for performance)",
+    "Good: GET /api/organizations/{org_id}/reports/{id} returns full report detail including data_snapshot",
+    "Good: GET /api/organizations/{org_id}/reports/{id}/download returns PDF file with correct content-type",
+    "Good: DELETE /api/organizations/{org_id}/reports/{id} removes report record and PDF file from disk",
+    "Good: All endpoints require admin/owner role (403 for non-admins)",
+    "Good: data_snapshot contains aggregated data for all configured sections (activity.total_events, members.total_active, webhooks.success_rate, billing.total_revenue)",
+    "Good: Frontend Reports tab is permission-gated by 'org:settings' permission",
+    "Good: Frontend shows schedule status ('Generating weekly reports with 5 sections (active)')",
+    "Good: Configure panel has frequency toggle (Weekly/Monthly), status toggle (Active/Paused), 5 section checkboxes with icons",
+    "Good: Generated reports list shows report type (7-Day/30-Day), timestamp, section count, PDF download button, delete button",
+    "Good: Report expandable preview shows data snapshot cards (Activity events, Notarizations documents, Members active, Webhooks delivery rate, Revenue)",
+    "Good: Generate Now button creates new report and shows 'Report Generated' toast"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_scheduled_reports.py"
+  ],
+  "success_rate": {
+    "backend": "100% (22/22 tests passed)",
+    "frontend": "100% - all scheduled reports UI features working correctly"
+  },
+  "test_credentials": {
+    "admin_user": {"email": "admin@notarychain.com", "password": "Admin123!"},
+    "demo_user": {"email": "demo@test.com", "password": "Demo123!"}
+  },
+  "seed_data_creation": "Generated TEST reports during testing. Multiple reports exist in the system from pytest runs.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Scheduled Reports feature fully working. 5 report sections: activity, notarizations, members, webhooks, billing. Config supports weekly/monthly frequency with is_active flag. Reports are generated using reportlab with formatted tables for each section. Background scheduler (start_report_scheduler) runs hourly to auto-generate reports based on config. Frontend Reports tab at /organizations shows config panel, reports list with expand/collapse preview cards. PDF download works correctly. Admin-only access enforced.",
+  "features_tested": {
+    "backend_sections": {
+      "GET /api/organizations/{org_id}/reports/sections": "Returns 5 sections with key, label, description - PASS"
+    },
+    "backend_config": {
+      "GET /api/organizations/{org_id}/reports/config": "Returns config or {configured: false} - PASS",
+      "POST create/update config": "Creates config with frequency, sections, is_active - PASS",
+      "Update to monthly": "Frequency and sections update correctly - PASS",
+      "Invalid frequency rejected": "Returns 400 for 'daily' - PASS",
+      "Invalid sections rejected": "Returns 400 for unknown section keys - PASS",
+      "Empty sections rejected": "Returns 400 for empty array - PASS"
+    },
+    "backend_generate": {
+      "POST generate report now": "Creates PDF, returns report with data_snapshot - PASS"
+    },
+    "backend_list": {
+      "GET list reports": "Returns paginated list without data_snapshot - PASS",
+      "Pagination": "page and page_size work correctly - PASS"
+    },
+    "backend_detail": {
+      "GET report detail": "Returns full report with data_snapshot - PASS",
+      "Invalid report id": "Returns 404 - PASS"
+    },
+    "backend_download": {
+      "GET download PDF": "Returns application/pdf with valid content - PASS",
+      "Invalid report id": "Returns 404 - PASS"
+    },
+    "backend_delete": {
+      "DELETE report": "Removes record and file, returns 200 - PASS",
+      "DELETE nonexistent": "Returns 404 - PASS"
+    },
+    "backend_admin_only": {
+      "Non-admin sections": "Returns 403 - PASS",
+      "Non-admin config": "Returns 403 - PASS",
+      "Non-admin generate": "Returns 403 - PASS",
+      "Non-admin list": "Returns 403 - PASS",
+      "Non-admin download": "Returns 403 - PASS"
+    },
+    "backend_data_snapshot": {
+      "All sections in snapshot": "activity, notarizations, members, webhooks, billing present - PASS",
+      "Activity structure": "total_events, by_action - PASS",
+      "Members structure": "total_active, new_members, custom_roles - PASS",
+      "Webhooks structure": "success_rate, deliveries_success/failed - PASS",
+      "Billing structure": "total_revenue, total_transactions - PASS"
+    },
+    "frontend_reports_tab": {
+      "Tab visibility": "Reports tab visible for admin/owner - PASS",
+      "Schedule status": "Shows 'Generating weekly reports with 5 sections (active)' - PASS",
+      "Configure button": "Present and clickable - PASS",
+      "Generate Now button": "Present and clickable - PASS"
+    },
+    "frontend_config_panel": {
+      "Frequency toggle": "Weekly/Monthly buttons present - PASS",
+      "Status toggle": "Active/Paused button present - PASS",
+      "Section checkboxes": "5 checkboxes with icons - PASS",
+      "Save Schedule button": "Present and clickable - PASS"
+    },
+    "frontend_reports_list": {
+      "Report items": "Shows 7-Day/30-Day Report with timestamp - PASS",
+      "Section count": "Shows '5 sections' - PASS",
+      "PDF download button": "Present on each report - PASS",
+      "Delete button": "Present on each report - PASS"
+    },
+    "frontend_generate": {
+      "Generate Now": "Creates new report - PASS",
+      "Toast notification": "'Report Generated' toast appears - PASS"
+    },
+    "frontend_preview": {
+      "Expandable row": "Click expands report details - PASS",
+      "REPORT PREVIEW section": "Shows data snapshot cards - PASS",
+      "Activity card": "Shows '14 events' - PASS",
+      "Notarizations card": "Shows '0 documents' - PASS",
+      "Members card": "Shows '4 active' - PASS",
+      "Webhooks card": "Shows '100% delivery rate' - PASS",
+      "Revenue card": "Shows '$0 in period' - PASS"
+    }
+  }
+}
