@@ -70,6 +70,21 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **Frontend:** `OrgActivityLog.jsx` — full-featured activity dashboard with timeline view, stats panel, search, filters, pagination, and export
 - New "Activity" tab in Organization page (permission-gated by `org:settings`)
 
+### Organization Webhooks — COMPLETED (Mar 2, 2026)
+- **Backend:** `org_webhook_routes.py` — Full webhook management system
+- CRUD for webhook endpoints (URL, events, description, active toggle)
+- HMAC-SHA256 payload signing (X-Webhook-Signature header)
+- 3-attempt retry with exponential backoff delivery engine
+- 11 supported event types: document.notarized, document.uploaded, member.joined/removed/invited, role.assigned/created, approval.created/decided, vault.uploaded, sso.login
+- Test webhook, rotate secret, delivery log endpoints
+- Max 10 webhooks per org, admin-only access
+- **Frontend:** `OrgWebhooks.jsx` — Webhook management UI in Organization page
+- Create/edit modal with URL input, event checkboxes by category, select all
+- Webhook list with status indicators, event counts, last delivery badge
+- Expandable details: subscribed events, masked secret, delivery log
+- Actions: Test, Edit, Enable/Disable, Rotate Secret, Delete
+- Integrated with RBAC: role.created and role.assigned fire webhooks to subscribed endpoints
+
 ### Organization Document Vault — COMPLETED
 Upload, search, filter, role-based access, audit trail
 
