@@ -10,7 +10,7 @@ import { Card, CardContent } from '../components/ui/card';
 import {
   Building2, Users, Plus, Settings, Shield, Mail, Crown,
   UserPlus, X, ChevronRight, Loader2, Check, Trash2,
-  Key, Globe, Lock, FolderOpen, ShieldCheck,
+  Key, Globe, Lock, FolderOpen, ShieldCheck, Webhook,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
