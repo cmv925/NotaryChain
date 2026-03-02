@@ -294,6 +294,11 @@ async def create_indexes():
         await db.webhook_deliveries.create_index("id", unique=True)
         await db.webhook_deliveries.create_index([("webhook_id", 1), ("created_at", -1)])
 
+        # Scheduled Reports
+        await db.report_configs.create_index("org_id", unique=True)
+        await db.generated_reports.create_index("id", unique=True)
+        await db.generated_reports.create_index([("org_id", 1), ("generated_at", -1)])
+
         # Bookings
         await db.bookings.create_index("id", unique=True)
         await db.bookings.create_index("user_id")
