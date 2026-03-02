@@ -304,6 +304,7 @@ async def create_indexes():
         # Start document expiry background checker
         asyncio.create_task(expiry_service.run_expiry_checker())
         asyncio.create_task(reminder_service.run_reminder_checks())
+        asyncio.create_task(scheduled_reports_routes.start_report_scheduler())
 
         logger.info("Database indexes created/verified successfully")
     except Exception as e:
