@@ -85,6 +85,19 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - Actions: Test, Edit, Enable/Disable, Rotate Secret, Delete
 - Integrated with RBAC: role.created and role.assigned fire webhooks to subscribed endpoints
 
+### Scheduled Reports — COMPLETED (Mar 2, 2026)
+- **Backend:** `scheduled_reports_routes.py` — Downloadable PDF report system
+- Configurable schedule (weekly/monthly) with 5 selectable sections: Activity, Notarizations, Members, Webhooks, Billing
+- PDF generation using reportlab with formatted tables per section
+- Data aggregation from org_activity_logs, documents, notary_requests, org_members, rbac_roles, org_webhooks, webhook_deliveries, subscriptions, payment_transactions
+- Background scheduler (hourly check) for auto-generation based on configured frequency
+- Manual "Generate Now", download PDF, delete report endpoints
+- Admin-only access, paginated report list, full data snapshot in detail view
+- **Frontend:** `OrgReports.jsx` — Report management UI in Organization page
+- Configure panel: frequency toggle (weekly/monthly), section checkboxes with icons, active/paused toggle
+- Reports list with download PDF and delete buttons
+- Expandable preview with data snapshot cards (events, documents, members, delivery rate, revenue)
+
 ### Organization Document Vault — COMPLETED
 Upload, search, filter, role-based access, audit trail
 
