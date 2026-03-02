@@ -232,6 +232,7 @@ async def create_role(org_id: str, body: CreateRoleRequest, current_user: dict =
     await log_org_activity(org_id, "role.created", current_user.id, current_user.email,
         f"Created role '{body.name.strip()}' with {len(body.permissions)} permissions",
         target_type="role", target_id=role["id"], target_name=body.name.strip())
+    await fire_org_webhooks(org_id, "role.created", {"role_name": body.name.strip(), "permissions_count": len(body.permissions)})
     return role
 
 
@@ -322,6 +323,7 @@ async def assign_custom_role(
         await log_org_activity(org_id, "role.assigned", current_user.id, current_user.email,
             f"Assigned role '{role['name']}' to {member.get('email', 'member')}",
             target_type="member", target_id=member_id, target_name=member.get("email"))
+        await fire_org_webhooks(org_id, "role.assigned", {"role_name": role["name"], "member_email": member.get("email")})
         return {"message": f"Role '{role['name']}' assigned to member"}
     else:
         await db.org_members.update_one(
