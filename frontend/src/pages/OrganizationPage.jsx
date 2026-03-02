@@ -10,7 +10,7 @@ import { Card, CardContent } from '../components/ui/card';
 import {
   Building2, Users, Plus, Settings, Shield, Mail, Crown,
   UserPlus, X, ChevronRight, Loader2, Check, Trash2,
-  Key, Globe, Lock, FolderOpen, ShieldCheck, Webhook,
+  Key, Globe, Lock, FolderOpen, ShieldCheck, Webhook, FileBarChart,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
@@ -20,6 +20,7 @@ import PermissionGate from '../components/PermissionGate';
 import { usePermissions } from '../hooks/usePermissions';
 import OrgActivityLog from '../components/OrgActivityLog';
 import OrgWebhooks from '../components/OrgWebhooks';
+import OrgReports from '../components/OrgReports';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -486,6 +487,7 @@ const OrganizationPage = () => {
     { id: 'roles', label: 'Roles', icon: ShieldCheck, permission: 'members:manage_roles' },
     { id: 'activity', label: 'Activity', icon: Globe, permission: 'org:settings' },
     { id: 'webhooks', label: 'Webhooks', icon: Webhook, permission: 'org:settings' },
+    { id: 'reports', label: 'Reports', icon: FileBarChart, permission: 'org:settings' },
     { id: 'vault', label: 'Vault', icon: FolderOpen, permission: 'vault:view' },
     { id: 'invites', label: 'Invites', icon: Mail, permission: 'members:invite' },
     { id: 'sso', label: 'SSO', icon: Key, permission: 'org:sso' },
@@ -640,6 +642,11 @@ const OrganizationPage = () => {
                       {/* Webhooks Tab */}
                       {activeTab === 'webhooks' && (
                         <OrgWebhooks orgId={selectedOrg.id} token={token} />
+                      )}
+
+                      {/* Reports Tab */}
+                      {activeTab === 'reports' && (
+                        <OrgReports orgId={selectedOrg.id} token={token} />
                       )}
 
                       {/* Invites Tab */}
