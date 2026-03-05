@@ -12,7 +12,7 @@ import os
 
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 if not BASE_URL:
-    BASE_URL = "https://enterprise-auth-flow.preview.emergentagent.com"
+    BASE_URL = "https://investor-deck-16.preview.emergentagent.com"
 
 # Test credentials  
 ADMIN_USER = {"email": "admin@notarychain.com", "password": "Admin123!"}

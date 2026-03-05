@@ -55,6 +55,7 @@ import ApprovalsPage from './pages/ApprovalsPage';
 import DocComparePage from './pages/DocComparePage';
 import BrandingPage from './pages/BrandingPage';
 import SSOLoginPage from './pages/SSOLoginPage';
+import InvestorDeck from './pages/InvestorDeck';
 import ErrorBoundary from './components/ErrorBoundary';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { Toaster } from './components/ui/toaster';
@@ -75,6 +76,7 @@ function App() {
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/demo" element={<QuickSealDemo />} />
             <Route path="/verify" element={<VerifyDocument />} />
+            <Route path="/investor-deck" element={<InvestorDeck />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/checkout/crypto" element={<CryptoCheckout />} />
             <Route path="/payment/success" element={<PaymentSuccess />} />
