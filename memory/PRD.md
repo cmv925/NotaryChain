@@ -45,6 +45,14 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - Enterprise SSO button on login page, SSO settings tab on org page
 
 ### Permission-based UI Rendering — COMPLETED (Feb 28, 2026)
+
+### Investor Demo Flow — COMPLETED (Feb 2026)
+- **Backend:** `investor_deck_routes.py` — Password verification (`/api/investor-deck/verify-password`) and contact form (`/api/investor-deck/contact`) with Resend email + MongoDB storage
+- **Frontend:** `InvestorDeck.jsx` — Password-protected cinematic auto-playing presentation at `/investor-deck`
+- 10 slides: Hero (platform stats) → 6 Feature showcases (AI Orchestrator, Biometric Passport, Blockchain Sealing, Enterprise RBAC, Smart Templates, Real-Time Collaboration) → Tech Stack → Market Opportunity → Contact Form
+- Navigation: keyboard arrows, scroll wheel, click arrows, right-side nav dots with labels, auto-play (6s interval) with pause/play toggle
+- Contact form submissions stored in MongoDB `investor_inquiries` collection and emailed via Resend
+- Testing: 100% pass rate — Backend 8/8, Frontend 17/17 E2E tests
 - **Backend:** `GET /api/organizations/{org_id}/my-permissions` — returns current user's effective permissions, base_role, custom_role, source
 - **Frontend Hook:** `usePermissions(orgId)` — fetches and caches user's RBAC permissions with helpers: `hasPermission()`, `hasAny()`, `hasAll()`
 - **Frontend Component:** `<PermissionGate>` — conditionally renders children based on permissions (single, any-of, all-of modes). Shows lock indicator when `showLock=true`
@@ -359,6 +367,9 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 ## Future/Backlog
 - Enterprise Features Expansion
 - Additional marketplace features
+- Hedera Mainnet Integration (awaiting mainnet account)
+- Stripe Live Mode (awaiting live keys)
+- Real SAML/OIDC SSO (awaiting IdP provider selection)
 
 ## Test Credentials
 | Role | Email | Password |
@@ -366,3 +377,4 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 | Admin | admin@notarychain.com | Admin123! |
 | User | demo@test.com | Demo123! |
 | Notary | notarytest@test.com | Test123! |
+| Investor Deck | N/A | NotaryChain2026! |
