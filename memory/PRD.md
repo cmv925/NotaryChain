@@ -49,10 +49,11 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 ### Investor Demo Flow — COMPLETED (Feb 2026)
 - **Backend:** `investor_deck_routes.py` — Password verification (`/api/investor-deck/verify-password`) and contact form (`/api/investor-deck/contact`) with Resend email + MongoDB storage
 - **Frontend:** `InvestorDeck.jsx` — Password-protected cinematic auto-playing presentation at `/investor-deck`
-- 10 slides: Hero (platform stats) → 6 Feature showcases (AI Orchestrator, Biometric Passport, Blockchain Sealing, Enterprise RBAC, Smart Templates, Real-Time Collaboration) → Tech Stack → Market Opportunity → Contact Form
+- 16 slides: Hero (platform stats) → IP Portfolio (8 trademarkable names) → 6 Feature showcases (AI Orchestrator, Biometric Passport, Blockchain Sealing, Enterprise RBAC, Smart Templates, Real-Time Collaboration) → 4-Phase AI Pipeline → Feature Breakdown (11 categories, 67 features) → Architecture Diagram → Tech Stack → Infrastructure → Platform Metrics → Market Opportunity → Contact Form
+- Data sourced from live website pages: /full-feature-list and /architecture
 - Navigation: keyboard arrows, scroll wheel, click arrows, right-side nav dots with labels, auto-play (6s interval) with pause/play toggle
 - Contact form submissions stored in MongoDB `investor_inquiries` collection and emailed via Resend
-- Testing: 100% pass rate — Backend 8/8, Frontend 17/17 E2E tests
+- Testing: 100% pass rate — Backend 2/2, Frontend 16/16 slides verified
 - **Backend:** `GET /api/organizations/{org_id}/my-permissions` — returns current user's effective permissions, base_role, custom_role, source
 - **Frontend Hook:** `usePermissions(orgId)` — fetches and caches user's RBAC permissions with helpers: `hasPermission()`, `hasAny()`, `hasAll()`
 - **Frontend Component:** `<PermissionGate>` — conditionally renders children based on permissions (single, any-of, all-of modes). Shows lock indicator when `showLock=true`
