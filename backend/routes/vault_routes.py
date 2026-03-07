@@ -206,6 +206,7 @@ async def download_document(org_id: str, doc_id: str, current_user: dict = Depen
         filepath,
         media_type=doc.get("content_type", "application/octet-stream"),
         filename=doc["original_filename"],
+        headers={"Content-Disposition": f"attachment; filename={doc['original_filename']}"},
     )
 
 

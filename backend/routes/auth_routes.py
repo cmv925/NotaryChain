@@ -8,7 +8,7 @@ from middleware.security import limiter, validate_password, sanitize_email
 from services.notification_service import create_notification as create_notif
 from pydantic import BaseModel
 from typing import Optional
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 import pyotp
 import os
 import logging
@@ -84,7 +84,7 @@ async def signup(request: Request, user_data: UserCreate, background_tasks: Back
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
+            detail="Unable to create account with this email"
         )
     
     # Create new user
@@ -141,12 +141,38 @@ async def login(request: Request, user_data: UserLogin):
             detail="Incorrect email or password"
         )
     
+    # H8: Check account lockout
+    lockout_until = user.get("lockout_until")
+    if lockout_until:
+        if isinstance(lockout_until, str):
+            lockout_until = datetime.fromisoformat(lockout_until)
+        if lockout_until > datetime.now(timezone.utc):
+            raise HTTPException(
+                status_code=status.HTTP_423_LOCKED,
+                detail="Account temporarily locked due to too many failed attempts. Please try again in 15 minutes."
+            )
+        else:
+            # Lockout expired, reset
+            await db.users.update_one({"email": clean_email}, {"$set": {"failed_login_attempts": 0, "lockout_until": None}})
+    
     # Verify password
     if not verify_password(user_data.password, user["hashed_password"]):
+        # Increment failed attempts
+        failed = user.get("failed_login_attempts", 0) + 1
+        update = {"$set": {"failed_login_attempts": failed}}
+        if failed >= 5:
+            lockout_time = datetime.now(timezone.utc) + timedelta(minutes=15)
+            update["$set"]["lockout_until"] = lockout_time.isoformat()
+            logger.warning(f"Account locked for {clean_email} after {failed} failed attempts")
+        await db.users.update_one({"email": clean_email}, update)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password"
         )
+    
+    # Reset failed attempts on successful login
+    if user.get("failed_login_attempts", 0) > 0:
+        await db.users.update_one({"email": clean_email}, {"$set": {"failed_login_attempts": 0, "lockout_until": None}})
     
     # Check if 2FA is enabled
     if user.get("two_factor_enabled"):
@@ -193,13 +219,17 @@ async def login_2fa(request: Request, data: TwoFALoginRequest):
     totp = pyotp.TOTP(secret)
     code_valid = totp.verify(data.code, valid_window=1)
     
-    # If TOTP failed, check backup codes
+    # If TOTP failed, check backup codes (hashed)
     if not code_valid:
         backup_codes = user.get("two_factor_backup_codes", [])
-        if data.code in backup_codes:
+        matched_index = None
+        for i, hashed_code in enumerate(backup_codes):
+            if verify_password(data.code, hashed_code):
+                matched_index = i
+                break
+        if matched_index is not None:
             code_valid = True
-            # Remove used backup code
-            backup_codes.remove(data.code)
+            backup_codes.pop(matched_index)
             await db.users.update_one(
                 {"email": email},
                 {"$set": {"two_factor_backup_codes": backup_codes}}

@@ -1,6 +1,8 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Request, HTTPException
+from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import asyncio
@@ -188,6 +190,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# M4: Global request body size limit (10MB)
+MAX_BODY_SIZE = 10 * 1024 * 1024
+
+class BodySizeLimitMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        content_length = request.headers.get("content-length")
+        if content_length and int(content_length) > MAX_BODY_SIZE:
+            return JSONResponse(status_code=413, content={"detail": "Request body too large. Maximum size is 10MB."})
+        return await call_next(request)
+
+app.add_middleware(BodySizeLimitMiddleware)
 
 # Configure logging
 logging.basicConfig(

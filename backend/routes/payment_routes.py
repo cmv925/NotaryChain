@@ -211,7 +211,7 @@ async def create_checkout(
         )
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to create checkout: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to create checkout. Please try again.")
 
 
 @router.get("/status/{session_id}")
@@ -288,7 +288,7 @@ async def get_payment_status(
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to check status: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to check status. Please try again.")
 
 
 @router.get("/history")
@@ -345,4 +345,4 @@ async def stripe_webhook(request: Request):
         return {"status": "received"}
         
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Webhook error: {str(e)}")
+        raise HTTPException(status_code=400, detail="Webhook processing error")

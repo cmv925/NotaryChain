@@ -259,6 +259,8 @@ async def upload_seal(
     filepath = os.path.join(UPLOAD_DIR, filename)
 
     contents = await file.read()
+    if len(contents) > 2 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File too large (max 2MB)")
     with open(filepath, "wb") as f:
         f.write(contents)
 
@@ -345,5 +347,5 @@ async def get_seal_file(
 
     media_types = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".svg": "image/svg+xml"}
     media_type = media_types.get(seal.get("file_type", ""), "application/octet-stream")
-    return FileResponse(filepath, media_type=media_type)
+    return FileResponse(filepath, media_type=media_type, headers={"Content-Disposition": f"attachment; filename={seal.get('original_name', seal.get('filename', 'seal'))}"})
 

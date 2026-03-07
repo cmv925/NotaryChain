@@ -87,8 +87,8 @@ async def get_user_stats(
     total_seals = await db.document_seals.count_documents({"user_id": current_user.id})
     
     # Get seals in last 30 days
-    from datetime import datetime, timedelta
-    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+    from datetime import datetime, timedelta, timezone
+    thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
     recent_seals = await db.document_seals.count_documents({
         "user_id": current_user.id,
         "timestamp": {"$gte": thirty_days_ago}
@@ -126,4 +126,4 @@ async def serve_document_file(
     }
     media_type = content_types.get(ext, 'application/octet-stream')
 
-    return FileResponse(file_path, media_type=media_type, filename=safe_name)
+    return FileResponse(file_path, media_type=media_type, filename=safe_name, headers={"Content-Disposition": f"attachment; filename={safe_name}"})

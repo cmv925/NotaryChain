@@ -553,7 +553,7 @@ async def complete_notarization(
         {"id": request_id, "notary_id": current_user.id},
         {"$set": {
             "status": "completed",
-            "completed_at": datetime.utcnow()
+            "completed_at": datetime.now(timezone.utc)
         }}
     )
     
@@ -580,7 +580,7 @@ async def complete_notarization(
                 "request_id": request_id,
                 "notary_id": current_user.id,
                 "notes": notes,
-                "completed_at": datetime.utcnow().isoformat()
+                "completed_at": datetime.now(timezone.utc).isoformat()
             })
         except Exception as e:
             logger.error(f"Failed to log completion to HCS: {e}")

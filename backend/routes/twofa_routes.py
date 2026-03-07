@@ -127,8 +127,10 @@ async def verify_2fa_setup(
             detail="Invalid verification code"
         )
     
-    # Activate 2FA
+    # Activate 2FA - hash backup codes for security
+    from auth import get_password_hash
     backup_codes = user_doc.get("two_factor_backup_codes_pending", [])
+    hashed_backup_codes = [get_password_hash(code) for code in backup_codes]
     
     await db.users.update_one(
         {"email": current_user.email},
@@ -136,7 +138,7 @@ async def verify_2fa_setup(
             "$set": {
                 "two_factor_enabled": True,
                 "two_factor_secret": pending_secret,
-                "two_factor_backup_codes": backup_codes,
+                "two_factor_backup_codes": hashed_backup_codes,
                 "two_factor_enabled_at": datetime.now(timezone.utc),
                 "updated_at": datetime.now(timezone.utc)
             },

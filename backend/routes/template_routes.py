@@ -285,9 +285,13 @@ async def generate_template_pdf(
         raise HTTPException(status_code=404, detail="Template not found")
 
     from services.template_wizard_service import generate_pdf
+    from html import escape
+
+    # M7: Sanitize field values before PDF generation
+    sanitized_values = {k: escape(str(v)) for k, v in body.field_values.items()}
 
     try:
-        filepath = generate_pdf(template, body.field_values)
+        filepath = generate_pdf(template, sanitized_values)
     except Exception as e:
         logger.error(f"PDF generation failed: {e}")
         raise HTTPException(status_code=500, detail="Failed to generate PDF")
@@ -300,7 +304,7 @@ async def generate_template_pdf(
         filepath,
         media_type="application/pdf",
         filename=f"{template['name'].replace(' ', '_')}.pdf",
-        headers={"X-Generated-File": filename},
+        headers={"Content-Disposition": f"attachment; filename={template['name'].replace(' ', '_')}.pdf"},
     )
 
 

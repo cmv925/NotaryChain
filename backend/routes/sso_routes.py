@@ -28,10 +28,6 @@ def set_db(database):
     db = database
 
 
-# In-memory SSO session store (simulated)
-sso_sessions = {}
-
-
 # --- Models ---
 
 class SSODiscoverRequest(BaseModel):
@@ -98,17 +94,18 @@ async def initiate_sso(body: SSOInitiateRequest):
     if allowed_domains and email_domain not in allowed_domains:
         raise HTTPException(status_code=403, detail=f"Email domain '{email_domain}' is not allowed for SSO with this organization")
 
-    # Create SSO session
+    # Create SSO session in MongoDB
     session_id = secrets.token_urlsafe(32)
-    sso_sessions[session_id] = {
+    await db.sso_sessions.insert_one({
+        "session_id": session_id,
         "org_id": body.org_id,
         "org_name": org["name"],
         "email": body.email,
         "provider": sso_config.get("sso_provider", "oidc"),
         "issuer_url": sso_config.get("sso_issuer_url", ""),
-        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_at": datetime.now(timezone.utc),
         "status": "pending",
-    }
+    })
 
     # In a real implementation, this would redirect to the IdP
     # For simulation, we return the session info for the mock IdP page
@@ -125,7 +122,7 @@ async def initiate_sso(body: SSOInitiateRequest):
 @router.get("/session/{session_id}")
 async def get_sso_session(session_id: str):
     """Get SSO session details (for mock IdP page)."""
-    session = sso_sessions.get(session_id)
+    session = await db.sso_sessions.find_one({"session_id": session_id}, {"_id": 0})
     if not session:
         raise HTTPException(status_code=404, detail="SSO session not found or expired")
     return {
@@ -144,7 +141,7 @@ async def sso_callback(body: SSOCallbackRequest):
     This simulates the IdP verifying the user and returning an assertion.
     In production, this would validate SAML assertions or OIDC tokens.
     """
-    session = sso_sessions.get(body.session_id)
+    session = await db.sso_sessions.find_one({"session_id": body.session_id}, {"_id": 0})
     if not session:
         raise HTTPException(status_code=400, detail="Invalid or expired SSO session")
 
@@ -163,7 +160,7 @@ async def sso_callback(body: SSOCallbackRequest):
     allowed_domains = [d.lower() for d in sso_config.get("sso_allowed_domains", [])]
     email_domain = email.split("@")[-1] if "@" in email else ""
     if allowed_domains and email_domain not in allowed_domains:
-        sso_sessions[body.session_id]["status"] = "failed"
+        await db.sso_sessions.update_one({"session_id": body.session_id}, {"$set": {"status": "failed"}})
         raise HTTPException(status_code=403, detail="Email domain not allowed")
 
     # Check if user exists
@@ -232,7 +229,7 @@ async def sso_callback(body: SSOCallbackRequest):
             )
 
     # Mark session complete
-    sso_sessions[body.session_id]["status"] = "completed"
+    await db.sso_sessions.update_one({"session_id": body.session_id}, {"$set": {"status": "completed"}})
 
     # Issue access token
     access_token = create_access_token(data={"sub": email})
@@ -314,7 +311,6 @@ async def test_sso_config(body: SSOTestRequest, current_user: dict = Depends(get
 async def cleanup_sso_sessions():
     """Remove expired SSO sessions (older than 10 minutes)."""
     cutoff = datetime.now(timezone.utc) - timedelta(minutes=10)
-    cutoff_str = cutoff.isoformat()
-    expired = [sid for sid, s in sso_sessions.items() if s["created_at"] < cutoff_str]
-    for sid in expired:
-        del sso_sessions[sid]
+    result = await db.sso_sessions.delete_many({"created_at": {"$lt": cutoff}})
+    if result.deleted_count > 0:
+        logger.info(f"Cleaned up {result.deleted_count} expired SSO sessions")

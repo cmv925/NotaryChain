@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 class NotaryCredentials(BaseModel):
@@ -41,7 +41,7 @@ class NotaryProfile(BaseModel):
     reviewed_at: Optional[datetime] = None
     approved_at: Optional[datetime] = None
     
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = None
 
 class NotaryProfileCreate(BaseModel):
@@ -75,7 +75,7 @@ class NotarizationRequest(BaseModel):
     hcs_topic_id: Optional[str] = None  # Hedera Consensus Service topic for audit trail
     hcs_topic_explorer: Optional[str] = None  # HashScan explorer URL for the topic
     expires_at: Optional[str] = None  # ISO date for document expiry tracking
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: Optional[datetime] = None
 
 class NotarizationRequestCreate(BaseModel):
@@ -93,7 +93,7 @@ class NotarySession(BaseModel):
     user_id: str
     session_type: str  # video, in_person
     status: str = "scheduled"  # scheduled, active, completed, cancelled
-    start_time: datetime = Field(default_factory=datetime.utcnow)
+    start_time: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     end_time: Optional[datetime] = None
     recording_url: Optional[str] = None
     verification_status: dict = {}  # {identity_verified, biometric_verified, document_verified}
@@ -107,7 +107,7 @@ class IdentityVerification(BaseModel):
     status: str = "pending"  # pending, passed, failed
     confidence_score: float = 0.0
     verification_data: dict = {}
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class NotaryAction(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -115,4 +115,4 @@ class NotaryAction(BaseModel):
     notary_id: str
     action_type: str  # assign, start_session, verify_identity, approve, reject
     notes: str = ""
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

@@ -3,7 +3,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from models import User
 from routes.auth_routes import get_current_user
 from ai_document_analyzer import DocumentAnalyzer
-from datetime import datetime
+from datetime import datetime, timezone
 import os
 import uuid
 import shutil
@@ -68,7 +68,7 @@ async def analyze_document(
             "filename": file.filename,
             "document_type": document_type,
             "analysis_result": analysis_result,
-            "timestamp": datetime.utcnow(),
+            "timestamp": datetime.now(timezone.utc),
             "file_path": file_path
         }
         
@@ -107,7 +107,7 @@ async def verify_biometric(
         "verification_type": verification_type,
         "status": "passed" if confidence_score >= 0.7 else "failed",
         "confidence_score": confidence_score,
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(timezone.utc),
         "metadata": {
             "device": "web",
             "ip_address": "simulated"

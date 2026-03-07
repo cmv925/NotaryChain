@@ -5,7 +5,7 @@ Defines Transaction Blueprints, Transactions, Participants, Tasks, and Messages
 
 from pydantic import BaseModel, Field, EmailStr
 from typing import Optional, List, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 import uuid
 
@@ -113,7 +113,7 @@ class TransactionBlueprint(BaseModel):
     
     # Metadata
     created_by: Optional[str] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = None
 
 
@@ -154,7 +154,7 @@ class TransactionParticipant(BaseModel):
     last_active_at: Optional[datetime] = None
     tasks_completed: int = 0
     
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class TransactionTask(BaseModel):
@@ -198,7 +198,7 @@ class TransactionTask(BaseModel):
     ai_validation_status: Optional[str] = None  # passed, warning, failed
     ai_validation_notes: Optional[str] = None
     
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = None
 
 
@@ -214,7 +214,7 @@ class TransactionDocument(BaseModel):
     storage_url: str
     
     uploaded_by: str  # Participant ID
-    uploaded_at: datetime = Field(default_factory=datetime.utcnow)
+    uploaded_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     # Verification
     document_hash: Optional[str] = None
@@ -248,7 +248,7 @@ class TransactionMessage(BaseModel):
     # Read tracking
     read_by: List[str] = []  # Participant IDs
     
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class Transaction(BaseModel):
@@ -294,7 +294,7 @@ class Transaction(BaseModel):
     ai_recommendations: List[str] = []
     
     # Timestamps
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = None
 
 

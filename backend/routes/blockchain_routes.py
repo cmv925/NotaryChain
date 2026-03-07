@@ -116,7 +116,7 @@ async def create_hcs_topic(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Topic creation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Topic creation failed. Please try again.")
 
 
 @router.post("/topics/{topic_id}/messages")
@@ -162,7 +162,7 @@ async def submit_topic_message(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Message submission failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Message submission failed. Please try again.")
 
 
 @router.get("/topics/my")
@@ -216,7 +216,7 @@ async def get_topic_info(
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get topic: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to get topic. Please try again.")
 
 
 @router.post("/seal")
@@ -276,7 +276,7 @@ async def seal_document(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Seal operation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Seal operation failed. Please try again.")
 
 
 @router.post("/seal-file")
@@ -292,6 +292,12 @@ async def seal_file(
     Computes SHA-256 hash and records on HCS.
     """
     try:
+        # Validate file type
+        ALLOWED_EXTENSIONS = {'.pdf', '.doc', '.docx', '.txt', '.png', '.jpg', '.jpeg', '.tiff', '.bmp'}
+        ext = ('.' + file.filename.rsplit('.', 1)[-1].lower()) if file.filename and '.' in file.filename else ''
+        if ext not in ALLOWED_EXTENSIONS:
+            raise HTTPException(status_code=400, detail=f"File type not allowed. Accepted: {', '.join(ALLOWED_EXTENSIONS)}")
+
         # Read file content and compute hash
         MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
         content = await file.read()
@@ -355,7 +361,7 @@ async def seal_file(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"File seal failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="File seal failed. Please try again.")
 
 
 @router.post("/verify")
@@ -389,7 +395,7 @@ async def verify_document(request: VerifyDocumentRequest):
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Verification failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Verification failed. Please try again.")
 
 
 @router.get("/verify/{document_hash}")
@@ -431,7 +437,7 @@ async def verify_by_hash(document_hash: str):
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Verification failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Verification failed. Please try again.")
 
 
 @router.get("/seals/my")

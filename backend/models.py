@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 class UserBase(BaseModel):
@@ -16,7 +16,7 @@ class UserLogin(BaseModel):
 
 class User(UserBase):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     is_active: bool = True
 
     class Config:
@@ -37,7 +37,7 @@ class DocumentSeal(BaseModel):
     file_type: str
     sha256_hash: str
     transaction_id: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     status: str = "sealed"  # sealed, pending, failed
 
 class DocumentSealCreate(BaseModel):

@@ -118,4 +118,4 @@ async def serve_logo(filename: str):
     filepath = os.path.join(UPLOAD_DIR, filename)
     if not os.path.exists(filepath):
         raise HTTPException(status_code=404, detail="Logo not found")
-    return FileResponse(filepath)
+    return FileResponse(filepath, headers={"Content-Disposition": f"attachment; filename={filename}"})
