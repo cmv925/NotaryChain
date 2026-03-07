@@ -59,10 +59,12 @@ async def search_notaries(
     if ron_certified is not None:
         query["ron_certified"] = ron_certified
     if search:
+        import re
+        safe_search = re.escape(search)
         query["$or"] = [
-            {"full_legal_name": {"$regex": search, "$options": "i"}},
-            {"bio": {"$regex": search, "$options": "i"}},
-            {"license_state": {"$regex": search, "$options": "i"}},
+            {"full_legal_name": {"$regex": safe_search, "$options": "i"}},
+            {"bio": {"$regex": safe_search, "$options": "i"}},
+            {"license_state": {"$regex": safe_search, "$options": "i"}},
         ]
 
     notaries = await db.notary_profiles.find(

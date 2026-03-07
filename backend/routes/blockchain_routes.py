@@ -293,7 +293,10 @@ async def seal_file(
     """
     try:
         # Read file content and compute hash
+        MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
         content = await file.read()
+        if len(content) > MAX_FILE_SIZE:
+            raise HTTPException(status_code=413, detail="File too large. Maximum size is 50MB.")
         document_hash = HederaNotaryService.hash_document(content)
         
         # Use filename if no name provided

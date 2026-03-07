@@ -60,9 +60,11 @@ async def get_journal(
     query = {"notary_id": current_user.id}
 
     if search:
+        import re
+        safe_search = re.escape(search)
         query["$or"] = [
-            {"signer_name": {"$regex": search, "$options": "i"}},
-            {"document_name": {"$regex": search, "$options": "i"}},
+            {"signer_name": {"$regex": safe_search, "$options": "i"}},
+            {"document_name": {"$regex": safe_search, "$options": "i"}},
         ]
     if doc_type:
         query["document_type"] = doc_type

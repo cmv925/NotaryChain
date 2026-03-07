@@ -218,9 +218,11 @@ async def list_templates(
     if category:
         query["category"] = category
     if search:
+        import re
+        safe_search = re.escape(search)
         query["$or"] = [
-            {"name": {"$regex": search, "$options": "i"}},
-            {"description": {"$regex": search, "$options": "i"}},
+            {"name": {"$regex": safe_search, "$options": "i"}},
+            {"description": {"$regex": safe_search, "$options": "i"}},
         ]
 
     templates = await db.templates.find(query, {"_id": 0}).sort("popular", -1).to_list(100)

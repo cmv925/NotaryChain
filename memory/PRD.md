@@ -46,6 +46,13 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 
 ### Permission-based UI Rendering — COMPLETED (Feb 28, 2026)
 
+### Security Audit & Critical Fixes — COMPLETED (Feb 2026)
+- Conducted full security audit: identified 6 Critical, 8 High, 9 Medium, 5 Low issues
+- **All 6 Critical vulnerabilities fixed:** CORS wildcard, regex injection (3 routes), HTML injection in email, blockchain file size limit, JWT expiry reduced 7d→24h, WebSocket token moved from URL to message-based auth
+- **H1 fixed:** Rate limiting added to investor deck endpoints
+- Constant-time password comparison (hmac.compare_digest) added
+- Full report: `/app/security_audit_report.md`
+
 ### Investor Demo Flow — COMPLETED (Feb 2026)
 - **Backend:** `investor_deck_routes.py` — Password verification (`/api/investor-deck/verify-password`) and contact form (`/api/investor-deck/contact`) with Resend email + MongoDB storage
 - **Frontend:** `InvestorDeck.jsx` — Password-protected cinematic auto-playing presentation at `/investor-deck`

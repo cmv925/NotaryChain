@@ -564,21 +564,36 @@ async def get_transaction_room(
 @router.websocket("/{transaction_id}/ws")
 async def websocket_endpoint(websocket: WebSocket, transaction_id: str):
     """WebSocket for real-time transaction room updates"""
-    # Authenticate via query param token
+    await websocket.accept()
+
+    # Authenticate via first message (not query param) to avoid token leakage in logs
+    # Also support legacy query param for backwards compatibility
     token = websocket.query_params.get("token")
     if not token:
-        await websocket.close(code=4001, reason="Missing token")
-        return
+        try:
+            raw = await websocket.receive_text()
+            data = json.loads(raw)
+            if data.get("type") == "auth" and data.get("token"):
+                token = data["token"]
+            else:
+                await websocket.send_json({"type": "error", "message": "Send auth message first: {type: 'auth', token: '...'}"})
+                await websocket.close(code=4001)
+                return
+        except Exception:
+            await websocket.close(code=4001)
+            return
 
     payload = decode_access_token(token)
     if not payload:
-        await websocket.close(code=4001, reason="Invalid token")
+        await websocket.send_json({"type": "error", "message": "Invalid token"})
+        await websocket.close(code=4001)
         return
 
     email = payload.get("sub")
     user = await db.users.find_one({"email": email}, {"_id": 0, "id": 1, "email": 1, "full_name": 1})
     if not user:
-        await websocket.close(code=4001, reason="User not found")
+        await websocket.send_json({"type": "error", "message": "User not found"})
+        await websocket.close(code=4001)
         return
 
     # Verify participant
@@ -587,15 +602,27 @@ async def websocket_endpoint(websocket: WebSocket, transaction_id: str):
         "user_id": user["id"]
     })
     if not participant:
-        await websocket.close(code=4003, reason="Not a participant")
+        await websocket.send_json({"type": "error", "message": "Not a participant"})
+        await websocket.close(code=4003)
         return
 
     user_name = participant.get("name", user.get("full_name", email))
     user_id = user["id"]
 
-    await ws_manager.connect(websocket, transaction_id, user_id, user_name)
+    ws_manager._connections.setdefault(transaction_id, {})[user_id] = {"ws": websocket, "name": user_name}
 
     # Send initial presence list
+    try:
+        await websocket.send_json({
+            "type": "auth_success",
+            "message": "Authenticated",
+            "user_id": user_id,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+    except Exception:
+        pass
+
+    ws_manager.active_connections.setdefault(transaction_id, {})[user_id] = websocket
     try:
         await websocket.send_json({
             "type": "presence",
