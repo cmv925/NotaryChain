@@ -6,8 +6,9 @@
 
 **Applicant:** NotaryChain  
 **Grant Category:** Ecosystem Growth & Enterprise Adoption  
-**Requested Amount:** $250,000 USD  
-**Duration:** 12 Months  
+**Requested Amount:** $500,000 USD (Phase 1)  
+**Duration:** 18 Months  
+**Phase 2 Intent:** Growth grant application upon milestone achievement  
 **Date:** February 2026  
 
 ---
@@ -16,7 +17,9 @@
 
 NotaryChain is a fully-built, production-ready digital notarization platform that has already integrated Hedera Hashgraph as its core trust layer. With **67+ enterprise features shipped**, **8 proprietary innovations**, and **100% test pass rates** across the entire platform, NotaryChain represents one of the most feature-complete real-world applications built on Hedera.
 
-We are applying for Hedera Foundation funding to migrate from testnet to mainnet, scale our user base, and become the **first enterprise-grade notarization platform to make every document seal a permanent Hedera transaction** — generating sustained, high-volume network usage that directly grows the Hedera ecosystem.
+We are applying for a **$500,000 Phase 1 grant** to migrate from testnet to mainnet, scale our user base, and become the **first enterprise-grade notarization platform to make every document seal a permanent Hedera transaction** — generating sustained, high-volume network usage that directly grows the Hedera ecosystem.
+
+Upon achieving our Phase 1 milestones (mainnet traction, enterprise accounts, and revenue), we intend to apply for a **Phase 2 growth grant** to accelerate enterprise adoption and expand internationally. This staged approach de-risks the Foundation's investment while giving NotaryChain the runway to prove the model with real mainnet data.
 
 **This is not a concept. This is not a whitepaper. This is a working platform requesting funding to go live on mainnet and scale.**
 
@@ -104,16 +107,17 @@ What makes NotaryChain unique is not just blockchain sealing — it's the **AI-f
 | Verification lookups | Mirror node queries (free but drives adoption metrics) |
 | **Total per notarization** | **~6-8 Hedera transactions** |
 
-### Projected Transaction Volume
+### Projected Transaction Volume (Phase 1)
 
 | Timeline | Active Notarizations/Month | Hedera Transactions/Month |
 |---|---|---|
 | Month 3 (post-launch) | 500 | 3,500 |
 | Month 6 | 2,500 | 17,500 |
 | Month 12 | 10,000 | 70,000 |
-| Month 24 (projected) | 50,000 | 350,000 |
+| Month 18 (Phase 1 end) | 25,000 | 175,000 |
+| Month 24 (Phase 2, projected) | 50,000 | 350,000 |
 
-These are **sustained, recurring transactions** — not one-time token mints. Every document notarized generates Hedera network activity in perpetuity (sealing + ongoing verification queries).
+These are **sustained, recurring transactions** — not one-time token mints. Every document notarized generates Hedera network activity in perpetuity (sealing + ongoing verification queries). By the end of Phase 1, NotaryChain alone will represent a meaningful percentage of Hedera's non-token-transfer HCS activity.
 
 ### Ecosystem Flywheel Effects
 
@@ -198,16 +202,16 @@ These innovations are not theoretical. They are **shipped, tested, and operation
 
 ## USE OF FUNDS
 
-### Budget Allocation ($250,000)
+### Budget Allocation ($500,000 over 18 Months)
 
 | Category | Amount | % | Description |
 |---|---|---|---|
-| **Hedera Mainnet Migration** | $30,000 | 12% | Mainnet account funding, load testing, security audit of blockchain integration, HCS topic optimization |
-| **Enterprise Sales & BD** | $75,000 | 30% | Hire enterprise sales lead, target title companies, law firms, and notary networks. Direct Hedera ecosystem BD partnerships |
-| **Product Development** | $70,000 | 28% | AWS S3 migration, advanced Hedera features (multi-sig sealing, token-gated access, NFT certificates), mobile app |
-| **Compliance & Legal** | $30,000 | 12% | Trademark filings (8 TMs), SOC 2 Type II audit preparation, state RON compliance certifications |
-| **Marketing & Ecosystem** | $35,000 | 14% | Developer documentation, Hedera ecosystem conference presence, case study production, content marketing |
-| **Infrastructure & Ops** | $10,000 | 4% | Cloud infrastructure, monitoring, Sentry, CI/CD scaling |
+| **Hedera Mainnet Migration & Security** | $55,000 | 11% | Mainnet account funding, third-party security audit of blockchain integration, HCS topic optimization, load testing at scale, penetration testing |
+| **Engineering & Advanced Hedera Features** | $140,000 | 28% | 2 full-time engineers for 18 months. AWS S3 migration, multi-sig sealing, NFT certificates (HTS), token-gated access, Hedera-verified public portal, smart contract escrow, mobile app |
+| **Enterprise Sales & BD** | $120,000 | 24% | Enterprise sales lead (full-time). Target title companies, law firms, and notary networks. Hedera ecosystem BD partnerships. Pilot programs with 3-5 anchor enterprise customers |
+| **Compliance & Legal** | $65,000 | 13% | Trademark filings (8 TMs), SOC 2 Type II audit, state RON compliance certifications across top 10 states, legal counsel for enterprise contract templates |
+| **Marketing & Ecosystem** | $80,000 | 16% | Developer documentation & API portal, Hedera ecosystem conference presence (Hedera26, ETH events), case study production, content marketing, PR campaign for mainnet launch |
+| **Infrastructure & Operations** | $40,000 | 8% | Cloud infrastructure (AWS), monitoring & alerting, Sentry, CI/CD scaling, 18-month operational runway for hosting and services |
 
 ### Advanced Hedera Features (Funded by Grant)
 
@@ -218,45 +222,67 @@ With mainnet access and dedicated development resources, we will build:
 3. **Token-Gated Document Access** — Use HTS tokens to control document vault access, enabling decentralized permission management
 4. **Hedera-Verified Public Portal** — Enhance the existing public verification page to query Hedera mirror nodes directly, allowing anyone to verify document authenticity without trusting NotaryChain's servers
 5. **Smart Contract Escrow** — Implement Hedera smart contracts for payment escrow during high-value notarization transactions
+6. **Hedera Analytics Dashboard** — Real-time visualization of all NotaryChain activity on Hedera (transactions, topics, seals, verifications) — doubles as an ecosystem showcase
 
 ---
 
 ## MILESTONES & DELIVERABLES
 
+### Phase 1 Milestones (This Grant — 18 Months)
+
 | Milestone | Timeline | Deliverable | Hedera Impact |
 |---|---|---|---|
-| **M1: Mainnet Launch** | Month 1-2 | Full platform migrated from testnet to mainnet. Security audit complete. | First production Hedera transactions |
-| **M2: Public Beta** | Month 3-4 | Open registration. 100 active users. Marketing launch. | ~700 transactions/month |
-| **M3: NFT Certificates** | Month 4-5 | HTS NFT minting for notarization certificates. | New HTS token activity |
-| **M4: Enterprise Onboarding** | Month 5-7 | 5 enterprise accounts (law firms/title companies). Multi-sig sealing live. | ~5,000 transactions/month |
-| **M5: Public Verification** | Month 7-8 | Hedera-verified public portal. Anyone can verify any NotaryChain document on-chain. | Mirror node query volume increase |
-| **M6: Scale** | Month 9-12 | 10,000 monthly notarizations. Token-gated access. Developer API ecosystem. | ~70,000 transactions/month |
+| **M1: Mainnet Launch** | Month 1-2 | Full platform migrated from testnet to mainnet. Security audit complete. SOC 2 preparation initiated. | First production Hedera transactions |
+| **M2: Public Beta** | Month 3-4 | Open registration. 100 active users. PR campaign & mainnet launch announcement. | ~700 transactions/month |
+| **M3: NFT Certificates** | Month 5-6 | HTS NFT minting for notarization certificates. Hedera Analytics Dashboard live. | New HTS token activity |
+| **M4: Enterprise Pilots** | Month 7-9 | 5 anchor enterprise accounts (law firms/title companies). Multi-sig sealing live. First paid enterprise contracts signed. | ~5,000 transactions/month |
+| **M5: Public Verification Portal** | Month 10-11 | Hedera-verified public portal. Anyone can verify any NotaryChain document on-chain. Token-gated vault access. | Mirror node query volume increase |
+| **M6: Scale & Revenue** | Month 12-15 | 10,000 monthly notarizations. Smart contract escrow. Developer API ecosystem with external integrators. | ~70,000 transactions/month |
+| **M7: Phase 2 Readiness** | Month 16-18 | $15K+ MRR achieved. 25 enterprise accounts. Phase 2 grant application submitted with mainnet data. Mobile app beta. | ~100,000 transactions/month |
 
 ### Success Metrics (KPIs)
 
-| KPI | Month 6 Target | Month 12 Target |
-|---|---|---|
-| Monthly Active Notarizations | 2,500 | 10,000 |
-| Hedera Transactions/Month | 17,500 | 70,000 |
-| Enterprise Accounts | 5 | 25 |
-| Public Verifications/Month | 1,000 | 10,000 |
-| NFT Certificates Minted | 500 | 5,000 |
-| Platform Revenue (MRR) | $5,000 | $25,000 |
+| KPI | Month 6 Target | Month 12 Target | Month 18 Target |
+|---|---|---|---|
+| Monthly Active Notarizations | 2,500 | 10,000 | 25,000 |
+| Hedera Transactions/Month | 17,500 | 70,000 | 175,000 |
+| Enterprise Accounts | 5 | 15 | 25 |
+| Public Verifications/Month | 1,000 | 10,000 | 25,000 |
+| NFT Certificates Minted | 500 | 5,000 | 15,000 |
+| Platform MRR | $5,000 | $15,000 | $30,000 |
+
+### Phase 2 Intent (Future Application — Not Part of This Ask)
+
+Upon achieving M7 milestones (proven mainnet traction, enterprise revenue, and sustained transaction volume), we intend to apply for a **Phase 2 growth grant ($750K-$1M)** to fund:
+
+- International expansion (EU eIDAS compliance, UK & Canadian notary markets)
+- Dedicated Hedera integration team for advanced DID/Verifiable Credentials
+- Enterprise sales team expansion (3-5 sales reps targeting Fortune 500 legal departments)
+- Series A fundraising preparation with Hedera Foundation co-investment signal
+
+This staged approach ensures the Foundation's Phase 1 investment is validated by real mainnet data before any additional commitment.
 
 ---
 
 ## REVENUE MODEL & SUSTAINABILITY
 
-NotaryChain is designed to be self-sustaining beyond the grant period:
+NotaryChain is designed to be **self-sustaining before the Phase 1 grant concludes.** The 18-month runway ensures we reach revenue milestones without pressure to seek emergency funding:
 
-| Revenue Stream | Pricing | Projected ARR (Year 2) |
-|---|---|---|
-| **Subscription Plans** | Starter $29/mo, Professional $79/mo, Enterprise $199/mo | $180,000 |
-| **Per-Document Fees** | $2-5 per notarization (tiered discounts for subscribers) | $120,000 |
-| **Enterprise Contracts** | Custom pricing for law firms and title companies | $150,000 |
-| **API Access** | Developer API keys for third-party integrations | $30,000 |
-| **White-Label Licensing** | Branded deployment for notary networks | $60,000 |
-| **Total Projected ARR** | | **$540,000** |
+| Revenue Stream | Pricing | Month 12 ARR | Month 18 ARR |
+|---|---|---|---|
+| **Subscription Plans** | Starter $29/mo, Professional $79/mo, Enterprise $199/mo | $108,000 | $216,000 |
+| **Per-Document Fees** | $2-5 per notarization (tiered discounts for subscribers) | $72,000 | $144,000 |
+| **Enterprise Contracts** | Custom pricing for law firms and title companies | $90,000 | $180,000 |
+| **API Access** | Developer API keys for third-party integrations | $18,000 | $36,000 |
+| **White-Label Licensing** | Branded deployment for notary networks | $36,000 | $72,000 |
+| **Total Projected ARR** | | **$324,000** | **$648,000** |
+
+### Path to Self-Sustainability
+
+- **Month 9:** Platform covers its own infrastructure costs (~$3K/month)
+- **Month 12:** MRR of $15K covers operational expenses; grant funds directed entirely to growth
+- **Month 15:** MRR of $25K; platform is operationally self-sustaining
+- **Month 18:** MRR of $30K+; Phase 2 growth grant or Series A fundraise extends the trajectory
 
 Every revenue-generating transaction creates Hedera network activity. **Our business model and Hedera's network growth are perfectly aligned.**
 
@@ -278,23 +304,26 @@ Every revenue-generating transaction creates Hedera network activity. **Our busi
 
 ## WHY THE HEDERA FOUNDATION SHOULD FUND THIS
 
-### 1. It's Already Built
-This is not a roadmap. We've shipped 67+ features, 200+ API endpoints, and a complete Hedera integration. The grant de-risks entirely — you're funding growth, not development.
+### 1. It's Already Built — You're Funding Growth, Not Development
+This is not a roadmap. We've shipped 67+ features, 200+ API endpoints, and a complete Hedera integration. The grant de-risks entirely — your $500K funds mainnet launch and enterprise scaling, not speculative R&D.
 
-### 2. Sustained Transaction Volume
-Unlike NFT projects with burst-and-fade activity, notarization generates **recurring, predictable Hedera transactions**. Every document sealed today will be verified for years to come.
+### 2. Sustained, Recurring Transaction Volume
+Unlike NFT projects with burst-and-fade activity, notarization generates **recurring, predictable Hedera transactions**. Every document sealed today will be verified for years to come. Projected: 175,000 Hedera transactions/month by Month 18.
 
 ### 3. Enterprise Bridge
-NotaryChain brings law firms, title companies, and notary networks into the Hedera ecosystem — organizations that would never interact with blockchain otherwise.
+NotaryChain brings law firms, title companies, and notary networks into the Hedera ecosystem — organizations that would never interact with blockchain otherwise. Each enterprise account becomes a long-term Hedera stakeholder.
 
 ### 4. Regulatory Tailwind
 43 states permitting RON + increasing demand for verifiable digital documents = massive tailwind. NotaryChain converts this demand into Hedera network growth.
 
 ### 5. AI + Blockchain Narrative
-The intersection of AI and blockchain is the defining technology narrative of 2026. NotaryChain is a living, working example — perfect for Hedera's ecosystem marketing.
+The intersection of AI and blockchain is the defining technology narrative of 2026. NotaryChain is a living, working example — perfect for Hedera's ecosystem marketing and conference showcases.
 
 ### 6. Defensible IP
 8 trademarkable innovations create a moat that competitors cannot easily replicate. This is a long-term Hedera ecosystem asset, not a short-term grant project.
+
+### 7. Staged Investment, Proven Model
+This Phase 1 ask is deliberately sized to prove the model with real mainnet data. The Foundation risks $500K to validate a platform that — if successful — generates hundreds of thousands of monthly Hedera transactions and anchors an entire industry vertical to the network. Phase 2 follows only after Phase 1 milestones are met.
 
 ---
 
@@ -316,7 +345,7 @@ The platform itself is the proof. In a matter of weeks, a single development eff
 
 ## CONCLUSION
 
-NotaryChain is asking the Hedera Foundation to invest in the most feature-complete, AI-powered notarization platform ever built — one that has already chosen Hedera as its immutable trust layer.
+NotaryChain is asking the Hedera Foundation for a **$500,000 Phase 1 investment** in the most feature-complete, AI-powered notarization platform ever built — one that has already chosen Hedera as its immutable trust layer.
 
 Every document sealed on NotaryChain is a Hedera transaction.  
 Every enterprise onboarded is a new Hedera stakeholder.  
@@ -336,4 +365,5 @@ The $18.6 billion notarization market is moving digital. The only question is wh
 
 **Contact:** Available via the NotaryChain Investor Portal at `/investor-deck`  
 **Live Demo:** Platform fully operational on Hedera Testnet  
-**Mainnet Migration:** Ready upon funding confirmation
+**Mainnet Migration:** Ready upon Phase 1 funding confirmation  
+**Grant Structure:** Phase 1 ($500K / 18 months) → Milestone validation → Phase 2 application
