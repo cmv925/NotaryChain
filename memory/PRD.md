@@ -48,9 +48,10 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 
 ### Security Audit & Critical Fixes — COMPLETED (Feb 2026)
 - Conducted full security audit: identified 6 Critical, 8 High, 9 Medium, 5 Low issues
-- **All 6 Critical vulnerabilities fixed:** CORS wildcard, regex injection (3 routes), HTML injection in email, blockchain file size limit, JWT expiry reduced 7d→24h, WebSocket token moved from URL to message-based auth
-- **H1 fixed:** Rate limiting added to investor deck endpoints
-- Constant-time password comparison (hmac.compare_digest) added
+- **All 6 Critical fixed:** CORS wildcard, regex injection (3 routes), HTML injection in email, blockchain file size limit, JWT expiry 7d→24h, WebSocket token moved from URL to message-based auth
+- **All 8 High fixed:** Rate limiting on investor deck, error message sanitization (blockchain + payment), file type validation on uploads, notary upload size check, SSO sessions moved to MongoDB, deprecated datetime.utcnow→datetime.now(timezone.utc) across all files, account lockout after 5 failed logins (15min cooldown)
+- **7 of 9 Medium fixed:** Constant-time password comparison, hashed 2FA backup codes with bcrypt, email enumeration prevention (generic signup error), global 10MB request body size limit, template PDF field sanitization, Content-Disposition: attachment on all file downloads, admin audit logging (already existed)
+- Testing: 100% pass rate — all 12 security features verified
 - Full report: `/app/security_audit_report.md`
 
 ### Investor Demo Flow — COMPLETED (Feb 2026)
