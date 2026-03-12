@@ -95,12 +95,19 @@ async def get_platform_stats(
     total_notarizations = await db.notarization_requests.count_documents({})
     completed_notarizations = await db.notarization_requests.count_documents({"status": "completed"})
     
-    # Payment stats
-    stripe_payments = await db.payments.find({"status": "paid"}).to_list(10000)
-    crypto_payments = await db.crypto_payments.find({"status": "confirmed"}).to_list(10000)
+    # Payment stats — use aggregation instead of fetching all records
+    stripe_agg = await db.payments.aggregate([
+        {"$match": {"status": "paid"}},
+        {"$group": {"_id": None, "total": {"$sum": "$amount"}, "count": {"$sum": 1}}}
+    ]).to_list(1)
+    crypto_agg = await db.crypto_payments.aggregate([
+        {"$match": {"status": "confirmed"}},
+        {"$group": {"_id": None, "total": {"$sum": "$usd_amount"}, "count": {"$sum": 1}}}
+    ]).to_list(1)
     
-    total_revenue = sum(p.get("amount", 0) / 100 for p in stripe_payments)  # Stripe is in cents
-    total_revenue += sum(p.get("usd_amount", 0) for p in crypto_payments)
+    stripe_total = (stripe_agg[0]["total"] / 100) if stripe_agg else 0  # Stripe is in cents
+    crypto_total = crypto_agg[0]["total"] if crypto_agg else 0
+    total_revenue = stripe_total + crypto_total
     
     # Document stats
     documents_sealed = await db.blockchain_seals.count_documents({})
@@ -113,7 +120,7 @@ async def get_platform_stats(
         total_notarizations=total_notarizations,
         completed_notarizations=completed_notarizations,
         total_revenue_usd=round(total_revenue, 2),
-        crypto_payments_count=len(crypto_payments),
+        crypto_payments_count=crypto_agg[0]["count"] if crypto_agg else 0,
         documents_sealed=documents_sealed
     )
 
