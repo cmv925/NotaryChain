@@ -71,6 +71,16 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - Replaced test key (`sk_test_emergent`) with user-provided live key
 - Live checkout sessions (`cs_live_*`) verified working
 - Zero code changes — env-only migration
+
+### Operations Dashboard — COMPLETED (Mar 14, 2026)
+- New admin-only "Operations" tab in AdminDashboard showing real-time production metrics
+- **Backend**: `routes/ops_dashboard_routes.py` — `GET /api/admin/ops/metrics` aggregates data from Hedera, S3, Stripe, and MongoDB
+- **Hedera Section**: HBAR balance, total/mainnet seals, HCS submission stats, 30d seal trend, estimated cost
+- **S3 Section**: Bucket name, total files, total size, per-category breakdown (seals, credentials, etc.)
+- **Stripe Section**: Total/30d revenue, payment counts, active subscriptions, revenue trend chart
+- **System Health**: Live status indicators for all 4 services with pulsing green dots
+- **Low Balance Alert**: Automatic warning when HBAR drops below 10
+- Testing: 100% pass rate — all backend API + frontend UI tests passed
 - **Storage Service:** `services/storage_service.py` — Unified StorageService with S3 (boto3) + local filesystem fallback
 - S3 bucket: `notarychain-documents` (us-east-2), pre-signed URL generation for downloads
 - **server.py fix:** Moved `load_dotenv()` before route imports so StorageService singleton picks up AWS credentials
@@ -411,8 +421,7 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - Real SAML/OIDC SSO (awaiting IdP provider selection)
 - Enterprise Features Expansion
 - Additional marketplace features
-- Admin Dashboard Enhancements (blockchain analytics, S3 storage dashboard)
-- Production Hardening (HBAR balance alerts, connection health monitoring)
+- Production Hardening (HBAR balance alerts via email/Slack, circuit breakers)
 
 ## Test Credentials
 | Role | Email | Password |
