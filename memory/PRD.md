@@ -92,6 +92,16 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - Updated `complete_notarization` endpoint in `routes/notary_routes.py` to compile sealed package data and pass to email
 - Testing: 100% pass rate — all package compilation, sealing, email queuing flows verified
 - Note: Resend email delivery requires domain verification for non-owner recipients
+
+### HBAR Balance Alert Service — COMPLETED (Mar 14, 2026)
+- New background service: `services/hbar_alert_service.py` — checks balance every 30 minutes
+- **3 alert levels**: Warning (< 50 HBAR), Critical (< 10 HBAR), Emergency (< 1 HBAR)
+- **In-app notifications**: Created for all admin users when threshold triggered
+- **Email alerts**: Sent to admins with detailed balance info, account ID, network, explorer links
+- **Audit logging**: All alerts stored in `hbar_balance_alerts` MongoDB collection
+- **24-hour cooldown**: Won't repeat same threshold alert within cooldown period
+- **Alert history**: Displayed in Operations Dashboard with color-coded severity badges
+- Auto-clears cooldown when balance recovers above threshold
 - **Storage Service:** `services/storage_service.py` — Unified StorageService with S3 (boto3) + local filesystem fallback
 - S3 bucket: `notarychain-documents` (us-east-2), pre-signed URL generation for downloads
 - **server.py fix:** Moved `load_dotenv()` before route imports so StorageService singleton picks up AWS credentials
@@ -432,7 +442,6 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - Real SAML/OIDC SSO (awaiting IdP provider selection)
 - Enterprise Features Expansion
 - Additional marketplace features
-- Production Hardening (HBAR balance alerts via email/Slack, circuit breakers)
 
 ## Test Credentials
 | Role | Email | Password |

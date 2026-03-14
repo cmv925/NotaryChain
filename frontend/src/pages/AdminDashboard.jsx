@@ -685,6 +685,38 @@ const AdminDashboard = () => {
                     </div>
                   </div>
                 )}
+
+                {/* HBAR Alert History */}
+                {opsData.hbar_alerts && opsData.hbar_alerts.length > 0 && (
+                  <Card className="bg-[#1a2332] border-gray-800">
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <AlertCircle className="w-5 h-5 text-yellow-400" />
+                        Balance Alert History
+                      </h3>
+                      <div className="space-y-2" data-testid="ops-alert-history">
+                        {opsData.hbar_alerts.map((alert, idx) => (
+                          <div key={idx} className={`flex items-center justify-between rounded-lg p-3 border ${
+                            alert.level === 'emergency' ? 'bg-red-500/5 border-red-500/20' :
+                            alert.level === 'critical' ? 'bg-orange-500/5 border-orange-500/20' :
+                            'bg-yellow-500/5 border-yellow-500/20'
+                          }`}>
+                            <div className="flex items-center gap-3">
+                              <span className={`text-xs font-bold px-2 py-0.5 rounded ${
+                                alert.level === 'emergency' ? 'bg-red-500/20 text-red-400' :
+                                alert.level === 'critical' ? 'bg-orange-500/20 text-orange-400' :
+                                'bg-yellow-500/20 text-yellow-400'
+                              }`}>{alert.level.toUpperCase()}</span>
+                              <span className="text-gray-300 text-sm">{alert.balance_hbar.toFixed(2)} HBAR</span>
+                              <span className="text-gray-500 text-xs">threshold: {alert.threshold_hbar}</span>
+                            </div>
+                            <span className="text-gray-500 text-xs">{new Date(alert.alerted_at).toLocaleString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </>
             ) : (
               <Card className="bg-[#1a2332] border-gray-800">

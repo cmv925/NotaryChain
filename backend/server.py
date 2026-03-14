@@ -20,6 +20,7 @@ from services.notification_service import set_db as set_notification_db, set_ws_
 from services.ws_manager import ws_manager
 from services import expiry_service
 from services import reminder_service
+from services import hbar_alert_service
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
@@ -96,6 +97,8 @@ from services.email_service import email_service
 from services import notification_service as notif_svc_module
 expiry_service.set_dependencies(db, notif_svc_module, email_service)
 reminder_service.set_dependencies(db, notif_svc_module)
+from services.hedera_service import hedera_service
+hbar_alert_service.set_dependencies(db, hedera_service, notif_svc_module, email_service)
 
 # Create the main app without a prefix
 app = FastAPI(
@@ -329,6 +332,7 @@ async def create_indexes():
         asyncio.create_task(expiry_service.run_expiry_checker())
         asyncio.create_task(reminder_service.run_reminder_checks())
         asyncio.create_task(scheduled_reports_routes.start_report_scheduler())
+        asyncio.create_task(hbar_alert_service.run_balance_checker())
 
         logger.info("Database indexes created/verified successfully")
     except Exception as e:

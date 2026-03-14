@@ -181,10 +181,16 @@ async def get_ops_metrics(current_user: User = Depends(get_current_user)):
         "database": "healthy",
     }
 
+    # --- HBAR Alert History (last 10) ---
+    recent_alerts = await db.hbar_balance_alerts.find(
+        {}, {"_id": 0}
+    ).sort("alerted_at", -1).to_list(10)
+
     return {
         "timestamp": now.isoformat(),
         "hedera": hedera_metrics,
         "storage": s3_metrics,
         "payments": stripe_metrics,
         "system": system,
+        "hbar_alerts": recent_alerts,
     }
