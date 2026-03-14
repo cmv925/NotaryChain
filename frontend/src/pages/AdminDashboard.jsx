@@ -6,7 +6,8 @@ import {
   Shield, Users, FileText, TrendingUp, DollarSign,
   CheckCircle, XCircle, Clock, RefreshCw, Search,
   BarChart3, Activity, Wallet, LogOut, ChevronDown,
-  Eye, UserCheck, UserX, Settings, AlertTriangle, PieChart, Plus
+  Eye, UserCheck, UserX, Settings, AlertTriangle, PieChart, Plus,
+  Server, HardDrive, Zap, Database, Globe, AlertCircle
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
@@ -42,6 +43,8 @@ const AdminDashboard = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUserModal, setShowUserModal] = useState(false);
   const [processingAction, setProcessingAction] = useState(null);
+  const [opsData, setOpsData] = useState(null);
+  const [loadingOps, setLoadingOps] = useState(false);
 
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
 
@@ -111,6 +114,18 @@ const AdminDashboard = () => {
       toast({ title: 'Error', description: 'Failed to load analytics data', variant: 'destructive' });
     } finally {
       setLoadingAnalytics(false);
+    }
+  };
+
+  const fetchOpsMetrics = async () => {
+    setLoadingOps(true);
+    try {
+      const response = await axios.get(`${API}/admin/ops/metrics`, authHeaders);
+      setOpsData(response.data);
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to load ops metrics', variant: 'destructive' });
+    } finally {
+      setLoadingOps(false);
     }
   };
 
@@ -307,6 +322,7 @@ const AdminDashboard = () => {
           <div className="flex gap-2 border-b border-gray-800 overflow-x-auto">
             {[
               { id: 'overview', label: 'Overview', icon: BarChart3 },
+              { id: 'operations', label: 'Operations', icon: Server },
               { id: 'analytics', label: 'Analytics', icon: PieChart },
               { id: 'users', label: 'Users', icon: Users },
               { id: 'notaries', label: 'Notaries', icon: UserCheck },
@@ -318,6 +334,7 @@ const AdminDashboard = () => {
                   setActiveTab(tab.id);
                   if (tab.id === 'audit') fetchAuditLogs();
                   if (tab.id === 'analytics' && !analyticsData) fetchAnalyticsData();
+                  if (tab.id === 'operations' && !opsData) fetchOpsMetrics();
                 }}
                 className={`flex items-center gap-2 px-4 py-3 font-medium transition-all whitespace-nowrap ${
                   activeTab === tab.id
@@ -439,6 +456,241 @@ const AdminDashboard = () => {
                     <span>30 days ago</span>
                     <span>Today</span>
                   </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'operations' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <Server className="w-6 h-6 text-cyan-500" />
+                Production Operations
+              </h2>
+              <Button
+                onClick={fetchOpsMetrics}
+                disabled={loadingOps}
+                variant="outline"
+                className="border-gray-700"
+                data-testid="ops-refresh-btn"
+              >
+                <RefreshCw className={`w-4 h-4 ${loadingOps ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
+
+            {loadingOps && !opsData ? (
+              <div className="flex items-center justify-center py-20">
+                <RefreshCw className="w-12 h-12 text-cyan-500 animate-spin" />
+              </div>
+            ) : opsData ? (
+              <>
+                {/* System Status Strip */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3" data-testid="ops-system-status">
+                  {Object.entries(opsData.system).map(([service, status]) => (
+                    <div key={service} className={`rounded-lg p-3 border flex items-center gap-3 ${
+                      status === 'live' || status === 'healthy' || status === 's3'
+                        ? 'bg-emerald-500/10 border-emerald-500/30'
+                        : status === 'degraded' ? 'bg-yellow-500/10 border-yellow-500/30'
+                        : 'bg-gray-500/10 border-gray-700'
+                    }`}>
+                      <div className={`w-2.5 h-2.5 rounded-full ${
+                        status === 'live' || status === 'healthy' || status === 's3'
+                          ? 'bg-emerald-400 animate-pulse' : status === 'degraded' ? 'bg-yellow-400 animate-pulse' : 'bg-gray-500'
+                      }`} />
+                      <div>
+                        <p className="text-white text-sm font-medium capitalize">{service}</p>
+                        <p className="text-gray-400 text-xs capitalize">{status}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Hedera Blockchain Section */}
+                <Card className="bg-[#1a2332] border-gray-800">
+                  <CardContent className="p-6">
+                    <h3 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                      <Zap className="w-5 h-5 text-cyan-400" />
+                      Hedera Hashgraph
+                      <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
+                        opsData.hedera.network === 'mainnet' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-yellow-500/20 text-yellow-400'
+                      }`}>
+                        {opsData.hedera.network}
+                      </span>
+                    </h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                      <div className="bg-[#0a0f1a] rounded-lg p-4" data-testid="ops-hbar-balance">
+                        <p className="text-gray-400 text-xs mb-1">HBAR Balance</p>
+                        <p className="text-2xl font-bold text-cyan-400">
+                          {opsData.hedera.balance_hbar != null ? opsData.hedera.balance_hbar.toFixed(2) : '--'}
+                        </p>
+                        <p className="text-gray-500 text-xs mt-1">{opsData.hedera.account_id}</p>
+                      </div>
+                      <div className="bg-[#0a0f1a] rounded-lg p-4" data-testid="ops-total-seals">
+                        <p className="text-gray-400 text-xs mb-1">Total Seals</p>
+                        <p className="text-2xl font-bold text-white">{opsData.hedera.total_seals}</p>
+                        <p className="text-gray-500 text-xs mt-1">{opsData.hedera.hcs_submitted} on-chain</p>
+                      </div>
+                      <div className="bg-[#0a0f1a] rounded-lg p-4">
+                        <p className="text-gray-400 text-xs mb-1">Seals (30d)</p>
+                        <p className="text-2xl font-bold text-white">{opsData.hedera.seals_30d}</p>
+                        <p className="text-gray-500 text-xs mt-1">{opsData.hedera.seals_7d} last 7d</p>
+                      </div>
+                      <div className="bg-[#0a0f1a] rounded-lg p-4">
+                        <p className="text-gray-400 text-xs mb-1">Est. Cost (30d)</p>
+                        <p className="text-2xl font-bold text-emerald-400">${opsData.hedera.estimated_cost_30d}</p>
+                        <p className="text-gray-500 text-xs mt-1">{opsData.hedera.total_topics} topics</p>
+                      </div>
+                    </div>
+
+                    {/* Seal Trend Chart */}
+                    {opsData.hedera.seal_trend.length > 0 && (
+                      <div>
+                        <p className="text-gray-400 text-sm mb-3">Seal Activity (30 days)</p>
+                        <div className="h-24 flex items-end gap-1">
+                          {opsData.hedera.seal_trend.map((day, idx) => {
+                            const max = Math.max(...opsData.hedera.seal_trend.map(d => d.count)) || 1;
+                            const pct = (day.count / max) * 100;
+                            return (
+                              <div key={idx} className="flex-1 group relative">
+                                <div
+                                  className="w-full bg-gradient-to-t from-cyan-600 to-cyan-400 rounded-t transition-all hover:from-cyan-500 hover:to-cyan-300"
+                                  style={{ height: `${Math.max(pct, 8)}%` }}
+                                  title={`${day.date}: ${day.count} seals`}
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* S3 Storage + Payments side by side */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* S3 Storage */}
+                  <Card className="bg-[#1a2332] border-gray-800">
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                        <HardDrive className="w-5 h-5 text-orange-400" />
+                        Cloud Storage (S3)
+                        <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">
+                          {opsData.storage.bucket}
+                        </span>
+                      </h3>
+                      <div className="grid grid-cols-2 gap-4 mb-5">
+                        <div className="bg-[#0a0f1a] rounded-lg p-4" data-testid="ops-s3-files">
+                          <p className="text-gray-400 text-xs mb-1">Total Files</p>
+                          <p className="text-2xl font-bold text-orange-400">{opsData.storage.total_files}</p>
+                        </div>
+                        <div className="bg-[#0a0f1a] rounded-lg p-4" data-testid="ops-s3-size">
+                          <p className="text-gray-400 text-xs mb-1">Total Size</p>
+                          <p className="text-2xl font-bold text-white">{opsData.storage.total_size_mb || 0} MB</p>
+                        </div>
+                      </div>
+
+                      {/* Category breakdown */}
+                      <p className="text-gray-400 text-sm mb-3">Storage by Category</p>
+                      {Object.keys(opsData.storage.categories).length > 0 ? (
+                        <div className="space-y-2">
+                          {Object.entries(opsData.storage.categories).map(([cat, info]) => {
+                            const maxFiles = Math.max(...Object.values(opsData.storage.categories).map(c => c.count)) || 1;
+                            return (
+                              <div key={cat} className="flex items-center gap-3">
+                                <span className="text-gray-300 text-sm w-24 truncate">{cat}</span>
+                                <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
+                                  <div className="h-full bg-orange-500 rounded-full" style={{ width: `${(info.count / maxFiles) * 100}%` }} />
+                                </div>
+                                <span className="text-gray-400 text-xs w-20 text-right">{info.count} files</span>
+                                <span className="text-gray-500 text-xs w-16 text-right">{info.size_mb} MB</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 text-sm text-center py-4">No files stored yet</p>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  {/* Stripe Payments */}
+                  <Card className="bg-[#1a2332] border-gray-800">
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                        <DollarSign className="w-5 h-5 text-green-400" />
+                        Stripe Payments
+                        <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">
+                          live
+                        </span>
+                      </h3>
+                      <div className="grid grid-cols-2 gap-4 mb-5">
+                        <div className="bg-[#0a0f1a] rounded-lg p-4" data-testid="ops-stripe-revenue">
+                          <p className="text-gray-400 text-xs mb-1">Total Revenue</p>
+                          <p className="text-2xl font-bold text-green-400">${opsData.payments.total_revenue_usd}</p>
+                        </div>
+                        <div className="bg-[#0a0f1a] rounded-lg p-4">
+                          <p className="text-gray-400 text-xs mb-1">Revenue (30d)</p>
+                          <p className="text-2xl font-bold text-white">${opsData.payments.revenue_30d_usd}</p>
+                        </div>
+                        <div className="bg-[#0a0f1a] rounded-lg p-4">
+                          <p className="text-gray-400 text-xs mb-1">Total Payments</p>
+                          <p className="text-2xl font-bold text-white">{opsData.payments.total_payments}</p>
+                          <p className="text-gray-500 text-xs mt-1">{opsData.payments.payments_30d} last 30d</p>
+                        </div>
+                        <div className="bg-[#0a0f1a] rounded-lg p-4">
+                          <p className="text-gray-400 text-xs mb-1">Active Subs</p>
+                          <p className="text-2xl font-bold text-white">{opsData.payments.active_subscriptions}</p>
+                        </div>
+                      </div>
+
+                      {/* Revenue trend */}
+                      {opsData.payments.revenue_trend.length > 0 ? (
+                        <div>
+                          <p className="text-gray-400 text-sm mb-3">Revenue Trend (30d)</p>
+                          <div className="h-24 flex items-end gap-1">
+                            {opsData.payments.revenue_trend.map((day, idx) => {
+                              const max = Math.max(...opsData.payments.revenue_trend.map(d => d.amount_usd)) || 1;
+                              const pct = (day.amount_usd / max) * 100;
+                              return (
+                                <div key={idx} className="flex-1">
+                                  <div
+                                    className="w-full bg-gradient-to-t from-green-600 to-green-400 rounded-t transition-all hover:from-green-500 hover:to-green-300"
+                                    style={{ height: `${Math.max(pct, 4)}%` }}
+                                    title={`${day.date}: $${day.amount_usd}`}
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 text-sm text-center py-4">No payment data yet</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Balance Alert */}
+                {opsData.hedera.balance_hbar != null && opsData.hedera.balance_hbar < 10 && (
+                  <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex items-center gap-3" data-testid="ops-hbar-alert">
+                    <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                    <div>
+                      <p className="text-red-300 font-medium">Low HBAR Balance Warning</p>
+                      <p className="text-red-400/70 text-sm">
+                        Balance is {opsData.hedera.balance_hbar.toFixed(2)} HBAR. 
+                        Fund account {opsData.hedera.account_id} to avoid service interruption.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <Card className="bg-[#1a2332] border-gray-800">
+                <CardContent className="p-12 text-center">
+                  <Server className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400">Click refresh to load operations data</p>
                 </CardContent>
               </Card>
             )}
