@@ -603,10 +603,31 @@ async def complete_notarization(
             logger.error(f"Failed to seal notarization package: {e}")
             package_result = {"error": str(e)}
     
-    # Send completion email to user
+    # Send completion email to user with full session package
     user = await db.users.find_one({"id": request.get("user_id")}, {"_id": 0, "email": 1, "full_name": 1})
     if user:
         seal_hash = package_result.get("blockchain_seal", {}).get("content_hash") if package_result else None
+
+        # Compile full package data for the email
+        email_package_data = None
+        if package_result and package_result.get("success"):
+            try:
+                package_service = NotarizationPackageService(db, hedera_service)
+                full_package = await package_service.get_package(package_result.get("package_id"))
+                if full_package:
+                    pkg = full_package.get("package", {})
+                    email_package_data = {
+                        "package_id": package_result.get("package_id"),
+                        "network": hedera_service.get_status().get("network", "mainnet"),
+                        "blockchain_seal": full_package.get("blockchain_seal", {}),
+                        "document_analysis": pkg.get("document_analysis", {}),
+                        "biometric_verification": pkg.get("biometric_verification", {}),
+                        "video_sessions": pkg.get("video_sessions", {}),
+                        "participants": pkg.get("participants", {}),
+                    }
+            except Exception as e:
+                logger.warning(f"Failed to compile email package data: {e}")
+
         background_tasks.add_task(
             email_service.send_notarization_complete_email,
             email=user.get("email"),
@@ -614,9 +635,10 @@ async def complete_notarization(
             request_id=request_id,
             document_type=request.get("document_type", "Document"),
             seal_hash=seal_hash,
-            hcs_topic_id=request.get("hcs_topic_id")
+            hcs_topic_id=request.get("hcs_topic_id"),
+            package_data=email_package_data,
         )
-        logger.info(f"Completion email queued for {user.get('email')}")
+        logger.info(f"Completion email with full package queued for {user.get('email')}")
 
     # In-app notification
     background_tasks.add_task(

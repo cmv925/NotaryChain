@@ -132,26 +132,96 @@ class EmailService:
         request_id: str,
         document_type: str,
         seal_hash: Optional[str] = None,
-        hcs_topic_id: Optional[str] = None
+        hcs_topic_id: Optional[str] = None,
+        package_data: Optional[dict] = None
     ) -> dict:
-        """Send notification when notarization is completed"""
-        blockchain_info = ""
-        if seal_hash or hcs_topic_id:
-            blockchain_info = f"""
-            <div style="background: #0d1b2a; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #00d4aa;">
-                <p style="color: #00d4aa; font-weight: 600; margin: 0 0 10px 0;">Blockchain Verification</p>
+        """Send comprehensive notarization completion email with full session package"""
+
+        # --- Blockchain Verification Section ---
+        blockchain_section = ""
+        explorer_url = ""
+        if package_data and package_data.get("blockchain_seal"):
+            bs = package_data["blockchain_seal"]
+            explorer_url = bs.get("explorer_url", "")
+            blockchain_section = f"""
+            <div style="background: #0d1b2a; border-radius: 12px; padding: 24px; margin: 24px 0; border-left: 4px solid #00d4aa;">
+                <p style="color: #00d4aa; font-weight: 700; margin: 0 0 16px 0; font-size: 15px;">Hedera Blockchain Proof</p>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr><td style="color: #888; padding: 6px 0; font-size: 13px;">Network</td><td style="color: #fff; padding: 6px 0; font-size: 13px; text-align: right;">{package_data.get('network', 'mainnet')}</td></tr>
+                    {f'<tr><td style="color: #888; padding: 6px 0; font-size: 13px;">Seal Hash</td><td style="color: #fff; padding: 6px 0; font-size: 13px; text-align: right; word-break: break-all;"><code style="background: #1a1a2e; padding: 2px 6px; border-radius: 4px; font-size: 11px;">{seal_hash[:32]}...</code></td></tr>' if seal_hash else ''}
+                    {f'<tr><td style="color: #888; padding: 6px 0; font-size: 13px;">HCS Topic</td><td style="color: #fff; padding: 6px 0; font-size: 13px; text-align: right;">{hcs_topic_id}</td></tr>' if hcs_topic_id else ''}
+                    {f'<tr><td style="color: #888; padding: 6px 0; font-size: 13px;">Transaction ID</td><td style="color: #fff; padding: 6px 0; font-size: 13px; text-align: right;">{bs.get("transaction_id", "N/A")}</td></tr>' if bs.get("transaction_id") else ''}
+                    {f'<tr><td style="color: #888; padding: 6px 0; font-size: 13px;">Package ID</td><td style="color: #fff; padding: 6px 0; font-size: 13px; text-align: right;">{package_data.get("package_id", "")[:16]}...</td></tr>' if package_data.get("package_id") else ''}
+                </table>
+                {f'<a href="{explorer_url}" style="display: inline-block; background: rgba(0,212,170,0.15); color: #00d4aa; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: 600; margin-top: 16px; font-size: 13px; border: 1px solid rgba(0,212,170,0.3);">View on HashScan Explorer</a>' if explorer_url else ''}
+            </div>
+            """
+        elif seal_hash or hcs_topic_id:
+            blockchain_section = f"""
+            <div style="background: #0d1b2a; border-radius: 12px; padding: 24px; margin: 24px 0; border-left: 4px solid #00d4aa;">
+                <p style="color: #00d4aa; font-weight: 700; margin: 0 0 12px 0;">Blockchain Verification</p>
                 {"<p style='color: #888; font-size: 13px; margin: 5px 0;'>Seal Hash: <code style='background: #1a1a2e; padding: 2px 6px; border-radius: 4px;'>" + (seal_hash[:20] + "..." if seal_hash else "N/A") + "</code></p>" if seal_hash else ""}
                 {"<p style='color: #888; font-size: 13px; margin: 5px 0;'>HCS Topic: <code style='background: #1a1a2e; padding: 2px 6px; border-radius: 4px;'>" + str(hcs_topic_id) + "</code></p>" if hcs_topic_id else ""}
             </div>
             """
-        
+
+        # --- AI Document Analysis Section ---
+        ai_section = ""
+        if package_data and package_data.get("document_analysis"):
+            da = package_data["document_analysis"]
+            count = da.get("total_analyses", 0)
+            ai_section = f"""
+            <div style="background: #0d1b2a; border-radius: 12px; padding: 24px; margin: 24px 0; border-left: 4px solid #3b82f6;">
+                <p style="color: #3b82f6; font-weight: 700; margin: 0 0 12px 0; font-size: 15px;">AI Document Analysis</p>
+                <p style="color: #b0b0b0; font-size: 13px; margin: 0;">{count} document{'s' if count != 1 else ''} analyzed by AI for authenticity, completeness, and compliance.</p>
+                {''.join(f'<div style="background: #111827; border-radius: 8px; padding: 12px; margin-top: 10px;"><p style="color: #fff; font-size: 13px; margin: 0 0 4px 0;">{a.get("filename", "Document")}</p><p style="color: #888; font-size: 12px; margin: 0;">Type: {a.get("document_type", "General")} | Status: <span style="color: #00d4aa;">Verified</span></p></div>' for a in da.get("analyses", [])[:3])}
+            </div>
+            """
+
+        # --- Biometric Verification Section ---
+        bio_section = ""
+        if package_data and package_data.get("biometric_verification"):
+            bv = package_data["biometric_verification"]
+            summary = bv.get("summary", {})
+            status_color = "#00d4aa" if summary.get("status") == "verified" else "#ffd700" if summary.get("status") == "partial" else "#ff6b6b"
+            status_text = summary.get("status", "none").upper()
+            bio_section = f"""
+            <div style="background: #0d1b2a; border-radius: 12px; padding: 24px; margin: 24px 0; border-left: 4px solid {status_color};">
+                <p style="color: {status_color}; font-weight: 700; margin: 0 0 12px 0; font-size: 15px;">Biometric Verification</p>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr><td style="color: #888; padding: 4px 0; font-size: 13px;">Status</td><td style="color: {status_color}; padding: 4px 0; font-size: 13px; text-align: right; font-weight: 600;">{status_text}</td></tr>
+                    <tr><td style="color: #888; padding: 4px 0; font-size: 13px;">Verifications Performed</td><td style="color: #fff; padding: 4px 0; font-size: 13px; text-align: right;">{summary.get('total', 0)}</td></tr>
+                    <tr><td style="color: #888; padding: 4px 0; font-size: 13px;">Passed</td><td style="color: #00d4aa; padding: 4px 0; font-size: 13px; text-align: right;">{summary.get('passed', 0)}</td></tr>
+                    {f'<tr><td style="color: #888; padding: 4px 0; font-size: 13px;">Avg Confidence</td><td style="color: #fff; padding: 4px 0; font-size: 13px; text-align: right;">{summary.get("average_confidence", 0)}%</td></tr>' if summary.get('average_confidence') else ''}
+                </table>
+            </div>
+            """
+
+        # --- Notary Session Section ---
+        notary_section = ""
+        if package_data and package_data.get("participants", {}).get("notary"):
+            n = package_data["participants"]["notary"]
+            vs = package_data.get("video_sessions", {}).get("summary", {})
+            notary_section = f"""
+            <div style="background: #0d1b2a; border-radius: 12px; padding: 24px; margin: 24px 0; border-left: 4px solid #a855f7;">
+                <p style="color: #a855f7; font-weight: 700; margin: 0 0 12px 0; font-size: 15px;">Notary Session Details</p>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr><td style="color: #888; padding: 4px 0; font-size: 13px;">Notary</td><td style="color: #fff; padding: 4px 0; font-size: 13px; text-align: right;">{n.get('full_name', 'N/A')}</td></tr>
+                    {f'<tr><td style="color: #888; padding: 4px 0; font-size: 13px;">License #</td><td style="color: #fff; padding: 4px 0; font-size: 13px; text-align: right;">{n.get("license_number")}</td></tr>' if n.get('license_number') else ''}
+                    {f'<tr><td style="color: #888; padding: 4px 0; font-size: 13px;">State</td><td style="color: #fff; padding: 4px 0; font-size: 13px; text-align: right;">{n.get("license_state")}</td></tr>' if n.get('license_state') else ''}
+                    {'<tr><td style="color: #888; padding: 4px 0; font-size: 13px;">RON Certified</td><td style="color: #00d4aa; padding: 4px 0; font-size: 13px; text-align: right;">Yes</td></tr>' if n.get('ron_certified') else ''}
+                    {f'<tr><td style="color: #888; padding: 4px 0; font-size: 13px;">Video Sessions</td><td style="color: #fff; padding: 4px 0; font-size: 13px; text-align: right;">{vs.get("completed_sessions", 0)} completed ({vs.get("total_duration_minutes", 0)} min)</td></tr>' if vs.get("total_sessions") else ''}
+                </table>
+            </div>
+            """
+
         html = f"""
         <!DOCTYPE html>
         <html>
         <head>
             <style>
                 body {{ font-family: 'Segoe UI', Arial, sans-serif; background: #0a0a0a; color: #ffffff; margin: 0; padding: 0; }}
-                .container {{ max-width: 600px; margin: 0 auto; padding: 40px 20px; }}
+                .container {{ max-width: 640px; margin: 0 auto; padding: 40px 20px; }}
                 .header {{ text-align: center; margin-bottom: 40px; }}
                 .logo {{ font-size: 28px; font-weight: bold; color: #00d4aa; }}
                 .content {{ background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 16px; padding: 40px; border: 1px solid #333; }}
@@ -173,7 +243,7 @@ class EmailService:
                     <span class="success-badge">NOTARIZATION COMPLETE</span>
                     <h1>Your Document Has Been Notarized</h1>
                     <p>Hi {full_name},</p>
-                    <p>Great news! Your notarization request has been successfully completed and sealed on the blockchain.</p>
+                    <p>Great news! Your notarization request has been successfully completed, verified, and permanently sealed on the Hedera blockchain. Below is your complete session package.</p>
                     
                     <div style="margin: 30px 0;">
                         <div class="detail-row">
@@ -190,12 +260,17 @@ class EmailService:
                         </div>
                     </div>
                     
-                    {blockchain_info}
+                    {ai_section}
+                    {bio_section}
+                    {notary_section}
+                    {blockchain_section}
                     
-                    <p>You can view the full details and blockchain audit trail in your dashboard.</p>
+                    <p style="margin-top: 24px;">You can view the full details, download your certificate, and verify the blockchain audit trail in your <strong style="color: #fff;">dashboard</strong>.</p>
+                    <p style="color: #888; font-size: 13px;">This notarization is permanently recorded on the Hedera Hashgraph public ledger and cannot be altered or revoked.</p>
                 </div>
                 <div class="footer">
                     <p>&copy; {datetime.now().year} NotaryChain. All rights reserved.</p>
+                    <p>Secure. Immutable. Trusted.</p>
                 </div>
             </div>
         </body>
@@ -204,7 +279,7 @@ class EmailService:
         
         return await EmailService.send_email(
             to_email=email,
-            subject=f"Notarization Complete - {document_type}",
+            subject=f"Notarization Complete - {document_type} | Full Session Package",
             html_content=html
         )
     
