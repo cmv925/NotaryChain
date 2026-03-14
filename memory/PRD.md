@@ -12,7 +12,7 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 - **Video**: Daily.co (RON)
 - **Payments**: Stripe (checkout + subscriptions)
 - **Email**: Resend
-- **Infrastructure**: Sentry, cachetools, background tasks, storage abstraction
+- **Infrastructure**: Sentry, cachetools, background tasks, storage abstraction, AWS S3 (boto3)
 
 ## Completed Features
 
@@ -53,6 +53,24 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **7 of 9 Medium fixed:** Constant-time password comparison, hashed 2FA backup codes with bcrypt, email enumeration prevention (generic signup error), global 10MB request body size limit, template PDF field sanitization, Content-Disposition: attachment on all file downloads, admin audit logging (already existed)
 - Testing: 100% pass rate — all 12 security features verified
 - Full report: `/app/security_audit_report.md`
+
+### AWS S3 Storage Integration — COMPLETED (Mar 14, 2026)
+- **Storage Service:** `services/storage_service.py` — Unified StorageService with S3 (boto3) + local filesystem fallback
+- S3 bucket: `notarychain-documents` (us-east-2), pre-signed URL generation for downloads
+- **server.py fix:** Moved `load_dotenv()` before route imports so StorageService singleton picks up AWS credentials
+- **Routes migrated to S3:**
+  - `vault_routes.py` — Upload, download (presigned URL redirect), delete
+  - `document_routes.py` — File serving with S3 presigned URL redirect
+  - `notary_professional_routes.py` — Seal upload/download/delete via S3
+  - `branding_routes.py` — Logo upload/download via S3
+  - `witness_routes.py` — Video upload via S3
+  - `scheduled_reports_routes.py` — PDF generation → S3 upload, download via presigned URL
+  - `notary_routes.py` — Credential upload migrated from base64-in-MongoDB to S3
+  - `ai_routes.py` — Document analysis files uploaded to S3
+  - `summarizer_routes.py` — Temp file upload to S3, cleanup after processing
+- **Removed:** Direct local filesystem writes from all routes, base64 credential storage
+- **Testing:** 100% pass rate — S3 upload, presigned URL, download, delete all verified
+
 
 ### Investor Demo Flow — COMPLETED (Feb 2026)
 - **Backend:** `investor_deck_routes.py` — Password verification (`/api/investor-deck/verify-password`) and contact form (`/api/investor-deck/contact`) with Resend email + MongoDB storage
@@ -371,7 +389,7 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - `/api/sso/test` — Test SSO configuration validity
 
 ## Upcoming Tasks
-- **Cloud Integration** — Migrate to AWS S3 (awaiting user credentials)
+- **Low-Severity Security Fixes** — Expand password blacklist, add /.well-known/security.txt, obfuscate health check details
 
 ## Future/Backlog
 - Enterprise Features Expansion
