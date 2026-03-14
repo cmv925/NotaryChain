@@ -54,6 +54,11 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - Testing: 100% pass rate — all 12 security features verified
 - Full report: `/app/security_audit_report.md`
 
+### Low-Severity Security Fixes — COMPLETED (Mar 14, 2026)
+- **L1 — Password Blacklist:** Expanded from 10 to 100+ common passwords (top NIST list) in `middleware/security.py`
+- **L3 — Security.txt:** Added `/.well-known/security.txt` (RFC 9116) with security contact in `frontend/public/.well-known/security.txt`
+- **L5 — Health Check Obfuscation:** Removed version number, renamed service identifiers (mongodb→database, stripe→payments), removed error details and non-essential service checks from public health endpoint
+
 ### AWS S3 Storage Integration — COMPLETED (Mar 14, 2026)
 - **Storage Service:** `services/storage_service.py` — Unified StorageService with S3 (boto3) + local filesystem fallback
 - S3 bucket: `notarychain-documents` (us-east-2), pre-signed URL generation for downloads
@@ -389,7 +394,7 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - `/api/sso/test` — Test SSO configuration validity
 
 ## Upcoming Tasks
-- **Low-Severity Security Fixes** — Expand password blacklist, add /.well-known/security.txt, obfuscate health check details
+- None — all identified security vulnerabilities have been remediated
 
 ## Future/Backlog
 - Enterprise Features Expansion

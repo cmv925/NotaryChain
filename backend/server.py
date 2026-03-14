@@ -112,7 +112,7 @@ api_router = APIRouter(prefix="/api")
 # Health check endpoints
 @api_router.get("/")
 async def root():
-    return {"message": "NotaryChain API", "version": "1.0.0", "status": "operational"}
+    return {"message": "NotaryChain API", "status": "operational"}
 
 @api_router.get("/health")
 async def api_health():

@@ -204,70 +204,42 @@ def capture_sentry_error(error: Exception, context: dict = None):
 # ============ HEALTH CHECK ============
 
 async def health_check():
-    """Comprehensive health check endpoint"""
-    from motor.motor_asyncio import AsyncIOMotorClient
-    from services.cache_service import cache_service
+    """Comprehensive health check endpoint - returns sanitized info only"""
     from services.storage_service import storage_service
     
     health = {
         "status": "healthy",
         "timestamp": time.time(),
-        "version": "1.1.0",
         "checks": {}
     }
     
     # Check MongoDB
     try:
+        from motor.motor_asyncio import AsyncIOMotorClient
         mongo_url = os.environ.get("MONGO_URL")
         if mongo_url:
             client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=2000)
             await client.admin.command('ping')
             client.close()
-            health["checks"]["mongodb"] = {"status": "healthy"}
+            health["checks"]["database"] = {"status": "healthy"}
         else:
-            health["checks"]["mongodb"] = {"status": "not_configured"}
-    except Exception as e:
-        health["checks"]["mongodb"] = {"status": "unhealthy", "error": str(e)}
+            health["checks"]["database"] = {"status": "not_configured"}
+    except Exception:
+        health["checks"]["database"] = {"status": "unhealthy"}
         health["status"] = "degraded"
     
-    # Check Hedera
-    hedera_configured = bool(os.environ.get("HEDERA_ACCOUNT_ID"))
-    health["checks"]["hedera"] = {
-        "status": "configured" if hedera_configured else "not_configured"
+    # Simplified service checks - only expose status, not names/versions
+    health["checks"]["blockchain"] = {
+        "status": "configured" if bool(os.environ.get("HEDERA_ACCOUNT_ID")) else "not_configured"
     }
-    
-    # Check Stripe
-    stripe_configured = bool(os.environ.get("STRIPE_API_KEY"))
-    health["checks"]["stripe"] = {
-        "status": "configured" if stripe_configured else "not_configured"
+    health["checks"]["payments"] = {
+        "status": "configured" if bool(os.environ.get("STRIPE_API_KEY")) else "not_configured"
     }
-    
-    # Check Daily.co
-    daily_configured = bool(os.environ.get("DAILY_API_KEY"))
-    health["checks"]["daily"] = {
-        "status": "configured" if daily_configured else "not_configured"
-    }
-    
-    # Check Resend
-    resend_configured = bool(os.environ.get("RESEND_API_KEY"))
-    health["checks"]["resend"] = {
-        "status": "configured" if resend_configured else "not_configured"
-    }
-
-    # Cache
-    health["checks"]["cache"] = {"status": "healthy", "backend": "in-memory"}
-
-    # Storage
     health["checks"]["storage"] = {
         "status": "healthy",
         "backend": storage_service.backend,
     }
-
-    # Sentry
-    sentry_configured = bool(os.environ.get("SENTRY_DSN"))
-    health["checks"]["sentry"] = {
-        "status": "configured" if sentry_configured else "not_configured"
-    }
+    health["checks"]["cache"] = {"status": "healthy"}
     
     return health
 
@@ -334,13 +306,33 @@ def validate_password(password: str) -> tuple[bool, str]:
     if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
         return False, "Password must contain at least one special character"
     
-    # Check for common passwords (basic check)
-    common_passwords = [
+    # Check for common passwords (top 100+ most common)
+    common_passwords = {
         'password', '12345678', 'qwerty', 'abc123', 'monkey',
-        'letmein', 'dragon', 'master', 'admin', 'welcome'
-    ]
-    if password.lower() in common_passwords:
-        return False, "Password is too common"
+        'letmein', 'dragon', 'master', 'admin', 'welcome',
+        'login', 'princess', 'football', 'shadow', 'sunshine',
+        'trustno1', 'iloveyou', 'batman', 'access', 'hello',
+        'charlie', 'donald', 'password1', 'qwerty123', 'mustang',
+        'michael', 'jessica', 'starwars', 'ashley', 'bailey',
+        'passw0rd', 'buster', 'daniel', 'hannah', 'thomas',
+        'summer', 'george', 'harley', 'ginger', 'robert',
+        'abcdef', 'jordan', 'hunter', 'ranger', 'jennifer',
+        'soccer', 'pepper', 'andrew', 'joshua', 'matthew',
+        'killer', 'amanda', 'nicole', 'thunder', 'orange',
+        'maggie', 'computer', 'yellow', 'banana', 'ferrari',
+        'cheese', 'cookie', 'flower', 'secret', 'garden',
+        'freedom', 'diamond', 'purple', 'silver', 'crystal',
+        'midnight', 'internet', 'whatever', 'chicken', 'butter',
+        'creative', 'nothing', 'phoenix', 'angels', 'chelsea',
+        'baseball', 'hockey', 'corvette', 'mercedes', 'arsenal',
+        'cowboys', 'dolphins', 'yankees', 'victoria', 'sparky',
+        'samantha', 'jackson', 'richard', 'brandy', 'zxcvbn',
+        'superman', 'asdfgh', 'qazwsx', '1qaz2wsx', 'q1w2e3r4',
+        'test1234', 'changeme', 'default', 'temp1234', 'newpass',
+        'Pa$$w0rd', 'Passw0rd', 'Welcome1', 'Password1', 'Admin123',
+    }
+    if password.lower() in {p.lower() for p in common_passwords}:
+        return False, "Password is too common. Please choose a more unique password."
     
     return True, "Password is valid"
 

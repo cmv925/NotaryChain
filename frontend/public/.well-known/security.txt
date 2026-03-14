@@ -1,0 +1,5 @@
+Contact: security@notarychain.com
+Preferred-Languages: en
+Canonical: https://notarychain.com/.well-known/security.txt
+Policy: https://notarychain.com/security-policy
+Expires: 2027-01-01T00:00:00.000Z
