@@ -9,6 +9,10 @@ import asyncio
 import logging
 from pathlib import Path
 
+# Load env vars BEFORE any route/service imports so all modules see them
+ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / '.env')
+
 # Import route modules
 from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes, notary_professional_routes, gdpr_routes, infra_routes, ws_routes, api_key_routes, public_api_routes, ron_compliance_routes, webhook_routes, template_routes, organization_routes, draft_routes, vault_routes, expiry_routes, draft_collab_routes, bulk_routes, marketplace_routes, embed_routes, booking_routes, copilot_routes, ai_generator_routes, summarizer_routes, witness_routes, remediation_routes, biometric_passport_routes, conductor_routes, evidence_package_routes, timeline_routes, reminder_routes, approval_routes, doc_compare_routes, branding_routes, rbac_routes, sso_routes, org_activity_routes, org_webhook_routes, scheduled_reports_routes, investor_deck_routes
 from middleware.security import setup_security, health_check, limiter
@@ -16,9 +20,6 @@ from services.notification_service import set_db as set_notification_db, set_ws_
 from services.ws_manager import ws_manager
 from services import expiry_service
 from services import reminder_service
-
-ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
@@ -87,7 +88,6 @@ webhook_service.set_db(db)
 set_notification_db(db)
 
 # Initialize notification service WS manager
-from services.ws_manager import ws_manager
 set_ws_manager(ws_manager)
 
 # Initialize expiry service dependencies

@@ -8,10 +8,10 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from models import User
 from routes.auth_routes import get_current_user
 from services.notification_service import create_notification
+from services.storage_service import storage_service
 from datetime import datetime, timezone
 import os
 import uuid
-import shutil
 import logging
 
 logger = logging.getLogger(__name__)
@@ -19,8 +19,6 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/video-witness", tags=["video-witness"])
 
 db: AsyncIOMotorDatabase = None
-UPLOAD_DIR = "/tmp/notary_uploads/witness_videos"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 MAX_VIDEO_SIZE = 100 * 1024 * 1024  # 100MB
 
@@ -86,22 +84,15 @@ async def upload_witness_video(
     if req.get("user_id") != current_user.id:
         raise HTTPException(status_code=403, detail="Access denied")
 
-    # Save video file
+    # Read and upload video via storage service
     video_id = str(uuid.uuid4())
     filename = f"witness_{video_id}{file_ext}"
-    file_path = os.path.join(UPLOAD_DIR, filename)
 
-    total_size = 0
-    with open(file_path, "wb") as f:
-        while True:
-            chunk = await file.read(1024 * 1024)  # 1MB chunks
-            if not chunk:
-                break
-            total_size += len(chunk)
-            if total_size > MAX_VIDEO_SIZE:
-                os.remove(file_path)
-                raise HTTPException(status_code=413, detail="Video too large (max 100MB)")
-            f.write(chunk)
+    content = await file.read()
+    if len(content) > MAX_VIDEO_SIZE:
+        raise HTTPException(status_code=413, detail="Video too large (max 100MB)")
+
+    storage_meta = await storage_service.upload(content, filename, folder="witness_videos")
 
     record = {
         "id": video_id,
@@ -109,10 +100,11 @@ async def upload_witness_video(
         "request_id": request_id,
         "instruction_type": instruction_type,
         "file_name": filename,
-        "file_path": file_path,
-        "file_size": total_size,
+        "stored_path": storage_meta["path"],
+        "storage_backend": storage_meta["storage_backend"],
+        "file_size": len(content),
         "file_ext": file_ext,
-        "status": "uploaded",  # uploaded -> under_review -> approved -> rejected
+        "status": "uploaded",
         "reviewed_by": None,
         "review_notes": None,
         "created_at": datetime.now(timezone.utc).isoformat(),
@@ -120,7 +112,7 @@ async def upload_witness_video(
     }
     await db.witness_recordings.insert_one(record)
     record.pop("_id", None)
-    record.pop("file_path", None)  # Don't expose path
+    record.pop("stored_path", None)  # Don't expose storage path
 
     # Notify assigned notary
     notary_id = req.get("notary_id")

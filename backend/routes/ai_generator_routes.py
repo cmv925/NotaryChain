@@ -16,7 +16,6 @@ import logging
 from models import User
 from routes.auth_routes import get_current_user
 from emergentintegrations.llm.chat import LlmChat, UserMessage
-from services.template_wizard_service import generate_pdf
 
 logger = logging.getLogger(__name__)
 
@@ -24,8 +23,6 @@ router = APIRouter(prefix="/api/ai-generator", tags=["ai-generator"])
 
 db: AsyncIOMotorDatabase = None
 EMERGENT_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
-UPLOAD_DIR = "/tmp/notary_uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 def set_db(database):

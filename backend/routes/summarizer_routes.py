@@ -8,10 +8,10 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from models import User
 from routes.auth_routes import get_current_user
 from emergentintegrations.llm.chat import LlmChat, UserMessage, FileContentWithMimeType
+from services.storage_service import storage_service
 from datetime import datetime, timezone
 import os
 import uuid
-import shutil
 import json
 import logging
 
@@ -21,8 +21,6 @@ router = APIRouter(prefix="/api/ai-summarizer", tags=["ai-summarizer"])
 
 db: AsyncIOMotorDatabase = None
 EMERGENT_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
-UPLOAD_DIR = "/tmp/notary_uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 MIME_MAP = {
     '.pdf': 'application/pdf',
@@ -52,11 +50,11 @@ async def summarize_document(
     if file_ext not in MIME_MAP:
         raise HTTPException(status_code=400, detail=f"Unsupported file type: {file_ext}")
 
-    # Save file
-    unique_name = f"{uuid.uuid4()}{file_ext}"
-    file_path = os.path.join(UPLOAD_DIR, unique_name)
-    with open(file_path, "wb") as f:
-        shutil.copyfileobj(file.file, f)
+    # Upload file to storage
+    content = await file.read()
+    storage_meta = await storage_service.upload(content, file.filename, folder="summarizer")
+    # Get local path for text extraction
+    file_path = await storage_service.get_file_path(storage_meta["path"], storage_meta["storage_backend"])
 
     detail_instruction = {
         "brief": "Provide a 2-3 sentence summary.",
@@ -105,7 +103,7 @@ Return as JSON:
             try:
                 with open(file_path, 'r', errors='ignore') as f:
                     file_text = f.read()[:10000]  # Limit to 10k chars
-            except:
+            except Exception:
                 pass
         
         full_prompt = f"{prompt}\n\nDocument content (if available):\n{file_text}" if file_text else prompt
@@ -118,9 +116,11 @@ Return as JSON:
         result = {"summary": "Unable to parse AI response. The document may be too complex or in an unsupported format.", "key_terms": [], "parties": []}
     except Exception as e:
         logger.error(f"Summarizer error: {e}")
-        # Clean up
-        try: os.remove(file_path)
-        except: pass
+        # Clean up from storage
+        try:
+            await storage_service.delete(storage_meta["path"], storage_meta["storage_backend"])
+        except Exception:
+            pass
         raise HTTPException(status_code=500, detail="AI summarization failed")
 
     # Save record
@@ -136,9 +136,11 @@ Return as JSON:
     await db.ai_summaries.insert_one(record)
     record.pop("_id", None)
 
-    # Clean up file
-    try: os.remove(file_path)
-    except: pass
+    # Clean up temp file from storage after processing
+    try:
+        await storage_service.delete(storage_meta["path"], storage_meta["storage_backend"])
+    except Exception:
+        pass
 
     return record
 

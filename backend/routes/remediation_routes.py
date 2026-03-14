@@ -10,7 +10,6 @@ from typing import Optional, List
 from datetime import datetime, timezone
 import os
 import uuid
-import shutil
 import json
 import logging
 
@@ -24,8 +23,6 @@ router = APIRouter(prefix="/api/remediation", tags=["remediation"])
 
 db: AsyncIOMotorDatabase = None
 EMERGENT_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
-UPLOAD_DIR = "/tmp/notary_uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 def set_db(database):

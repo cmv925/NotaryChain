@@ -4,6 +4,7 @@ Stores and manages documents within organizations with role-based access and aud
 """
 
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
+from fastapi.responses import FileResponse, RedirectResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional, List
 from datetime import datetime, timezone
@@ -13,15 +14,13 @@ import os
 import logging
 
 from routes.auth_routes import get_current_user
+from services.storage_service import storage_service
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/vault", tags=["vault"])
 
 db: AsyncIOMotorDatabase = None
-
-UPLOAD_DIR = "/tmp/notary_vault"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 CATEGORIES = ["contracts", "agreements", "notarized", "identity", "financial", "legal", "other"]
 
@@ -80,18 +79,14 @@ async def upload_document(
     if category not in CATEGORIES:
         category = "other"
 
-    # Save file
     doc_id = str(uuid.uuid4())
-    ext = os.path.splitext(file.filename)[1]
-    stored_name = f"{doc_id}{ext}"
-    filepath = os.path.join(UPLOAD_DIR, stored_name)
 
     content = await file.read()
     if len(content) > 25 * 1024 * 1024:
         raise HTTPException(status_code=400, detail="File too large (max 25MB)")
 
-    with open(filepath, "wb") as f:
-        f.write(content)
+    # Upload via storage service (S3 or local fallback)
+    storage_meta = await storage_service.upload(content, file.filename, folder="vault")
 
     now = datetime.now(timezone.utc).isoformat()
     tag_list = [t.strip() for t in tags.split(",") if t.strip()] if tags else []
@@ -101,7 +96,8 @@ async def upload_document(
         "org_id": org_id,
         "name": name or file.filename,
         "original_filename": file.filename,
-        "stored_filename": stored_name,
+        "stored_filename": storage_meta["path"],
+        "storage_backend": storage_meta["storage_backend"],
         "file_size": len(content),
         "content_type": file.content_type,
         "category": category,
@@ -194,16 +190,25 @@ async def download_document(org_id: str, doc_id: str, current_user: dict = Depen
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
 
-    filepath = os.path.join(UPLOAD_DIR, doc["stored_filename"])
-    if not os.path.exists(filepath):
-        raise HTTPException(status_code=404, detail="File not found on disk")
-
     await db.vault_documents.update_one({"id": doc_id}, {"$inc": {"download_count": 1}})
     await _add_audit_entry(doc_id, "downloaded", current_user.email, current_user.id)
 
-    from fastapi.responses import FileResponse
+    backend = doc.get("storage_backend", "local")
+    stored_path = doc["stored_filename"]
+
+    # Try presigned URL for S3
+    if backend == "s3":
+        url = storage_service.get_presigned_url(stored_path)
+        if url:
+            return RedirectResponse(url=url, status_code=307)
+
+    # Fallback to file serve
+    local_path = await storage_service.get_file_path(stored_path, backend)
+    if not local_path:
+        raise HTTPException(status_code=404, detail="File not found")
+
     return FileResponse(
-        filepath,
+        local_path,
         media_type=doc.get("content_type", "application/octet-stream"),
         filename=doc["original_filename"],
         headers={"Content-Disposition": f"attachment; filename={doc['original_filename']}"},
@@ -263,9 +268,7 @@ async def delete_document(org_id: str, doc_id: str, current_user: dict = Depends
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
 
-    filepath = os.path.join(UPLOAD_DIR, doc["stored_filename"])
-    if os.path.exists(filepath):
-        os.remove(filepath)
+    await storage_service.delete(doc["stored_filename"], doc.get("storage_backend", "local"))
 
     await db.vault_documents.delete_one({"id": doc_id})
     await db.vault_audit.delete_many({"document_id": doc_id})

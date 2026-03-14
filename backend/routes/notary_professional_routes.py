@@ -4,7 +4,7 @@ Digital Journal, Commission Tracking, Seal Management
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Query, UploadFile, File
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional
 from datetime import datetime, timezone, timedelta
@@ -16,13 +16,11 @@ import logging
 from models import User
 from routes.auth_routes import get_current_user
 from services.notification_service import create_notification
+from services.storage_service import storage_service
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/notary/professional", tags=["notary-professional"])
-
-UPLOAD_DIR = "/tmp/notary_uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 db: AsyncIOMotorDatabase = None
 
@@ -253,22 +251,20 @@ async def upload_seal(
     if file.size and file.size > 2 * 1024 * 1024:
         raise HTTPException(status_code=400, detail="File too large (max 2MB)")
 
-    # Save file
+    # Save file via storage service
     seal_id = str(uuid.uuid4())
-    filename = f"seal_{seal_id}{ext}"
-    filepath = os.path.join(UPLOAD_DIR, filename)
-
     contents = await file.read()
     if len(contents) > 2 * 1024 * 1024:
         raise HTTPException(status_code=400, detail="File too large (max 2MB)")
-    with open(filepath, "wb") as f:
-        f.write(contents)
+
+    storage_meta = await storage_service.upload(contents, file.filename or f"seal_{seal_id}{ext}", folder="seals")
 
     now = datetime.now(timezone.utc)
     seal_doc = {
         "id": seal_id,
         "notary_id": current_user.id,
-        "filename": filename,
+        "filename": storage_meta["path"],
+        "storage_backend": storage_meta["storage_backend"],
         "original_name": file.filename,
         "file_type": ext,
         "is_active": True,
@@ -322,10 +318,8 @@ async def delete_seal(
     if not seal:
         raise HTTPException(status_code=404, detail="Seal not found")
 
-    # Delete file
-    filepath = os.path.join(UPLOAD_DIR, seal.get("filename", ""))
-    if os.path.exists(filepath):
-        os.remove(filepath)
+    # Delete file from storage
+    await storage_service.delete(seal.get("filename", ""), seal.get("storage_backend", "local"))
 
     await db.notary_seals.delete_one({"id": seal_id})
     return {"success": True}
@@ -341,11 +335,20 @@ async def get_seal_file(
     if not seal:
         raise HTTPException(status_code=404, detail="Seal not found")
 
-    filepath = os.path.join(UPLOAD_DIR, seal.get("filename", ""))
-    if not os.path.exists(filepath):
+    backend = seal.get("storage_backend", "local")
+    stored_path = seal.get("filename", "")
+
+    # Try presigned URL for S3
+    if backend == "s3":
+        url = storage_service.get_presigned_url(stored_path)
+        if url:
+            return RedirectResponse(url=url, status_code=307)
+
+    local_path = await storage_service.get_file_path(stored_path, backend)
+    if not local_path:
         raise HTTPException(status_code=404, detail="File not found")
 
     media_types = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".svg": "image/svg+xml"}
     media_type = media_types.get(seal.get("file_type", ""), "application/octet-stream")
-    return FileResponse(filepath, media_type=media_type, headers={"Content-Disposition": f"attachment; filename={seal.get('original_name', seal.get('filename', 'seal'))}"})
+    return FileResponse(local_path, media_type=media_type, headers={"Content-Disposition": f"attachment; filename={seal.get('original_name', seal.get('filename', 'seal'))}"})
 

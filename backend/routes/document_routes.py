@@ -1,14 +1,13 @@
 from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import List
 from models import DocumentSeal, DocumentSealCreate, DocumentSealResponse, User
 from routes.auth_routes import get_current_user
+from services.storage_service import storage_service
 import os
 
 router = APIRouter(prefix="/api/documents", tags=["documents"])
-
-UPLOAD_DIR = "/tmp/notary_uploads"
 
 # This will be injected from main server.py
 db: AsyncIOMotorDatabase = None
@@ -110,14 +109,28 @@ async def serve_document_file(
     current_user: User = Depends(get_current_user)
 ):
     """Serve an uploaded document file (authenticated access)"""
-    # Sanitize filename to prevent path traversal
     safe_name = os.path.basename(filename)
-    file_path = os.path.join(UPLOAD_DIR, safe_name)
 
-    if not os.path.isfile(file_path):
+    # Check DB for storage metadata
+    doc_record = await db.document_seals.find_one(
+        {"$or": [{"stored_filename": safe_name}, {"stored_filename": {"$regex": safe_name}}]},
+        {"_id": 0, "storage_backend": 1, "stored_filename": 1}
+    )
+
+    backend = doc_record.get("storage_backend", "local") if doc_record else "local"
+    stored_path = doc_record.get("stored_filename", safe_name) if doc_record else safe_name
+
+    # Try presigned URL for S3
+    if backend == "s3":
+        url = storage_service.get_presigned_url(stored_path)
+        if url:
+            return RedirectResponse(url=url, status_code=307)
+
+    # Fallback to local file serve
+    local_path = await storage_service.get_file_path(stored_path, backend)
+    if not local_path:
         raise HTTPException(status_code=404, detail="File not found")
 
-    # Determine content type
     ext = os.path.splitext(safe_name)[1].lower()
     content_types = {
         '.pdf': 'application/pdf',
@@ -129,4 +142,4 @@ async def serve_document_file(
     }
     media_type = content_types.get(ext, 'application/octet-stream')
 
-    return FileResponse(file_path, media_type=media_type, filename=safe_name, headers={"Content-Disposition": f"attachment; filename={safe_name}"})
+    return FileResponse(local_path, media_type=media_type, filename=safe_name, headers={"Content-Disposition": f"attachment; filename={safe_name}"})

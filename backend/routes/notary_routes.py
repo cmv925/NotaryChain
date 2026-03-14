@@ -12,10 +12,10 @@ from services.hedera_service import hedera_service
 from services.email_service import email_service
 from services.notification_service import create_notification, broadcast_event, get_notary_user_ids
 from services.webhook_service import trigger_event as trigger_webhook
+from services.storage_service import storage_service
 from datetime import datetime, timezone
 import logging
 import uuid
-import base64
 import os
 
 logger = logging.getLogger(__name__)
@@ -83,7 +83,7 @@ async def upload_credentials(
             detail=f"Invalid credential type. Must be one of: {', '.join(valid_types)}"
         )
     
-    # Read file and store as base64 (in production, use cloud storage)
+    # Read file and store via S3/storage service
     content = await file.read()
     if len(content) > 5 * 1024 * 1024:  # 5MB limit
         raise HTTPException(
@@ -91,6 +91,9 @@ async def upload_credentials(
             detail="File too large. Maximum size is 5MB."
         )
     
+    # Upload to storage
+    storage_meta = await storage_service.upload(content, file.filename, folder="credentials")
+
     # Store document metadata
     doc_id = str(uuid.uuid4())
     credential_doc = {
@@ -101,7 +104,8 @@ async def upload_credentials(
         "filename": file.filename,
         "content_type": file.content_type,
         "size": len(content),
-        "data": base64.b64encode(content).decode('utf-8'),
+        "stored_path": storage_meta["path"],
+        "storage_backend": storage_meta["storage_backend"],
         "uploaded_at": datetime.now(timezone.utc)
     }
     

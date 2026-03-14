@@ -3,10 +3,10 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from models import User
 from routes.auth_routes import get_current_user
 from ai_document_analyzer import DocumentAnalyzer
+from services.storage_service import storage_service
 from datetime import datetime, timezone
 import os
 import uuid
-import shutil
 
 router = APIRouter(prefix="/api/ai", tags=["ai-analysis"])
 
@@ -15,10 +15,6 @@ db: AsyncIOMotorDatabase = None
 def set_db(database):
     global db
     db = database
-
-# Ensure uploads directory exists
-UPLOAD_DIR = "/tmp/notary_uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/analyze-document")
 async def analyze_document(
@@ -31,16 +27,17 @@ async def analyze_document(
     Analyze an uploaded document using AI
     """
     try:
-        # Generate unique filename
-        file_ext = os.path.splitext(file.filename)[1]
-        unique_filename = f"{uuid.uuid4()}{file_ext}"
-        file_path = os.path.join(UPLOAD_DIR, unique_filename)
-        
-        # Save uploaded file
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-        
+        # Read file and upload to storage
+        content = await file.read()
+        storage_meta = await storage_service.upload(content, file.filename, folder="ai_analysis")
+
+        # Get local path for analysis (analyzer needs file on disk)
+        file_path = await storage_service.get_file_path(storage_meta["path"], storage_meta["storage_backend"])
+        if not file_path:
+            raise HTTPException(status_code=500, detail="Failed to access uploaded file")
+
         # Determine MIME type
+        file_ext = os.path.splitext(file.filename)[1]
         mime_types = {
             '.pdf': 'application/pdf',
             '.jpg': 'image/jpeg',
@@ -69,13 +66,11 @@ async def analyze_document(
             "document_type": document_type,
             "analysis_result": analysis_result,
             "timestamp": datetime.now(timezone.utc),
-            "file_path": file_path
+            "stored_path": storage_meta["path"],
+            "storage_backend": storage_meta["storage_backend"],
         }
         
         await db.document_analyses.insert_one(analysis_record)
-        
-        # Clean up file after analysis (optional - keep for audit trail)
-        # os.remove(file_path)
         
         return {
             "success": True,

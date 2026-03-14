@@ -4,7 +4,7 @@ Generates downloadable PDF reports for organizations with configurable schedules
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Query
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 from typing import Optional, List
@@ -15,6 +15,7 @@ import os
 import logging
 
 from routes.auth_routes import get_current_user
+from services.storage_service import storage_service
 
 logger = logging.getLogger(__name__)
 
@@ -359,11 +360,26 @@ async def generate_report_now(org_id: str, current_user: dict = Depends(get_curr
     data = await _aggregate_report_data(org_id, days, sections)
     filename = _generate_pdf(data, org_id)
 
+    # Upload generated PDF to storage service
+    filepath = os.path.join(REPORTS_DIR, filename)
+    with open(filepath, "rb") as f:
+        pdf_content = f.read()
+    storage_meta = await storage_service.upload(pdf_content, filename, folder="reports")
+
+    # Clean up local file after upload to S3
+    if storage_meta["storage_backend"] == "s3":
+        try:
+            os.remove(filepath)
+        except OSError:
+            pass
+
     now = datetime.now(timezone.utc).isoformat()
     report_record = {
         "id": str(uuid.uuid4()),
         "org_id": org_id,
         "filename": filename,
+        "stored_path": storage_meta["path"],
+        "storage_backend": storage_meta["storage_backend"],
         "sections": sections,
         "period_days": days,
         "generated_by": current_user.id,
@@ -416,11 +432,25 @@ async def download_report(org_id: str, report_id: str, current_user: dict = Depe
     if not report:
         raise HTTPException(status_code=404, detail="Report not found")
 
-    filepath = os.path.join(REPORTS_DIR, report["filename"])
-    if not os.path.exists(filepath):
-        raise HTTPException(status_code=404, detail="Report file not found on disk")
+    backend = report.get("storage_backend", "local")
+    stored_path = report.get("stored_path", report["filename"])
 
-    return FileResponse(filepath, media_type="application/pdf", filename=report["filename"])
+    # Try presigned URL for S3
+    if backend == "s3":
+        url = storage_service.get_presigned_url(stored_path)
+        if url:
+            return RedirectResponse(url=url, status_code=307)
+
+    # Fallback to local file
+    local_path = await storage_service.get_file_path(stored_path, backend)
+    if not local_path:
+        # Legacy: try reports dir directly
+        filepath = os.path.join(REPORTS_DIR, report["filename"])
+        if not os.path.exists(filepath):
+            raise HTTPException(status_code=404, detail="Report file not found")
+        local_path = filepath
+
+    return FileResponse(local_path, media_type="application/pdf", filename=report["filename"])
 
 
 @router.delete("/{org_id}/reports/{report_id}")
@@ -432,6 +462,12 @@ async def delete_report(org_id: str, report_id: str, current_user: dict = Depend
     if not report:
         raise HTTPException(status_code=404, detail="Report not found")
 
+    # Delete from storage
+    backend = report.get("storage_backend", "local")
+    stored_path = report.get("stored_path", report["filename"])
+    await storage_service.delete(stored_path, backend)
+
+    # Also clean up legacy local file if exists
     filepath = os.path.join(REPORTS_DIR, report["filename"])
     if os.path.exists(filepath):
         os.remove(filepath)
@@ -475,10 +511,24 @@ async def _check_scheduled_reports():
                 days = 7 if freq == "weekly" else 30
                 data = await _aggregate_report_data(org_id, days, config["sections"])
                 filename = _generate_pdf(data, org_id)
+
+                # Upload to storage
+                filepath = os.path.join(REPORTS_DIR, filename)
+                with open(filepath, "rb") as f:
+                    pdf_content = f.read()
+                storage_meta = await storage_service.upload(pdf_content, filename, folder="reports")
+                if storage_meta["storage_backend"] == "s3":
+                    try:
+                        os.remove(filepath)
+                    except OSError:
+                        pass
+
                 report_record = {
                     "id": str(uuid.uuid4()),
                     "org_id": org_id,
                     "filename": filename,
+                    "stored_path": storage_meta["path"],
+                    "storage_backend": storage_meta["storage_backend"],
                     "sections": config["sections"],
                     "period_days": days,
                     "generated_by": "system",
