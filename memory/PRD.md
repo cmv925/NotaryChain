@@ -59,7 +59,18 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **L3 — Security.txt:** Added `/.well-known/security.txt` (RFC 9116) with security contact in `frontend/public/.well-known/security.txt`
 - **L5 — Health Check Obfuscation:** Removed version number, renamed service identifiers (mongodb→database, stripe→payments), removed error details and non-essential service checks from public health endpoint
 
-### AWS S3 Storage Integration — COMPLETED (Mar 14, 2026)
+### Hedera Mainnet Integration — COMPLETED (Mar 14, 2026)
+- Migrated from testnet to mainnet using user-provided mnemonic phrase
+- Derived ECDSA private key from 24-word BIP39 mnemonic via BIP44 Hedera path (m/44'/3030'/0'/0/0)
+- Account: `0.0.10373542`, funded with 172 HBAR
+- Created default mainnet HCS topic: `0.0.10373605`
+- First mainnet seal recorded: sequence #1, verified on HashScan
+- Explorer: https://hashscan.io/mainnet/topic/0.0.10373605
+
+### Stripe Live Mode — COMPLETED (Mar 14, 2026)
+- Replaced test key (`sk_test_emergent`) with user-provided live key
+- Live checkout sessions (`cs_live_*`) verified working
+- Zero code changes — env-only migration
 - **Storage Service:** `services/storage_service.py` — Unified StorageService with S3 (boto3) + local filesystem fallback
 - S3 bucket: `notarychain-documents` (us-east-2), pre-signed URL generation for downloads
 - **server.py fix:** Moved `load_dotenv()` before route imports so StorageService singleton picks up AWS credentials
@@ -397,11 +408,11 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - None — all identified security vulnerabilities have been remediated
 
 ## Future/Backlog
+- Real SAML/OIDC SSO (awaiting IdP provider selection)
 - Enterprise Features Expansion
 - Additional marketplace features
-- Hedera Mainnet Integration (awaiting mainnet account)
-- Stripe Live Mode (awaiting live keys)
-- Real SAML/OIDC SSO (awaiting IdP provider selection)
+- Admin Dashboard Enhancements (blockchain analytics, S3 storage dashboard)
+- Production Hardening (HBAR balance alerts, connection health monitoring)
 
 ## Test Credentials
 | Role | Email | Password |
