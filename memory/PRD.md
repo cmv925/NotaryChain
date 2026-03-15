@@ -147,6 +147,52 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **24-hour cooldown**: Won't repeat same threshold alert within cooldown period
 - **Alert history**: Displayed in Operations Dashboard with color-coded severity badges
 - Auto-clears cooldown when balance recovers above threshold
+
+### S3 Storage Dashboard Enhancements — COMPLETED (Mar 15, 2026)
+- **Backend** (`routes/ops_dashboard_routes.py`): `GET /api/admin/ops/storage-analytics`
+- Per-user storage usage breakdown (top 20 by size)
+- Upload activity trend (daily counts, last 30 days) with bar chart visualization
+- Cost projections: current GB, monthly cost ($0.023/GB S3 Standard), 12-month projected cost
+- Growth rate calculation (current 30d vs previous 30d)
+- Testing: 100% pass rate — iteration_54, iteration_55
+
+### SOC2 Security Audit Export — COMPLETED (Mar 15, 2026)
+- **Backend** (`routes/soc2_export_routes.py`): `GET /api/admin/security/export-pdf`
+- Professional PDF report using ReportLab: score banner, summary table, all 6 security categories
+- One-click download from Security tab with audit log entry
+- Admin-only access, filename includes date
+- Testing: 100% pass rate — iteration_54, iteration_55
+
+### Landing Page Refresh — COMPLETED (Mar 15, 2026)
+- **Frontend** (`components/HeroSection.jsx`): Modernized hero with animated grid background
+- "Production-Ready on Hedera Mainnet" status badge with pulsing indicator
+- 4 trust indicator cards: SOC2 Compliant, Hedera Mainnet, AI-Powered, Biometric ID
+- Updated CTAs: "Get Started Free" → /signup, "Live Demo" → /demo
+- Testing: 100% pass rate — iteration_54, iteration_55
+
+### Guided Onboarding Flow — COMPLETED (Mar 15, 2026)
+- **Frontend** (`pages/OnboardingPage.jsx`): 4-step onboarding for new users
+- Step 1: Welcome with platform highlights
+- Step 2: Role selection (Individual, Business, Notary Professional)
+- Step 3: Personalized feature recommendations based on role
+- Step 4: Completion with quick-action shortcuts to key features
+- Route: `/onboarding` (authenticated, ProtectedRoute)
+- Testing: 100% pass rate — iteration_54, iteration_55
+
+### Service Degradation Alerts — COMPLETED (Mar 15, 2026)
+- **Backend** (`services/service_health_monitor.py`): Background service monitoring MongoDB, S3, Stripe, Hedera
+- 5-minute check interval, 60-minute cooldown per service
+- Auto-detects degradation AND recovery — sends appropriate notifications
+- In-app + email alerts to all admin users when service goes down
+- Health snapshot stored in `system_settings`, alerts in `service_health_alerts` collection
+- **API**: `GET /api/admin/ops/service-health` — live health check with recent alerts
+- **Frontend**: Service Health panel in Operations tab with color-coded cards per service
+- Testing: 100% pass rate — 23/23 backend + all frontend (iteration_55)
+
+### Audit Log 500 Error Fix — COMPLETED (Mar 15, 2026)
+- Fixed `AuditLogResponse` model to use default values for optional fields
+- Added try/except around log parsing to handle mixed schema entries
+- `GET /api/audit/logs` now returns 200 (was 500)
 - **Storage Service:** `services/storage_service.py` — Unified StorageService with S3 (boto3) + local filesystem fallback
 - S3 bucket: `notarychain-documents` (us-east-2), pre-signed URL generation for downloads
 - **server.py fix:** Moved `load_dotenv()` before route imports so StorageService singleton picks up AWS credentials
@@ -481,12 +527,13 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - `/api/sso/test` — Test SSO configuration validity
 
 ## Upcoming Tasks
-- None — all identified security vulnerabilities have been remediated
+- SSO routes refactor (split sso_routes.py into auth0_routes.py + okta_routes.py)
 
 ## Future/Backlog
-- Enterprise Features Expansion
-- Additional marketplace features
-- Configurable Alert Settings Panel (admin UI for HBAR thresholds)
+- Enterprise Features Expansion (SOC2 audit export — done, org management already exists, RBAC policy builder already exists)
+- Additional marketplace features (ratings/reviews already exist, availability calendars already exist)
+- Resend Domain Verification (user task)
+- Custom RBAC policy builder UI enhancements
 
 ## Test Credentials
 | Role | Email | Password |
