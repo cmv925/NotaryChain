@@ -118,6 +118,27 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - Okta Domain: `trial-1257751.okta.com`, Client ID: `0oa110cnei9quynQC698`
 - **Bug fix (Mar 15, 2026):** Fixed redirect_uri mismatch — corrected Okta Client ID and Client Secret in backend/.env to match the Okta application with the registered redirect URIs
 - Testing: 100% pass rate — 12 backend + all frontend tests passed (iteration_52)
+
+### Configurable Alert Settings Panel — COMPLETED (Mar 15, 2026)
+- **Backend** (`routes/alert_settings_routes.py`):
+  - `GET /api/admin/ops/alert-settings` — returns current settings (defaults if not customized)
+  - `PUT /api/admin/ops/alert-settings` — update thresholds, interval, cooldown, notification channels
+  - Settings stored in MongoDB `system_settings` collection, validated (interval 5–1440min, cooldown 1–168h)
+- **Backend** (`services/hbar_alert_service.py`): Refactored to read settings dynamically from DB via `reload_settings()`
+  - Supports per-threshold enable/disable, configurable check interval, and email/in-app notification toggles
+- **Frontend**: Alert Configuration panel in Operations tab with Edit/Save, channel toggles, threshold controls
+- Admin-only (403 for non-admin users)
+- Testing: 100% pass rate — 17 backend + all frontend tests passed (iteration_53)
+
+### Security Compliance Dashboard — COMPLETED (Mar 15, 2026)
+- **Backend** (`routes/security_compliance_routes.py`):
+  - `GET /api/admin/security/compliance` — returns security posture across 6 categories
+- **6 Categories**: Authentication (4 items), SSO (3 items), Data Protection (4 items), Network & Transport (5 items), Authorization & RBAC (3 items), Monitoring & Alerting (3 items)
+- **22 total security features** tracked with live status detection from env vars and DB queries
+- **Score calculation**: Percentage of active features shown in circular progress indicator
+- **Frontend**: New "Security" tab in Admin Dashboard with score banner + 6 category cards
+- Admin-only (403 for non-admin users)
+- Testing: 100% pass rate — included in iteration_53
 - New background service: `services/hbar_alert_service.py` — checks balance every 30 minutes
 - **3 alert levels**: Warning (< 50 HBAR), Critical (< 10 HBAR), Emergency (< 1 HBAR)
 - **In-app notifications**: Created for all admin users when threshold triggered
