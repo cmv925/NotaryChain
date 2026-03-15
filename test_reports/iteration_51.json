@@ -1,0 +1,107 @@
+{
+  "summary": "Tested SSO integration for Okta and Auth0. Backend: 11/11 tests passed (100%). Frontend: All SSO buttons present and clickable. CRITICAL ISSUE: Okta redirect_uri still NOT registered in Okta dashboard - redirect returns 400 Bad Request.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Okta SSO Login",
+        "issue": "Okta returns 400 Bad Request - redirect_uri not registered in Okta dashboard",
+        "affected_selectors": ["data-testid=\"okta-login-button\""],
+        "priority": "HIGH",
+        "notes": "Backend correctly generates URL with redirect_uri=https://okta-flow-test.preview.emergentagent.com/auth/okta/callback but this URL is NOT registered in Okta's application settings"
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_sso_validation.py",
+    "/app/test_reports/pytest/pytest_results_sso_validation.xml"
+  ],
+  "action_items": [
+    "CRITICAL: User must add 'https://okta-flow-test.preview.emergentagent.com/auth/okta/callback' to Okta Dashboard > Applications > NotaryChain > Sign-in redirect URIs"
+  ],
+  "critical_code_review_comments": [
+    "Good: Backend correctly generates Okta auth URL with proper redirect_uri",
+    "Good: Auth0 and Okta status endpoints correctly report configured: true",
+    "Good: SSO providers endpoint lists both Auth0 and Okta",
+    "Good: Frontend has all three SSO buttons with proper data-testid attributes",
+    "Good: OktaCallback page renders correctly and handles missing params gracefully",
+    "Good: Auth0Callback page renders correctly and handles missing params gracefully",
+    "Good: Regular login flow with admin credentials works correctly",
+    "Issue: Okta redirect_uri mismatch - needs dashboard configuration update"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_sso_validation.py"
+  ],
+  "success_rate": {
+    "backend": "100% (11/11 tests passed)",
+    "frontend": "100% (all UI elements present and functional)"
+  },
+  "test_credentials": {
+    "admin_user": {
+      "email": "admin@notarychain.com",
+      "password": "Admin123!"
+    }
+  },
+  "seed_data_creation": "",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "1) All SSO backend endpoints working correctly. 2) Okta redirect_uri is correctly generated as 'https://okta-flow-test.preview.emergentagent.com/auth/okta/callback'. 3) Auth0 redirect_uri is 'https://okta-flow-test.preview.emergentagent.com/auth/callback'. 4) BLOCKING ISSUE: Okta dashboard has NOT been updated with the new redirect URI - Okta returns 400 Bad Request. 5) User must manually update Okta dashboard settings.",
+  "features_tested": {
+    "okta_status": {
+      "endpoint": "GET /api/sso/okta/status",
+      "status": "WORKING",
+      "result": {"configured": true, "domain": "trial-1257751.okta.com"}
+    },
+    "auth0_status": {
+      "endpoint": "GET /api/sso/auth0/status",
+      "status": "WORKING",
+      "result": {"configured": true, "domain": "dev-ec3s8jabv4ei2wjs.us.auth0.com"}
+    },
+    "sso_providers": {
+      "endpoint": "GET /api/sso/providers",
+      "status": "WORKING",
+      "result": "Returns both Auth0 and Okta providers"
+    },
+    "okta_login": {
+      "endpoint": "GET /api/sso/okta/login",
+      "status": "WORKING",
+      "result": "Returns correct auth_url with redirect_uri=https://okta-flow-test.preview.emergentagent.com/auth/okta/callback"
+    },
+    "auth0_login": {
+      "endpoint": "GET /api/sso/auth0/login",
+      "status": "WORKING",
+      "result": "Returns correct auth_url with redirect_uri=https://okta-flow-test.preview.emergentagent.com/auth/callback"
+    },
+    "login_page_sso_buttons": {
+      "route": "/login",
+      "status": "WORKING",
+      "elements": ["Sign in with Auth0", "Sign in with Okta", "Sign in with Enterprise SSO"]
+    },
+    "okta_callback_page": {
+      "route": "/auth/okta/callback",
+      "status": "WORKING",
+      "notes": "Renders correctly, handles missing params gracefully"
+    },
+    "auth0_callback_page": {
+      "route": "/auth/callback",
+      "status": "WORKING",
+      "notes": "Renders correctly, handles missing params gracefully"
+    },
+    "regular_login": {
+      "endpoint": "POST /api/auth/login",
+      "status": "WORKING",
+      "notes": "admin@notarychain.com / Admin123! works correctly"
+    }
+  },
+  "okta_redirect_uri_issue": {
+    "error": "400 Bad Request - The 'redirect_uri' parameter must be a Login redirect URI in the client app settings",
+    "backend_generated_url": "https://trial-1257751.okta.com/oauth2/default/v1/authorize?client_id=0oa110btli7AyC2ZB698&response_type=code&scope=openid%20profile%20email&redirect_uri=https://okta-flow-test.preview.emergentagent.com/auth/okta/callback&state=...",
+    "required_action": "Add 'https://okta-flow-test.preview.emergentagent.com/auth/okta/callback' to Okta Dashboard > Applications > NotaryChain > Sign-in redirect URIs",
+    "root_cause": "App was forked to new environment (okta-flow-test) but Okta dashboard still has old redirect URIs"
+  }
+}
