@@ -485,12 +485,26 @@ async def auth0_status():
 # --- Okta OIDC Routes ---
 
 def _get_callback_base(request: Request):
-    """Extract frontend base URL from request headers."""
+    """Extract frontend base URL from request headers, handling K8s ingress."""
+    # Try X-Forwarded headers first (set by K8s ingress)
+    forwarded_host = request.headers.get("x-forwarded-host")
+    forwarded_proto = request.headers.get("x-forwarded-proto", "https")
+    if forwarded_host:
+        return f"{forwarded_proto}://{forwarded_host}"
+
+    # Try origin header
     origin = request.headers.get("origin") or request.headers.get("referer", "")
     if origin:
         from urllib.parse import urlparse
         parsed = urlparse(origin.rstrip("/").split("?")[0].split("#")[0])
-        return f"{parsed.scheme}://{parsed.netloc}"
+        if parsed.netloc and "cluster-" not in parsed.netloc:
+            return f"{parsed.scheme}://{parsed.netloc}"
+
+    # Fallback to REACT_APP_BACKEND_URL (which is the public URL)
+    backend_url = os.environ.get("REACT_APP_BACKEND_URL", "")
+    if backend_url:
+        return backend_url.rstrip("/")
+
     return os.environ.get("FRONTEND_URL", "http://localhost:3000")
 
 
