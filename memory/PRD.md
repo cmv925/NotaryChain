@@ -115,8 +115,9 @@ Multi-tenancy, Organizations, Member management, SSO configuration
   - `GET /api/sso/okta/status` — check if Okta is configured
   - `GET /api/sso/providers` — lists all configured SSO providers (Auth0 + Okta)
 - **Frontend**: "Sign in with Okta" button (blue) on LoginPage, OktaCallback page at `/auth/okta/callback`
-- Okta Domain: `trial-1257751.okta.com`
-- Testing: 100% pass rate — 19 backend + all frontend tests passed
+- Okta Domain: `trial-1257751.okta.com`, Client ID: `0oa110cnei9quynQC698`
+- **Bug fix (Mar 15, 2026):** Fixed redirect_uri mismatch — corrected Okta Client ID and Client Secret in backend/.env to match the Okta application with the registered redirect URIs
+- Testing: 100% pass rate — 12 backend + all frontend tests passed (iteration_52)
 - New background service: `services/hbar_alert_service.py` — checks balance every 30 minutes
 - **3 alert levels**: Warning (< 50 HBAR), Critical (< 10 HBAR), Emergency (< 1 HBAR)
 - **In-app notifications**: Created for all admin users when threshold triggered
