@@ -106,6 +106,17 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - Works alongside existing email/password auth — no breaking changes
 - Auth0 Domain: `dev-ec3s8jabv4ei2wjs.us.auth0.com`
 - Testing: 100% pass rate — 13 backend + all frontend tests passed
+
+### Okta SSO Integration — COMPLETED (Mar 15, 2026)
+- Real Okta OIDC integration alongside Auth0
+- **Backend** (`routes/sso_routes.py`): Okta login URL generator, callback handler, status endpoint
+  - `GET /api/sso/okta/login` — generates Okta authorization URL via `/oauth2/default/v1/authorize`
+  - `POST /api/sso/okta/callback` — exchanges code via `/oauth2/default/v1/token`, fetches userinfo, JIT provisions user
+  - `GET /api/sso/okta/status` — check if Okta is configured
+  - `GET /api/sso/providers` — lists all configured SSO providers (Auth0 + Okta)
+- **Frontend**: "Sign in with Okta" button (blue) on LoginPage, OktaCallback page at `/auth/okta/callback`
+- Okta Domain: `trial-1257751.okta.com`
+- Testing: 100% pass rate — 19 backend + all frontend tests passed
 - New background service: `services/hbar_alert_service.py` — checks balance every 30 minutes
 - **3 alert levels**: Warning (< 50 HBAR), Critical (< 10 HBAR), Emergency (< 1 HBAR)
 - **In-app notifications**: Created for all admin users when threshold triggered
@@ -451,7 +462,6 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - None — all identified security vulnerabilities have been remediated
 
 ## Future/Backlog
-- Okta SSO Integration (if needed alongside Auth0)
 - Enterprise Features Expansion
 - Additional marketplace features
 - Configurable Alert Settings Panel (admin UI for HBAR thresholds)
