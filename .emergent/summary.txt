@@ -1,70 +1,77 @@
 <analysis>**original_problem_statement:**
-The user's goal is to build a sophisticated, futuristic notarization platform named NotaryChain. The project has evolved into a feature-rich, enterprise-grade platform. Recent user requests have focused on creating investor-facing materials (demo page, funding proposals), completing a full security audit and remediation, and beginning the migration to a production-ready infrastructure by integrating key third-party services like AWS S3.
+The user's goal is to build a sophisticated, futuristic notarization platform named NotaryChain. The project has evolved into a feature-rich, enterprise-grade platform. Recent user requests have focused on creating investor-facing materials (demo page, funding proposals), completing a full security audit and remediation, and beginning the migration to a production-ready infrastructure by integrating key third-party services like AWS S3, Hedera Mainnet, Stripe Live, and real SSO providers (Auth0, Okta).
 
 PRODUCT REQUIREMENTS:
 1.  **Investor Demo Flow**: Build a password-protected, cinematic demo page. (COMPLETED)
 2.  **Funding Proposals**: Generate compelling proposals for the Hedera Foundation and Wefunder. (COMPLETED)
 3.  **Comprehensive Security Review**: Systematically audit the codebase for vulnerabilities. (COMPLETED)
-4.  **Security Remediation**: Fix all identified vulnerabilities, starting with the most critical. (IN PROGRESS - Critical, High, and Medium fixed)
-5.  **Production Integrations**: Provide guides for and begin implementing production services, starting with AWS S3 for document storage. (IN PROGRESS)
+4.  **Security Remediation**: Fix all identified vulnerabilities, including low-priority ones. (COMPLETED)
+5.  **Production Integrations**: Implement production services: AWS S3, Hedera Mainnet, Stripe Live, and real SSO. (IN PROGRESS)
 
 **User's preferred language**: English
 
 **what currently exists?**
-A mature, full-stack notarization platform built with React, FastAPI, and MongoDB. The application features a multi-role authentication system, a custom RBAC engine, AI-driven transaction orchestration, blockchain sealing (Hedera testnet), Stripe payments (test mode), and enterprise tools like webhooks and scheduled reports. The agent has just completed a major security overhaul, fixing all critical, high, and medium vulnerabilities, and has begun integrating AWS S3 using user-provided credentials.
+A mature, full-stack notarization platform (React, FastAPI, MongoDB) that is nearly production-ready. The application has been significantly hardened and enhanced with live, production-grade services. Key features now include:
+- **Cloud Storage**: All documents are stored on AWS S3.
+- **Blockchain Sealing**: Notarizations are sealed on the Hedera Mainnet.
+- **Live Payments**: Stripe is configured in Live Mode.
+- **Real SSO**: Auth0 is fully integrated and working. Okta integration is in progress but currently blocked.
+- **Operational Monitoring**: An admin Operations Dashboard provides real-time status for all key services (Hedera, S3, Stripe), and an automated background service sends alerts for low HBAR balance.
+- **Enhanced Communications**: The notarization completion email now includes a full data package with blockchain proofs.
 
 **Last working item**:
--   **Last item agent was working:** The agent began integrating AWS S3 to replace local disk storage for all documents, a critical step for production readiness. The agent received the user's AWS credentials and added them to the  file.
--   **Status:** IN PROGRESS
+-   **Last item agent was working:** Debugging the Okta SSO integration. The flow is failing with a 400 Bad Request error from Okta, indicating a  mismatch, even after the user confirmed the configuration in the Okta dashboard. The agent was attempting to debug the exact URL being sent to pinpoint the discrepancy.
+-   **Status:** BLOCKED
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?** both
+-   **Which testing method agent to use?** The agent should first use  with verbose output and log the exact generated URL in  to identify the mismatch. Once the URI issue is resolved, use the  to perform a full end-to-end test of both the Auth0 and Okta login flows.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Remediate Low-Severity Security Vulnerabilities (P2)**
-    -   **Attempted fixes:** None. These were deprioritized to focus on more severe issues.
+-   **Issue 1: Okta SSO Integration Fails with Redirect URI Mismatch (P0)**
+    -   **Attempted fixes:**
+        -   Corrected the callback URL generation logic in  to use  to handle proxy rewrites.
+        -   Experimented with both Okta's  and org-level authorization servers.
+        -   Confirmed with the user that the redirect URI  was set in the Okta dashboard.
     -   **Next debug checklist:**
-        -   : Implement a larger common password blacklist to prevent weak passwords (L1).
-        -   : Add a route for  to provide a security contact point (L3).
-        -   : Obfuscate or remove detailed version/dependency info from the public health check endpoint (L5).
-    -   **Why fix this issue and what will be achieved with the fix?** To fully harden the application's security posture and adhere to all best practices identified in the audit.
-    -   **Status:** NOT STARTED
+        -   In , within the  function, add a print statement to log the fully constructed  right before returning the .
+        -   Ask the user to provide a screenshot of the Okta Application's General Settings page, specifically showing the Sign-in redirect URIs field, to eliminate any possibility of a subtle typo or whitespace issue.
+        -   Verify the  variable in  does not contain any typos or extra characters (e.g., a trailing slash). The value is .
+    -   **Why fix this issue and what will be achieved with the fix?** To complete the multi-provider SSO implementation, offering enterprise customers a choice between Auth0 and Okta.
+    -   **Status:** IN PROGRESS
     -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** backend
+    -   **Should Test frontend/backend/both after fix?** both
     -   **Blocked on other issue:** None.
 
 **In progress Task List**:
--   **Task 1: Complete AWS S3 Integration (P0)**
-    -   **Where to resume:** The user has provided AWS credentials, which have been added to . The next step is to create a new service file  using . This service will manage all S3 operations (upload, download, delete). Subsequently, all routes that currently handle file I/O with the local disk must be refactored to use this new S3 service. This includes , , , and . Downloads should be handled via pre-signed URLs.
-    -   **What will be achieved with this?** The application will have a scalable, durable, and secure cloud storage solution for all user documents, a prerequisite for production launch.
-    -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** both
-    -   **Blocked on something:** No.
+-   None. The current focus is solely on fixing the Okta integration.
 
 **Upcoming and Future Tasks**
-
 **Upcoming Tasks:**
-*   **Implement Production Integrations (P1 - Blocked):** The following integrations are architecturally ready but blocked until the user provides credentials:
-    *   **Hedera Mainnet Integration:** Migrate from Testnet to Mainnet for legally binding blockchain sealing.
-    *   **Stripe Live Mode:** Switch from test keys to live keys to accept real payments.
-    *   **Real SSO Integration (Auth0 recommended):** Replace the mocked SSO with a real Identity Provider (e.g., Auth0, Clerk).
+*   **Configurable Alert Settings Panel (P1):** Build an admin UI to customize HBAR alert thresholds, check interval, and notification preferences.
+*   **Security Compliance Dashboard (P1):** Create an admin panel showing security posture at-a-glance (active features, audit dates, policy strength) for investor due diligence.
+
+**Future Tasks:**
+*   **S3 Storage Dashboard Enhancements (P2):** Add deeper S3 analytics like upload/download trends, per-user storage quotas, and cost projections.
+*   **Enterprise Features Expansion (P2):** Implement SOC2-style audit export reports, advanced organization management, and a custom RBAC policy builder.
+*   **Landing Page Refresh & Onboarding (P2):** Modernize the landing page and create a guided onboarding flow for new users.
+*   **Additional Marketplace Features (P2):** Expand the notary marketplace with ratings/reviews and availability calendars.
+*   **Service Degradation Alerts (P2):** Implement proactive notifications for when any integration (S3, Stripe, DB) becomes unhealthy.
+*   **Resend Domain Verification (User Task):** The user needs to verify their domain on  to enable email delivery to all users.
 
 **Completed work in this session**
--   **Investor Demo Flow (DONE):** Implemented a password-protected cinematic investor deck at  with 16 auto-playing slides showcasing platform features.
--   **Funding Proposals (DONE):** Generated comprehensive, tailored funding proposals for both the Hedera Foundation and the Wefunder community crowdfunding platform.
--   **Comprehensive Security Audit (DONE):** Performed a systematic security review of the entire codebase, identifying 28 vulnerabilities across 4 severity levels and generating a detailed report.
--   **Security Remediation (DONE for Critical/High/Medium):** Fixed all 6 CRITICAL, 8 HIGH, and 9 MEDIUM vulnerabilities. Key fixes included:
-    -   Patched Regex (ReDoS) and HTML injection vulnerabilities.
-    -   Hardened CORS policy and reduced JWT expiry from 7 days to 24 hours.
-    -   Secured WebSocket authentication by moving the token from URL parameters to the message body.
-    -   Implemented rate limiting, file size/type validation, and account lockout mechanisms.
-    -   Migrated SSO sessions from in-memory storage to a MongoDB collection with a TTL index.
-    -   Replaced all  calls with timezone-aware .
--   **Production Readiness Analysis (DONE):** Provided detailed pricing breakdowns and step-by-step guides for all pending production integrations (AWS S3, Hedera Mainnet, Stripe Live, SSO).
--   **Deployment Health Check (DONE):** Ran the deployment agent and fixed a database query performance issue identified in the admin dashboard.
+-   **AWS S3 Integration (DONE):** Migrated all file I/O from local disk to a production-ready AWS S3 bucket.
+-   **Low-Severity Security Remediation (DONE):** Fixed all remaining security audit items (expanded password blacklist, added , obfuscated health check).
+-   **Hedera Mainnet Integration (DONE):** Migrated from Testnet to Mainnet using user-provided credentials, derived the private key from a mnemonic, created a mainnet topic, and verified the first live transaction.
+-   **Stripe Live Mode Integration (DONE):** Switched the payment system from test to live mode using user-provided keys.
+-   **Operations Dashboard (DONE):** Created a new admin dashboard tab to provide real-time monitoring of Hedera balance, S3 storage, and Stripe status.
+-   **HBAR Balance Alerts (DONE):** Implemented a background service that monitors the Hedera account balance and sends alerts (in-app, email, log) when it falls below a threshold.
+-   **Notarization Completion Email Enhancement (DONE):** Upgraded the session completion email to include a full data package with notary details and blockchain proofs.
+-   **Auth0 SSO Integration (DONE):** Successfully integrated Auth0 as the first real SSO provider.
+-   **Okta SSO Integration (IN PROGRESS):** Began integrating Okta as a second SSO option.
+-   **Deployment Readiness (DONE):** Ran a health check and fixed a production-blocking CORS configuration issue.
 
 **Earlier issues found/mentioned but not fixed**
--   See . The only remaining known issues are the Low-severity findings from the security audit.
+-   None.
 
 **Known issue recurrence from previous fork**
 -   None.
@@ -73,78 +80,78 @@ A mature, full-stack notarization platform built with React, FastAPI, and MongoD
 
 
 **Key Technical Concepts**
--   **Frontend**: React, React Router, TailwindCSS, Shadcn UI, Axios, 
--   **Backend**: FastAPI, MongoDB (Motor), , Pydantic, , 
--   **Security**: JWT, 2FA, bcrypt, Rate Limiting, CORS, Content Security Policy, WebSocket secure auth
--   **Integrations**: Gemini (AI), Stripe (Payments), Hedera (Blockchain), Daily.co (Video), Resend (Email), AWS S3 (Storage)
+-   **Frontend**: React, React Router, TailwindCSS, Shadcn UI, Axios
+-   **Backend**: FastAPI, MongoDB (Motor), 
+-   **Security**: JWT, 2FA, OIDC (Auth0, Okta), Rate Limiting, CORS, CSP
+-   **Integrations**: Gemini (AI), Stripe (Live Payments), Hedera (Mainnet Blockchain), AWS S3 (Storage), Auth0 (SSO), Okta (SSO)
 
 **key DB schema**
--   **users**: Now includes ,  fields. 2FA backup codes are now hashed.
--   **sso_sessions**:  - New collection to persist SSO sessions.
+-   **hbar_balance_alerts**:  - New collection for logging HBAR alerts.
 
 **changes in tech stack**
--   : Added to  for AWS S3 integration.
--   : Added to  to support the new CORS configuration.
+-   : Now fully integrated for S3 storage.
+-   : Used for mnemonic-to-private-key derivation.
+-   : Used by the integration playbook for OIDC flows with Auth0 and Okta.
 
 **All files of reference**
--   **Key Modified Backend**:  (CORS, new middleware),  (JWT expiry, account lockout, hashed backup codes), , ,  (MongoDB sessions),  (WebSocket auth).
--   **Key Modified Frontend**: , .
--   **New Documents**: , , .
--   **User Provided**:  now contains AWS credentials.
+-   **Primary Target**:  (for debugging Okta).
+-   **Key Modified**: , , , , , , , , .
+-   **Numerous route files** were refactored to use the S3 .
 
 **Areas that need refactoring**:
--   All routes performing local file I/O need to be refactored to use the new .
+-   The  file is becoming large and complex. Once Okta is working, consider splitting it into  and  for better separation of concerns.
 
 **key api endpoints**
--    (POST)
--    (POST)
--   All file upload/download endpoints (e.g., , ) are targeted for refactoring to use S3.
+-    (GET)
+-    (GET)
+-    (GET)
+-    (GET) - **(Needs fix)**
+-    (GET) - **(Needs fix)**
 
 **Critical Info for New Agent**
--   You are resuming the AWS S3 integration. The user has provided valid credentials. Your top priority is to complete this migration.
--   The application's security has been significantly hardened. All Critical, High, and Medium vulnerabilities from the audit are fixed. Be mindful of these new security patterns (e.g., rate limiting, input sanitization) when adding new code.
--   Do not work on the other blocked Upcoming Tasks (Hedera Mainnet, Stripe Live, SSO) until the user provides the necessary credentials for them.
--   The platform is in a very healthy state, with most recent features and fixes having passed extensive testing.
+-   Your immediate priority is to resolve the Okta  mismatch. Auth0 integration is working perfectly and can be used as a reference for the correct OIDC server-side flow.
+-   The user has already confirmed the redirect URI is configured in their Okta dashboard, but the error persists. Do not simply ask them to check again without first doing your own deep-dive investigation by logging the exact URL being generated.
+-   The platform is now operating almost entirely on live production services (S3, Hedera Mainnet, Stripe Live, Auth0). Be mindful that actions have real-world consequences (e.g., spending HBAR).
 
 **documents and test reports created in this job**
+-    (S3 integration validation)
+-    (Ops Dashboard validation)
+-    (Completion email validation)
+-    (Auth0 SSO validation)
+-    (Okta SSO validation - partial)
 -   
--   
--   
--    (Investor Deck initial tests)
--    (Investor Deck expanded tests)
--    (Security fixes validation tests)
--    (Deployment readiness report)
+-    (Continuously updated)
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User provided AWS S3 credentials.** (Completed)
-2.  **User asked for a step-by-step guide to connect AWS.** (Completed)
-3.  **User asked for a Wefunder proposal.** (Completed)
-4.  **User asked for a deployment health check.** (Completed)
-5.  **User asked for sections to be integrated into the Hedera proposal.** (Completed)
-6.  **User asked about NotaryChain's impact on the Hedera ecosystem.** (Completed)
-7.  **User asked about NotaryChain's most important needs and funding impact.** (Completed)
-8.  **User asked for a pricing list for all third-party integrations.** (Completed)
-9.  **User confirmed updating the Hedera proposal with a new funding amount.** (Completed)
-10. **User asked for advice on the best investment ask for the Hedera foundation.** (Completed)
+1.  **User:** its set correctly - In response to the agent's suggestion that the Okta redirect URI might be wrong. This is the main blocker. (Pending resolution)
+2.  **User:** both have been configured - Confirming they set the callback URLs in both Auth0 and Okta dashboards. (Completed)
+3.  **User:** Provided Okta credentials. (Completed)
+4.  **User:** Asked for the steps to configure Okta. (Completed)
+5.  **User:** proceed with the Next Action Items - Triggering the manual configuration step for SSO providers. (Completed)
+6.  **User:** Provided Auth0 credentials. (Completed)
+7.  **User:** Asked what was needed for Auth0 & Okta integration. (Completed)
+8.  **User:** Asked to see the list of remaining enhancement ideas. (Completed)
+9.  **User:** yes proceed - Approving the HBAR balance alert feature. (Completed)
+10. **User:** HBAR balance alerts - Selecting the next feature to build. (Completed)
 
 **Project Health Check:**
--   **Broken:** None
--   **Mocked:** SSO (simulated), Stripe (test mode), Hedera (testnet). Document Storage (local disk) is currently being migrated to AWS S3.
+-   **Broken:** Okta SSO login flow.
+-   **Mocked:** The generic Enterprise SSO button on the login page remains a placeholder concept.
 
 **3rd Party Integrations**
 -   **Google Gemini** — uses Emergent LLM Key
--   **Hedera Hashgraph (Testnet)** — uses User API Key
--   **Stripe (Test Mode)** — uses User API Key
+-   **Hedera Hashgraph (Mainnet)** — uses User API Key
+-   **Stripe (Live Mode)** — uses User API Key
 -   **Daily.co** — uses User API Key
 -   **Resend** (Email) — uses User API Key
--   **AWS S3** — uses User API Key (Integration In Progress)
--   **CoinGecko** — Public API
--   **TensorFlow.js / face-api.js** — Client-side libraries
+-   **AWS S3** — uses User API Key
+-   **Auth0** — uses User API Key
+-   **Okta** — uses User API Key (Integration In Progress)
 
 **Testing status**
--   **Testing agent used after significant changes**: YES (Used multiple times for the investor deck and security remediation, all with 100% pass rates).
+-   **Testing agent used after significant changes**: YES. Used extensively for all major features (S3, Ops Dashboard, Auth0, etc.), all passing with 100%.
 -   **Troubleshoot agent used after agent stuck in loop**: NO
--   **Test files created**: Yes, the testing agent created temporary test suites.
+-   **Test files created**: Yes, multiple temporary suites were created and passed by the testing agent.
 -   **Known regressions**: None.
 
 **Credentials to test flow:**
@@ -152,7 +159,6 @@ A mature, full-stack notarization platform built with React, FastAPI, and MongoD
 |---|---|---|
 | **Admin** | admin@notarychain.com | Admin123! |
 | **Regular User** | demo@test.com | Demo123! |
-| **Test Notary Applicant** | notarytest@test.com | Test123! |
 
 **What agent forgot to execute**
--   The agent has been diligent in following user requests. The only pending work is the completion of the S3 integration which was just started, and the remediation of low-priority security issues.</analysis>
+-   The agent is currently stuck on the Okta integration and has not yet been able to resolve the  mismatch error. All other planned tasks for the session were completed.</analysis>

@@ -18,7 +18,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://chain-cloud-storage.preview.emergentagent.com")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://okta-flow-test.preview.emergentagent.com")
 
 # Module-scoped session to avoid rate limiting with multiple logins
 _session_cache = {}
