@@ -8,7 +8,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '../hooks/use-toast';
 import { useAuth } from '../contexts/AuthContext';
-import { ShieldCheck, ArrowLeft, KeyRound, Globe } from 'lucide-react';
+import { ShieldCheck, ArrowLeft, KeyRound, Globe, Shield } from 'lucide-react';
 import axios from 'axios';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -19,6 +19,7 @@ const LoginPage = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [auth0Loading, setAuth0Loading] = useState(false);
+  const [oktaLoading, setOktaLoading] = useState(false);
 
   // 2FA state
   const [show2FA, setShow2FA] = useState(false);
@@ -122,6 +123,21 @@ const LoginPage = () => {
     }
   };
 
+  const handleOktaLogin = async () => {
+    setOktaLoading(true);
+    try {
+      const response = await axios.get(`${API}/api/sso/okta/login`, {
+        headers: { origin: window.location.origin },
+      });
+      if (response.data.auth_url) {
+        window.location.href = response.data.auth_url;
+      }
+    } catch (err) {
+      toast({ title: 'Okta Unavailable', description: err.response?.data?.detail || 'SSO is not configured', variant: 'destructive' });
+      setOktaLoading(false);
+    }
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -211,6 +227,15 @@ const LoginPage = () => {
                   >
                     <Globe className="w-4 h-4" />
                     {auth0Loading ? 'Redirecting...' : 'Sign in with Auth0'}
+                  </button>
+                  <button
+                    onClick={handleOktaLogin}
+                    disabled={oktaLoading}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-blue-500/30 bg-blue-500/5 text-blue-400 hover:bg-blue-500/10 hover:border-blue-500/50 transition-all text-sm font-medium disabled:opacity-50"
+                    data-testid="okta-login-button"
+                  >
+                    <Shield className="w-4 h-4" />
+                    {oktaLoading ? 'Redirecting...' : 'Sign in with Okta'}
                   </button>
                   <button
                     onClick={() => navigate('/sso/login')}

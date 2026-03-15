@@ -33,6 +33,11 @@ AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN", "")
 AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID", "")
 AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET", "")
 
+# Okta config
+OKTA_DOMAIN = os.environ.get("OKTA_DOMAIN", "")
+OKTA_CLIENT_ID = os.environ.get("OKTA_CLIENT_ID", "")
+OKTA_CLIENT_SECRET = os.environ.get("OKTA_CLIENT_SECRET", "")
+
 
 # --- Models ---
 
@@ -321,17 +326,7 @@ async def auth0_login(request: Request):
     if not AUTH0_DOMAIN or not AUTH0_CLIENT_ID:
         raise HTTPException(status_code=503, detail="Auth0 is not configured")
 
-    # Build callback URL from request origin
-    origin = request.headers.get("origin") or request.headers.get("referer", "")
-    if origin:
-        origin = origin.rstrip("/").split("?")[0].split("#")[0]
-        # Strip path to get base URL
-        from urllib.parse import urlparse
-        parsed = urlparse(origin)
-        callback_base = f"{parsed.scheme}://{parsed.netloc}"
-    else:
-        callback_base = os.environ.get("FRONTEND_URL", "http://localhost:3000")
-
+    callback_base = _get_callback_base(request)
     callback_url = f"{callback_base}/auth/callback"
     state = secrets.token_urlsafe(32)
 
@@ -485,6 +480,184 @@ async def auth0_status():
         "configured": bool(AUTH0_DOMAIN and AUTH0_CLIENT_ID),
         "domain": AUTH0_DOMAIN if AUTH0_DOMAIN else None,
     }
+
+
+# --- Okta OIDC Routes ---
+
+def _get_callback_base(request: Request):
+    """Extract frontend base URL from request headers."""
+    origin = request.headers.get("origin") or request.headers.get("referer", "")
+    if origin:
+        from urllib.parse import urlparse
+        parsed = urlparse(origin.rstrip("/").split("?")[0].split("#")[0])
+        return f"{parsed.scheme}://{parsed.netloc}"
+    return os.environ.get("FRONTEND_URL", "http://localhost:3000")
+
+
+@router.get("/okta/login")
+async def okta_login(request: Request):
+    """Initiate Okta login — returns the Okta authorization URL."""
+    if not OKTA_DOMAIN or not OKTA_CLIENT_ID:
+        raise HTTPException(status_code=503, detail="Okta is not configured")
+
+    callback_base = _get_callback_base(request)
+    callback_url = f"{callback_base}/auth/okta/callback"
+    state = secrets.token_urlsafe(32)
+
+    await db.sso_sessions.insert_one({
+        "session_id": state,
+        "type": "okta",
+        "callback_url": callback_url,
+        "created_at": datetime.now(timezone.utc),
+        "status": "pending",
+    })
+
+    auth_url = (
+        f"https://{OKTA_DOMAIN}/oauth2/default/v1/authorize?"
+        f"client_id={OKTA_CLIENT_ID}&"
+        f"response_type=code&"
+        f"scope=openid%20profile%20email&"
+        f"redirect_uri={callback_url}&"
+        f"state={state}"
+    )
+
+    return {"auth_url": auth_url, "state": state}
+
+
+@router.post("/okta/callback")
+async def okta_callback(request: Request):
+    """Exchange Okta authorization code for tokens, sync user, issue JWT."""
+    body = await request.json()
+    code = body.get("code")
+    state = body.get("state")
+    redirect_uri = body.get("redirect_uri")
+
+    if not code or not state:
+        raise HTTPException(status_code=400, detail="Missing code or state parameter")
+
+    session = await db.sso_sessions.find_one({"session_id": state, "type": "okta", "status": "pending"})
+    if not session:
+        raise HTTPException(status_code=400, detail="Invalid or expired state")
+
+    callback_url = redirect_uri or session.get("callback_url", "")
+
+    # Exchange code for tokens
+    async with httpx.AsyncClient() as client:
+        token_resp = await client.post(
+            f"https://{OKTA_DOMAIN}/oauth2/default/v1/token",
+            data={
+                "grant_type": "authorization_code",
+                "client_id": OKTA_CLIENT_ID,
+                "client_secret": OKTA_CLIENT_SECRET,
+                "code": code,
+                "redirect_uri": callback_url,
+            },
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+        )
+
+    if token_resp.status_code != 200:
+        logger.error(f"Okta token exchange failed: {token_resp.text}")
+        await db.sso_sessions.update_one({"session_id": state}, {"$set": {"status": "failed"}})
+        raise HTTPException(status_code=401, detail="Okta authentication failed")
+
+    token_data = token_resp.json()
+    access_token = token_data.get("access_token")
+
+    # Fetch user profile from Okta
+    async with httpx.AsyncClient() as client:
+        userinfo_resp = await client.get(
+            f"https://{OKTA_DOMAIN}/oauth2/default/v1/userinfo",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+    if userinfo_resp.status_code != 200:
+        logger.error(f"Okta userinfo failed: {userinfo_resp.text}")
+        raise HTTPException(status_code=401, detail="Failed to retrieve user profile")
+
+    okta_profile = userinfo_resp.json()
+    okta_sub = okta_profile.get("sub", "")
+    email = okta_profile.get("email", "").lower().strip()
+    full_name = okta_profile.get("name") or f"{okta_profile.get('given_name', '')} {okta_profile.get('family_name', '')}".strip() or email.split("@")[0]
+    picture = okta_profile.get("picture", "")
+
+    if not email:
+        raise HTTPException(status_code=400, detail="Okta profile missing email")
+
+    # Sync user in MongoDB
+    user = await db.users.find_one({"email": email})
+    now = datetime.now(timezone.utc).isoformat()
+
+    if not user:
+        user_id = str(uuid.uuid4())
+        random_pw = secrets.token_urlsafe(32)
+        user_doc = {
+            "id": user_id,
+            "email": email,
+            "full_name": full_name,
+            "hashed_password": get_password_hash(random_pw),
+            "is_active": True,
+            "created_at": now,
+            "okta_sub": okta_sub,
+            "auth_method": "okta",
+            "profile_picture": picture,
+            "sso_provisioned": True,
+        }
+        await db.users.insert_one(user_doc)
+        logger.info(f"Okta JIT provisioned user: {email} (sub: {okta_sub})")
+        provisioned = True
+    else:
+        await db.users.update_one(
+            {"email": email},
+            {"$set": {
+                "okta_sub": okta_sub,
+                "profile_picture": picture,
+                "last_login": now,
+                "last_login_method": "okta",
+            }}
+        )
+        user_id = user["id"]
+        provisioned = False
+
+    await db.sso_sessions.update_one({"session_id": state}, {"$set": {"status": "completed"}})
+
+    await db.audit_logs.insert_one({
+        "id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "action": "okta_login",
+        "details": {"email": email, "okta_sub": okta_sub, "provisioned": provisioned},
+        "timestamp": now,
+    })
+
+    jwt_token = create_access_token(data={"sub": email})
+
+    return {
+        "access_token": jwt_token,
+        "token_type": "bearer",
+        "user_email": email,
+        "full_name": full_name,
+        "provisioned": provisioned,
+        "message": "Okta authentication successful",
+    }
+
+
+@router.get("/okta/status")
+async def okta_status():
+    """Check if Okta is configured."""
+    return {
+        "configured": bool(OKTA_DOMAIN and OKTA_CLIENT_ID),
+        "domain": OKTA_DOMAIN if OKTA_DOMAIN else None,
+    }
+
+
+@router.get("/providers")
+async def sso_providers():
+    """List all configured SSO providers."""
+    providers = []
+    if AUTH0_DOMAIN and AUTH0_CLIENT_ID:
+        providers.append({"name": "Auth0", "type": "auth0", "configured": True})
+    if OKTA_DOMAIN and OKTA_CLIENT_ID:
+        providers.append({"name": "Okta", "type": "okta", "configured": True})
+    return {"providers": providers}
 
 
 # Cleanup old sessions periodically (called from startup or scheduler)

@@ -56,6 +56,7 @@ import DocComparePage from './pages/DocComparePage';
 import BrandingPage from './pages/BrandingPage';
 import SSOLoginPage from './pages/SSOLoginPage';
 import Auth0Callback from './pages/Auth0Callback';
+import OktaCallback from './pages/OktaCallback';
 import InvestorDeck from './pages/InvestorDeck';
 import ErrorBoundary from './components/ErrorBoundary';
 import { WebSocketProvider } from './contexts/WebSocketContext';
@@ -75,6 +76,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/sso/login" element={<SSOLoginPage />} />
             <Route path="/auth/callback" element={<Auth0Callback />} />
+            <Route path="/auth/okta/callback" element={<OktaCallback />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/demo" element={<QuickSealDemo />} />
             <Route path="/verify" element={<VerifyDocument />} />
