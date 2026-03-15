@@ -7,7 +7,9 @@ import {
   CheckCircle, XCircle, Clock, RefreshCw, Search,
   BarChart3, Activity, Wallet, LogOut, ChevronDown,
   Eye, UserCheck, UserX, Settings, AlertTriangle, PieChart, Plus,
-  Server, HardDrive, Zap, Database, Globe, AlertCircle
+  Server, HardDrive, Zap, Database, Globe, AlertCircle,
+  Lock, Bell, BellOff, Mail, MailX, Save, ToggleLeft, ToggleRight,
+  ShieldCheck, Key, Fingerprint, Network
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
@@ -45,6 +47,12 @@ const AdminDashboard = () => {
   const [processingAction, setProcessingAction] = useState(null);
   const [opsData, setOpsData] = useState(null);
   const [loadingOps, setLoadingOps] = useState(false);
+  const [alertSettings, setAlertSettings] = useState(null);
+  const [editingAlerts, setEditingAlerts] = useState(false);
+  const [savingAlerts, setSavingAlerts] = useState(false);
+  const [alertForm, setAlertForm] = useState(null);
+  const [securityData, setSecurityData] = useState(null);
+  const [loadingSecurity, setLoadingSecurity] = useState(false);
 
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
 
@@ -126,6 +134,42 @@ const AdminDashboard = () => {
       toast({ title: 'Error', description: 'Failed to load ops metrics', variant: 'destructive' });
     } finally {
       setLoadingOps(false);
+    }
+  };
+
+  const fetchAlertSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/admin/ops/alert-settings`, authHeaders);
+      setAlertSettings(response.data);
+      setAlertForm(JSON.parse(JSON.stringify(response.data)));
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to load alert settings', variant: 'destructive' });
+    }
+  };
+
+  const saveAlertSettings = async () => {
+    setSavingAlerts(true);
+    try {
+      await axios.put(`${API}/admin/ops/alert-settings`, alertForm, authHeaders);
+      toast({ title: 'Saved', description: 'Alert settings updated' });
+      setAlertSettings(JSON.parse(JSON.stringify(alertForm)));
+      setEditingAlerts(false);
+    } catch (error) {
+      toast({ title: 'Error', description: error.response?.data?.detail || 'Failed to save', variant: 'destructive' });
+    } finally {
+      setSavingAlerts(false);
+    }
+  };
+
+  const fetchSecurityCompliance = async () => {
+    setLoadingSecurity(true);
+    try {
+      const response = await axios.get(`${API}/admin/security/compliance`, authHeaders);
+      setSecurityData(response.data);
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to load security data', variant: 'destructive' });
+    } finally {
+      setLoadingSecurity(false);
     }
   };
 
@@ -323,6 +367,7 @@ const AdminDashboard = () => {
             {[
               { id: 'overview', label: 'Overview', icon: BarChart3 },
               { id: 'operations', label: 'Operations', icon: Server },
+              { id: 'security', label: 'Security', icon: ShieldCheck },
               { id: 'analytics', label: 'Analytics', icon: PieChart },
               { id: 'users', label: 'Users', icon: Users },
               { id: 'notaries', label: 'Notaries', icon: UserCheck },
@@ -335,6 +380,8 @@ const AdminDashboard = () => {
                   if (tab.id === 'audit') fetchAuditLogs();
                   if (tab.id === 'analytics' && !analyticsData) fetchAnalyticsData();
                   if (tab.id === 'operations' && !opsData) fetchOpsMetrics();
+                  if (tab.id === 'operations' && !alertSettings) fetchAlertSettings();
+                  if (tab.id === 'security' && !securityData) fetchSecurityCompliance();
                 }}
                 className={`flex items-center gap-2 px-4 py-3 font-medium transition-all whitespace-nowrap ${
                   activeTab === tab.id
@@ -717,12 +764,254 @@ const AdminDashboard = () => {
                     </CardContent>
                   </Card>
                 )}
+
+                {/* Alert Settings Panel */}
+                <Card className="bg-[#1a2332] border-gray-800" data-testid="alert-settings-panel">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between mb-5">
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                        <Settings className="w-5 h-5 text-blue-400" />
+                        Alert Configuration
+                      </h3>
+                      {!editingAlerts ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                          onClick={() => { if (!alertForm && alertSettings) setAlertForm(JSON.parse(JSON.stringify(alertSettings))); setEditingAlerts(true); }}
+                          data-testid="edit-alert-settings-btn"
+                        >
+                          <Settings className="w-4 h-4 mr-1" /> Edit
+                        </Button>
+                      ) : (
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline" className="border-gray-600 text-gray-400" onClick={() => { setEditingAlerts(false); setAlertForm(JSON.parse(JSON.stringify(alertSettings))); }}>Cancel</Button>
+                          <Button size="sm" className="bg-blue-600 hover:bg-blue-700" onClick={saveAlertSettings} disabled={savingAlerts} data-testid="save-alert-settings-btn">
+                            <Save className="w-4 h-4 mr-1" /> {savingAlerts ? 'Saving...' : 'Save'}
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+
+                    {alertForm ? (
+                      <div className="space-y-5">
+                        {/* Timing */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-gray-400 text-xs block mb-1.5">Check Interval (minutes)</label>
+                            <input
+                              type="number"
+                              min={5} max={1440}
+                              value={alertForm.check_interval_minutes}
+                              onChange={(e) => setAlertForm(f => ({...f, check_interval_minutes: parseInt(e.target.value) || 30}))}
+                              disabled={!editingAlerts}
+                              className="w-full px-3 py-2 rounded-lg bg-[#0a0f1a] border border-gray-700 text-white disabled:opacity-50"
+                              data-testid="alert-check-interval"
+                            />
+                            <p className="text-gray-600 text-xs mt-1">How often to check balance (5–1440 min)</p>
+                          </div>
+                          <div>
+                            <label className="text-gray-400 text-xs block mb-1.5">Cooldown Period (hours)</label>
+                            <input
+                              type="number"
+                              min={1} max={168}
+                              value={alertForm.cooldown_hours}
+                              onChange={(e) => setAlertForm(f => ({...f, cooldown_hours: parseInt(e.target.value) || 24}))}
+                              disabled={!editingAlerts}
+                              className="w-full px-3 py-2 rounded-lg bg-[#0a0f1a] border border-gray-700 text-white disabled:opacity-50"
+                              data-testid="alert-cooldown"
+                            />
+                            <p className="text-gray-600 text-xs mt-1">Don't repeat same alert within this period (1–168h)</p>
+                          </div>
+                        </div>
+
+                        {/* Notification Channels */}
+                        <div>
+                          <label className="text-gray-400 text-xs block mb-2">Notification Channels</label>
+                          <div className="flex gap-4">
+                            <button
+                              onClick={() => editingAlerts && setAlertForm(f => ({...f, email_alerts_enabled: !f.email_alerts_enabled}))}
+                              className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${alertForm.email_alerts_enabled ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400' : 'bg-gray-800/50 border-gray-700 text-gray-500'} ${!editingAlerts ? 'opacity-60 cursor-default' : 'cursor-pointer'}`}
+                              data-testid="toggle-email-alerts"
+                            >
+                              {alertForm.email_alerts_enabled ? <Mail className="w-4 h-4" /> : <MailX className="w-4 h-4" />}
+                              Email Alerts
+                            </button>
+                            <button
+                              onClick={() => editingAlerts && setAlertForm(f => ({...f, in_app_alerts_enabled: !f.in_app_alerts_enabled}))}
+                              className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${alertForm.in_app_alerts_enabled ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400' : 'bg-gray-800/50 border-gray-700 text-gray-500'} ${!editingAlerts ? 'opacity-60 cursor-default' : 'cursor-pointer'}`}
+                              data-testid="toggle-inapp-alerts"
+                            >
+                              {alertForm.in_app_alerts_enabled ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
+                              In-App Alerts
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Thresholds */}
+                        <div>
+                          <label className="text-gray-400 text-xs block mb-2">Alert Thresholds</label>
+                          <div className="space-y-2">
+                            {alertForm.thresholds.map((t, idx) => (
+                              <div key={idx} className={`flex items-center gap-3 p-3 rounded-lg border ${t.enabled ? (t.level === 'emergency' ? 'bg-red-500/5 border-red-500/20' : t.level === 'critical' ? 'bg-orange-500/5 border-orange-500/20' : 'bg-yellow-500/5 border-yellow-500/20') : 'bg-gray-800/30 border-gray-700'}`}>
+                                <button
+                                  onClick={() => {
+                                    if (!editingAlerts) return;
+                                    const updated = [...alertForm.thresholds];
+                                    updated[idx] = {...updated[idx], enabled: !updated[idx].enabled};
+                                    setAlertForm(f => ({...f, thresholds: updated}));
+                                  }}
+                                  className={!editingAlerts ? 'cursor-default' : 'cursor-pointer'}
+                                  data-testid={`toggle-threshold-${t.level}`}
+                                >
+                                  {t.enabled ? <ToggleRight className="w-5 h-5 text-emerald-400" /> : <ToggleLeft className="w-5 h-5 text-gray-600" />}
+                                </button>
+                                <span className={`text-xs font-bold px-2 py-0.5 rounded uppercase w-24 text-center ${t.level === 'emergency' ? 'bg-red-500/20 text-red-400' : t.level === 'critical' ? 'bg-orange-500/20 text-orange-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                                  {t.level}
+                                </span>
+                                <span className="text-gray-400 text-sm">&lt;</span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  value={t.hbar}
+                                  onChange={(e) => {
+                                    const updated = [...alertForm.thresholds];
+                                    updated[idx] = {...updated[idx], hbar: parseFloat(e.target.value) || 0};
+                                    setAlertForm(f => ({...f, thresholds: updated}));
+                                  }}
+                                  disabled={!editingAlerts}
+                                  className="w-20 px-2 py-1 rounded bg-[#0a0f1a] border border-gray-700 text-white text-sm disabled:opacity-50"
+                                />
+                                <span className="text-gray-400 text-sm">HBAR</span>
+                                <span className="text-gray-500 text-xs ml-auto hidden sm:inline">{t.label}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center py-8">
+                        <RefreshCw className="w-6 h-6 text-gray-500 animate-spin" />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </>
             ) : (
               <Card className="bg-[#1a2332] border-gray-800">
                 <CardContent className="p-12 text-center">
                   <Server className="w-16 h-16 text-gray-600 mx-auto mb-4" />
                   <p className="text-gray-400">Click refresh to load operations data</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'security' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <ShieldCheck className="w-6 h-6 text-emerald-500" />
+                Security Compliance
+              </h2>
+              <Button
+                onClick={fetchSecurityCompliance}
+                disabled={loadingSecurity}
+                variant="outline"
+                className="border-gray-700"
+                data-testid="security-refresh-btn"
+              >
+                <RefreshCw className={`w-4 h-4 ${loadingSecurity ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
+
+            {loadingSecurity && !securityData ? (
+              <div className="flex items-center justify-center py-20">
+                <RefreshCw className="w-12 h-12 text-emerald-500 animate-spin" />
+              </div>
+            ) : securityData ? (
+              <>
+                {/* Score Banner */}
+                <div className="relative overflow-hidden rounded-xl border border-gray-800 bg-[#1a2332] p-6" data-testid="security-score-banner">
+                  <div className="flex items-center gap-8">
+                    <div className="relative w-28 h-28 flex-shrink-0">
+                      <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="#1e293b" strokeWidth="8" />
+                        <circle
+                          cx="50" cy="50" r="42" fill="none"
+                          stroke={securityData.score_pct >= 90 ? '#10b981' : securityData.score_pct >= 70 ? '#f59e0b' : '#ef4444'}
+                          strokeWidth="8"
+                          strokeLinecap="round"
+                          strokeDasharray={`${securityData.score_pct * 2.64} 264`}
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-2xl font-bold text-white">{securityData.score_pct}%</span>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-white mb-1">
+                        {securityData.score_pct >= 90 ? 'Excellent' : securityData.score_pct >= 70 ? 'Good' : 'Needs Attention'}
+                      </h3>
+                      <p className="text-gray-400">
+                        {securityData.active_features} of {securityData.total_features} security features active
+                      </p>
+                      <p className="text-gray-600 text-sm mt-1">
+                        Last checked: {new Date(securityData.generated_at).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Category Cards */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  {Object.entries(securityData.categories).map(([key, cat]) => {
+                    const activeCount = cat.items.filter(i => i.status === 'active').length;
+                    const allActive = activeCount === cat.items.length;
+                    const catIcons = {
+                      authentication: Lock,
+                      sso: Key,
+                      data_protection: Shield,
+                      network_security: Network,
+                      access_control: Fingerprint,
+                      monitoring: Activity,
+                    };
+                    const CatIcon = catIcons[key] || Shield;
+                    return (
+                      <Card key={key} className="bg-[#1a2332] border-gray-800" data-testid={`security-cat-${key}`}>
+                        <CardContent className="p-5">
+                          <div className="flex items-center justify-between mb-4">
+                            <h4 className="text-base font-bold text-white flex items-center gap-2">
+                              <CatIcon className="w-4 h-4 text-blue-400" />
+                              {cat.label}
+                            </h4>
+                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${allActive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                              {activeCount}/{cat.items.length}
+                            </span>
+                          </div>
+                          <div className="space-y-2.5">
+                            {cat.items.map((item, idx) => (
+                              <div key={idx} className="flex items-start gap-3">
+                                <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${item.status === 'active' ? 'bg-emerald-400' : item.status === 'not_configured' || item.status === 'missing' ? 'bg-red-400' : 'bg-yellow-400'}`} />
+                                <div className="min-w-0">
+                                  <p className="text-gray-200 text-sm font-medium">{item.name}</p>
+                                  <p className="text-gray-500 text-xs mt-0.5">{item.detail}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </>
+            ) : (
+              <Card className="bg-[#1a2332] border-gray-800">
+                <CardContent className="p-12 text-center">
+                  <ShieldCheck className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400">Click refresh to load security compliance data</p>
                 </CardContent>
               </Card>
             )}

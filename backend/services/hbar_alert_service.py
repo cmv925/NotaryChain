@@ -15,18 +15,34 @@ notification_service = None
 email_service_instance = None
 hedera_service_instance = None
 
-CHECK_INTERVAL_SECONDS = 1800  # 30 minutes
-
-THRESHOLDS = [
-    {"hbar": 50, "level": "warning", "label": "getting low"},
-    {"hbar": 10, "level": "critical", "label": "critically low — service interruption risk"},
-    {"hbar": 1, "level": "emergency", "label": "nearly empty — immediate action required"},
-]
-
-COOLDOWN_HOURS = 24
+# Defaults (overridden by DB settings when available)
+_settings = {
+    "check_interval_minutes": 30,
+    "cooldown_hours": 24,
+    "email_alerts_enabled": True,
+    "in_app_alerts_enabled": True,
+    "thresholds": [
+        {"hbar": 50, "level": "warning", "label": "getting low", "enabled": True},
+        {"hbar": 10, "level": "critical", "label": "critically low — service interruption risk", "enabled": True},
+        {"hbar": 1, "level": "emergency", "label": "nearly empty — immediate action required", "enabled": True},
+    ],
+}
 
 # Track last alert time per threshold to avoid spam
 _last_alerted = {}
+
+
+async def reload_settings():
+    """Reload alert settings from MongoDB."""
+    global _settings
+    if db is None:
+        return
+    doc = await db.system_settings.find_one({"key": "hbar_alert_settings"}, {"_id": 0})
+    if doc:
+        for k in list(_settings.keys()):
+            if k in doc:
+                _settings[k] = doc[k]
+    logger.info("HBAR alert settings reloaded: interval=%dm, cooldown=%dh", _settings["check_interval_minutes"], _settings["cooldown_hours"])
 
 
 def set_dependencies(database, hedera_svc, notif_svc, email_svc):
@@ -59,8 +75,13 @@ async def _check_balance():
     account_id = result.get("account_id", "unknown")
     network = status.get("network", "unknown")
     now = datetime.now(timezone.utc)
+    cooldown_hours = _settings["cooldown_hours"]
+    email_enabled = _settings["email_alerts_enabled"]
+    inapp_enabled = _settings["in_app_alerts_enabled"]
 
-    for threshold in THRESHOLDS:
+    for threshold in _settings["thresholds"]:
+        if not threshold.get("enabled", True):
+            continue
         hbar_limit = threshold["hbar"]
         level = threshold["level"]
         label = threshold["label"]
@@ -73,7 +94,7 @@ async def _check_balance():
 
         # Check cooldown
         last = _last_alerted.get(cooldown_key)
-        if last and (now - last) < timedelta(hours=COOLDOWN_HOURS):
+        if last and (now - last) < timedelta(hours=cooldown_hours):
             continue
 
         # Balance is below threshold — send alerts
@@ -83,27 +104,29 @@ async def _check_balance():
         )
 
         # In-app notification to all admins
+        admins = []
         try:
             admins = await db.users.find(
                 {"role": "admin"}, {"_id": 0, "id": 1, "email": 1, "full_name": 1}
             ).to_list(50)
 
-            for admin in admins:
-                await notification_service.create_notification(
-                    user_id=admin["id"],
-                    title=f"HBAR Balance {level.upper()}: {balance:.2f} HBAR",
-                    message=(
-                        f"Your Hedera {network} account ({account_id}) balance is "
-                        f"{balance:.2f} HBAR — {label}. "
-                        f"Fund the account to prevent notarization service interruption."
-                    ),
-                    notif_type=level,
-                )
+            if inapp_enabled:
+                for admin in admins:
+                    await notification_service.create_notification(
+                        user_id=admin["id"],
+                        title=f"HBAR Balance {level.upper()}: {balance:.2f} HBAR",
+                        message=(
+                            f"Your Hedera {network} account ({account_id}) balance is "
+                            f"{balance:.2f} HBAR — {label}. "
+                            f"Fund the account to prevent notarization service interruption."
+                        ),
+                        notif_type=level,
+                    )
         except Exception as e:
             logger.error("Failed to create HBAR alert notification: %s", e)
 
         # Email alert to admins
-        if email_service_instance:
+        if email_enabled and email_service_instance:
             for admin in admins:
                 try:
                     await email_service_instance.send_email(
@@ -191,9 +214,11 @@ async def run_balance_checker():
     logger.info("HBAR balance alert service started")
     # Initial delay to let other services start
     await asyncio.sleep(10)
+    # Load settings from DB on startup
+    await reload_settings()
     while True:
         try:
             await _check_balance()
         except Exception as e:
             logger.error("HBAR balance checker error: %s", e)
-        await asyncio.sleep(CHECK_INTERVAL_SECONDS)
+        await asyncio.sleep(_settings["check_interval_minutes"] * 60)
