@@ -115,13 +115,55 @@ class TestOktaLoginURL:
         for param in required_params:
             assert param in query_params, f"Missing required param: {param}"
         
-        # Verify values
-        assert query_params["client_id"][0] == "0oa110btli7AyC2ZB698"
+        # Verify values - Updated client_id to correct value
+        assert query_params["client_id"][0] == "0oa110cnei9quynQC698"
         assert query_params["response_type"][0] == "code"
         assert "openid" in query_params["scope"][0]
         assert "profile" in query_params["scope"][0]
         assert "email" in query_params["scope"][0]
         print("✓ All OAuth2 parameters correct")
+
+
+class TestOktaAuthURLAcceptance:
+    """CRITICAL: Tests that Okta accepts the auth_url (HTTP 200, not 400)"""
+    
+    def test_okta_auth_url_accepted_by_okta(self):
+        """
+        CRITICAL TEST: Visit the Okta auth_url and verify HTTP 200 (not 400)
+        This was the main bug - Okta returned 400 Bad Request due to wrong Client ID.
+        With correct credentials (0oa110cnei9quynQC698), Okta should return 200.
+        """
+        # Step 1: Get the auth_url from our backend
+        response = requests.get(
+            f"{BASE_URL}/api/sso/okta/login",
+            headers={"Origin": "https://okta-flow-test.preview.emergentagent.com"}
+        )
+        assert response.status_code == 200
+        auth_url = response.json()["auth_url"]
+        print(f"Auth URL received: {auth_url[:100]}...")
+        
+        # Step 2: Actually visit the Okta auth_url and check response
+        # We're not completing the OAuth flow (that needs user interaction)
+        # We're just verifying Okta accepts our URL (returns login page, not 400 error)
+        okta_response = requests.get(auth_url, allow_redirects=True)
+        
+        # Okta should return 200 (login page) not 400 (bad request error)
+        assert okta_response.status_code == 200, f"CRITICAL: Okta returned {okta_response.status_code}, expected 200. Content: {okta_response.text[:500]}"
+        
+        # Verify it's actually the Okta login page (not an error page)
+        # The response should contain Okta login elements
+        content = okta_response.text.lower()
+        is_login_page = (
+            "okta" in content or 
+            "sign in" in content or 
+            "login" in content or
+            "username" in content or
+            "password" in content
+        )
+        assert is_login_page, f"CRITICAL: Okta did not return a login page. Response: {okta_response.text[:500]}"
+        
+        print(f"✓ CRITICAL TEST PASSED: Okta auth_url accepted (HTTP {okta_response.status_code})")
+        print(f"✓ Okta returns login page, not 400 Bad Request error")
 
 
 class TestAuth0LoginURL:

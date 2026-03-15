@@ -1,0 +1,105 @@
+{
+  "summary": "Okta SSO fix validated successfully. CRITICAL TEST PASSED: Okta now returns HTTP 200 (not 400 Bad Request) when visiting auth_url. Backend: 12/12 tests passed. Frontend: All SSO buttons functional, Okta redirects to login page correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_sso_validation.py",
+    "/app/test_reports/pytest/pytest_results_sso_okta_fix.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "CRITICAL FIX VERIFIED: Okta Client ID changed from 0oa110btli7AyC2ZB698 to 0oa110cnei9quynQC698 - now working",
+    "Okta auth_url returns HTTP 200 (was returning 400 in iteration_51)",
+    "Okta login page shows 'Sign in with your account to access NotaryChain' - confirms app registration is correct",
+    "All SSO endpoints (Okta, Auth0, providers, status) working correctly",
+    "Regular login with admin@notarychain.com / Admin123! working",
+    "Both callback pages (/auth/okta/callback, /auth/callback) handle missing params gracefully"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_sso_validation.py"
+  ],
+  "success_rate": {
+    "backend": "100% (12/12 tests passed)",
+    "frontend": "100% (all UI elements present and functional)"
+  },
+  "test_credentials": {
+    "admin_user": {
+      "email": "admin@notarychain.com",
+      "password": "Admin123!"
+    }
+  },
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Okta SSO integration is now fully functional. The fix involved updating OKTA_CLIENT_ID and OKTA_CLIENT_SECRET in backend/.env. Clicking 'Sign in with Okta' button correctly redirects to Okta login page at trial-1257751.okta.com with proper client_id=0oa110cnei9quynQC698 and redirect_uri=https://okta-flow-test.preview.emergentagent.com/auth/okta/callback",
+  "features_tested": {
+    "okta_status": {
+      "endpoint": "GET /api/sso/okta/status",
+      "status": "WORKING",
+      "result": {"configured": true, "domain": "trial-1257751.okta.com"}
+    },
+    "auth0_status": {
+      "endpoint": "GET /api/sso/auth0/status",
+      "status": "WORKING",
+      "result": {"configured": true, "domain": "dev-ec3s8jabv4ei2wjs.us.auth0.com"}
+    },
+    "sso_providers": {
+      "endpoint": "GET /api/sso/providers",
+      "status": "WORKING",
+      "result": "Returns both Auth0 and Okta providers"
+    },
+    "okta_login": {
+      "endpoint": "GET /api/sso/okta/login",
+      "status": "WORKING",
+      "result": "Returns correct auth_url with client_id=0oa110cnei9quynQC698"
+    },
+    "CRITICAL_okta_auth_url_acceptance": {
+      "test": "Visit Okta auth_url and verify HTTP 200",
+      "status": "PASSED",
+      "result": "Okta returns HTTP 200 with login page (was 400 Bad Request before fix)"
+    },
+    "auth0_login": {
+      "endpoint": "GET /api/sso/auth0/login",
+      "status": "WORKING",
+      "result": "Returns correct auth_url"
+    },
+    "login_page_sso_buttons": {
+      "route": "/login",
+      "status": "WORKING",
+      "elements": ["Sign in with Auth0", "Sign in with Okta", "Sign in with Enterprise SSO"]
+    },
+    "okta_button_click": {
+      "test": "Click 'Sign in with Okta' button",
+      "status": "WORKING",
+      "result": "Correctly redirects to https://trial-1257751.okta.com/oauth2/default/v1/authorize?client_id=0oa110cnei9quynQC698..."
+    },
+    "okta_callback_page": {
+      "route": "/auth/okta/callback",
+      "status": "WORKING",
+      "notes": "Renders correctly, handles missing params gracefully"
+    },
+    "auth0_callback_page": {
+      "route": "/auth/callback",
+      "status": "WORKING",
+      "notes": "Renders correctly, handles missing params gracefully"
+    },
+    "regular_login": {
+      "endpoint": "POST /api/auth/login",
+      "status": "WORKING",
+      "notes": "admin@notarychain.com / Admin123! works correctly, navigates to /dashboard"
+    }
+  },
+  "bug_fix_verification": {
+    "original_issue": "Okta returned 400 Bad Request - redirect_uri mismatch due to wrong Client ID",
+    "root_cause": "OKTA_CLIENT_ID in backend/.env was set to wrong value (0oa110btli7AyC2ZB698)",
+    "fix_applied": "Updated OKTA_CLIENT_ID to 0oa110cnei9quynQC698 and OKTA_CLIENT_SECRET",
+    "verification_result": "PASSED - Okta now returns HTTP 200 and displays login page"
+  }
+}
