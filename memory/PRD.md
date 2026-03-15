@@ -94,6 +94,18 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - Note: Resend email delivery requires domain verification for non-owner recipients
 
 ### HBAR Balance Alert Service — COMPLETED (Mar 14, 2026)
+
+### Auth0 SSO Integration — COMPLETED (Mar 15, 2026)
+- Real Auth0 OIDC integration replacing the mocked SSO
+- **Backend** (`routes/sso_routes.py`): Auth0 login URL generator, PKCE callback handler, JIT user provisioning
+  - `GET /api/sso/auth0/login` — generates Auth0 authorization URL with state (CSRF protection)
+  - `POST /api/sso/auth0/callback` — exchanges code for tokens, fetches userinfo, creates/syncs user, issues JWT
+  - `GET /api/sso/auth0/status` — check if Auth0 is configured
+- **Frontend**: "Sign in with Auth0" button on LoginPage, Auth0Callback page at `/auth/callback`
+- Users are JIT-provisioned in MongoDB on first Auth0 login with `auth0_sub` stored for identity linking
+- Works alongside existing email/password auth — no breaking changes
+- Auth0 Domain: `dev-ec3s8jabv4ei2wjs.us.auth0.com`
+- Testing: 100% pass rate — 13 backend + all frontend tests passed
 - New background service: `services/hbar_alert_service.py` — checks balance every 30 minutes
 - **3 alert levels**: Warning (< 50 HBAR), Critical (< 10 HBAR), Emergency (< 1 HBAR)
 - **In-app notifications**: Created for all admin users when threshold triggered
@@ -439,9 +451,10 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - None — all identified security vulnerabilities have been remediated
 
 ## Future/Backlog
-- Real SAML/OIDC SSO (awaiting IdP provider selection)
+- Okta SSO Integration (if needed alongside Auth0)
 - Enterprise Features Expansion
 - Additional marketplace features
+- Configurable Alert Settings Panel (admin UI for HBAR thresholds)
 
 ## Test Credentials
 | Role | Email | Password |
