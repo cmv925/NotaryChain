@@ -53,6 +53,11 @@ const AdminDashboard = () => {
   const [alertForm, setAlertForm] = useState(null);
   const [securityData, setSecurityData] = useState(null);
   const [loadingSecurity, setLoadingSecurity] = useState(false);
+  const [storageAnalytics, setStorageAnalytics] = useState(null);
+  const [loadingStorageAnalytics, setLoadingStorageAnalytics] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const [serviceHealth, setServiceHealth] = useState(null);
+  const [loadingHealth, setLoadingHealth] = useState(false);
 
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
 
@@ -170,6 +175,51 @@ const AdminDashboard = () => {
       toast({ title: 'Error', description: 'Failed to load security data', variant: 'destructive' });
     } finally {
       setLoadingSecurity(false);
+    }
+  };
+
+  const fetchStorageAnalytics = async () => {
+    setLoadingStorageAnalytics(true);
+    try {
+      const response = await axios.get(`${API}/admin/ops/storage-analytics`, authHeaders);
+      setStorageAnalytics(response.data);
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to load storage analytics', variant: 'destructive' });
+    } finally {
+      setLoadingStorageAnalytics(false);
+    }
+  };
+
+  const exportSecurityPdf = async () => {
+    setExportingPdf(true);
+    try {
+      const response = await axios.get(`${API}/admin/security/export-pdf`, {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `NotaryChain_Security_Compliance_${new Date().toISOString().slice(0,10)}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+      toast({ title: 'Exported', description: 'Security report downloaded' });
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to export PDF', variant: 'destructive' });
+    } finally {
+      setExportingPdf(false);
+    }
+  };
+
+  const fetchServiceHealth = async () => {
+    setLoadingHealth(true);
+    try {
+      const response = await axios.get(`${API}/admin/ops/service-health`, authHeaders);
+      setServiceHealth(response.data);
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to load service health', variant: 'destructive' });
+    } finally {
+      setLoadingHealth(false);
     }
   };
 
@@ -381,6 +431,8 @@ const AdminDashboard = () => {
                   if (tab.id === 'analytics' && !analyticsData) fetchAnalyticsData();
                   if (tab.id === 'operations' && !opsData) fetchOpsMetrics();
                   if (tab.id === 'operations' && !alertSettings) fetchAlertSettings();
+                  if (tab.id === 'operations' && !storageAnalytics) fetchStorageAnalytics();
+                  if (tab.id === 'operations' && !serviceHealth) fetchServiceHealth();
                   if (tab.id === 'security' && !securityData) fetchSecurityCompliance();
                 }}
                 className={`flex items-center gap-2 px-4 py-3 font-medium transition-all whitespace-nowrap ${
@@ -765,6 +817,181 @@ const AdminDashboard = () => {
                   </Card>
                 )}
 
+                {/* Service Health Monitor */}
+                <Card className="bg-[#1a2332] border-gray-800" data-testid="service-health-panel">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between mb-5">
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                        <Activity className="w-5 h-5 text-emerald-400" />
+                        Service Health
+                      </h3>
+                      <Button size="sm" variant="outline" className="border-gray-700" onClick={fetchServiceHealth} disabled={loadingHealth} data-testid="health-refresh-btn">
+                        <RefreshCw className={`w-4 h-4 ${loadingHealth ? 'animate-spin' : ''}`} />
+                      </Button>
+                    </div>
+
+                    {serviceHealth ? (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          {serviceHealth.services.map((svc, i) => {
+                            const isHealthy = svc.status === 'healthy';
+                            const isDegraded = svc.status === 'degraded';
+                            return (
+                              <div key={i} className={`rounded-xl p-4 border transition-all ${isHealthy ? 'bg-emerald-500/5 border-emerald-500/20' : isDegraded ? 'bg-red-500/5 border-red-500/20' : 'bg-gray-800/30 border-gray-700'}`} data-testid={`health-${svc.service.toLowerCase().replace(' ', '-')}`}>
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-white text-sm font-medium">{svc.service}</span>
+                                  <div className={`w-2.5 h-2.5 rounded-full ${isHealthy ? 'bg-emerald-400' : isDegraded ? 'bg-red-400 animate-pulse' : 'bg-gray-500'}`} />
+                                </div>
+                                <p className={`text-xs ${isHealthy ? 'text-emerald-400' : isDegraded ? 'text-red-400' : 'text-gray-500'}`}>
+                                  {svc.status === 'healthy' ? 'Operational' : svc.status === 'degraded' ? 'Degraded' : 'Not Configured'}
+                                </p>
+                                <p className="text-gray-600 text-xs mt-1 truncate">{svc.detail}</p>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {serviceHealth.recent_alerts?.length > 0 && (
+                          <div className="bg-[#0a0f1a] rounded-xl p-4 border border-gray-800">
+                            <h4 className="text-sm font-semibold text-white mb-2">Recent Alerts (24h)</h4>
+                            <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                              {serviceHealth.recent_alerts.map((alert, i) => (
+                                <div key={i} className="flex items-center gap-2 text-xs">
+                                  <div className={`w-1.5 h-1.5 rounded-full ${alert.status === 'recovered' ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                                  <span className="text-gray-500">{new Date(alert.timestamp).toLocaleTimeString()}</span>
+                                  <span className={alert.status === 'recovered' ? 'text-emerald-400' : 'text-red-400'}>{alert.service}</span>
+                                  <span className="text-gray-600">{alert.detail}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        <p className="text-gray-600 text-xs">Last checked: {new Date(serviceHealth.checked_at).toLocaleString()}</p>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center py-6">
+                        <p className="text-gray-500 text-sm">Click refresh to check service health</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* S3 Storage Analytics */}
+                <Card className="bg-[#1a2332] border-gray-800" data-testid="storage-analytics-panel">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between mb-5">
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                        <HardDrive className="w-5 h-5 text-cyan-400" />
+                        Storage Analytics
+                      </h3>
+                      <Button size="sm" variant="outline" className="border-gray-700" onClick={fetchStorageAnalytics} disabled={loadingStorageAnalytics} data-testid="storage-refresh-btn">
+                        <RefreshCw className={`w-4 h-4 ${loadingStorageAnalytics ? 'animate-spin' : ''}`} />
+                      </Button>
+                    </div>
+
+                    {storageAnalytics ? (
+                      <div className="space-y-5">
+                        {/* Summary row */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          {[
+                            { label: 'Total Files', value: storageAnalytics.total_vault_docs, color: 'blue' },
+                            { label: 'Storage Used', value: `${storageAnalytics.total_vault_size_mb} MB`, color: 'cyan' },
+                            { label: 'Downloads', value: storageAnalytics.total_downloads, color: 'purple' },
+                            { label: 'Uploads (30d)', value: storageAnalytics.cost_projection?.uploads_30d || 0, color: 'emerald' },
+                          ].map((s, i) => (
+                            <div key={i} className="bg-[#0a0f1a] rounded-xl p-4 border border-gray-800">
+                              <p className="text-gray-500 text-xs mb-1">{s.label}</p>
+                              <p className={`text-xl font-bold text-${s.color}-400`}>{s.value}</p>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Cost Projection */}
+                        {storageAnalytics.cost_projection && (
+                          <div className="bg-[#0a0f1a] rounded-xl p-4 border border-gray-800">
+                            <h4 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                              <DollarSign className="w-4 h-4 text-emerald-400" />
+                              Cost Projection (AWS S3 Standard)
+                            </h4>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                              <div>
+                                <p className="text-gray-500 text-xs">Current Usage</p>
+                                <p className="text-white font-medium">{storageAnalytics.cost_projection.current_gb} GB</p>
+                              </div>
+                              <div>
+                                <p className="text-gray-500 text-xs">Monthly Cost</p>
+                                <p className="text-emerald-400 font-medium">${storageAnalytics.cost_projection.monthly_cost_usd}</p>
+                              </div>
+                              <div>
+                                <p className="text-gray-500 text-xs">Growth Rate (30d)</p>
+                                <p className={`font-medium ${storageAnalytics.cost_projection.growth_rate_pct >= 0 ? 'text-yellow-400' : 'text-emerald-400'}`}>
+                                  {storageAnalytics.cost_projection.growth_rate_pct > 0 ? '+' : ''}{storageAnalytics.cost_projection.growth_rate_pct}%
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-gray-500 text-xs">12-Month Projected</p>
+                                <p className="text-white font-medium">${storageAnalytics.cost_projection.projected_12m_cost_usd}</p>
+                              </div>
+                            </div>
+                            <p className="text-gray-600 text-xs mt-2">Based on $0.023/GB/month S3 Standard pricing</p>
+                          </div>
+                        )}
+
+                        {/* Upload Activity Trend */}
+                        {storageAnalytics.activity_trend?.length > 0 && (
+                          <div className="bg-[#0a0f1a] rounded-xl p-4 border border-gray-800">
+                            <h4 className="text-sm font-semibold text-white mb-3">Upload Activity (Last 30 Days)</h4>
+                            <div className="flex items-end gap-1 h-20">
+                              {storageAnalytics.activity_trend.map((d, i) => {
+                                const maxUploads = Math.max(...storageAnalytics.activity_trend.map(t => t.uploads), 1);
+                                const height = Math.max((d.uploads / maxUploads) * 100, 4);
+                                return (
+                                  <div key={i} className="flex-1 flex flex-col items-center justify-end group relative">
+                                    <div className="absolute -top-6 hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
+                                      {d.date}: {d.uploads} files ({d.size_mb} MB)
+                                    </div>
+                                    <div
+                                      className="w-full bg-cyan-500/60 rounded-t hover:bg-cyan-400/80 transition-colors cursor-pointer"
+                                      style={{ height: `${height}%`, minHeight: '3px' }}
+                                    />
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Per-User Storage */}
+                        {storageAnalytics.per_user?.length > 0 && (
+                          <div className="bg-[#0a0f1a] rounded-xl p-4 border border-gray-800">
+                            <h4 className="text-sm font-semibold text-white mb-3">Storage by User (Top 10)</h4>
+                            <div className="space-y-2">
+                              {storageAnalytics.per_user.slice(0, 10).map((u, i) => {
+                                const maxMB = Math.max(...storageAnalytics.per_user.map(x => x.total_size_mb), 1);
+                                const pct = (u.total_size_mb / maxMB) * 100;
+                                return (
+                                  <div key={i} className="flex items-center gap-3 text-sm">
+                                    <span className="text-gray-400 w-48 truncate">{u.email}</span>
+                                    <div className="flex-1 h-2 bg-gray-800 rounded-full overflow-hidden">
+                                      <div className="h-full bg-blue-500/60 rounded-full" style={{ width: `${Math.max(pct, 2)}%` }} />
+                                    </div>
+                                    <span className="text-gray-400 w-24 text-right">{u.total_size_mb} MB ({u.file_count})</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center py-8">
+                        <p className="text-gray-500 text-sm">Click refresh to load storage analytics</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
                 {/* Alert Settings Panel */}
                 <Card className="bg-[#1a2332] border-gray-800" data-testid="alert-settings-panel">
                   <CardContent className="p-6">
@@ -915,6 +1142,7 @@ const AdminDashboard = () => {
                 <ShieldCheck className="w-6 h-6 text-emerald-500" />
                 Security Compliance
               </h2>
+              <div className="flex items-center gap-2">
               <Button
                 onClick={fetchSecurityCompliance}
                 disabled={loadingSecurity}
@@ -924,6 +1152,18 @@ const AdminDashboard = () => {
               >
                 <RefreshCw className={`w-4 h-4 ${loadingSecurity ? 'animate-spin' : ''}`} />
               </Button>
+              {securityData && (
+                <Button
+                  onClick={exportSecurityPdf}
+                  disabled={exportingPdf}
+                  className="bg-blue-600 hover:bg-blue-500"
+                  data-testid="security-export-pdf-btn"
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  {exportingPdf ? 'Exporting...' : 'Export PDF'}
+                </Button>
+              )}
+              </div>
             </div>
 
             {loadingSecurity && !securityData ? (

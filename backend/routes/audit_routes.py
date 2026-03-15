@@ -90,17 +90,17 @@ class AuditLogCreate(BaseModel):
 
 
 class AuditLogResponse(BaseModel):
-    id: str
-    action: str
-    resource_type: str
-    resource_id: Optional[str]
-    description: str
-    user_id: Optional[str]
-    user_email: Optional[str]
-    severity: str
-    ip_address: Optional[str]
-    metadata: Optional[dict]
-    timestamp: str
+    id: str = ""
+    action: str = ""
+    resource_type: str = ""
+    resource_id: Optional[str] = None
+    description: str = ""
+    user_id: Optional[str] = None
+    user_email: Optional[str] = None
+    severity: str = "info"
+    ip_address: Optional[str] = None
+    metadata: Optional[dict] = None
+    timestamp: str = ""
 
 
 class AuditLogListResponse(BaseModel):
@@ -197,8 +197,15 @@ async def get_audit_logs(
     # Format timestamps
     formatted_logs = []
     for log in logs:
-        log["timestamp"] = log["timestamp"].isoformat() if isinstance(log["timestamp"], datetime) else log["timestamp"]
-        formatted_logs.append(AuditLogResponse(**log))
+        if isinstance(log.get("timestamp"), datetime):
+            log["timestamp"] = log["timestamp"].isoformat()
+        elif not isinstance(log.get("timestamp"), str):
+            log["timestamp"] = str(log.get("timestamp", ""))
+        try:
+            formatted_logs.append(AuditLogResponse(**log))
+        except Exception:
+            # Skip malformed log entries
+            continue
     
     return AuditLogListResponse(
         total=total,

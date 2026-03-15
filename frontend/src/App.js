@@ -57,6 +57,7 @@ import BrandingPage from './pages/BrandingPage';
 import SSOLoginPage from './pages/SSOLoginPage';
 import Auth0Callback from './pages/Auth0Callback';
 import OktaCallback from './pages/OktaCallback';
+import OnboardingPage from './pages/OnboardingPage';
 import InvestorDeck from './pages/InvestorDeck';
 import ErrorBoundary from './components/ErrorBoundary';
 import { WebSocketProvider } from './contexts/WebSocketContext';
@@ -81,6 +82,14 @@ function App() {
             <Route path="/demo" element={<QuickSealDemo />} />
             <Route path="/verify" element={<VerifyDocument />} />
             <Route path="/investor-deck" element={<InvestorDeck />} />
+            <Route
+              path="/onboarding"
+              element={
+                <ProtectedRoute>
+                  <OnboardingPage />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/checkout/crypto" element={<CryptoCheckout />} />
             <Route path="/payment/success" element={<PaymentSuccess />} />

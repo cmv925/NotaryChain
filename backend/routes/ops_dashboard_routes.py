@@ -194,3 +194,123 @@ async def get_ops_metrics(current_user: User = Depends(get_current_user)):
         "system": system,
         "hbar_alerts": recent_alerts,
     }
+
+
+@router.get("/storage-analytics")
+async def get_storage_analytics(current_user: User = Depends(get_current_user)):
+    """Enhanced S3 storage analytics: per-user usage, upload trends, cost projections."""
+    await _check_admin(current_user)
+
+    now = datetime.now(timezone.utc)
+    thirty_days_ago = now - timedelta(days=30)
+
+    # Per-user storage from vault_documents
+    user_storage = await db.vault_documents.aggregate([
+        {"$group": {
+            "_id": "$uploaded_by_email",
+            "file_count": {"$sum": 1},
+            "total_size": {"$sum": {"$ifNull": ["$file_size", 0]}},
+            "last_upload": {"$max": "$uploaded_at"},
+        }},
+        {"$sort": {"total_size": -1}},
+        {"$limit": 20},
+    ]).to_list(20)
+
+    per_user = [
+        {
+            "email": u["_id"] or "unknown",
+            "file_count": u["file_count"],
+            "total_size_bytes": u["total_size"],
+            "total_size_mb": round(u["total_size"] / (1024 * 1024), 2) if u["total_size"] else 0,
+            "last_upload": u["last_upload"],
+        }
+        for u in user_storage
+    ]
+
+    # Upload activity trend (daily counts from vault_documents, last 30 days)
+    upload_trend = await db.vault_documents.aggregate([
+        {"$match": {"uploaded_at": {"$gte": thirty_days_ago.isoformat()}}},
+        {"$addFields": {"date_str": {"$substr": ["$uploaded_at", 0, 10]}}},
+        {"$group": {"_id": "$date_str", "uploads": {"$sum": 1}, "bytes": {"$sum": {"$ifNull": ["$file_size", 0]}}}},
+        {"$sort": {"_id": 1}},
+    ]).to_list(30)
+
+    activity_trend = [
+        {"date": t["_id"], "uploads": t["uploads"], "size_mb": round(t["bytes"] / (1024 * 1024), 2) if t["bytes"] else 0}
+        for t in upload_trend
+    ]
+
+    # Download activity from vault audit trail
+    download_trend = await db.vault_documents.aggregate([
+        {"$group": {"_id": None, "total_downloads": {"$sum": {"$ifNull": ["$download_count", 0]}}}},
+    ]).to_list(1)
+    total_downloads = download_trend[0]["total_downloads"] if download_trend else 0
+
+    # Total vault stats
+    total_vault_docs = await db.vault_documents.count_documents({})
+    total_vault_size_agg = await db.vault_documents.aggregate([
+        {"$group": {"_id": None, "total": {"$sum": {"$ifNull": ["$file_size", 0]}}}}
+    ]).to_list(1)
+    total_vault_size = total_vault_size_agg[0]["total"] if total_vault_size_agg else 0
+
+    # Cost projection (AWS S3 Standard: ~$0.023/GB/month)
+    s3_cost_per_gb_month = 0.023
+    current_gb = total_vault_size / (1024 ** 3) if total_vault_size else 0
+    monthly_cost = round(current_gb * s3_cost_per_gb_month, 4)
+
+    # Growth rate (uploads in last 30 days vs previous 30 days)
+    sixty_days_ago = now - timedelta(days=60)
+    prev_30d_uploads = await db.vault_documents.count_documents({
+        "uploaded_at": {"$gte": sixty_days_ago.isoformat(), "$lt": thirty_days_ago.isoformat()}
+    })
+    recent_30d_uploads = await db.vault_documents.count_documents({
+        "uploaded_at": {"$gte": thirty_days_ago.isoformat()}
+    })
+
+    growth_rate = round(((recent_30d_uploads - prev_30d_uploads) / max(prev_30d_uploads, 1)) * 100, 1)
+
+    # 12-month projected cost based on current growth
+    projected_12m_cost = round(monthly_cost * 12 * max(1 + growth_rate / 100, 1), 2)
+
+    return {
+        "per_user": per_user,
+        "activity_trend": activity_trend,
+        "total_vault_docs": total_vault_docs,
+        "total_vault_size_mb": round(total_vault_size / (1024 * 1024), 2),
+        "total_downloads": total_downloads,
+        "cost_projection": {
+            "current_gb": round(current_gb, 4),
+            "monthly_cost_usd": monthly_cost,
+            "projected_12m_cost_usd": projected_12m_cost,
+            "price_per_gb": s3_cost_per_gb_month,
+            "growth_rate_pct": growth_rate,
+            "uploads_30d": recent_30d_uploads,
+            "uploads_prev_30d": prev_30d_uploads,
+        },
+    }
+
+
+@router.get("/service-health")
+async def get_service_health(current_user: User = Depends(get_current_user)):
+    """Get current service health status and recent alerts."""
+    await _check_admin(current_user)
+
+    # Get latest snapshot
+    snapshot = await db.system_settings.find_one({"key": "service_health_snapshot"}, {"_id": 0})
+
+    # Get recent alerts (last 24h)
+    yesterday = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+    recent_alerts = await db.service_health_alerts.find(
+        {"timestamp": {"$gte": yesterday}},
+        {"_id": 0},
+    ).sort("timestamp", -1).limit(20).to_list(20)
+
+    # Trigger a fresh check
+    from services import service_health_monitor
+    live_results = await service_health_monitor.check_services()
+
+    return {
+        "services": live_results,
+        "recent_alerts": recent_alerts,
+        "checked_at": datetime.now(timezone.utc).isoformat(),
+    }
