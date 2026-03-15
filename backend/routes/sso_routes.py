@@ -1,19 +1,20 @@
 """
 SSO (Single Sign-On) Authentication Routes
-Simulated SAML/OIDC authentication flows for enterprise organizations.
-Provides a mock Identity Provider for testing SSO configurations.
+Supports real Auth0 OIDC authentication and simulated SAML/OIDC flows for enterprise organizations.
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timezone, timedelta
-from auth import create_access_token
+from auth import create_access_token, get_password_hash
 import uuid
 import secrets
 import logging
+import os
+import httpx
 
 from routes.auth_routes import get_current_user
 
@@ -26,6 +27,11 @@ db: AsyncIOMotorDatabase = None
 def set_db(database):
     global db
     db = database
+
+# Auth0 config
+AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN", "")
+AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID", "")
+AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET", "")
 
 
 # --- Models ---
@@ -304,6 +310,180 @@ async def test_sso_config(body: SSOTestRequest, current_user: dict = Depends(get
         "issuer_url": config.get("sso_issuer_url"),
         "allowed_domains": config.get("sso_allowed_domains", []),
         "test_timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+# --- Auth0 OIDC Routes ---
+
+@router.get("/auth0/login")
+async def auth0_login(request: Request):
+    """Initiate Auth0 login — returns the Auth0 authorization URL."""
+    if not AUTH0_DOMAIN or not AUTH0_CLIENT_ID:
+        raise HTTPException(status_code=503, detail="Auth0 is not configured")
+
+    # Build callback URL from request origin
+    origin = request.headers.get("origin") or request.headers.get("referer", "")
+    if origin:
+        origin = origin.rstrip("/").split("?")[0].split("#")[0]
+        # Strip path to get base URL
+        from urllib.parse import urlparse
+        parsed = urlparse(origin)
+        callback_base = f"{parsed.scheme}://{parsed.netloc}"
+    else:
+        callback_base = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+
+    callback_url = f"{callback_base}/auth/callback"
+    state = secrets.token_urlsafe(32)
+
+    # Store state for CSRF protection
+    await db.sso_sessions.insert_one({
+        "session_id": state,
+        "type": "auth0",
+        "callback_url": callback_url,
+        "created_at": datetime.now(timezone.utc),
+        "status": "pending",
+    })
+
+    auth_url = (
+        f"https://{AUTH0_DOMAIN}/authorize?"
+        f"client_id={AUTH0_CLIENT_ID}&"
+        f"response_type=code&"
+        f"scope=openid%20profile%20email&"
+        f"redirect_uri={callback_url}&"
+        f"state={state}"
+    )
+
+    return {"auth_url": auth_url, "state": state}
+
+
+@router.post("/auth0/callback")
+async def auth0_callback(request: Request):
+    """Exchange Auth0 authorization code for tokens, sync user, issue JWT."""
+    body = await request.json()
+    code = body.get("code")
+    state = body.get("state")
+    redirect_uri = body.get("redirect_uri")
+
+    if not code or not state:
+        raise HTTPException(status_code=400, detail="Missing code or state parameter")
+
+    # Verify state (CSRF protection)
+    session = await db.sso_sessions.find_one({"session_id": state, "type": "auth0", "status": "pending"})
+    if not session:
+        raise HTTPException(status_code=400, detail="Invalid or expired state")
+
+    callback_url = redirect_uri or session.get("callback_url", "")
+
+    # Exchange code for tokens
+    async with httpx.AsyncClient() as client:
+        token_resp = await client.post(
+            f"https://{AUTH0_DOMAIN}/oauth/token",
+            json={
+                "grant_type": "authorization_code",
+                "client_id": AUTH0_CLIENT_ID,
+                "client_secret": AUTH0_CLIENT_SECRET,
+                "code": code,
+                "redirect_uri": callback_url,
+            },
+            headers={"Content-Type": "application/json"},
+        )
+
+    if token_resp.status_code != 200:
+        logger.error(f"Auth0 token exchange failed: {token_resp.text}")
+        await db.sso_sessions.update_one({"session_id": state}, {"$set": {"status": "failed"}})
+        raise HTTPException(status_code=401, detail="Auth0 authentication failed")
+
+    token_data = token_resp.json()
+    access_token = token_data.get("access_token")
+
+    # Fetch user profile from Auth0
+    async with httpx.AsyncClient() as client:
+        userinfo_resp = await client.get(
+            f"https://{AUTH0_DOMAIN}/userinfo",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+    if userinfo_resp.status_code != 200:
+        logger.error(f"Auth0 userinfo failed: {userinfo_resp.text}")
+        raise HTTPException(status_code=401, detail="Failed to retrieve user profile")
+
+    auth0_profile = userinfo_resp.json()
+    auth0_sub = auth0_profile.get("sub", "")
+    email = auth0_profile.get("email", "").lower().strip()
+    full_name = auth0_profile.get("name") or auth0_profile.get("nickname") or email.split("@")[0]
+    picture = auth0_profile.get("picture", "")
+
+    if not email:
+        raise HTTPException(status_code=400, detail="Auth0 profile missing email")
+
+    # Sync user in MongoDB
+    user = await db.users.find_one({"email": email})
+    now = datetime.now(timezone.utc).isoformat()
+
+    if not user:
+        # Create new user (JIT provisioning)
+        user_id = str(uuid.uuid4())
+        random_pw = secrets.token_urlsafe(32)
+        user_doc = {
+            "id": user_id,
+            "email": email,
+            "full_name": full_name,
+            "hashed_password": get_password_hash(random_pw),
+            "is_active": True,
+            "created_at": now,
+            "auth0_sub": auth0_sub,
+            "auth_method": "auth0",
+            "profile_picture": picture,
+            "sso_provisioned": True,
+        }
+        await db.users.insert_one(user_doc)
+        logger.info(f"Auth0 JIT provisioned user: {email} (sub: {auth0_sub})")
+        provisioned = True
+    else:
+        # Update existing user with Auth0 info
+        await db.users.update_one(
+            {"email": email},
+            {"$set": {
+                "auth0_sub": auth0_sub,
+                "profile_picture": picture,
+                "last_login": now,
+                "last_login_method": "auth0",
+            }}
+        )
+        user_id = user["id"]
+        provisioned = False
+
+    # Mark session completed
+    await db.sso_sessions.update_one({"session_id": state}, {"$set": {"status": "completed"}})
+
+    # Audit log
+    await db.audit_logs.insert_one({
+        "id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "action": "auth0_login",
+        "details": {"email": email, "auth0_sub": auth0_sub, "provisioned": provisioned},
+        "timestamp": now,
+    })
+
+    # Issue our JWT
+    jwt_token = create_access_token(data={"sub": email})
+
+    return {
+        "access_token": jwt_token,
+        "token_type": "bearer",
+        "user_email": email,
+        "full_name": full_name,
+        "provisioned": provisioned,
+        "message": "Auth0 authentication successful",
+    }
+
+
+@router.get("/auth0/status")
+async def auth0_status():
+    """Check if Auth0 is configured."""
+    return {
+        "configured": bool(AUTH0_DOMAIN and AUTH0_CLIENT_ID),
+        "domain": AUTH0_DOMAIN if AUTH0_DOMAIN else None,
     }
 
 

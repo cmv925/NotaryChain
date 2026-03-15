@@ -8,13 +8,17 @@ import { Card, CardContent } from '../components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '../hooks/use-toast';
 import { useAuth } from '../contexts/AuthContext';
-import { ShieldCheck, ArrowLeft, KeyRound } from 'lucide-react';
+import { ShieldCheck, ArrowLeft, KeyRound, Globe } from 'lucide-react';
+import axios from 'axios';
+
+const API = process.env.REACT_APP_BACKEND_URL;
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const { login, verify2FA } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
+  const [auth0Loading, setAuth0Loading] = useState(false);
 
   // 2FA state
   const [show2FA, setShow2FA] = useState(false);
@@ -103,6 +107,21 @@ const LoginPage = () => {
     }
   };
 
+  const handleAuth0Login = async () => {
+    setAuth0Loading(true);
+    try {
+      const response = await axios.get(`${API}/api/sso/auth0/login`, {
+        headers: { origin: window.location.origin },
+      });
+      if (response.data.auth_url) {
+        window.location.href = response.data.auth_url;
+      }
+    } catch (err) {
+      toast({ title: 'Auth0 Unavailable', description: err.response?.data?.detail || 'SSO is not configured', variant: 'destructive' });
+      setAuth0Loading(false);
+    }
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -183,7 +202,16 @@ const LoginPage = () => {
                   </p>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-gray-800">
+                <div className="mt-4 pt-4 border-t border-gray-800 space-y-3">
+                  <button
+                    onClick={handleAuth0Login}
+                    disabled={auth0Loading}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-cyan-500/30 bg-cyan-500/5 text-cyan-400 hover:bg-cyan-500/10 hover:border-cyan-500/50 transition-all text-sm font-medium disabled:opacity-50"
+                    data-testid="auth0-login-button"
+                  >
+                    <Globe className="w-4 h-4" />
+                    {auth0Loading ? 'Redirecting...' : 'Sign in with Auth0'}
+                  </button>
                   <button
                     onClick={() => navigate('/sso/login')}
                     className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-purple-500/30 bg-purple-500/5 text-purple-400 hover:bg-purple-500/10 hover:border-purple-500/50 transition-all text-sm font-medium"
