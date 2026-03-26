@@ -217,6 +217,38 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - data-testid: invite-role-admin, invite-role-member
 - Testing: 100% pass rate (iteration_56)
 
+
+### Custom RBAC Policy Builder Visual Editor — COMPLETED (Mar 26, 2026)
+- **Frontend** (`components/RBACManagement.jsx`): Completely rebuilt with two view modes
+  - **Grid View**: Visual permission matrix with role columns × permission rows, toggle switches per cell
+  - **List View**: Expandable role cards with effective permissions preview per category
+  - Inline permission toggling (click grid cell to toggle, auto-saves)
+  - Category-aware UI with color-coded icons (Documents, Vault, Members, Templates, etc.)
+  - Permission progress bar in role editor, Select All / Clear All shortcuts
+- Create/Edit modal with categorized checkboxes and indeterminate state
+- Testing: 100% pass rate (iteration_57)
+
+### Advanced Availability Calendar Widget — COMPLETED (Mar 26, 2026)
+- **Frontend** (`pages/BookingCalendar.jsx`): Enhanced booking experience
+  - Weekly Availability Overview: 7-day grid showing slot count + hours per day
+  - Slot Period Grouping: Morning (before noon), Afternoon (12-5pm), Evening (5pm+)
+  - Visual indicators for available vs booked slots with disabled states
+- **Marketplace** (`pages/NotaryMarketplace.jsx`): Availability preview in notary profile detail
+- Testing: 100% pass rate (iteration_57)
+
+### Automated Incident Reporting — COMPLETED (Mar 26, 2026)
+- **Backend** (`routes/incident_routes.py`):
+  - `GET /api/admin/incidents?days=7` — Lists all service incidents with timeline events, duration, status
+  - `GET /api/admin/incidents/export-pdf?days=30` — Downloadable PDF incident report
+  - Groups sequential degradation/recovery alerts into incidents automatically
+  - Calculates incident duration, tracks ongoing vs resolved status
+- **Frontend**: Incidents panel in Operations tab with:
+  - Summary badges (total, resolved, ongoing)
+  - "All Clear" state with green checkmark when no incidents
+  - Expandable incident cards with event timeline
+  - One-click PDF export for stakeholder communication
+- Testing: 100% pass rate — 13/13 backend + all frontend (iteration_57)
+
 - **Storage Service:** `services/storage_service.py` — Unified StorageService with S3 (boto3) + local filesystem fallback
 - S3 bucket: `notarychain-documents` (us-east-2), pre-signed URL generation for downloads
 - **server.py fix:** Moved `load_dotenv()` before route imports so StorageService singleton picks up AWS credentials
@@ -554,9 +586,9 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - Resend Domain Verification (user task — verify domain on resend.com)
 
 ## Future/Backlog
-- Custom RBAC policy builder visual editor
-- Advanced availability calendar widget for marketplace notaries
-- Automated incident reporting for service degradation events
+- Performance optimization (lazy loading, code splitting for large pages)
+- Advanced analytics dashboard with chart visualizations
+- Multi-language support (i18n)
 
 ## Test Credentials
 | Role | Email | Password |
