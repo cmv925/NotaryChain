@@ -201,7 +201,40 @@ const BookingCalendar = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" data-testid="booking-layout">
+              {/* Weekly Availability Overview */}
+              {availability?.weekly_slots && (
+                <Card className="bg-[#1a2332] border-gray-800 mb-0 lg:col-span-2" data-testid="weekly-availability-overview">
+                  <CardContent className="p-5">
+                    <h3 className="text-white font-semibold mb-3 text-sm">Weekly Availability Pattern</h3>
+                    <div className="grid grid-cols-7 gap-2">
+                      {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((day, i) => {
+                        const daySlots = availability.weekly_slots.filter(s => s.day_of_week === i);
+                        const hasSlots = daySlots.length > 0;
+                        const totalHours = daySlots.reduce((acc, s) => {
+                          const [sh, sm] = (s.start_time || '09:00').split(':').map(Number);
+                          const [eh, em] = (s.end_time || '17:00').split(':').map(Number);
+                          return acc + ((eh * 60 + em) - (sh * 60 + sm)) / 60;
+                        }, 0);
+                        return (
+                          <div key={day} className={`rounded-xl p-3 text-center border transition-all ${hasSlots ? 'bg-emerald-500/5 border-emerald-500/20 hover:bg-emerald-500/10' : 'bg-gray-800/20 border-gray-800'}`}>
+                            <p className={`text-xs font-bold mb-1 ${hasSlots ? 'text-emerald-400' : 'text-gray-600'}`}>{day}</p>
+                            {hasSlots ? (
+                              <>
+                                <p className="text-white text-lg font-bold">{daySlots.length}</p>
+                                <p className="text-gray-500 text-[10px]">{totalHours.toFixed(0)}h available</p>
+                              </>
+                            ) : (
+                              <p className="text-gray-700 text-xs mt-2">Closed</p>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               {/* Calendar */}
               <Card className="bg-[#1a2332] border-gray-800" data-testid="booking-calendar">
                 <CardContent className="p-5">
@@ -273,21 +306,44 @@ const BookingCalendar = () => {
                       ) : slots.length === 0 ? (
                         <p className="text-gray-500 text-sm text-center py-4">No available slots on this date.</p>
                       ) : (
-                        <div className="grid grid-cols-3 gap-2" data-testid="slot-grid">
-                          {slots.map(slot => (
-                            <button
-                              key={slot.start_time}
-                              onClick={() => setSelectedSlot(slot)}
-                              className={`py-2.5 px-3 rounded-lg text-sm font-medium transition-all border
-                                ${selectedSlot?.start_time === slot.start_time
-                                  ? 'bg-blue-600 text-white border-blue-400'
-                                  : 'bg-[#0d1520] text-gray-300 border-gray-800 hover:border-blue-500/50 hover:text-white'}
-                              `}
-                              data-testid={`slot-${slot.start_time}`}
-                            >
-                              {slot.start_time}
-                            </button>
-                          ))}
+                        <div data-testid="slot-grid">
+                          {/* Period-based slot grouping */}
+                          {(() => {
+                            const morning = slots.filter(s => parseInt(s.start_time) < 12);
+                            const afternoon = slots.filter(s => parseInt(s.start_time) >= 12 && parseInt(s.start_time) < 17);
+                            const evening = slots.filter(s => parseInt(s.start_time) >= 17);
+                            const periods = [
+                              { label: 'Morning', slots: morning, icon: '☀', color: 'amber' },
+                              { label: 'Afternoon', slots: afternoon, icon: '🌤', color: 'blue' },
+                              { label: 'Evening', slots: evening, icon: '🌙', color: 'purple' },
+                            ].filter(p => p.slots.length > 0);
+                            return periods.map(period => (
+                              <div key={period.label} className="mb-3">
+                                <p className={`text-${period.color}-400 text-xs font-medium mb-1.5 uppercase tracking-wider`}>
+                                  {period.label} ({period.slots.length})
+                                </p>
+                                <div className="grid grid-cols-3 gap-2">
+                                  {period.slots.map(slot => (
+                                    <button
+                                      key={slot.start_time}
+                                      onClick={() => setSelectedSlot(slot)}
+                                      className={`py-2.5 px-3 rounded-lg text-sm font-medium transition-all border
+                                        ${selectedSlot?.start_time === slot.start_time
+                                          ? 'bg-blue-600 text-white border-blue-400'
+                                          : slot.booked
+                                            ? 'bg-red-500/10 text-red-400/50 border-red-500/20 cursor-not-allowed line-through'
+                                            : 'bg-[#0d1520] text-gray-300 border-gray-800 hover:border-blue-500/50 hover:text-white'}
+                                      `}
+                                      disabled={slot.booked}
+                                      data-testid={`slot-${slot.start_time}`}
+                                    >
+                                      {slot.start_time}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            ));
+                          })()}
                         </div>
                       )}
                     </CardContent>

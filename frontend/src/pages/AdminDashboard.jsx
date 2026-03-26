@@ -58,6 +58,9 @@ const AdminDashboard = () => {
   const [exportingPdf, setExportingPdf] = useState(false);
   const [serviceHealth, setServiceHealth] = useState(null);
   const [loadingHealth, setLoadingHealth] = useState(false);
+  const [incidents, setIncidents] = useState(null);
+  const [loadingIncidents, setLoadingIncidents] = useState(false);
+  const [exportingIncidents, setExportingIncidents] = useState(false);
 
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
 
@@ -220,6 +223,39 @@ const AdminDashboard = () => {
       toast({ title: 'Error', description: 'Failed to load service health', variant: 'destructive' });
     } finally {
       setLoadingHealth(false);
+    }
+  };
+
+  const fetchIncidents = async () => {
+    setLoadingIncidents(true);
+    try {
+      const response = await axios.get(`${API}/admin/incidents?days=7`, authHeaders);
+      setIncidents(response.data);
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to load incidents', variant: 'destructive' });
+    } finally {
+      setLoadingIncidents(false);
+    }
+  };
+
+  const exportIncidentPdf = async () => {
+    setExportingIncidents(true);
+    try {
+      const response = await axios.get(`${API}/admin/incidents/export-pdf?days=30`, {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `NotaryChain_Incident_Report_${new Date().toISOString().slice(0,10)}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+      toast({ title: 'Exported', description: 'Incident report downloaded' });
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to export', variant: 'destructive' });
+    } finally {
+      setExportingIncidents(false);
     }
   };
 
@@ -433,6 +469,7 @@ const AdminDashboard = () => {
                   if (tab.id === 'operations' && !alertSettings) fetchAlertSettings();
                   if (tab.id === 'operations' && !storageAnalytics) fetchStorageAnalytics();
                   if (tab.id === 'operations' && !serviceHealth) fetchServiceHealth();
+                  if (tab.id === 'operations' && !incidents) fetchIncidents();
                   if (tab.id === 'security' && !securityData) fetchSecurityCompliance();
                 }}
                 className={`flex items-center gap-2 px-4 py-3 font-medium transition-all whitespace-nowrap ${
@@ -872,6 +909,92 @@ const AdminDashboard = () => {
                     ) : (
                       <div className="flex items-center justify-center py-6">
                         <p className="text-gray-500 text-sm">Click refresh to check service health</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Incident Timeline */}
+                <Card className="bg-[#1a2332] border-gray-800" data-testid="incidents-panel">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between mb-5">
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                        <AlertCircle className="w-5 h-5 text-orange-400" />
+                        Incidents (7 Days)
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <Button size="sm" variant="outline" className="border-gray-700" onClick={fetchIncidents} disabled={loadingIncidents}>
+                          <RefreshCw className={`w-4 h-4 ${loadingIncidents ? 'animate-spin' : ''}`} />
+                        </Button>
+                        <Button size="sm" className="bg-blue-600 hover:bg-blue-500" onClick={exportIncidentPdf} disabled={exportingIncidents} data-testid="export-incident-pdf-btn">
+                          <FileText className="w-4 h-4 mr-1" /> {exportingIncidents ? 'Exporting...' : 'Export PDF'}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {incidents ? (
+                      <div className="space-y-4">
+                        {/* Summary badges */}
+                        <div className="flex items-center gap-3">
+                          <span className="text-gray-400 text-sm">{incidents.summary?.total_incidents || 0} incidents</span>
+                          {incidents.summary?.resolved > 0 && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400">
+                              {incidents.summary.resolved} resolved
+                            </span>
+                          )}
+                          {incidents.summary?.ongoing > 0 && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 animate-pulse">
+                              {incidents.summary.ongoing} ongoing
+                            </span>
+                          )}
+                        </div>
+
+                        {incidents.incidents?.length > 0 ? (
+                          <div className="space-y-2">
+                            {incidents.incidents.map((inc, i) => (
+                              <div key={i} className={`rounded-xl p-4 border ${inc.status === 'resolved' ? 'bg-[#0a0f1a] border-gray-800' : 'bg-red-500/5 border-red-500/20'}`} data-testid={`incident-${i}`}>
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <div className={`w-2 h-2 rounded-full ${inc.status === 'resolved' ? 'bg-emerald-400' : 'bg-red-400 animate-pulse'}`} />
+                                    <span className="text-white text-sm font-medium">{inc.service}</span>
+                                    <span className={`text-xs px-1.5 py-0.5 rounded ${inc.status === 'resolved' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'}`}>
+                                      {inc.status}
+                                    </span>
+                                  </div>
+                                  <span className="text-gray-500 text-xs">
+                                    {inc.duration_minutes != null ? `${inc.duration_minutes} min` : 'ongoing'}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-4 text-xs text-gray-500">
+                                  <span>Started: {new Date(inc.started_at).toLocaleString()}</span>
+                                  {inc.ended_at && <span>Ended: {new Date(inc.ended_at).toLocaleString()}</span>}
+                                </div>
+                                {inc.events?.length > 0 && (
+                                  <div className="mt-2 pl-3 border-l-2 border-gray-800 space-y-1">
+                                    {inc.events.slice(0, 3).map((evt, j) => (
+                                      <div key={j} className="flex items-center gap-2 text-xs">
+                                        <div className={`w-1.5 h-1.5 rounded-full ${evt.status === 'recovered' ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                                        <span className="text-gray-600">{new Date(evt.timestamp).toLocaleTimeString()}</span>
+                                        <span className={evt.status === 'recovered' ? 'text-emerald-400' : 'text-red-400'}>{evt.status}</span>
+                                        <span className="text-gray-600 truncate">{evt.detail?.slice(0, 60)}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center py-6 bg-[#0a0f1a] rounded-xl border border-gray-800">
+                            <CheckCircle className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
+                            <p className="text-emerald-400 text-sm font-medium">All Clear</p>
+                            <p className="text-gray-500 text-xs mt-1">No incidents in the last 7 days</p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center py-6">
+                        <p className="text-gray-500 text-sm">Click refresh to load incident history</p>
                       </div>
                     )}
                   </CardContent>
