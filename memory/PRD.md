@@ -193,6 +193,30 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - Fixed `AuditLogResponse` model to use default values for optional fields
 - Added try/except around log parsing to handle mixed schema entries
 - `GET /api/audit/logs` now returns 200 (was 500)
+
+### SSO Routes Refactor — COMPLETED (Mar 26, 2026)
+- Split `sso_routes.py` (684 lines) into 4 focused modules:
+  - `sso_common.py` — shared helpers (get_callback_base, sync_sso_user, session management)
+  - `auth0_routes.py` — Auth0 OIDC login/callback/status
+  - `okta_routes.py` — Okta OIDC login/callback/status
+  - `sso_routes.py` — Enterprise SSO (discover, initiate, callback, test, providers) - slimmed to ~240 lines
+- All endpoints maintain identical URL paths — zero frontend changes required
+- Testing: 100% pass rate — 11/11 backend + all frontend (iteration_56)
+
+### Marketplace UI Enhancement — COMPLETED (Mar 26, 2026)
+- **Review Submission Form**: Interactive 5-star rating, comment textarea, submit/cancel buttons
+- **Availability Preview**: Weekly availability grid in notary profile (Mon-Sun with slot counts)
+- Auto-fetches notary availability when viewing profile
+- data-testid attributes: write-review-btn, review-form, review-star-1 to -5, review-comment, submit-review-btn, notary-availability
+- Testing: 100% pass rate (iteration_56)
+
+### Organization Invite Modal Enhancement — COMPLETED (Mar 26, 2026)
+- Replaced dropdown with visual role cards (Admin/Member) with icons and descriptions
+- Admin: "Full access — manage members, billing, settings, and SSO" (Shield icon)
+- Member: "Standard access — create and manage own documents" (Users icon)
+- data-testid: invite-role-admin, invite-role-member
+- Testing: 100% pass rate (iteration_56)
+
 - **Storage Service:** `services/storage_service.py` — Unified StorageService with S3 (boto3) + local filesystem fallback
 - S3 bucket: `notarychain-documents` (us-east-2), pre-signed URL generation for downloads
 - **server.py fix:** Moved `load_dotenv()` before route imports so StorageService singleton picks up AWS credentials
@@ -527,13 +551,12 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - `/api/sso/test` — Test SSO configuration validity
 
 ## Upcoming Tasks
-- SSO routes refactor (split sso_routes.py into auth0_routes.py + okta_routes.py)
+- Resend Domain Verification (user task — verify domain on resend.com)
 
 ## Future/Backlog
-- Enterprise Features Expansion (SOC2 audit export — done, org management already exists, RBAC policy builder already exists)
-- Additional marketplace features (ratings/reviews already exist, availability calendars already exist)
-- Resend Domain Verification (user task)
-- Custom RBAC policy builder UI enhancements
+- Custom RBAC policy builder visual editor
+- Advanced availability calendar widget for marketplace notaries
+- Automated incident reporting for service degradation events
 
 ## Test Credentials
 | Role | Email | Password |
