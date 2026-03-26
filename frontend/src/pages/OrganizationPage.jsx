@@ -128,10 +128,26 @@ const InviteMemberModal = ({ orgId, onClose, onInvited, token }) => {
           </div>
           <div>
             <Label className="text-gray-200 text-sm">Role</Label>
-            <select value={role} onChange={(e) => setRole(e.target.value)} className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white mt-1" data-testid="invite-role-select">
-              <option value="member">Member</option>
-              <option value="admin">Admin</option>
-            </select>
+            <div className="mt-2 space-y-2">
+              {[
+                { value: 'admin', label: 'Admin', desc: 'Full access — manage members, billing, settings, and SSO', icon: Shield },
+                { value: 'member', label: 'Member', desc: 'Standard access — create and manage own documents', icon: Users },
+              ].map(r => (
+                <button
+                  key={r.value}
+                  type="button"
+                  onClick={() => setRole(r.value)}
+                  className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${role === r.value ? 'border-blue-500 bg-blue-500/10' : 'border-gray-700 bg-[#0a0f1a] hover:border-gray-600'}`}
+                  data-testid={`invite-role-${r.value}`}
+                >
+                  <r.icon className={`w-4 h-4 ${role === r.value ? 'text-blue-400' : 'text-gray-500'}`} />
+                  <div>
+                    <p className={`text-sm font-medium ${role === r.value ? 'text-white' : 'text-gray-300'}`}>{r.label}</p>
+                    <p className="text-gray-500 text-xs">{r.desc}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
           <Button type="submit" disabled={sending || !email.trim()} className="w-full bg-blue-600 hover:bg-blue-700 text-white" data-testid="send-invite-btn">
             {sending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Mail className="w-4 h-4 mr-2" />}

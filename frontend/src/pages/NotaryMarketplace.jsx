@@ -41,6 +41,11 @@ const NotaryMarketplace = () => {
   const [sortBy, setSortBy] = useState('rating');
   const [selectedNotary, setSelectedNotary] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [availability, setAvailability] = useState(null);
   const headers = { Authorization: `Bearer ${token}` };
 
   const fetchNotaries = useCallback(async () => {
@@ -61,13 +66,39 @@ const NotaryMarketplace = () => {
 
   const viewProfile = async (notaryId) => {
     setLoadingProfile(true);
+    setShowReviewForm(false);
+    setAvailability(null);
     try {
       const res = await axios.get(`${API}/marketplace/notaries/${notaryId}`);
       setSelectedNotary(res.data);
+      // Fetch availability
+      try {
+        const availRes = await axios.get(`${API}/booking/notary/${notaryId}/availability`);
+        setAvailability(availRes.data);
+      } catch {}
     } catch {
       toast({ title: 'Error', description: 'Failed to load profile', variant: 'destructive' });
     }
     setLoadingProfile(false);
+  };
+
+  const submitReview = async () => {
+    if (!selectedNotary || !token) return;
+    setSubmittingReview(true);
+    try {
+      await axios.post(`${API}/marketplace/notaries/${selectedNotary.notary_id}/reviews`, {
+        rating: reviewRating,
+        comment: reviewComment,
+      }, { headers });
+      toast({ title: 'Review Submitted', description: 'Thank you for your feedback!' });
+      setShowReviewForm(false);
+      setReviewComment('');
+      setReviewRating(5);
+      viewProfile(selectedNotary.notary_id);
+    } catch (err) {
+      toast({ title: 'Error', description: err.response?.data?.detail || 'Failed to submit review', variant: 'destructive' });
+    }
+    setSubmittingReview(false);
   };
 
   return (
@@ -131,8 +162,76 @@ const NotaryMarketplace = () => {
                 </Button>
               </div>
 
+              {/* Availability Preview */}
+              {availability && (
+                <Card className="bg-[#1a2332] border-gray-800 mb-6" data-testid="notary-availability">
+                  <CardContent className="p-5">
+                    <h3 className="text-base font-semibold text-white mb-3 flex items-center gap-2">
+                      <CalendarIcon className="w-4 h-4 text-blue-400" />
+                      Availability This Week
+                    </h3>
+                    {availability.availability ? (
+                      <div className="grid grid-cols-7 gap-2">
+                        {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((day, i) => {
+                          const dayKey = day.toLowerCase();
+                          const slots = availability.availability[dayKey] || availability.availability[['monday','tuesday','wednesday','thursday','friday','saturday','sunday'][i]] || [];
+                          const hasSlots = Array.isArray(slots) ? slots.length > 0 : !!slots;
+                          return (
+                            <div key={day} className={`rounded-lg p-2 text-center border ${hasSlots ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-gray-800/30 border-gray-700'}`}>
+                              <p className={`text-xs font-medium ${hasSlots ? 'text-emerald-400' : 'text-gray-600'}`}>{day}</p>
+                              <p className="text-[10px] text-gray-500 mt-0.5">{hasSlots ? (Array.isArray(slots) ? `${slots.length} slots` : 'Available') : 'Closed'}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 text-sm">No availability data.</p>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
               {/* Reviews */}
-              <h2 className="text-lg font-semibold text-white mb-4">Reviews ({selectedNotary.review_count})</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-white">Reviews ({selectedNotary.review_count})</h2>
+                {token && !showReviewForm && (
+                  <Button size="sm" onClick={() => setShowReviewForm(true)} className="bg-blue-600 hover:bg-blue-500" data-testid="write-review-btn">
+                    <MessageSquare className="w-4 h-4 mr-1" /> Write Review
+                  </Button>
+                )}
+              </div>
+
+              {/* Review Form */}
+              {showReviewForm && (
+                <Card className="bg-[#1a2332] border-blue-500/30 mb-4" data-testid="review-form">
+                  <CardContent className="p-5 space-y-4">
+                    <h3 className="text-white font-medium">Rate your experience</h3>
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map(i => (
+                        <button key={i} onClick={() => setReviewRating(i)} className="focus:outline-none" data-testid={`review-star-${i}`}>
+                          <Star className={`w-7 h-7 ${i <= reviewRating ? 'text-amber-400 fill-amber-400' : 'text-gray-600'} hover:text-amber-300 transition-colors`} />
+                        </button>
+                      ))}
+                      <span className="text-gray-400 text-sm ml-2">{reviewRating}/5</span>
+                    </div>
+                    <textarea
+                      value={reviewComment}
+                      onChange={e => setReviewComment(e.target.value)}
+                      placeholder="Share your experience..."
+                      rows={3}
+                      className="w-full bg-[#0a0f1a] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm placeholder-gray-500 focus:border-blue-500 outline-none"
+                      data-testid="review-comment"
+                    />
+                    <div className="flex gap-2">
+                      <Button onClick={submitReview} disabled={submittingReview} className="bg-blue-600 hover:bg-blue-500" data-testid="submit-review-btn">
+                        {submittingReview ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null}
+                        Submit Review
+                      </Button>
+                      <Button variant="outline" onClick={() => setShowReviewForm(false)} className="border-gray-700 text-gray-400">Cancel</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
               {(selectedNotary.reviews || []).length === 0 ? (
                 <p className="text-gray-500 text-sm">No reviews yet.</p>
               ) : (
