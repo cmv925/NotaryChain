@@ -279,6 +279,22 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **Images stored separately** in `ceremony_images` collection (not in main ceremony doc) for performance
 - Testing: 100% pass rate (iteration_62)
 
+### Real Witness Agent (Merkle Tree + Audit Trail) — COMPLETED (Mar 27, 2026)
+- Builds real Merkle tree from ceremony evidence (ceremony_id, document_name, signer, verifier hash, verdicts)
+- Session timeline with real events (ceremony_created, pipeline_started, verifier_completed, witness_observation)
+- Evidence packaging with tamper-proof hash, item count, image witness flag
+- Writes audit logs to `ceremony_audit_logs` collection
+- Always passes (evidence completeness drives confidence 0.85-0.99)
+- Testing: 100% pass rate (iteration_63)
+
+### Ceremony Certificate PDF Auto-Generation — COMPLETED (Mar 27, 2026)
+- **Trigger**: Auto-generated when ceremony consensus is APPROVED (both sync and SSE paths)
+- **Content**: Document info, agent verdicts table (color-coded PASS/FAIL), consensus oracle, blockchain seal details, AI verifier notes
+- **Storage**: PDF stored as base64 in `ceremony_certificates` collection
+- **Endpoint**: GET `/api/ceremony/{id}/certificate` returns PDF download
+- **Frontend**: "Download Certificate" button on sealed ceremonies, `certificate_generated` SSE event in live log
+- Testing: 100% pass rate (iteration_63)
+
 - Testing: 100% pass rate backend + frontend (iteration_60, iteration_61)
 
 - **Frontend** (`pages/BookingCalendar.jsx`): Enhanced booking experience
@@ -635,11 +651,11 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - `/api/sso/test` — Test SSO configuration validity
 
 ## Upcoming Tasks
-- Plug real audit/evidence packaging into Witness Agent
 - Resend Domain Verification (user task — verify domain on resend.com)
 
 ## Future/Backlog
 - Add more languages (DE, PT, JA, ZH)
+- Webcam face capture for live selfie in ceremony form
 - Extract translation strings to separate JSON locale files for scalability
 
 ## Test Credentials
