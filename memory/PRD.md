@@ -295,6 +295,14 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **Frontend**: "Download Certificate" button on sealed ceremonies, `certificate_generated` SSE event in live log
 - Testing: 100% pass rate (iteration_63)
 
+### Universal Back Buttons — COMPLETED (Mar 27, 2026)
+- Added back buttons to 14 nested frontend pages for improved navigation
+- **Pages updated**: AdminDashboard, NotaryDashboard, TransactionsPage, MyDrafts, TemplateLibrary, VerifyDocument, CheckoutPage, OrganizationPage, PaymentSuccess, PricingPage, QuickSealDemo, RequestNotarization, SharedDraftViewer, NotaryMarketplace
+- **Root pages correctly excluded**: HomePage, Dashboard, LoginPage, SignUpPage (no back buttons needed)
+- **Pattern**: Shadcn `<Button variant="ghost">` with `ArrowLeft` icon, navigates to `/dashboard` or `navigate(-1)` as appropriate
+- **data-testid**: `back-to-dashboard` for dashboard-bound buttons, `back-button` for history-based navigation
+- Testing: 100% pass rate — 12/12 pages verified, 3 root pages confirmed excluded (iteration_64)
+
 - Testing: 100% pass rate backend + frontend (iteration_60, iteration_61)
 
 - **Frontend** (`pages/BookingCalendar.jsx`): Enhanced booking experience
@@ -654,8 +662,10 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - Resend Domain Verification (user task — verify domain on resend.com)
 
 ## Future/Backlog
+- Public certificate verification page (`/verify-certificate/:certHash`) — anyone can paste a hash and verify against Hedera blockchain (P2)
+- Ceremony Analytics widget for admin dashboard (P2)
+- Face Capture via webcam directly in ceremony form instead of file uploads (P2)
 - Add more languages (DE, PT, JA, ZH)
-- Webcam face capture for live selfie in ceremony form
 - Extract translation strings to separate JSON locale files for scalability
 
 ## Test Credentials

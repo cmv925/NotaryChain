@@ -119,6 +119,9 @@ const SharedDraftViewer = () => {
       <div className="min-h-screen bg-[#0f1825]">
         <Navbar />
         <div className="pt-32 text-center">
+          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="text-gray-400 hover:text-white mb-4" data-testid="back-button">
+            <ArrowLeft className="w-4 h-4 mr-1" /> Back
+          </Button>
           <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
           <p className="text-gray-400">This shared draft was not found or the link has expired.</p>
           <Button onClick={() => navigate('/templates')} className="mt-4 bg-blue-600 text-white">
