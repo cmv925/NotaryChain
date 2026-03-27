@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from '../hooks/use-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { ShieldCheck, ArrowLeft, KeyRound, Globe, Shield } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -16,6 +17,7 @@ const API = process.env.REACT_APP_BACKEND_URL;
 const LoginPage = () => {
   const navigate = useNavigate();
   const { login, verify2FA } = useAuth();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [auth0Loading, setAuth0Loading] = useState(false);
@@ -152,13 +154,13 @@ const LoginPage = () => {
             {!show2FA ? (
               <>
                 <div className="text-center mb-8">
-                  <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-                  <p className="text-gray-400">Sign in to your NotaryChain account</p>
+                  <h1 className="text-3xl font-bold text-white mb-2">{t('auth.welcome_back')}</h1>
+                  <p className="text-gray-400">{t('auth.sign_in')} to NotaryChain</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6" data-testid="login-form">
                   <div>
-                    <Label htmlFor="email" className="text-white mb-2 block">Email Address</Label>
+                    <Label htmlFor="email" className="text-white mb-2 block">{t('auth.email')}</Label>
                     <Input
                       id="email"
                       name="email"
@@ -174,7 +176,7 @@ const LoginPage = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="password" className="text-white mb-2 block">Password</Label>
+                    <Label htmlFor="password" className="text-white mb-2 block">{t('auth.password')}</Label>
                     <Input
                       id="password"
                       name="password"
@@ -195,7 +197,7 @@ const LoginPage = () => {
                       <span className="text-gray-400 text-sm">Remember me</span>
                     </label>
                     <a href="#" className="text-blue-500 hover:text-blue-400 text-sm">
-                      Forgot password?
+                      {t('auth.forgot')}
                     </a>
                   </div>
 
@@ -205,15 +207,15 @@ const LoginPage = () => {
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg"
                     data-testid="login-submit-button"
                   >
-                    {loading ? 'Signing in...' : 'Sign In'}
+                    {loading ? `${t('common.loading')}` : t('auth.sign_in')}
                   </Button>
                 </form>
 
                 <div className="mt-6 text-center">
                   <p className="text-gray-400">
-                    Don't have an account?{' '}
+                    {t('auth.no_account')}{' '}
                     <button onClick={() => navigate('/signup')} className="text-blue-500 hover:text-blue-400 font-semibold" data-testid="go-to-signup">
-                      Sign up
+                      {t('auth.sign_up')}
                     </button>
                   </p>
                 </div>

@@ -1,67 +1,81 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
-import HomePage from './pages/HomePage';
-import PricingPage from './pages/PricingPage';
-import LoginPage from './pages/LoginPage';
-import SignUpPage from './pages/SignUpPage';
-import QuickSealDemo from './pages/QuickSealDemo';
-import Dashboard from './pages/Dashboard';
-import NotaryOnboarding from './pages/NotaryOnboarding';
-import NotaryDashboard from './pages/NotaryDashboard';
-import RequestNotarization from './pages/RequestNotarization';
-import VerifyDocument from './pages/VerifyDocument';
-import CheckoutPage from './pages/CheckoutPage';
-import CryptoCheckout from './pages/CryptoCheckout';
-import PaymentSuccess from './pages/PaymentSuccess';
-import PaymentCancel from './pages/PaymentCancel';
-import NotaryVideoSession from './pages/NotaryVideoSession';
-import AdminDashboard from './pages/AdminDashboard';
-import TransactionsPage from './pages/TransactionsPage';
-import TransactionRoom from './pages/TransactionRoom';
-import NotarizationCertificate from './pages/NotarizationCertificate';
-import BlueprintCreator from './pages/BlueprintCreator';
-import SecuritySettings from './pages/SecuritySettings';
-import SubscriptionPage from './pages/SubscriptionPage';
-import SubscriptionSuccess from './pages/SubscriptionSuccess';
-import NotaryJournal from './pages/NotaryJournal';
-import DigitalSeal from './pages/DigitalSeal';
-import CompliancePage from './pages/CompliancePage';
-import DeveloperPage from './pages/DeveloperPage';
-import RONComplianceDashboard from './pages/RONComplianceDashboard';
-import TemplateLibrary from './pages/TemplateLibrary';
-import TemplateWizard from './pages/TemplateWizard';
-import OrganizationPage from './pages/OrganizationPage';
-import MyDrafts from './pages/MyDrafts';
-import SharedDraftViewer from './pages/SharedDraftViewer';
-import BulkNotarization from './pages/BulkNotarization';
-import NotaryMarketplace from './pages/NotaryMarketplace';
-import WhiteLabelPage from './pages/WhiteLabelPage';
-import BookingCalendar from './pages/BookingCalendar';
-import MyBookings from './pages/MyBookings';
-import AIDocumentGenerator from './pages/AIDocumentGenerator';
-import AIDocumentSummarizer from './pages/AIDocumentSummarizer';
-import VideoWitness from './pages/VideoWitness';
-import DocumentRemediation from './pages/DocumentRemediation';
-import BiometricPassportPage from './pages/BiometricPassportPage';
-import AIConductorPage from './pages/AIConductorPage';
-import EvidencePackagePage from './pages/EvidencePackagePage';
-import TransactionTimeline from './pages/TransactionTimeline';
-import RemindersPage from './pages/RemindersPage';
-import ApprovalsPage from './pages/ApprovalsPage';
-import DocComparePage from './pages/DocComparePage';
-import BrandingPage from './pages/BrandingPage';
-import SSOLoginPage from './pages/SSOLoginPage';
-import Auth0Callback from './pages/Auth0Callback';
-import OktaCallback from './pages/OktaCallback';
-import OnboardingPage from './pages/OnboardingPage';
-import InvestorDeck from './pages/InvestorDeck';
 import ErrorBoundary from './components/ErrorBoundary';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { Toaster } from './components/ui/toaster';
+import './i18n';
+
+// Eager-loaded (critical path)
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
+
+// Lazy-loaded pages
+const PricingPage = lazy(() => import('./pages/PricingPage'));
+const QuickSealDemo = lazy(() => import('./pages/QuickSealDemo'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const NotaryOnboarding = lazy(() => import('./pages/NotaryOnboarding'));
+const NotaryDashboard = lazy(() => import('./pages/NotaryDashboard'));
+const RequestNotarization = lazy(() => import('./pages/RequestNotarization'));
+const VerifyDocument = lazy(() => import('./pages/VerifyDocument'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const CryptoCheckout = lazy(() => import('./pages/CryptoCheckout'));
+const PaymentSuccess = lazy(() => import('./pages/PaymentSuccess'));
+const PaymentCancel = lazy(() => import('./pages/PaymentCancel'));
+const NotaryVideoSession = lazy(() => import('./pages/NotaryVideoSession'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
+const TransactionRoom = lazy(() => import('./pages/TransactionRoom'));
+const NotarizationCertificate = lazy(() => import('./pages/NotarizationCertificate'));
+const BlueprintCreator = lazy(() => import('./pages/BlueprintCreator'));
+const SecuritySettings = lazy(() => import('./pages/SecuritySettings'));
+const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage'));
+const SubscriptionSuccess = lazy(() => import('./pages/SubscriptionSuccess'));
+const NotaryJournal = lazy(() => import('./pages/NotaryJournal'));
+const DigitalSeal = lazy(() => import('./pages/DigitalSeal'));
+const CompliancePage = lazy(() => import('./pages/CompliancePage'));
+const DeveloperPage = lazy(() => import('./pages/DeveloperPage'));
+const RONComplianceDashboard = lazy(() => import('./pages/RONComplianceDashboard'));
+const TemplateLibrary = lazy(() => import('./pages/TemplateLibrary'));
+const TemplateWizard = lazy(() => import('./pages/TemplateWizard'));
+const OrganizationPage = lazy(() => import('./pages/OrganizationPage'));
+const MyDrafts = lazy(() => import('./pages/MyDrafts'));
+const SharedDraftViewer = lazy(() => import('./pages/SharedDraftViewer'));
+const BulkNotarization = lazy(() => import('./pages/BulkNotarization'));
+const NotaryMarketplace = lazy(() => import('./pages/NotaryMarketplace'));
+const WhiteLabelPage = lazy(() => import('./pages/WhiteLabelPage'));
+const BookingCalendar = lazy(() => import('./pages/BookingCalendar'));
+const MyBookings = lazy(() => import('./pages/MyBookings'));
+const AIDocumentGenerator = lazy(() => import('./pages/AIDocumentGenerator'));
+const AIDocumentSummarizer = lazy(() => import('./pages/AIDocumentSummarizer'));
+const VideoWitness = lazy(() => import('./pages/VideoWitness'));
+const DocumentRemediation = lazy(() => import('./pages/DocumentRemediation'));
+const BiometricPassportPage = lazy(() => import('./pages/BiometricPassportPage'));
+const AIConductorPage = lazy(() => import('./pages/AIConductorPage'));
+const EvidencePackagePage = lazy(() => import('./pages/EvidencePackagePage'));
+const TransactionTimeline = lazy(() => import('./pages/TransactionTimeline'));
+const RemindersPage = lazy(() => import('./pages/RemindersPage'));
+const ApprovalsPage = lazy(() => import('./pages/ApprovalsPage'));
+const DocComparePage = lazy(() => import('./pages/DocComparePage'));
+const BrandingPage = lazy(() => import('./pages/BrandingPage'));
+const SSOLoginPage = lazy(() => import('./pages/SSOLoginPage'));
+const Auth0Callback = lazy(() => import('./pages/Auth0Callback'));
+const OktaCallback = lazy(() => import('./pages/OktaCallback'));
+const OnboardingPage = lazy(() => import('./pages/OnboardingPage'));
+const InvestorDeck = lazy(() => import('./pages/InvestorDeck'));
+
+const PageLoader = () => (
+  <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
+    <div className="flex flex-col items-center gap-3">
+      <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      <p className="text-gray-500 text-sm">Loading...</p>
+    </div>
+  </div>
+);
 
 function App() {
   return (
@@ -71,6 +85,7 @@ function App() {
       <AuthProvider>
         <WebSocketProvider>
         <BrowserRouter>
+          <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/pricing" element={<PricingPage />} />
@@ -415,6 +430,7 @@ function App() {
               }
             />
           </Routes>
+          </Suspense>
         </BrowserRouter>
         </WebSocketProvider>
         <Toaster />

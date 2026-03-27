@@ -8,10 +8,12 @@ import { Card, CardContent } from '../components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '../hooks/use-toast';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
   const { signup } = useAuth();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -79,14 +81,14 @@ const SignUpPage = () => {
         <Card className="w-full max-w-md bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800">
           <CardContent className="p-8">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
+              <h1 className="text-3xl font-bold text-white mb-2">{t('auth.create_account')}</h1>
               <p className="text-gray-400">Start your journey with NotaryChain</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <Label htmlFor="fullName" className="text-white mb-2 block">
-                  Full Name
+                  {t('auth.full_name')}
                 </Label>
                 <Input
                   id="fullName"
@@ -103,7 +105,7 @@ const SignUpPage = () => {
 
               <div>
                 <Label htmlFor="email" className="text-white mb-2 block">
-                  Email Address
+                  {t('auth.email')}
                 </Label>
                 <Input
                   id="email"
@@ -120,7 +122,7 @@ const SignUpPage = () => {
 
               <div>
                 <Label htmlFor="password" className="text-white mb-2 block">
-                  Password
+                  {t('auth.password')}
                 </Label>
                 <Input
                   id="password"
@@ -138,7 +140,7 @@ const SignUpPage = () => {
 
               <div>
                 <Label htmlFor="confirmPassword" className="text-white mb-2 block">
-                  Confirm Password
+                  {t('auth.confirm_password')}
                 </Label>
                 <Input
                   id="confirmPassword"
@@ -172,18 +174,18 @@ const SignUpPage = () => {
                 disabled={loading}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg"
               >
-                {loading ? 'Creating Account...' : 'Create Account'}
+                {loading ? `${t('common.loading')}` : t('auth.create_account')}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-gray-400">
-                Already have an account?{' '}
+                {t('auth.has_account')}{' '}
                 <button
                   onClick={() => navigate('/login')}
                   className="text-blue-500 hover:text-blue-400 font-semibold"
                 >
-                  Sign in
+                  {t('auth.sign_in')}
                 </button>
               </p>
             </div>

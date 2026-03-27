@@ -1422,29 +1422,29 @@ const AdminDashboard = () => {
             ) : analyticsData ? (
               <>
                 {/* Summary Cards */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <Card className="bg-gradient-to-br from-green-600/20 to-green-600/10 border-green-500/30">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4" data-testid="analytics-summary-cards">
+                  <Card className="bg-gradient-to-br from-green-600/20 to-green-600/10 border-green-500/30" data-testid="analytics-total-revenue">
                     <CardContent className="p-4">
                       <p className="text-gray-400 text-xs">Total Revenue</p>
                       <p className="text-2xl font-bold text-white">${analyticsData.summary.total_revenue.toLocaleString()}</p>
                       <p className="text-xs text-gray-500 mt-1">Last {analyticsPeriod} days</p>
                     </CardContent>
                   </Card>
-                  <Card className="bg-gradient-to-br from-blue-600/20 to-blue-600/10 border-blue-500/30">
+                  <Card className="bg-gradient-to-br from-blue-600/20 to-blue-600/10 border-blue-500/30" data-testid="analytics-new-users">
                     <CardContent className="p-4">
                       <p className="text-gray-400 text-xs">New Users</p>
                       <p className="text-2xl font-bold text-white">{analyticsData.summary.new_users}</p>
                       <p className="text-xs text-gray-500 mt-1">Last {analyticsPeriod} days</p>
                     </CardContent>
                   </Card>
-                  <Card className="bg-gradient-to-br from-purple-600/20 to-purple-600/10 border-purple-500/30">
+                  <Card className="bg-gradient-to-br from-purple-600/20 to-purple-600/10 border-purple-500/30" data-testid="analytics-notarizations">
                     <CardContent className="p-4">
                       <p className="text-gray-400 text-xs">Notarizations</p>
                       <p className="text-2xl font-bold text-white">{analyticsData.summary.total_notarizations}</p>
                       <p className="text-xs text-green-400 mt-1">{analyticsData.summary.completed_notarizations} completed</p>
                     </CardContent>
                   </Card>
-                  <Card className="bg-gradient-to-br from-orange-600/20 to-orange-600/10 border-orange-500/30">
+                  <Card className="bg-gradient-to-br from-orange-600/20 to-orange-600/10 border-orange-500/30" data-testid="analytics-transactions">
                     <CardContent className="p-4">
                       <p className="text-gray-400 text-xs">Transactions</p>
                       <p className="text-2xl font-bold text-white">{analyticsData.summary.total_transactions}</p>

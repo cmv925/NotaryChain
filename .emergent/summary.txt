@@ -1,164 +1,147 @@
-<analysis>**original_problem_statement:**
-The user's goal is to build a sophisticated, futuristic notarization platform named NotaryChain. The project has evolved into a feature-rich, enterprise-grade platform. Recent user requests have focused on creating investor-facing materials (demo page, funding proposals), completing a full security audit and remediation, and beginning the migration to a production-ready infrastructure by integrating key third-party services like AWS S3, Hedera Mainnet, Stripe Live, and real SSO providers (Auth0, Okta).
+<analysis>**original_problem_statement**: 
+Build a sophisticated, futuristic notarization platform named NotaryChain with AI-powered document analysis, blockchain sealing, and enterprise features. Recent focus has been on migrating the platform to production-ready infrastructure (AWS S3, Hedera Mainnet, Stripe Live, Okta/Auth0 SSO) and building out comprehensive administration, monitoring, marketplace, and enterprise RBAC capabilities. 
 
 PRODUCT REQUIREMENTS:
-1.  **Investor Demo Flow**: Build a password-protected, cinematic demo page. (COMPLETED)
-2.  **Funding Proposals**: Generate compelling proposals for the Hedera Foundation and Wefunder. (COMPLETED)
-3.  **Comprehensive Security Review**: Systematically audit the codebase for vulnerabilities. (COMPLETED)
-4.  **Security Remediation**: Fix all identified vulnerabilities, including low-priority ones. (COMPLETED)
-5.  **Production Integrations**: Implement production services: AWS S3, Hedera Mainnet, Stripe Live, and real SSO. (IN PROGRESS)
+1. Complete Okta/Auth0 integration (COMPLETED)
+2. Build configurable alert settings and security compliance dashboards (COMPLETED)
+3. Implement Service Degradation Alerts and Storage Analytics (COMPLETED)
+4. Build SOC2 Audit Export & Incident Report generation (COMPLETED)
+5. SSO code refactoring & Marketplace UI enhancements (COMPLETED)
+6. Frontend Performance Optimization (Lazy Loading), i18n setup, and Analytics Dashboard with Charts (IN PROGRESS)
 
-**User's preferred language**: English
+**User's preferred language**: INSTRUCT next agent to respond in English.
 
-**what currently exists?**
-A mature, full-stack notarization platform (React, FastAPI, MongoDB) that is nearly production-ready. The application has been significantly hardened and enhanced with live, production-grade services. Key features now include:
-- **Cloud Storage**: All documents are stored on AWS S3.
-- **Blockchain Sealing**: Notarizations are sealed on the Hedera Mainnet.
-- **Live Payments**: Stripe is configured in Live Mode.
-- **Real SSO**: Auth0 is fully integrated and working. Okta integration is in progress but currently blocked.
-- **Operational Monitoring**: An admin Operations Dashboard provides real-time status for all key services (Hedera, S3, Stripe), and an automated background service sends alerts for low HBAR balance.
-- **Enhanced Communications**: The notarization completion email now includes a full data package with blockchain proofs.
+**what currently exists?** 
+A mature, production-ready full-stack notarization platform (React, FastAPI, MongoDB). The app features live integrations (AWS S3, Hedera Mainnet, Stripe, Auth0, Okta), a sophisticated Operations Dashboard with real-time health monitoring, an enterprise RBAC Visual Policy Builder, a Notary Marketplace with reviews/availability, and automated PDF reporting for SOC2 and Incidents. 
 
 **Last working item**:
--   **Last item agent was working:** Debugging the Okta SSO integration. The flow is failing with a 400 Bad Request error from Okta, indicating a  mismatch, even after the user confirmed the configuration in the Okta dashboard. The agent was attempting to debug the exact URL being sent to pinpoint the discrepancy.
--   **Status:** BLOCKED
--   **Agent Testing Done:** N
--   **Which testing method agent to use?** The agent should first use  with verbose output and log the exact generated URL in  to identify the mismatch. Once the URI issue is resolved, use the  to perform a full end-to-end test of both the Auth0 and Okta login flows.
--   **User Testing Done:** N
+- **Last item agent was working**: Implementing three frontend architectural upgrades: 1) Performance Optimization via React Lazy Loading, 2) i18n (Internationalization) setup using , and 3) An Analytics Dashboard with visual charts using . The agent successfully implemented lazy loading in , created  and , and applied translations to the . It was cut off while reviewing the backend endpoint  to build the frontend Recharts UI.
+- **Status**: IN PROGRESS
+- **Agent Testing Done**: N
+- **Which testing method agent to use?**:  (to ensure the lazy-loaded routes didn't break the app flow and to test the new Analytics UI and i18n language toggle).
+- **User Testing Done**: N
 
-**All Pending/In progress Issue list**:
--   **Issue 1: Okta SSO Integration Fails with Redirect URI Mismatch (P0)**
-    -   **Attempted fixes:**
-        -   Corrected the callback URL generation logic in  to use  to handle proxy rewrites.
-        -   Experimented with both Okta's  and org-level authorization servers.
-        -   Confirmed with the user that the redirect URI  was set in the Okta dashboard.
-    -   **Next debug checklist:**
-        -   In , within the  function, add a print statement to log the fully constructed  right before returning the .
-        -   Ask the user to provide a screenshot of the Okta Application's General Settings page, specifically showing the Sign-in redirect URIs field, to eliminate any possibility of a subtle typo or whitespace issue.
-        -   Verify the  variable in  does not contain any typos or extra characters (e.g., a trailing slash). The value is .
-    -   **Why fix this issue and what will be achieved with the fix?** To complete the multi-provider SSO implementation, offering enterprise customers a choice between Auth0 and Okta.
-    -   **Status:** IN PROGRESS
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** both
-    -   **Blocked on other issue:** None.
+**All Pending/In progress Issue list**: 
+Issue 1: Finish Analytics Dashboard Charts & i18n Setup (P0)
+- **Attempted fixes**: The agent reviewed  for comprehensive analytics data but ran out of tokens before creating the Recharts components in the frontend.
+- **Next debug checklist**: 
+  - Create the chart visualizations (Bar/Line charts) in the frontend (likely in  or a dedicated analytics component) using the  endpoint.
+  - Verify that React  and  loading in  work correctly without breaking authentication route transitions.
+  - Expand i18n translations beyond just the .
+- **Why fix this issue and what will be achieved with the fix?**: It fulfills the user's explicit request to build the future/backlog items (Performance, Analytics Charts, i18n).
+- **Status**: IN PROGRESS
+- **Is recurring issue?**: N
+- **Should Test frontend/backend/both after fix?**: both (Heavily focus on frontend rendering)
+- **Blocked on other issue**: None
 
 **In progress Task List**:
--   None. The current focus is solely on fixing the Okta integration.
+Task 1: Complete Recharts Implementation and Lazy Loading Validation (P0)
+- **Where to resume**: Review  to integrate  for the Analytics tab.
+- **What will be achieved with this?**: Richer data insights for enterprise admins.
+- **Status**: IN PROGRESS
+- **Should Test frontend/backend/both after fix?**: frontend
+- **Blocked on something**: None
 
-**Upcoming and Future Tasks**
-**Upcoming Tasks:**
-*   **Configurable Alert Settings Panel (P1):** Build an admin UI to customize HBAR alert thresholds, check interval, and notification preferences.
-*   **Security Compliance Dashboard (P1):** Create an admin panel showing security posture at-a-glance (active features, audit dates, policy strength) for investor due diligence.
+**Upcoming and Future Tasks**:
+Upcoming Tasks:
+- Validate all lazy-loaded routes to ensure no blank screens on navigation (P1)
+- Extend i18n to other core pages like Dashboard, Marketplace, and Authentication (P1)
+Future Tasks:
+- Resend Domain Verification (User task required to enable full email delivery).
 
-**Future Tasks:**
-*   **S3 Storage Dashboard Enhancements (P2):** Add deeper S3 analytics like upload/download trends, per-user storage quotas, and cost projections.
-*   **Enterprise Features Expansion (P2):** Implement SOC2-style audit export reports, advanced organization management, and a custom RBAC policy builder.
-*   **Landing Page Refresh & Onboarding (P2):** Modernize the landing page and create a guided onboarding flow for new users.
-*   **Additional Marketplace Features (P2):** Expand the notary marketplace with ratings/reviews and availability calendars.
-*   **Service Degradation Alerts (P2):** Implement proactive notifications for when any integration (S3, Stripe, DB) becomes unhealthy.
-*   **Resend Domain Verification (User Task):** The user needs to verify their domain on  to enable email delivery to all users.
+**Completed work in this session**:
+- **Okta SSO Bug Fix**: Resolved redirect URI and Client ID/Secret mismatches in  (DONE)
+- **Configurable Alert Settings**: Added HBAR alert threshold management (DONE)
+- **Security Compliance Dashboard**: Added 22-point security checklist UI (DONE)
+- **Storage Analytics API & UI**: Added S3 usage metrics and cost projections (DONE)
+- **SOC2 Audit Export**: Built automated PDF generation via ReportLab (DONE)
+- **Landing Page Refresh & Onboarding**: Modernized Hero UI and added new onboarding flow (DONE)
+- **Service Degradation Alerts**: Background monitor for MongoDB, S3, Stripe, Hedera (DONE)
+- **SSO Routes Refactor**: Split  into , , and  (DONE)
+- **Marketplace Enhancements**: Added review submission forms and availability calendars (DONE)
+- **Enterprise RBAC Visual Policy Builder**: Interactive matrix for custom roles (DONE)
+- **Automated Incident Report PDF**: Exportable service incident history (DONE)
+- **React Lazy Loading & i18n init**: Updated  and added  dependencies (DONE - Partially)
 
-**Completed work in this session**
--   **AWS S3 Integration (DONE):** Migrated all file I/O from local disk to a production-ready AWS S3 bucket.
--   **Low-Severity Security Remediation (DONE):** Fixed all remaining security audit items (expanded password blacklist, added , obfuscated health check).
--   **Hedera Mainnet Integration (DONE):** Migrated from Testnet to Mainnet using user-provided credentials, derived the private key from a mnemonic, created a mainnet topic, and verified the first live transaction.
--   **Stripe Live Mode Integration (DONE):** Switched the payment system from test to live mode using user-provided keys.
--   **Operations Dashboard (DONE):** Created a new admin dashboard tab to provide real-time monitoring of Hedera balance, S3 storage, and Stripe status.
--   **HBAR Balance Alerts (DONE):** Implemented a background service that monitors the Hedera account balance and sends alerts (in-app, email, log) when it falls below a threshold.
--   **Notarization Completion Email Enhancement (DONE):** Upgraded the session completion email to include a full data package with notary details and blockchain proofs.
--   **Auth0 SSO Integration (DONE):** Successfully integrated Auth0 as the first real SSO provider.
--   **Okta SSO Integration (IN PROGRESS):** Began integrating Okta as a second SSO option.
--   **Deployment Readiness (DONE):** Ran a health check and fixed a production-blocking CORS configuration issue.
+**Earlier issues found/mentioned but not fixed**:
+- None.
 
-**Earlier issues found/mentioned but not fixed**
--   None.
+**Known issue recurrence from previous fork**:
+- None. 
 
-**Known issue recurrence from previous fork**
--   None.
-
-**Code Architecture**
+**Code Architecture**:
 
 
-**Key Technical Concepts**
--   **Frontend**: React, React Router, TailwindCSS, Shadcn UI, Axios
--   **Backend**: FastAPI, MongoDB (Motor), 
--   **Security**: JWT, 2FA, OIDC (Auth0, Okta), Rate Limiting, CORS, CSP
--   **Integrations**: Gemini (AI), Stripe (Live Payments), Hedera (Mainnet Blockchain), AWS S3 (Storage), Auth0 (SSO), Okta (SSO)
+**Key Technical Concepts**:
+- **Frontend**: React, React Router (Lazy Loaded), TailwindCSS, Shadcn UI, Recharts, i18next
+- **Backend**: FastAPI, MongoDB (Motor), ReportLab (PDF Generation)
+- **Integrations**: AWS S3, Hedera Mainnet, Stripe Live, Auth0, Okta
 
-**key DB schema**
--   **hbar_balance_alerts**:  - New collection for logging HBAR alerts.
+**key DB schema**:
+- ,  (Now tolerant to missing fields),  (Alerts)
 
-**changes in tech stack**
--   : Now fully integrated for S3 storage.
--   : Used for mnemonic-to-private-key derivation.
--   : Used by the integration playbook for OIDC flows with Auth0 and Okta.
+**changes in tech stack**:
+- Added  and  for localization.
+- Added  for backend PDF generation.
 
-**All files of reference**
--   **Primary Target**:  (for debugging Okta).
--   **Key Modified**: , , , , , , , , .
--   **Numerous route files** were refactored to use the S3 .
+**All files of reference**:
+-  (Lazy loading implementation)
+- ,  (New localization setup)
+-  (Source of  for the charts)
+-  (Target for chart visualizations)
 
 **Areas that need refactoring**:
--   The  file is becoming large and complex. Once Okta is working, consider splitting it into  and  for better separation of concerns.
+- Translation strings are currently hardcoded in  and only applied to . To be truly i18n compliant, translations need to be expanded and mapped to other core components.
 
-**key api endpoints**
--    (GET)
--    (GET)
--    (GET)
--    (GET) - **(Needs fix)**
--    (GET) - **(Needs fix)**
+**key api endpoints**:
+-  (GET) - Data source for the pending chart implementation.
+-  (GET)
+-  (GET)
+-  (GET)
+-  (GET)
 
-**Critical Info for New Agent**
--   Your immediate priority is to resolve the Okta  mismatch. Auth0 integration is working perfectly and can be used as a reference for the correct OIDC server-side flow.
--   The user has already confirmed the redirect URI is configured in their Okta dashboard, but the error persists. Do not simply ask them to check again without first doing your own deep-dive investigation by logging the exact URL being generated.
--   The platform is now operating almost entirely on live production services (S3, Hedera Mainnet, Stripe Live, Auth0). Be mindful that actions have real-world consequences (e.g., spending HBAR).
+**Critical Info for New Agent**:
+- You are picking up *exactly* where the last agent was interrupted. The backend endpoint  is ready. Your immediate task is to go into the frontend, likely  (or a dedicated Analytics page), and implement the  UI using this data. 
+- Ensure that the lazy loading implemented in  is fully functional and hasn't broken the routing. Use  immediately after finishing the charts.
 
-**documents and test reports created in this job**
--    (S3 integration validation)
--    (Ops Dashboard validation)
--    (Completion email validation)
--    (Auth0 SSO validation)
--    (Okta SSO validation - partial)
--   
--    (Continuously updated)
+**documents and test reports created in this job**:
+-  through  (100% pass rates on completed features)
+-  (Updated with latest feature status)
 
-**Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** its set correctly - In response to the agent's suggestion that the Okta redirect URI might be wrong. This is the main blocker. (Pending resolution)
-2.  **User:** both have been configured - Confirming they set the callback URLs in both Auth0 and Okta dashboards. (Completed)
-3.  **User:** Provided Okta credentials. (Completed)
-4.  **User:** Asked for the steps to configure Okta. (Completed)
-5.  **User:** proceed with the Next Action Items - Triggering the manual configuration step for SSO providers. (Completed)
-6.  **User:** Provided Auth0 credentials. (Completed)
-7.  **User:** Asked what was needed for Auth0 & Okta integration. (Completed)
-8.  **User:** Asked to see the list of remaining enhancement ideas. (Completed)
-9.  **User:** yes proceed - Approving the HBAR balance alert feature. (Completed)
-10. **User:** HBAR balance alerts - Selecting the next feature to build. (Completed)
+**Last 10 User Messages and any pending HUMAN messages**:
+1. User: proceed with all 3 in this order (Approving Performance, Analytics, and i18n features)
+2. User: build future/backlog into platform
+3. User: 1-3 proceed
+4. User: proceed to the next step you suggested in the build
+5. User: Call Deployer Agent and Run Health Check to Check for Readiness for Deployment
+6. User: what is the benefit of using okta and auth0
+7. User: proceed with the Next Action Items
+8. User: continue with action items
+9. User: yes proceed (Approving S3 Dashboard, SOC2 Export, Landing Page Refresh)
 
-**Project Health Check:**
--   **Broken:** Okta SSO login flow.
--   **Mocked:** The generic Enterprise SSO button on the login page remains a placeholder concept.
+**Project Health Check**:
+- **Broken**: Analytics charting is incomplete in the frontend.
+- **Mocked**: None.
 
-**3rd Party Integrations**
--   **Google Gemini** — uses Emergent LLM Key
--   **Hedera Hashgraph (Mainnet)** — uses User API Key
--   **Stripe (Live Mode)** — uses User API Key
--   **Daily.co** — uses User API Key
--   **Resend** (Email) — uses User API Key
--   **AWS S3** — uses User API Key
--   **Auth0** — uses User API Key
--   **Okta** — uses User API Key (Integration In Progress)
+**3rd Party Integrations**:
+- **OpenAI / Gemini** — uses Emergent LLM Key
+- **Hedera Hashgraph (Mainnet)** — uses User API Key
+- **Stripe (Live Mode)** — uses User API Key
+- **AWS S3** — uses User API Key
+- **Auth0** — uses User API Key
+- **Okta** — uses User API Key
+- **Resend** — uses User API Key
 
-**Testing status**
--   **Testing agent used after significant changes**: YES. Used extensively for all major features (S3, Ops Dashboard, Auth0, etc.), all passing with 100%.
--   **Troubleshoot agent used after agent stuck in loop**: NO
--   **Test files created**: Yes, multiple temporary suites were created and passed by the testing agent.
--   **Known regressions**: None.
+**Testing status**:
+- Testing agent used after significant changes: YES (Tested Iterations 51-57 successfully)
+- Troubleshoot agent used after agent stuck in loop: NO
+- Test files created: Multiple created in  and ran via pytest.
+- Known regressions: None (But untested lazy-loading introduced right before cutoff).
 
-**Credentials to test flow:**
-| Role | Email | Password |
-|---|---|---|
-| **Admin** | admin@notarychain.com | Admin123! |
-| **Regular User** | demo@test.com | Demo123! |
+**Credentials to test flow**:
+- Admin: admin@notarychain.com / Admin123!
+- User: demo@test.com / Demo123!
+- Notary: notarytest@test.com / Test123!
 
-**What agent forgot to execute**
--   The agent is currently stuck on the Okta integration and has not yet been able to resolve the  mismatch error. All other planned tasks for the session were completed.</analysis>
+**What agent forgot to execute**:
+The agent did not finish building the frontend  implementation for the Analytics Dashboard, nor did it run the testing agent for the lazy-loading/i18n changes, as the context window limits were reached.</analysis>

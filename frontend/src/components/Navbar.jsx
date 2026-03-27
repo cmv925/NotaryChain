@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Shield, Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0f1825]/80 backdrop-blur-md border-b border-gray-800">
@@ -22,21 +25,22 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-5">
             <Link to="/verify" className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
               Verify
             </Link>
             <Link to="/pricing" className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
-              Pricing
+              {t('nav.pricing')}
             </Link>
             <Link to="/login" className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
-              Login
+              {t('nav.login')}
             </Link>
+            <LanguageSwitcher />
             <Button
               onClick={() => navigate('/signup')}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition-all"
             >
-              Sign Up
+              {t('nav.signup')}
             </Button>
           </div>
 
@@ -65,20 +69,23 @@ const Navbar = () => {
               onClick={() => setMobileOpen(false)}
               className="block text-gray-300 hover:text-white transition-colors text-sm font-medium py-2"
             >
-              Pricing
+              {t('nav.pricing')}
             </Link>
             <Link
               to="/login"
               onClick={() => setMobileOpen(false)}
               className="block text-gray-300 hover:text-white transition-colors text-sm font-medium py-2"
             >
-              Login
+              {t('nav.login')}
             </Link>
+            <div className="py-2">
+              <LanguageSwitcher />
+            </div>
             <Button
               onClick={() => { navigate('/signup'); setMobileOpen(false); }}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md"
             >
-              Sign Up
+              {t('nav.signup')}
             </Button>
           </div>
         )}

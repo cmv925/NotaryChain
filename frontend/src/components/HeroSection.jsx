@@ -2,9 +2,11 @@ import React from 'react';
 import { Button } from './ui/button';
 import { ArrowRight, Shield, Cpu, Link2, Fingerprint, Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const HeroSection = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-[#0f1825] pt-20 overflow-hidden">
@@ -20,21 +22,20 @@ const HeroSection = () => {
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/5 mb-8">
           <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-sm text-blue-300 font-medium">Production-Ready on Hedera Mainnet</span>
+          <span className="text-sm text-blue-300 font-medium">{t('hero.badge')}</span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-[1.1] tracking-tight">
-          The Intelligent Notary
+          {t('hero.title1')}
           <br />
-          Platform with{' '}
+          {t('hero.title2')}{' '}
           <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
-            Unbreakable Trust
+            {t('hero.title3')}
           </span>
         </h1>
 
         <p className="text-base lg:text-lg text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-          NotaryChain fuses AI document intelligence, biometric verification, and
-          blockchain-sealed integrity into one enterprise-grade platform.
+          {t('hero.subtitle')}
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
@@ -43,7 +44,7 @@ const HeroSection = () => {
             className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-6 text-base rounded-lg transition-all shadow-lg shadow-blue-600/25 hover:shadow-blue-500/40 group"
             data-testid="hero-get-started-btn"
           >
-            Get Started Free
+            {t('hero.cta_start')}
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
           <Button
@@ -53,17 +54,17 @@ const HeroSection = () => {
             data-testid="hero-demo-btn"
           >
             <Play className="mr-2 w-4 h-4 text-blue-400 group-hover:text-blue-300" />
-            Live Demo
+            {t('hero.cta_demo')}
           </Button>
         </div>
 
         {/* Trust indicators */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
           {[
-            { icon: Shield, label: 'SOC2 Compliant', sublabel: '22 security features' },
-            { icon: Link2, label: 'Hedera Mainnet', sublabel: 'Blockchain sealed' },
-            { icon: Cpu, label: 'AI-Powered', sublabel: 'Gemini analysis' },
-            { icon: Fingerprint, label: 'Biometric ID', sublabel: 'Liveness detection' },
+            { icon: Shield, label: t('trust.soc2'), sublabel: '22 security features' },
+            { icon: Link2, label: t('trust.hedera'), sublabel: 'Blockchain sealed' },
+            { icon: Cpu, label: t('trust.ai'), sublabel: 'Gemini analysis' },
+            { icon: Fingerprint, label: t('trust.biometric'), sublabel: 'Liveness detection' },
           ].map((item, idx) => (
             <div
               key={idx}

@@ -11,6 +11,7 @@ import { ExpiryWidget, ExpiryBadge, SetExpiryButton } from '../components/Expiry
 import BlockchainAuditTrail from '../components/BlockchainAuditTrail';
 import { OnboardingTour } from '../components/OnboardingTour';
 import { useTheme } from '../contexts/ThemeContext';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -21,6 +22,7 @@ const Dashboard = () => {
   const { subscribe } = useWS();
   const navigate = useNavigate();
   const { theme, toggle: toggleTheme } = useTheme();
+  const { t } = useTranslation();
   const [stats, setStats] = useState({ total_seals: 0, recent_seals: 0 });
   const [documents, setDocuments] = useState([]);
   const [notaryRequests, setNotaryRequests] = useState([]);
@@ -106,7 +108,7 @@ const Dashboard = () => {
                 </span>
               </div>
               <span className="text-gray-400 hidden sm:inline">|</span>
-              <span className="text-gray-400 hidden sm:inline">Dashboard</span>
+              <span className="text-gray-400 hidden sm:inline">{t('dashboard.title')}</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="text-right hidden sm:block">
@@ -190,7 +192,7 @@ const Dashboard = () => {
                 className="border-gray-700 text-gray-300 hover:text-white hover:border-red-500"
               >
                 <LogOut className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">{t('nav.logout')}</span>
               </Button>
             </div>
           </div>
