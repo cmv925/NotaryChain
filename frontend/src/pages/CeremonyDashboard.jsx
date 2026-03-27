@@ -101,6 +101,34 @@ function AgentCard({ name, icon: Icon, agent, accent }) {
           </div>
         )}
 
+        {/* Witness Agent audit details */}
+        {agent.details?.real_audit && agent.details?.evidence && (
+          <div className="mt-3 space-y-1.5 text-[11px]">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400">merkle root</span>
+              <code className="text-blue-400 font-mono">{agent.details.evidence.audit_integrity?.merkle_root?.slice(0, 16)}</code>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400">timeline entries</span>
+              <span className="text-emerald-400">{agent.details.evidence.audit_integrity?.entries}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400">evidence items</span>
+              <span className="text-emerald-400">{agent.details.evidence.evidence_package?.items_collected}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400">tamper proof</span>
+              <span className="text-emerald-400">{agent.details.evidence.evidence_package?.tamper_proof ? 'VALID' : 'INVALID'}</span>
+            </div>
+            {agent.details.audit_log_written && (
+              <div className="flex items-center gap-1.5 mt-1">
+                <CheckCircle className="w-3 h-3 text-emerald-400" />
+                <span className="text-emerald-400">Audit log written</span>
+              </div>
+            )}
+          </div>
+        )}
+
         {isRunning && (
           <div className="mt-4 flex items-center gap-2 text-blue-400 text-xs">
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -369,6 +397,11 @@ const CeremonyDashboard = () => {
       }
     });
 
+    eventSource.addEventListener('certificate_generated', () => {
+      addLog('Certificate PDF generated');
+      setCeremony(prev => prev ? { ...prev, has_certificate: true } : prev);
+    });
+
     eventSource.addEventListener('ceremony_complete', () => {
       addLog('Ceremony complete');
       eventSource.close();
@@ -606,6 +639,13 @@ const CeremonyDashboard = () => {
                     <Button onClick={handleExecute} disabled={executing} variant="outline" className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10 rounded-sm" data-testid="retry-ceremony-btn">
                       <RotateCcw className="w-4 h-4 mr-2" /> Retry
                     </Button>
+                  )}
+                  {ceremony.status === 'sealed' && ceremony.has_certificate && (
+                    <a href={`${API}/ceremony/${ceremony.ceremony_id}/certificate`} target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 rounded-sm" data-testid="download-certificate-btn">
+                        <FileSearch className="w-4 h-4 mr-2" /> Download Certificate
+                      </Button>
+                    </a>
                   )}
                 </div>
 

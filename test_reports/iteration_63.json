@@ -1,0 +1,147 @@
+{
+  "summary": "Iteration 63 - Witness Agent Real Audit & Certificate PDF Testing Complete. All backend and frontend tests passed. Witness Agent now builds real Merkle trees from ceremony evidence and writes audit logs to DB. Certificate PDF auto-generated on APPROVED consensus and downloadable.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_witness_certificate.py",
+    "/app/test_reports/pytest/pytest_results_witness_certificate.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Witness Agent correctly builds Merkle tree from ceremony evidence (ceremony_id, document_name, signer_name, verifier evidence_hash, etc.)",
+    "Merkle root is a valid SHA256 hash (64 hex characters)",
+    "Audit log written to ceremony_audit_logs collection with ceremony_id, merkle_root, timeline_entries, evidence_package_hash",
+    "Certificate PDF generated using ReportLab with document info, agent verdicts table, consensus oracle, blockchain seal sections",
+    "Certificate endpoint returns valid PDF (Content-Type: application/pdf, starts with %PDF)",
+    "Certificate returns 404 for non-sealed ceremonies (correct behavior)",
+    "SSE stream fires certificate_generated event after APPROVED consensus",
+    "Frontend Witness card displays: merkle root, timeline entries, evidence items, tamper proof, 'Audit log written' checkmark",
+    "Download Certificate button only appears on sealed ceremonies (not on pending/failed)"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_witness_certificate.py"
+  ],
+  "success_rate": {
+    "backend": "100% (all curl tests passed)",
+    "frontend": "100% (all UI elements verified)"
+  },
+  "test_credentials": {
+    "admin": {
+      "email": "admin@notarychain.com",
+      "password": "Admin123!"
+    }
+  },
+  "seed_data_creation": "Created test ceremonies with prefix 'TEST_' including: TEST_QuickCheck_Document, TEST_SSE_CertEvent_Document, TEST_PendingNoCert_Document",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Witness Agent real audit and Certificate PDF features fully tested. Key endpoints: POST /api/ceremony/{id}/execute (returns witness.details.real_audit=true, audit_log_written=true), GET /api/ceremony/{id}/certificate (returns PDF). SSE endpoint fires certificate_generated event. Frontend shows Witness card with merkle root, timeline entries, evidence items, tamper proof, audit log written badge. Download Certificate button visible only on sealed ceremonies.",
+  "features_tested": {
+    "backend_witness_agent": {
+      "real_audit_flag": {
+        "status": "WORKING",
+        "verified": ["real_audit=true in witness.details", "audit_log_written=true in witness.details"]
+      },
+      "merkle_root": {
+        "status": "WORKING",
+        "verified": ["64 hex character SHA256 hash", "Example: fdeda1cab02abefd40b4be3968aa6b08f86061659bd8c8d70ee7495c80c3f6a5"]
+      },
+      "timeline_entries": {
+        "status": "WORKING",
+        "verified": ["entries > 0", "Example: 5 entries"]
+      },
+      "evidence_items": {
+        "status": "WORKING",
+        "verified": ["items_collected > 0", "Example: 7 items"]
+      },
+      "tamper_proof": {
+        "status": "WORKING",
+        "verified": ["tamper_proof=true in evidence_package"]
+      },
+      "audit_log_collection": {
+        "status": "WORKING",
+        "verified": ["audit_log_written=true indicates entry in ceremony_audit_logs collection"]
+      }
+    },
+    "backend_certificate": {
+      "has_certificate_flag": {
+        "status": "WORKING",
+        "verified": ["has_certificate=true on sealed ceremonies"]
+      },
+      "certificate_endpoint": {
+        "status": "WORKING",
+        "endpoint": "GET /api/ceremony/{id}/certificate",
+        "verified": ["Returns HTTP 200", "Content-Type: application/pdf", "PDF starts with %PDF", "File size > 1KB (4093 bytes)"]
+      },
+      "certificate_404_non_sealed": {
+        "status": "WORKING",
+        "verified": ["Returns HTTP 404 for pending ceremony", "Returns HTTP 404 for invalid ceremony ID"]
+      }
+    },
+    "backend_sse": {
+      "certificate_generated_event": {
+        "status": "WORKING",
+        "verified": ["certificate_generated event fires in SSE stream after APPROVED consensus"]
+      }
+    },
+    "frontend_witness_card": {
+      "merkle_root_display": {
+        "status": "WORKING",
+        "data_testid": "agent-card-witness",
+        "verified": ["Merkle root displayed (truncated to 16 chars)"]
+      },
+      "timeline_entries_display": {
+        "status": "WORKING",
+        "verified": ["Timeline entries count displayed"]
+      },
+      "evidence_items_display": {
+        "status": "WORKING",
+        "verified": ["Evidence items count displayed"]
+      },
+      "tamper_proof_display": {
+        "status": "WORKING",
+        "verified": ["Tamper proof status displayed as VALID"]
+      },
+      "audit_log_written_badge": {
+        "status": "WORKING",
+        "verified": ["'Audit log written' checkmark displayed"]
+      }
+    },
+    "frontend_certificate_button": {
+      "visible_on_sealed": {
+        "status": "WORKING",
+        "data_testid": "download-certificate-btn",
+        "verified": ["Button visible on sealed ceremonies"]
+      },
+      "hidden_on_pending": {
+        "status": "WORKING",
+        "verified": ["Button NOT visible on pending ceremonies", "Execute Pipeline button shown instead"]
+      }
+    },
+    "frontend_sse_log": {
+      "certificate_generated_message": {
+        "status": "WORKING",
+        "data_testid": "ceremony-stream-log",
+        "verified": ["'Certificate PDF generated' appears in execution log"]
+      }
+    }
+  },
+  "mocked_apis": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": [
+      "Verifier Agent (simulated when no images provided)"
+    ],
+    "real_integrations": [
+      "Witness Agent is now REAL (Merkle tree + audit logs)",
+      "Sealer Agent connected to REAL Hedera Mainnet (topic 0.0.10373605)",
+      "Certificate PDF generated using ReportLab"
+    ],
+    "note": "Verifier Agent uses REAL GPT-5.2 Vision when images provided, simulated when not. Witness Agent is now REAL with Merkle tree and audit logs."
+  }
+}
