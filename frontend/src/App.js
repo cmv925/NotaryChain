@@ -67,6 +67,7 @@ const Auth0Callback = lazy(() => import('./pages/Auth0Callback'));
 const OktaCallback = lazy(() => import('./pages/OktaCallback'));
 const OnboardingPage = lazy(() => import('./pages/OnboardingPage'));
 const InvestorDeck = lazy(() => import('./pages/InvestorDeck'));
+const CeremonyDashboard = lazy(() => import('./pages/CeremonyDashboard'));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
@@ -97,6 +98,22 @@ function App() {
             <Route path="/demo" element={<QuickSealDemo />} />
             <Route path="/verify" element={<VerifyDocument />} />
             <Route path="/investor-deck" element={<InvestorDeck />} />
+            <Route
+              path="/ceremony"
+              element={
+                <ProtectedRoute>
+                  <CeremonyDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ceremony/:ceremonyId"
+              element={
+                <ProtectedRoute>
+                  <CeremonyDashboard />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/onboarding"
               element={

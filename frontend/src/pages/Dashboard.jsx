@@ -275,6 +275,17 @@ const Dashboard = () => {
               </div>
             </Button>
             <Button
+              onClick={() => navigate('/ceremony')}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-6 text-lg justify-start"
+              data-testid="ceremony-mode-button"
+            >
+              <Shield className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Ceremony Mode</div>
+                <div className="text-sm text-blue-200">Multi-agent verification</div>
+              </div>
+            </Button>
+            <Button
               onClick={() => navigate('/templates')}
               className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-6 text-lg justify-start"
               data-testid="templates-button"
