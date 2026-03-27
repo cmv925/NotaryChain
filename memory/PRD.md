@@ -266,8 +266,10 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **Consensus Oracle**: 2-of-3 voting — APPROVED (2+ PASS), REJECTED (2+ FAIL), REVIEW (else)
 - **Frontend**: `CeremonyDashboard.jsx` with live pipeline view, 3 agent cards with animated states, consensus display, blockchain seal info, ceremony history sidebar
 - **Dashboard Integration**: "Ceremony Mode" button in Quick Actions grid
-- **Note**: Agents are SIMULATED (architecture-first). Ready for real API plugs.
-- Testing: 100% pass rate backend + frontend (iteration_60)
+- **Note**: Verifier and Witness agents are SIMULATED (architecture-first). Sealer Agent connected to REAL Hedera Mainnet.
+- **SSE Streaming**: GET /api/ceremony/{id}/stream provides real-time events (ceremony_started, agent_started×3, agent_completed×3, consensus_started, sealing_blockchain, consensus_reached, ceremony_complete)
+- **Hedera Integration**: seal_document() via hedera_service, real HCS topic 0.0.10373605, hcs_submitted=true, explorer URL
+- Testing: 100% pass rate backend + frontend (iteration_60, iteration_61)
 
 - **Frontend** (`pages/BookingCalendar.jsx`): Enhanced booking experience
   - Weekly Availability Overview: 7-day grid showing slot count + hours per day
@@ -624,7 +626,7 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 
 ## Upcoming Tasks
 - Plug real biometric API into Verifier Agent (e.g., Onfido, Jumio, or GPT-5.2 Vision)
-- Connect Sealer Agent to real Hedera Mainnet transaction submission
+- Plug real audit/evidence packaging into Witness Agent
 - Resend Domain Verification (user task — verify domain on resend.com)
 
 ## Future/Backlog
