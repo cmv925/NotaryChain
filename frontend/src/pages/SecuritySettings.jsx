@@ -7,6 +7,7 @@ import { Input } from '../components/ui/input';
 import { Card, CardContent } from '../components/ui/card';
 import { NotificationBell } from '../components/NotificationBell';
 import { toast } from '../hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -15,6 +16,7 @@ const API = `${BACKEND_URL}/api`;
 const SecuritySettings = () => {
   const { user, token, logout, refreshUser } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [twoFAStatus, setTwoFAStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [setupData, setSetupData] = useState(null);
@@ -155,7 +157,7 @@ const SecuritySettings = () => {
               </Button>
               <span className="text-gray-600 hidden sm:inline">|</span>
               <h1 className="text-white font-semibold flex items-center gap-2 text-sm sm:text-base">
-                <Shield className="w-5 h-5 text-blue-500" /> Security Settings
+                <Shield className="w-5 h-5 text-blue-500" /> {t('security.title')}
               </h1>
             </div>
             <div className="flex items-center gap-3">
@@ -183,15 +185,15 @@ const SecuritySettings = () => {
                   )}
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-xl font-bold text-white mb-1">Two-Factor Authentication</h2>
+                  <h2 className="text-xl font-bold text-white mb-1">{t('security.two_factor')}</h2>
                   <p className="text-gray-400 text-sm mb-4">
                     {twoFAStatus?.enabled
-                      ? 'Your account is protected with an authenticator app.'
-                      : 'Add an extra layer of security to your account by enabling 2FA.'}
+                      ? t('security.enabled_desc')
+                      : t('security.disabled_desc')}
                   </p>
 
                   <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${twoFAStatus?.enabled ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`} data-testid="2fa-status-badge">
-                    {twoFAStatus?.enabled ? 'Enabled' : 'Not Enabled'}
+                    {twoFAStatus?.enabled ? t('security.enabled') : t('security.not_enabled')}
                   </div>
 
                   {twoFAStatus?.enabled && twoFAStatus?.enabled_at && (
@@ -204,15 +206,15 @@ const SecuritySettings = () => {
                     {twoFAStatus?.enabled ? (
                       <>
                         <Button onClick={() => setStep('disable')} variant="outline" className="border-red-500/50 text-red-400 hover:bg-red-500/10" data-testid="disable-2fa-button">
-                          <ShieldOff className="w-4 h-4 mr-2" /> Disable 2FA
+                          <ShieldOff className="w-4 h-4 mr-2" /> {t('security.disable_2fa')}
                         </Button>
                         <Button onClick={regenerateBackupCodes} variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800" disabled={actionLoading} data-testid="regenerate-backup-codes-button">
-                          <RefreshCw className="w-4 h-4 mr-2" /> Regenerate Backup Codes
+                          <RefreshCw className="w-4 h-4 mr-2" /> {t('security.regenerate')}
                         </Button>
                       </>
                     ) : (
                       <Button onClick={startSetup} className="bg-blue-600 hover:bg-blue-700 text-white" disabled={actionLoading} data-testid="enable-2fa-button">
-                        <ShieldCheck className="w-4 h-4 mr-2" /> Enable 2FA
+                        <ShieldCheck className="w-4 h-4 mr-2" /> {t('security.enable_2fa')}
                       </Button>
                     )}
                   </div>
@@ -220,7 +222,7 @@ const SecuritySettings = () => {
                   {twoFAStatus?.enabled && twoFAStatus?.backup_codes_remaining !== undefined && (
                     <p className="text-gray-500 text-xs mt-4">
                       <KeyRound className="w-3 h-3 inline mr-1" />
-                      {twoFAStatus.backup_codes_remaining} backup codes remaining
+                      {twoFAStatus.backup_codes_remaining} {t('security.codes_remaining')}
                     </p>
                   )}
                 </div>
@@ -233,8 +235,8 @@ const SecuritySettings = () => {
         {step === 'setup' && setupData && (
           <Card className="bg-[#1a2332] border-gray-800" data-testid="2fa-setup-card">
             <CardContent className="p-8">
-              <h2 className="text-xl font-bold text-white mb-2">Set Up Two-Factor Authentication</h2>
-              <p className="text-gray-400 text-sm mb-6">Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)</p>
+              <h2 className="text-xl font-bold text-white mb-2">{t('security.setup_title')}</h2>
+              <p className="text-gray-400 text-sm mb-6">{t('security.setup_desc')}</p>
 
               <div className="flex flex-col lg:flex-row gap-8">
                 {/* QR Code */}
@@ -243,7 +245,7 @@ const SecuritySettings = () => {
                     <img src={setupData.qr_code} alt="2FA QR Code" className="w-48 h-48" data-testid="2fa-qr-code" />
                   </div>
                   <p className="text-gray-500 text-xs text-center max-w-[250px]">
-                    Can't scan? Enter this key manually:
+                    {t('security.manual_key')}
                   </p>
                   <code className="mt-1 text-xs bg-[#0a0f1a] text-blue-400 px-3 py-1.5 rounded border border-gray-700 select-all" data-testid="2fa-secret-key">
                     {setupData.secret}
@@ -253,24 +255,24 @@ const SecuritySettings = () => {
                 {/* Backup Codes */}
                 <div className="flex-1">
                   <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
-                    <KeyRound className="w-4 h-4 text-yellow-400" /> Backup Codes
+                    <KeyRound className="w-4 h-4 text-yellow-400" /> {t('security.backup_codes')}
                   </h3>
-                  <p className="text-gray-400 text-xs mb-3">Save these codes in a safe place. Each can be used once if you lose access to your authenticator.</p>
+                  <p className="text-gray-400 text-xs mb-3">{t('security.backup_desc')}</p>
                   <div className="grid grid-cols-2 gap-2 mb-3" data-testid="backup-codes-list">
                     {backupCodes.map((code, i) => (
                       <div key={i} className="bg-[#0a0f1a] border border-gray-700 rounded px-3 py-1.5 text-sm font-mono text-gray-300">{code}</div>
                     ))}
                   </div>
                   <Button onClick={copyBackupCodes} variant="outline" size="sm" className="border-gray-700 text-gray-300 hover:bg-gray-800" data-testid="copy-backup-codes">
-                    <Copy className="w-3 h-3 mr-2" /> Copy All
+                    <Copy className="w-3 h-3 mr-2" /> {t('security.copy_all')}
                   </Button>
                 </div>
               </div>
 
               {/* Verify Step */}
               <div className="mt-8 pt-6 border-t border-gray-800">
-                <h3 className="text-white font-semibold mb-2">Verify Setup</h3>
-                <p className="text-gray-400 text-sm mb-4">Enter the 6-digit code from your authenticator app to confirm setup.</p>
+                <h3 className="text-white font-semibold mb-2">{t('security.verify_setup')}</h3>
+                <p className="text-gray-400 text-sm mb-4">{t('security.verify_desc')}</p>
                 <form onSubmit={verifySetup} className="flex flex-col items-center gap-4" data-testid="2fa-verify-setup-form">
                   <div className="flex gap-2" onPaste={handleCodePaste}>
                     {verifyCode.map((digit, index) => (
@@ -291,10 +293,10 @@ const SecuritySettings = () => {
                   </div>
                   <div className="flex gap-3">
                     <Button type="button" variant="ghost" onClick={() => { setStep('status'); setSetupData(null); setVerifyCode(['','','','','','']); }} className="text-gray-400" data-testid="2fa-setup-cancel">
-                      Cancel
+                      {t('common.cancel')}
                     </Button>
                     <Button type="submit" className="bg-blue-600 hover:bg-blue-700" disabled={actionLoading || verifyCode.join('').length < 6} data-testid="2fa-setup-verify">
-                      {actionLoading ? 'Verifying...' : 'Verify & Enable'}
+                      {actionLoading ? `${t('common.loading')}` : t('security.verify_enable')}
                     </Button>
                   </div>
                 </form>
@@ -312,14 +314,14 @@ const SecuritySettings = () => {
                   <ShieldOff className="w-6 h-6 text-red-400" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white mb-1">Disable Two-Factor Authentication</h2>
-                  <p className="text-gray-400 text-sm">This will remove the extra security layer from your account. Enter your password and a current 2FA code to confirm.</p>
+                  <h2 className="text-xl font-bold text-white mb-1">{t('security.disable_title')}</h2>
+                  <p className="text-gray-400 text-sm">{t('security.disable_desc')}</p>
                 </div>
               </div>
 
               <form onSubmit={disable2FA} className="space-y-4 max-w-md" data-testid="2fa-disable-form">
                 <div>
-                  <label className="text-white text-sm block mb-1.5">Password</label>
+                  <label className="text-white text-sm block mb-1.5">{t('auth.password')}</label>
                   <div className="relative">
                     <Input
                       type={showPassword ? 'text' : 'password'}
@@ -336,7 +338,7 @@ const SecuritySettings = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="text-white text-sm block mb-1.5">2FA Code</label>
+                  <label className="text-white text-sm block mb-1.5">{t('security.twofa_code')}</label>
                   <Input
                     type="text"
                     value={disableCode}
@@ -350,10 +352,10 @@ const SecuritySettings = () => {
                 </div>
                 <div className="flex gap-3 pt-2">
                   <Button type="button" variant="ghost" onClick={() => { setStep('status'); setDisablePassword(''); setDisableCode(''); }} className="text-gray-400" data-testid="disable-2fa-cancel">
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                   <Button type="submit" className="bg-red-600 hover:bg-red-700" disabled={actionLoading || !disablePassword || disableCode.length < 6} data-testid="disable-2fa-confirm">
-                    {actionLoading ? 'Disabling...' : 'Disable 2FA'}
+                    {actionLoading ? `${t('common.loading')}` : t('security.disable_2fa')}
                   </Button>
                 </div>
               </form>
@@ -366,9 +368,9 @@ const SecuritySettings = () => {
           <Card className="bg-[#1a2332] border-gray-800 mt-6" data-testid="new-backup-codes-card">
             <CardContent className="p-8">
               <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                <KeyRound className="w-5 h-5 text-yellow-400" /> New Backup Codes
+                <KeyRound className="w-5 h-5 text-yellow-400" /> {t('security.new_backup')}
               </h3>
-              <p className="text-gray-400 text-sm mb-4">Save these codes. Your previous backup codes are no longer valid.</p>
+              <p className="text-gray-400 text-sm mb-4">{t('security.new_backup_desc')}</p>
               <div className="grid grid-cols-2 gap-2 mb-4" data-testid="new-backup-codes-list">
                 {backupCodes.map((code, i) => (
                   <div key={i} className="bg-[#0a0f1a] border border-gray-700 rounded px-3 py-1.5 text-sm font-mono text-gray-300">{code}</div>
@@ -379,7 +381,7 @@ const SecuritySettings = () => {
                   <Copy className="w-3 h-3 mr-2" /> Copy All
                 </Button>
                 <Button onClick={() => setShowBackupCodes(false)} variant="ghost" size="sm" className="text-gray-400">
-                  Dismiss
+                  {t('security.dismiss')}
                 </Button>
               </div>
             </CardContent>

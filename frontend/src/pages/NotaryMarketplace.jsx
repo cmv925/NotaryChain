@@ -11,6 +11,7 @@ import {
   ChevronRight, Loader2, MessageSquare, Video, Calendar as CalendarIcon,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -32,6 +33,7 @@ function StarRating({ rating, size = 'sm' }) {
 const NotaryMarketplace = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [notaries, setNotaries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -110,7 +112,7 @@ const NotaryMarketplace = () => {
             /* Notary Profile Detail */
             <div data-testid="notary-profile-detail">
               <Button onClick={() => setSelectedNotary(null)} variant="ghost" className="text-gray-400 mb-4">
-                &larr; Back to Marketplace
+                &larr; {t('marketplace.back')}
               </Button>
               <Card className="bg-[#1a2332] border-gray-800 mb-6">
                 <CardContent className="p-6">
@@ -131,7 +133,7 @@ const NotaryMarketplace = () => {
                           <MapPin className="w-3.5 h-3.5" /> {selectedNotary.license_state}
                         </span>
                         {selectedNotary.ron_certified && (
-                          <span className="px-2 py-0.5 bg-green-500/15 text-green-400 text-xs rounded-full border border-green-500/30">RON Certified</span>
+                          <span className="px-2 py-0.5 bg-green-500/15 text-green-400 text-xs rounded-full border border-green-500/30">{t('marketplace.ron_certified')}</span>
                         )}
                       </div>
                       <p className="text-gray-400 text-sm mt-3">{selectedNotary.bio || 'No bio provided.'}</p>
@@ -141,9 +143,9 @@ const NotaryMarketplace = () => {
                         ))}
                       </div>
                       <div className="flex items-center gap-6 mt-4 text-sm">
-                        <div><span className="text-gray-500">Rate:</span> <span className="text-white font-semibold">${selectedNotary.hourly_rate}/hr</span></div>
-                        <div><span className="text-gray-500">Experience:</span> <span className="text-white font-semibold">{selectedNotary.years_experience} yrs</span></div>
-                        <div><span className="text-gray-500">Completed:</span> <span className="text-white font-semibold">{selectedNotary.completed_notarizations}</span></div>
+                        <div><span className="text-gray-500">{t('marketplace.rate')}:</span> <span className="text-white font-semibold">${selectedNotary.hourly_rate}/hr</span></div>
+                        <div><span className="text-gray-500">{t('marketplace.experience')}:</span> <span className="text-white font-semibold">{selectedNotary.years_experience} yrs</span></div>
+                        <div><span className="text-gray-500">{t('dashboard.completed')}:</span> <span className="text-white font-semibold">{selectedNotary.completed_notarizations}</span></div>
                       </div>
                     </div>
                   </div>
@@ -158,7 +160,7 @@ const NotaryMarketplace = () => {
                   data-testid="book-session-btn"
                 >
                   <CalendarIcon className="w-5 h-5 mr-2" />
-                  Book a Session with {selectedNotary.name?.split(' ')[0]}
+                  {t('marketplace.book_session')} with {selectedNotary.name?.split(' ')[0]}
                 </Button>
               </div>
 
@@ -168,7 +170,7 @@ const NotaryMarketplace = () => {
                   <CardContent className="p-5">
                     <h3 className="text-base font-semibold text-white mb-3 flex items-center gap-2">
                       <CalendarIcon className="w-4 h-4 text-blue-400" />
-                      Availability This Week
+                      {t('marketplace.availability')}
                     </h3>
                     {availability.availability ? (
                       <div className="grid grid-cols-7 gap-2">
@@ -185,7 +187,7 @@ const NotaryMarketplace = () => {
                         })}
                       </div>
                     ) : (
-                      <p className="text-gray-500 text-sm">No availability data.</p>
+                      <p className="text-gray-500 text-sm">{t('marketplace.no_availability')}</p>
                     )}
                   </CardContent>
                 </Card>
@@ -193,10 +195,10 @@ const NotaryMarketplace = () => {
 
               {/* Reviews */}
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-white">Reviews ({selectedNotary.review_count})</h2>
+                <h2 className="text-lg font-semibold text-white">{t('marketplace.reviews')} ({selectedNotary.review_count})</h2>
                 {token && !showReviewForm && (
                   <Button size="sm" onClick={() => setShowReviewForm(true)} className="bg-blue-600 hover:bg-blue-500" data-testid="write-review-btn">
-                    <MessageSquare className="w-4 h-4 mr-1" /> Write Review
+                    <MessageSquare className="w-4 h-4 mr-1" /> {t('marketplace.write_review')}
                   </Button>
                 )}
               </div>
@@ -205,7 +207,7 @@ const NotaryMarketplace = () => {
               {showReviewForm && (
                 <Card className="bg-[#1a2332] border-blue-500/30 mb-4" data-testid="review-form">
                   <CardContent className="p-5 space-y-4">
-                    <h3 className="text-white font-medium">Rate your experience</h3>
+                    <h3 className="text-white font-medium">{t('marketplace.rate_experience')}</h3>
                     <div className="flex items-center gap-1">
                       {[1, 2, 3, 4, 5].map(i => (
                         <button key={i} onClick={() => setReviewRating(i)} className="focus:outline-none" data-testid={`review-star-${i}`}>
@@ -217,7 +219,7 @@ const NotaryMarketplace = () => {
                     <textarea
                       value={reviewComment}
                       onChange={e => setReviewComment(e.target.value)}
-                      placeholder="Share your experience..."
+                      placeholder={t('marketplace.share_experience')}
                       rows={3}
                       className="w-full bg-[#0a0f1a] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm placeholder-gray-500 focus:border-blue-500 outline-none"
                       data-testid="review-comment"
@@ -225,15 +227,15 @@ const NotaryMarketplace = () => {
                     <div className="flex gap-2">
                       <Button onClick={submitReview} disabled={submittingReview} className="bg-blue-600 hover:bg-blue-500" data-testid="submit-review-btn">
                         {submittingReview ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null}
-                        Submit Review
+                        {t('marketplace.submit_review')}
                       </Button>
-                      <Button variant="outline" onClick={() => setShowReviewForm(false)} className="border-gray-700 text-gray-400">Cancel</Button>
+                      <Button variant="outline" onClick={() => setShowReviewForm(false)} className="border-gray-700 text-gray-400">{t('common.cancel')}</Button>
                     </div>
                   </CardContent>
                 </Card>
               )}
               {(selectedNotary.reviews || []).length === 0 ? (
-                <p className="text-gray-500 text-sm">No reviews yet.</p>
+                <p className="text-gray-500 text-sm">{t('marketplace.no_reviews')}</p>
               ) : (
                 <div className="space-y-3" data-testid="notary-reviews">
                   {selectedNotary.reviews.map(review => (
@@ -259,9 +261,9 @@ const NotaryMarketplace = () => {
               <div className="mb-8">
                 <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
                   <Users className="w-7 h-7 text-blue-400" />
-                  Notary Marketplace
+                  {t('marketplace.title')}
                 </h1>
-                <p className="text-gray-400 text-sm mt-1">Find and connect with certified notaries</p>
+                <p className="text-gray-400 text-sm mt-1">{t('marketplace.subtitle')}</p>
               </div>
 
               {/* Filters */}
@@ -270,23 +272,23 @@ const NotaryMarketplace = () => {
                   <Input
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    placeholder="Search by name, state, or bio..."
+                    placeholder={t('marketplace.search_placeholder')}
                     className="bg-[#1a2332] border-gray-700 text-white"
                     data-testid="marketplace-search"
                   />
                 </div>
                 <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-white text-sm focus:border-blue-500 outline-none" data-testid="marketplace-state-filter">
-                  <option value="">All States</option>
+                  <option value="">{t('marketplace.all_states')}</option>
                   {STATES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
                 <select value={specFilter} onChange={e => setSpecFilter(e.target.value)} className="bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-white text-sm focus:border-blue-500 outline-none" data-testid="marketplace-spec-filter">
-                  <option value="">All Specializations</option>
+                  <option value="">{t('marketplace.all_specs')}</option>
                   {SPECIALIZATIONS.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
                 <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-white text-sm focus:border-blue-500 outline-none" data-testid="marketplace-sort">
-                  <option value="rating">Top Rated</option>
-                  <option value="experience">Most Experienced</option>
-                  <option value="rate">Lowest Rate</option>
+                  <option value="rating">{t('marketplace.top_rated')}</option>
+                  <option value="experience">{t('marketplace.most_experienced')}</option>
+                  <option value="rate">{t('marketplace.lowest_rate')}</option>
                 </select>
                 <Button
                   onClick={() => setRonOnly(!ronOnly)}
@@ -306,7 +308,7 @@ const NotaryMarketplace = () => {
                 <Card className="bg-[#1a2332] border-gray-800">
                   <CardContent className="p-12 text-center">
                     <Users className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                    <p className="text-gray-400">No notaries found matching your criteria.</p>
+                    <p className="text-gray-400">{t('marketplace.no_results')}</p>
                   </CardContent>
                 </Card>
               ) : (

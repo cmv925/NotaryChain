@@ -18,6 +18,7 @@ import { Badge } from '../components/ui/badge';
 import { Progress } from '../components/ui/progress';
 import { NotificationBell } from '../components/NotificationBell';
 import { toast } from '../hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -27,6 +28,7 @@ const NotaryDashboard = () => {
   const { user, logout, token } = useAuth();
   const { subscribe } = useWS();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   const [stats, setStats] = useState(null);
   const [pendingRequests, setPendingRequests] = useState([]);
@@ -314,7 +316,7 @@ const NotaryDashboard = () => {
               <span className="text-gray-600 hidden sm:inline">|</span>
               <div className="hidden sm:flex items-center gap-2">
                 <Briefcase className="w-5 h-5 text-[#00d4aa]" />
-                <span className="text-[#00d4aa] font-semibold">Notary Workstation</span>
+                <span className="text-[#00d4aa] font-semibold">{t('notary.workstation')}</span>
               </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
@@ -334,7 +336,7 @@ const NotaryDashboard = () => {
                 size="sm"
                 className="border-[#333] text-gray-300 hover:text-white hidden sm:flex"
               >
-                User View
+                {t('notary.user_view')}
               </Button>
               <Button
                 onClick={handleLogout}
@@ -356,7 +358,7 @@ const NotaryDashboard = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-xs">Today's Earnings</p>
+                  <p className="text-gray-400 text-xs">{t('notary.todays_earnings')}</p>
                   <p className="text-2xl font-bold text-white">${todayEarnings}</p>
                 </div>
                 <DollarSign className="w-8 h-8 text-green-400" />
@@ -368,7 +370,7 @@ const NotaryDashboard = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-xs">Total Completed</p>
+                  <p className="text-gray-400 text-xs">{t('notary.total_completed')}</p>
                   <p className="text-2xl font-bold text-white">{stats?.total_completed || 0}</p>
                 </div>
                 <CheckCircle className="w-8 h-8 text-blue-400" />
@@ -380,7 +382,7 @@ const NotaryDashboard = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-xs">In Progress</p>
+                  <p className="text-gray-400 text-xs">{t('notary.in_progress')}</p>
                   <p className="text-2xl font-bold text-white">{assignedRequests.length}</p>
                 </div>
                 <Clock className="w-8 h-8 text-yellow-400" />
@@ -392,7 +394,7 @@ const NotaryDashboard = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-xs">Available</p>
+                  <p className="text-gray-400 text-xs">{t('notary.available_label')}</p>
                   <p className="text-2xl font-bold text-white">{pendingRequests.length}</p>
                 </div>
                 <FileText className="w-8 h-8 text-purple-400" />
@@ -404,7 +406,7 @@ const NotaryDashboard = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-xs">Lifetime Earnings</p>
+                  <p className="text-gray-400 text-xs">{t('notary.lifetime_earnings')}</p>
                   <p className="text-2xl font-bold text-white">${estimatedEarnings}</p>
                 </div>
                 <Award className="w-8 h-8 text-[#00d4aa]" />
@@ -421,9 +423,9 @@ const NotaryDashboard = () => {
                 <Video className="w-5 h-5 text-green-400 animate-pulse" />
               </div>
               <div>
-                <p className="text-green-400 font-semibold">Active Session in Progress</p>
+                <p className="text-green-400 font-semibold">{t('notary.active_session')}</p>
                 <p className="text-gray-400 text-sm">
-                  {assignedRequests.filter(r => r.status === 'in_progress').length} session(s) running
+                  {assignedRequests.filter(r => r.status === 'in_progress').length} {t('notary.sessions_running')}
                 </p>
               </div>
             </div>
@@ -435,7 +437,7 @@ const NotaryDashboard = () => {
               className="bg-green-600 hover:bg-green-700 text-white"
             >
               <Play className="w-4 h-4 mr-2" />
-              Rejoin Session
+              {t('notary.rejoin')}
             </Button>
           </div>
         )}
@@ -448,10 +450,10 @@ const NotaryDashboard = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex gap-1 bg-[#1a1a2e] p-1 rounded-lg">
                 {[
-                  { id: 'pending', label: 'Available', count: pendingRequests.length, color: 'purple' },
-                  { id: 'assigned', label: 'My Requests', count: assignedRequests.length, color: 'blue' },
-                  { id: 'history', label: 'History', count: completedRequests.length, color: 'green' },
-                  { id: 'schedule', label: 'Schedule', count: null, color: 'amber' },
+                  { id: 'pending', label: t('notary.tab_available'), count: pendingRequests.length, color: 'purple' },
+                  { id: 'assigned', label: t('notary.tab_my_requests'), count: assignedRequests.length, color: 'blue' },
+                  { id: 'history', label: t('notary.tab_history'), count: completedRequests.length, color: 'green' },
+                  { id: 'schedule', label: t('notary.tab_schedule'), count: null, color: 'amber' },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -481,7 +483,7 @@ const NotaryDashboard = () => {
                   <Input
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search requests..."
+                    placeholder={t('notary.search_requests')}
                     className="pl-9 w-48 bg-[#1a1a2e] border-[#333] text-white"
                   />
                 </div>
@@ -495,8 +497,8 @@ const NotaryDashboard = () => {
                   <Card className="bg-[#1a1a2e] border-[#333]">
                     <CardContent className="p-12 text-center">
                       <FileText className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                      <p className="text-gray-400 text-lg mb-2">No available requests</p>
-                      <p className="text-gray-500 text-sm">New notarization requests will appear here</p>
+                      <p className="text-gray-400 text-lg mb-2">{t('notary.no_available')}</p>
+                      <p className="text-gray-500 text-sm">{t('notary.new_requests_appear')}</p>
                     </CardContent>
                   </Card>
                 ) : (
