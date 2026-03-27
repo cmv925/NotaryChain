@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import StreamingResponse
 from datetime import datetime, timezone
 from typing import Optional
 from pydantic import BaseModel
@@ -6,6 +7,7 @@ import uuid
 import asyncio
 import random
 import hashlib
+import json
 
 router = APIRouter(prefix="/api/ceremony", tags=["ceremony"])
 db = None
@@ -335,13 +337,7 @@ async def execute_ceremony(ceremony_id: str):
 
     blockchain_seal = None
     if consensus["result"] == "APPROVED":
-        blockchain_seal = {
-            "network": "Hedera Mainnet",
-            "topic_id": sealer_result["details"].get("blockchain", {}).get("proposed_topic_id"),
-            "message_hash": sealer_result["details"].get("blockchain", {}).get("proposed_message_hash"),
-            "sealed_at": datetime.now(timezone.utc).isoformat(),
-            "consensus_hash": _generate_hash(f"consensus-{ceremony_id}-{consensus['decided_at']}"),
-        }
+        blockchain_seal = await _seal_on_hedera(ceremony_id, updated, consensus)
 
     await db.ceremonies.update_one(
         {"ceremony_id": ceremony_id},
@@ -354,6 +350,209 @@ async def execute_ceremony(ceremony_id: str):
 
     result = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
     return result
+
+
+async def _seal_on_hedera(ceremony_id: str, ceremony: dict, consensus: dict) -> dict:
+    """Submit ceremony seal to Hedera Mainnet via the existing hedera_service."""
+    from services.hedera_service import hedera_service
+
+    # Build a composite hash of all agent evidence
+    evidence_concat = "|".join([
+        ceremony["agents"]["verifier"].get("evidence_hash", ""),
+        ceremony["agents"]["witness"].get("evidence_hash", ""),
+        ceremony["agents"]["sealer"].get("evidence_hash", ""),
+    ])
+    document_hash = hashlib.sha256(evidence_concat.encode()).hexdigest()
+
+    metadata = {
+        "ceremony_id": ceremony_id,
+        "consensus_result": consensus["result"],
+        "consensus_votes": consensus["votes"],
+        "pass_count": consensus["pass_count"],
+        "agent_confidences": {
+            "verifier": ceremony["agents"]["verifier"].get("confidence"),
+            "witness": ceremony["agents"]["witness"].get("confidence"),
+            "sealer": ceremony["agents"]["sealer"].get("confidence"),
+        },
+        "signer": ceremony.get("signer_name", ""),
+    }
+
+    seal_result = await hedera_service.seal_document(
+        document_hash=document_hash,
+        document_name=ceremony.get("document_name", "Ceremony Seal"),
+        user_id=ceremony.get("initiated_by", "ceremony"),
+        metadata=metadata,
+    )
+
+    if seal_result.get("success"):
+        return {
+            "network": seal_result.get("network", "mainnet"),
+            "topic_id": seal_result.get("topic_id", ""),
+            "transaction_id": seal_result.get("transaction_id", ""),
+            "sequence_number": seal_result.get("sequence_number"),
+            "message_hash": seal_result.get("verification_hash", ""),
+            "hcs_submitted": seal_result.get("hcs_submitted", False),
+            "sealed_at": seal_result.get("sealed_at", datetime.now(timezone.utc).isoformat()),
+            "consensus_hash": _generate_hash(f"consensus-{ceremony_id}-{consensus['decided_at']}"),
+            "explorer_url": seal_result.get("explorer_url", ""),
+        }
+    else:
+        # Fallback: record locally even if HCS submission fails
+        return {
+            "network": "Hedera Mainnet",
+            "topic_id": "submission_failed",
+            "transaction_id": "",
+            "sequence_number": None,
+            "message_hash": document_hash,
+            "hcs_submitted": False,
+            "sealed_at": datetime.now(timezone.utc).isoformat(),
+            "consensus_hash": _generate_hash(f"consensus-{ceremony_id}-{consensus['decided_at']}"),
+            "explorer_url": "",
+            "error": seal_result.get("error", "Unknown error"),
+        }
+
+
+# --- SSE Streaming Endpoint ---
+
+async def _run_ceremony_pipeline(ceremony_id: str):
+    """Generator that runs the 3-agent pipeline and yields SSE events."""
+    ceremony = await db.ceremonies.find_one({"ceremony_id": ceremony_id})
+    if not ceremony:
+        yield _sse_event("error", {"message": "Ceremony not found"})
+        return
+
+    if ceremony["status"] not in ("pending", "consensus_failed"):
+        yield _sse_event("error", {"message": f"Ceremony is already {ceremony['status']}"})
+        return
+
+    now = datetime.now(timezone.utc).isoformat()
+
+    # Mark in_progress
+    await db.ceremonies.update_one({"ceremony_id": ceremony_id}, {"$set": {"status": "in_progress"}})
+    yield _sse_event("ceremony_started", {"ceremony_id": ceremony_id, "status": "in_progress"})
+
+    # --- Phase 1: Verifier ---
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {"agents.verifier.status": "running", "agents.verifier.started_at": now}}
+    )
+    yield _sse_event("agent_started", {"agent": "verifier"})
+
+    verifier_result = await _run_verifier_agent(ceremony)
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {
+            "agents.verifier.status": verifier_result["status"],
+            "agents.verifier.verdict": verifier_result["verdict"],
+            "agents.verifier.confidence": verifier_result["confidence"],
+            "agents.verifier.evidence_hash": verifier_result["evidence_hash"],
+            "agents.verifier.details": verifier_result["details"],
+            "agents.verifier.completed_at": verifier_result["completed_at"],
+        }}
+    )
+    yield _sse_event("agent_completed", {"agent": "verifier", "verdict": verifier_result["verdict"], "confidence": verifier_result["confidence"]})
+
+    # --- Phase 2: Witness ---
+    now2 = datetime.now(timezone.utc).isoformat()
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {"agents.witness.status": "running", "agents.witness.started_at": now2}}
+    )
+    yield _sse_event("agent_started", {"agent": "witness"})
+
+    witness_result = await _run_witness_agent(ceremony)
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {
+            "agents.witness.status": witness_result["status"],
+            "agents.witness.verdict": witness_result["verdict"],
+            "agents.witness.confidence": witness_result["confidence"],
+            "agents.witness.evidence_hash": witness_result["evidence_hash"],
+            "agents.witness.details": witness_result["details"],
+            "agents.witness.completed_at": witness_result["completed_at"],
+        }}
+    )
+    yield _sse_event("agent_completed", {"agent": "witness", "verdict": witness_result["verdict"], "confidence": witness_result["confidence"]})
+
+    # --- Phase 3: Sealer ---
+    now3 = datetime.now(timezone.utc).isoformat()
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {"agents.sealer.status": "running", "agents.sealer.started_at": now3}}
+    )
+    yield _sse_event("agent_started", {"agent": "sealer"})
+
+    sealer_result = await _run_sealer_agent(ceremony)
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {
+            "agents.sealer.status": sealer_result["status"],
+            "agents.sealer.verdict": sealer_result["verdict"],
+            "agents.sealer.confidence": sealer_result["confidence"],
+            "agents.sealer.evidence_hash": sealer_result["evidence_hash"],
+            "agents.sealer.details": sealer_result["details"],
+            "agents.sealer.completed_at": sealer_result["completed_at"],
+        }}
+    )
+    yield _sse_event("agent_completed", {"agent": "sealer", "verdict": sealer_result["verdict"], "confidence": sealer_result["confidence"]})
+
+    # --- Phase 4: Consensus ---
+    yield _sse_event("consensus_started", {"message": "Evaluating 2-of-3 consensus..."})
+
+    updated = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
+    consensus = _evaluate_consensus(updated["agents"])
+    final_status = "sealed" if consensus["result"] == "APPROVED" else "consensus_failed"
+
+    blockchain_seal = None
+    if consensus["result"] == "APPROVED":
+        yield _sse_event("sealing_blockchain", {"message": "Submitting to Hedera Mainnet..."})
+        blockchain_seal = await _seal_on_hedera(ceremony_id, updated, consensus)
+
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {
+            "status": final_status,
+            "consensus": consensus,
+            "blockchain_seal": blockchain_seal,
+        }}
+    )
+
+    yield _sse_event("consensus_reached", {
+        "result": consensus["result"],
+        "votes": consensus["votes"],
+        "pass_count": consensus["pass_count"],
+        "status": final_status,
+        "blockchain_seal": blockchain_seal,
+    })
+
+    yield _sse_event("ceremony_complete", {"ceremony_id": ceremony_id, "status": final_status})
+
+
+def _sse_event(event_type: str, data: dict) -> str:
+    """Format a Server-Sent Event string."""
+    payload = json.dumps({"type": event_type, **data})
+    return f"event: {event_type}\ndata: {payload}\n\n"
+
+
+@router.get("/{ceremony_id}/stream")
+async def stream_ceremony(ceremony_id: str):
+    """SSE endpoint — streams real-time agent status updates during ceremony execution."""
+    ceremony = await db.ceremonies.find_one({"ceremony_id": ceremony_id})
+    if not ceremony:
+        raise HTTPException(status_code=404, detail="Ceremony not found")
+
+    if ceremony["status"] not in ("pending", "consensus_failed"):
+        raise HTTPException(status_code=400, detail=f"Ceremony is already {ceremony['status']}")
+
+    return StreamingResponse(
+        _run_ceremony_pipeline(ceremony_id),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 @router.get("/list/my")

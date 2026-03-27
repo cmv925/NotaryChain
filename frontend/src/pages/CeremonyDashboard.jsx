@@ -7,7 +7,7 @@ import { Card, CardContent } from '../components/ui/card';
 import {
   Shield, ScanFace, Eye, Lock, CheckCircle, XCircle, Loader2,
   ArrowLeft, Play, RotateCcw, Fingerprint, FileSearch, Link2,
-  ShieldCheck, Vote, Blocks, Clock, ChevronRight, AlertTriangle,
+  ShieldCheck, Vote, Blocks, Clock, ChevronRight, AlertTriangle, Radio,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
@@ -174,6 +174,9 @@ function ConsensusOracle({ consensus, blockchainSeal }) {
             <div className="flex items-center gap-2 mb-3">
               <Blocks className="w-4 h-4 text-blue-400" />
               <span className="text-white font-semibold text-sm">Blockchain Seal</span>
+              {blockchainSeal.hcs_submitted && (
+                <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-1.5 py-0.5 rounded-sm">HCS VERIFIED</span>
+              )}
             </div>
             <div className="space-y-2 text-[11px]">
               <div className="flex justify-between">
@@ -184,6 +187,18 @@ function ConsensusOracle({ consensus, blockchainSeal }) {
                 <span className="text-slate-500">Topic ID</span>
                 <span className="text-blue-400 font-mono">{blockchainSeal.topic_id}</span>
               </div>
+              {blockchainSeal.transaction_id && (
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Transaction ID</span>
+                  <span className="text-blue-400 font-mono text-right break-all max-w-[280px]">{blockchainSeal.transaction_id}</span>
+                </div>
+              )}
+              {blockchainSeal.sequence_number != null && (
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Sequence #</span>
+                  <span className="text-white font-mono">{blockchainSeal.sequence_number}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-slate-500">Consensus Hash</span>
                 <code className="text-emerald-400 font-mono">{blockchainSeal.consensus_hash}</code>
@@ -192,6 +207,12 @@ function ConsensusOracle({ consensus, blockchainSeal }) {
                 <span className="text-slate-500">Sealed At</span>
                 <span className="text-white font-mono">{new Date(blockchainSeal.sealed_at).toLocaleString()}</span>
               </div>
+              {blockchainSeal.explorer_url && (
+                <a href={blockchainSeal.explorer_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-blue-400 hover:text-blue-300 mt-1" data-testid="explorer-link">
+                  <Link2 className="w-3 h-3" />
+                  <span>View on HashScan Explorer</span>
+                </a>
+              )}
             </div>
           </div>
         )}
@@ -247,7 +268,7 @@ const CeremonyDashboard = () => {
   const [ceremonies, setCeremonies] = useState([]);
   const [showNew, setShowNew] = useState(!ceremonyId);
   const [form, setForm] = useState({ document_name: '', signer_name: '' });
-  const [pollingActive, setPollingActive] = useState(false);
+  const [streamLog, setStreamLog] = useState([]);
 
   // Fetch ceremony detail
   const fetchCeremony = useCallback(async (id) => {
@@ -273,20 +294,6 @@ const CeremonyDashboard = () => {
     if (ceremonyId) { fetchCeremony(ceremonyId); setShowNew(false); }
   }, [ceremonyId]);
 
-  // Polling during execution
-  useEffect(() => {
-    if (!pollingActive || !ceremony?.ceremony_id) return;
-    const interval = setInterval(async () => {
-      const c = await fetchCeremony(ceremony.ceremony_id);
-      if (c && (c.status === 'sealed' || c.status === 'consensus_failed')) {
-        setPollingActive(false);
-        setExecuting(false);
-        fetchList();
-      }
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [pollingActive, ceremony?.ceremony_id]);
-
   // Start new ceremony
   const handleStart = async () => {
     if (!form.document_name.trim()) return toast({ title: 'Required', description: 'Enter a document name' });
@@ -304,22 +311,76 @@ const CeremonyDashboard = () => {
     setLoading(false);
   };
 
-  // Execute ceremony
-  const handleExecute = async () => {
+  // Execute ceremony via SSE streaming
+  const handleExecute = () => {
     if (!ceremony) return;
     setExecuting(true);
-    setPollingActive(true);
-    try {
-      await axios.post(`${API}/ceremony/${ceremony.ceremony_id}/execute`, {}, { headers });
-      await fetchCeremony(ceremony.ceremony_id);
-      setPollingActive(false);
+    setStreamLog([]);
+
+    const url = `${API}/ceremony/${ceremony.ceremony_id}/stream`;
+    const eventSource = new EventSource(url);
+
+    const addLog = (msg) => setStreamLog(prev => [...prev, { time: new Date().toLocaleTimeString(), msg }]);
+
+    eventSource.addEventListener('ceremony_started', () => {
+      addLog('Pipeline initiated');
+      setCeremony(prev => prev ? { ...prev, status: 'in_progress' } : prev);
+    });
+
+    eventSource.addEventListener('agent_started', (e) => {
+      const d = JSON.parse(e.data);
+      addLog(`${d.agent.charAt(0).toUpperCase() + d.agent.slice(1)} Agent analyzing...`);
+      setCeremony(prev => {
+        if (!prev) return prev;
+        return { ...prev, agents: { ...prev.agents, [d.agent]: { ...prev.agents[d.agent], status: 'running' } } };
+      });
+    });
+
+    eventSource.addEventListener('agent_completed', (e) => {
+      const d = JSON.parse(e.data);
+      const pct = d.confidence ? Math.round(d.confidence * 100) : '?';
+      addLog(`${d.agent.charAt(0).toUpperCase() + d.agent.slice(1)} Agent: ${d.verdict} (${pct}%)`);
+      setCeremony(prev => {
+        if (!prev) return prev;
+        return { ...prev, agents: { ...prev.agents, [d.agent]: { ...prev.agents[d.agent], status: d.verdict === 'PASS' ? 'passed' : 'failed', verdict: d.verdict, confidence: d.confidence } } };
+      });
+    });
+
+    eventSource.addEventListener('consensus_started', (e) => {
+      const d = JSON.parse(e.data);
+      addLog(d.message || 'Evaluating consensus...');
+    });
+
+    eventSource.addEventListener('sealing_blockchain', (e) => {
+      const d = JSON.parse(e.data);
+      addLog(d.message || 'Submitting to Hedera...');
+    });
+
+    eventSource.addEventListener('consensus_reached', (e) => {
+      const d = JSON.parse(e.data);
+      addLog(`Consensus: ${d.result} (${d.pass_count}/${Object.keys(d.votes).length} PASS)`);
+      if (d.blockchain_seal?.hcs_submitted) {
+        addLog(`Sealed on Hedera — Topic ${d.blockchain_seal.topic_id}`);
+      }
+    });
+
+    eventSource.addEventListener('ceremony_complete', () => {
+      addLog('Ceremony complete');
+      eventSource.close();
       setExecuting(false);
+      fetchCeremony(ceremony.ceremony_id);
       fetchList();
-    } catch (err) {
-      toast({ title: 'Error', description: err.response?.data?.detail || 'Execution failed', variant: 'destructive' });
-      setPollingActive(false);
-      setExecuting(false);
-    }
+    });
+
+    eventSource.addEventListener('error', () => {
+      // SSE reconnect or end — fetch final state
+      eventSource.close();
+      setTimeout(() => {
+        fetchCeremony(ceremony.ceremony_id);
+        fetchList();
+        setExecuting(false);
+      }, 1000);
+    });
   };
 
   const agents = ceremony?.agents || { verifier: { status: 'idle' }, witness: { status: 'idle' }, sealer: { status: 'idle' } };
@@ -481,6 +542,35 @@ const CeremonyDashboard = () => {
 
                 {/* Consensus Oracle */}
                 <ConsensusOracle consensus={ceremony.consensus} blockchainSeal={ceremony.blockchain_seal} />
+
+                {/* Live Stream Log */}
+                {streamLog.length > 0 && (
+                  <Card className="bg-[#0f1825] border-[#334155] rounded-sm" data-testid="ceremony-stream-log">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className={`w-2 h-2 rounded-full ${executing ? 'bg-blue-500 animate-pulse' : 'bg-emerald-500'}`} />
+                        <span className="text-slate-400 text-xs font-bold tracking-wider uppercase">
+                          {executing ? 'Live Stream' : 'Execution Log'}
+                        </span>
+                      </div>
+                      <div className="space-y-1 max-h-40 overflow-y-auto font-mono text-[11px]">
+                        {streamLog.map((entry, i) => (
+                          <div key={i} className="flex items-start gap-2">
+                            <span className="text-slate-600 flex-shrink-0">{entry.time}</span>
+                            <span className={
+                              entry.msg.includes('PASS') ? 'text-emerald-400' :
+                              entry.msg.includes('FAIL') ? 'text-red-400' :
+                              entry.msg.includes('APPROVED') ? 'text-emerald-400' :
+                              entry.msg.includes('REJECTED') ? 'text-red-400' :
+                              entry.msg.includes('Hedera') ? 'text-blue-400' :
+                              'text-slate-300'
+                            }>{entry.msg}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             ) : (
               <div className="text-center py-20">
