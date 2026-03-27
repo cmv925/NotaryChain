@@ -64,9 +64,14 @@ function AgentCard({ name, icon: Icon, agent, accent }) {
             </div>
             <div>
               <h3 className="text-white font-semibold text-sm tracking-tight">{name} Agent</h3>
-              <p className="text-slate-500 text-[11px] tracking-wide uppercase">
-                {name === 'Verifier' ? 'Biometric & ID' : name === 'Witness' ? 'Audit & Evidence' : 'Blockchain & Compliance'}
-              </p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-slate-500 text-[11px] tracking-wide uppercase">
+                  {name === 'Verifier' ? 'Biometric & ID' : name === 'Witness' ? 'Audit & Evidence' : 'Blockchain & Compliance'}
+                </p>
+                {agent.details?.ai_powered && (
+                  <span className="text-[9px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/40 px-1 py-0.5 rounded-sm" data-testid="ai-powered-badge">GPT-5.2</span>
+                )}
+              </div>
             </div>
           </div>
           <AgentStatusBadge status={agent.status} />
@@ -267,7 +272,7 @@ const CeremonyDashboard = () => {
   const [executing, setExecuting] = useState(false);
   const [ceremonies, setCeremonies] = useState([]);
   const [showNew, setShowNew] = useState(!ceremonyId);
-  const [form, setForm] = useState({ document_name: '', signer_name: '' });
+  const [form, setForm] = useState({ document_name: '', signer_name: '', id_image_base64: null, selfie_base64: null });
   const [streamLog, setStreamLog] = useState([]);
 
   // Fetch ceremony detail
@@ -407,7 +412,7 @@ const CeremonyDashboard = () => {
                 <h1 className="text-white font-semibold tracking-tight">Notarization Ceremony</h1>
               </div>
             </div>
-            <Button size="sm" onClick={() => { setShowNew(true); setCeremony(null); setForm({ document_name: '', signer_name: '' }); }} className="bg-blue-600 hover:bg-blue-700 rounded-sm text-xs" data-testid="new-ceremony-btn">
+            <Button size="sm" onClick={() => { setShowNew(true); setCeremony(null); setForm({ document_name: '', signer_name: '', id_image_base64: null, selfie_base64: null }); }} className="bg-blue-600 hover:bg-blue-700 rounded-sm text-xs" data-testid="new-ceremony-btn">
               <Play className="w-3.5 h-3.5 mr-1.5" /> New Ceremony
             </Button>
           </div>
@@ -485,6 +490,83 @@ const CeremonyDashboard = () => {
                           data-testid="ceremony-signer-name"
                         />
                       </div>
+
+                      {/* Biometric Verification Images */}
+                      <div className="pt-2 border-t border-[#334155]">
+                        <div className="flex items-center gap-2 mb-3">
+                          <ScanFace className="w-4 h-4 text-purple-400" />
+                          <span className="text-white text-sm font-medium">AI Biometric Verification</span>
+                          <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-sm">GPT-5.2 Vision</span>
+                        </div>
+                        <p className="text-slate-500 text-xs mb-3">Upload images to enable real AI-powered identity verification. Without images, the Verifier Agent uses simulated checks.</p>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-slate-300 text-xs block mb-1.5">ID Document</label>
+                            <label
+                              className={`flex flex-col items-center justify-center h-28 border-2 border-dashed rounded-sm cursor-pointer transition-all ${form.id_image_base64 ? 'border-purple-500/50 bg-purple-500/10' : 'border-[#334155] bg-[#0f1825] hover:border-slate-500'}`}
+                              data-testid="upload-id-image"
+                            >
+                              {form.id_image_base64 ? (
+                                <div className="text-center">
+                                  <CheckCircle className="w-6 h-6 text-purple-400 mx-auto mb-1" />
+                                  <span className="text-purple-300 text-[11px]">ID uploaded</span>
+                                </div>
+                              ) : (
+                                <div className="text-center">
+                                  <Fingerprint className="w-6 h-6 text-slate-600 mx-auto mb-1" />
+                                  <span className="text-slate-500 text-[11px]">Drop or click</span>
+                                </div>
+                              )}
+                              <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                className="hidden"
+                                onChange={e => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = () => setForm(f => ({ ...f, id_image_base64: reader.result.split(',')[1] }));
+                                    reader.readAsDataURL(file);
+                                  }
+                                }}
+                              />
+                            </label>
+                          </div>
+                          <div>
+                            <label className="text-slate-300 text-xs block mb-1.5">Selfie Photo</label>
+                            <label
+                              className={`flex flex-col items-center justify-center h-28 border-2 border-dashed rounded-sm cursor-pointer transition-all ${form.selfie_base64 ? 'border-blue-500/50 bg-blue-500/10' : 'border-[#334155] bg-[#0f1825] hover:border-slate-500'}`}
+                              data-testid="upload-selfie"
+                            >
+                              {form.selfie_base64 ? (
+                                <div className="text-center">
+                                  <CheckCircle className="w-6 h-6 text-blue-400 mx-auto mb-1" />
+                                  <span className="text-blue-300 text-[11px]">Selfie uploaded</span>
+                                </div>
+                              ) : (
+                                <div className="text-center">
+                                  <ScanFace className="w-6 h-6 text-slate-600 mx-auto mb-1" />
+                                  <span className="text-slate-500 text-[11px]">Drop or click</span>
+                                </div>
+                              )}
+                              <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                className="hidden"
+                                onChange={e => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = () => setForm(f => ({ ...f, selfie_base64: reader.result.split(',')[1] }));
+                                    reader.readAsDataURL(file);
+                                  }
+                                }}
+                              />
+                            </label>
+                          </div>
+                        </div>
+                      </div>
                       <Button onClick={handleStart} disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 rounded-sm mt-2" data-testid="start-ceremony-btn">
                         {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Play className="w-4 h-4 mr-2" />}
                         {loading ? 'Initializing...' : 'Start Ceremony'}
@@ -506,6 +588,12 @@ const CeremonyDashboard = () => {
                       <span className={`text-xs font-bold tracking-wider uppercase ${statusColor[ceremony.status] || 'text-slate-400'}`} data-testid="ceremony-status">
                         {ceremony.status?.toUpperCase()}
                       </span>
+                      {ceremony.has_id_image && (
+                        <>
+                          <span className="text-slate-700">|</span>
+                          <span className="text-[10px] font-bold bg-purple-500/15 text-purple-400 border border-purple-500/30 px-1.5 py-0.5 rounded-sm">AI BIOMETRICS</span>
+                        </>
+                      )}
                     </div>
                   </div>
                   {ceremony.status === 'pending' && (

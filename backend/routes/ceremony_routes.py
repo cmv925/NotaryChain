@@ -24,6 +24,8 @@ class CeremonyStartRequest(BaseModel):
     request_id: Optional[str] = None
     document_name: Optional[str] = "Untitled Document"
     signer_name: Optional[str] = "Unknown Signer"
+    id_image_base64: Optional[str] = None
+    selfie_base64: Optional[str] = None
 
 
 class CeremonyResponse(BaseModel):
@@ -56,31 +58,89 @@ def _generate_hash(data: str) -> str:
 
 
 async def _run_verifier_agent(ceremony: dict) -> dict:
-    """Simulated Verifier Agent — Biometric validation, ID forensics, liveness proof"""
-    await asyncio.sleep(random.uniform(2.0, 4.0))
+    """Verifier Agent — Uses GPT-5.2 Vision when images available, simulated otherwise."""
+    ceremony_id = ceremony.get("ceremony_id", "")
+    has_images = ceremony.get("has_id_image", False) or ceremony.get("has_selfie", False)
 
-    confidence = random.uniform(0.78, 0.99)
-    passed = confidence > 0.80  # ~95% pass rate
+    if has_images:
+        from services.ai_verifier_service import run_full_verification
 
-    checks = {
-        "biometric_match": {"score": round(random.uniform(0.85, 0.99), 3), "status": "PASS" if passed else "FAIL"},
-        "id_forensics": {"tampering_detected": False, "document_type": "Government ID", "status": "PASS"},
-        "liveness_proof": {"blink_detected": True, "motion_verified": True, "status": "PASS" if passed else "FAIL"},
-        "face_comparison": {"similarity": round(random.uniform(0.88, 0.98), 3), "threshold": 0.85, "status": "PASS"},
-    }
+        images = await db.ceremony_images.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
+        id_img = images.get("id_image_base64") if images else None
+        selfie_img = images.get("selfie_base64") if images else None
 
-    return {
-        "status": "passed" if passed else "failed",
-        "verdict": "PASS" if passed else "FAIL",
-        "confidence": round(confidence, 3),
-        "evidence_hash": _generate_hash(f"verifier-{ceremony['ceremony_id']}-{datetime.now(timezone.utc).isoformat()}"),
-        "details": {
-            "checks": checks,
-            "signer": ceremony.get("signer_name", "Unknown"),
-            "processing_time_ms": random.randint(1800, 3500),
-        },
-        "completed_at": datetime.now(timezone.utc).isoformat(),
-    }
+        ai_result = await run_full_verification(id_img, selfie_img)
+
+        confidence = ai_result.get("overall_confidence", 0.85)
+        passed = ai_result.get("overall_verdict", "PASS") == "PASS" and confidence > 0.60
+
+        checks = {}
+        id_data = ai_result.get("id_analysis", {})
+        face_data = ai_result.get("face_comparison", {})
+
+        if id_data and not id_data.get("error"):
+            tampering = id_data.get("tampering_indicators", id_data.get("forensic_checks", {}))
+            if isinstance(tampering, dict):
+                for k, v in tampering.items():
+                    if isinstance(v, bool):
+                        checks[k] = {"status": "PASS" if v else "FAIL"}
+                    elif isinstance(v, str):
+                        checks[k] = {"status": v}
+            checks["id_document"] = {
+                "status": "PASS" if id_data.get("is_valid", id_data.get("is_authentic", True)) else "FAIL",
+                "type": id_data.get("document_type", "Unknown"),
+            }
+
+        if face_data and not face_data.get("error"):
+            checks["face_match"] = {
+                "status": "PASS" if face_data.get("is_match", True) else "FAIL",
+                "score": face_data.get("similarity_score", 0),
+            }
+            liveness = face_data.get("liveness_indicators", {})
+            if liveness:
+                liveness_pass = sum(1 for v in liveness.values() if v) >= len(liveness) // 2 + 1
+                checks["liveness_proof"] = {"status": "PASS" if liveness_pass else "FAIL"}
+
+        return {
+            "status": "passed" if passed else "failed",
+            "verdict": "PASS" if passed else "FAIL",
+            "confidence": round(confidence, 3),
+            "evidence_hash": ai_result.get("evidence_hash", _generate_hash(f"verifier-{ceremony_id}-ai")),
+            "details": {
+                "checks": checks,
+                "ai_powered": True,
+                "model": "gpt-5.2",
+                "checks_performed": ai_result.get("checks_performed", []),
+                "signer": ceremony.get("signer_name", "Unknown"),
+            },
+            "completed_at": datetime.now(timezone.utc).isoformat(),
+        }
+    else:
+        # Simulated fallback when no images
+        await asyncio.sleep(random.uniform(2.0, 4.0))
+        confidence = random.uniform(0.78, 0.99)
+        passed = confidence > 0.80
+
+        checks = {
+            "biometric_match": {"score": round(random.uniform(0.85, 0.99), 3), "status": "PASS" if passed else "FAIL"},
+            "id_forensics": {"tampering_detected": False, "document_type": "Government ID", "status": "PASS"},
+            "liveness_proof": {"blink_detected": True, "motion_verified": True, "status": "PASS" if passed else "FAIL"},
+            "face_comparison": {"similarity": round(random.uniform(0.88, 0.98), 3), "threshold": 0.85, "status": "PASS"},
+        }
+
+        return {
+            "status": "passed" if passed else "failed",
+            "verdict": "PASS" if passed else "FAIL",
+            "confidence": round(confidence, 3),
+            "evidence_hash": _generate_hash(f"verifier-{ceremony_id}-{datetime.now(timezone.utc).isoformat()}"),
+            "details": {
+                "checks": checks,
+                "ai_powered": False,
+                "signer": ceremony.get("signer_name", "Unknown"),
+                "processing_time_ms": random.randint(1800, 3500),
+            },
+            "completed_at": datetime.now(timezone.utc).isoformat(),
+        }
 
 
 async def _run_witness_agent(ceremony: dict) -> dict:
@@ -220,6 +280,8 @@ async def start_ceremony(req: CeremonyStartRequest, request=None):
         "request_id": req.request_id,
         "document_name": req.document_name,
         "signer_name": req.signer_name,
+        "has_id_image": bool(req.id_image_base64),
+        "has_selfie": bool(req.selfie_base64),
         "initiated_by": user.get("email") if user else "anonymous",
         "initiated_by_name": user.get("full_name") if user else "Anonymous",
         "status": "pending",
@@ -244,7 +306,15 @@ async def start_ceremony(req: CeremonyStartRequest, request=None):
 
     await db.ceremonies.insert_one(ceremony)
 
-    return {"ceremony_id": ceremony_id, "status": "pending", "message": "Ceremony initialized. Call /execute to begin the agent pipeline."}
+    # Store images separately (not in the main ceremony doc for size)
+    if req.id_image_base64 or req.selfie_base64:
+        await db.ceremony_images.insert_one({
+            "ceremony_id": ceremony_id,
+            "id_image_base64": req.id_image_base64,
+            "selfie_base64": req.selfie_base64,
+        })
+
+    return {"ceremony_id": ceremony_id, "status": "pending", "has_images": bool(req.id_image_base64 or req.selfie_base64), "message": "Ceremony initialized. Call /execute to begin the agent pipeline."}
 
 
 @router.get("/{ceremony_id}")
