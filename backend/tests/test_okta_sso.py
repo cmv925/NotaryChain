@@ -44,7 +44,7 @@ class TestOktaLogin:
         """GET /api/sso/okta/login should return auth_url and state"""
         response = requests.get(
             f"{BASE_URL}/api/sso/okta/login",
-            headers={"origin": "https://doc-verify-pro-5.preview.emergentagent.com"}
+            headers={"origin": "https://verify-docs-7.preview.emergentagent.com"}
         )
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
         
@@ -58,7 +58,7 @@ class TestOktaLogin:
         """Okta auth_url should contain the correct Okta domain"""
         response = requests.get(
             f"{BASE_URL}/api/sso/okta/login",
-            headers={"origin": "https://doc-verify-pro-5.preview.emergentagent.com"}
+            headers={"origin": "https://verify-docs-7.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         
@@ -72,7 +72,7 @@ class TestOktaLogin:
         """Okta auth_url should use /oauth2/default/v1/authorize path"""
         response = requests.get(
             f"{BASE_URL}/api/sso/okta/login",
-            headers={"origin": "https://doc-verify-pro-5.preview.emergentagent.com"}
+            headers={"origin": "https://verify-docs-7.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         
@@ -86,7 +86,7 @@ class TestOktaLogin:
         """Okta auth_url should contain the correct client_id parameter"""
         response = requests.get(
             f"{BASE_URL}/api/sso/okta/login",
-            headers={"origin": "https://doc-verify-pro-5.preview.emergentagent.com"}
+            headers={"origin": "https://verify-docs-7.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         
@@ -102,7 +102,7 @@ class TestOktaLogin:
         """Okta auth_url should have response_type=code parameter"""
         response = requests.get(
             f"{BASE_URL}/api/sso/okta/login",
-            headers={"origin": "https://doc-verify-pro-5.preview.emergentagent.com"}
+            headers={"origin": "https://verify-docs-7.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         
@@ -118,7 +118,7 @@ class TestOktaLogin:
         """Okta auth_url should have scope=openid profile email"""
         response = requests.get(
             f"{BASE_URL}/api/sso/okta/login",
-            headers={"origin": "https://doc-verify-pro-5.preview.emergentagent.com"}
+            headers={"origin": "https://verify-docs-7.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         
@@ -137,7 +137,7 @@ class TestOktaLogin:
         """Okta auth_url should have redirect_uri pointing to /auth/okta/callback"""
         response = requests.get(
             f"{BASE_URL}/api/sso/okta/login",
-            headers={"origin": "https://doc-verify-pro-5.preview.emergentagent.com"}
+            headers={"origin": "https://verify-docs-7.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         
@@ -247,7 +247,7 @@ class TestAuth0StillWorks:
         """GET /api/sso/auth0/login should still work"""
         response = requests.get(
             f"{BASE_URL}/api/sso/auth0/login",
-            headers={"origin": "https://doc-verify-pro-5.preview.emergentagent.com"}
+            headers={"origin": "https://verify-docs-7.preview.emergentagent.com"}
         )
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
         
@@ -281,7 +281,7 @@ class TestOktaSessionCreation:
         # Call okta/login
         response = requests.get(
             f"{BASE_URL}/api/sso/okta/login",
-            headers={"origin": "https://doc-verify-pro-5.preview.emergentagent.com"}
+            headers={"origin": "https://verify-docs-7.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         

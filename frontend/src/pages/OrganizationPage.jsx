@@ -10,7 +10,7 @@ import { Card, CardContent } from '../components/ui/card';
 import {
   Building2, Users, Plus, Settings, Shield, Mail, Crown,
   UserPlus, X, ChevronRight, Loader2, Check, Trash2,
-  Key, Globe, Lock, FolderOpen, ShieldCheck, Webhook, FileBarChart,
+  Key, Globe, Lock, FolderOpen, ShieldCheck, Webhook, FileBarChart, ArrowLeft,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
@@ -520,9 +520,14 @@ const OrganizationPage = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white" data-testid="org-page-title">Organizations</h1>
-              <p className="text-gray-400 text-sm mt-1">Manage your teams and enterprise settings</p>
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white" data-testid="back-to-dashboard">
+                <ArrowLeft className="w-4 h-4 mr-1" /> Back
+              </Button>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-white" data-testid="org-page-title">Organizations</h1>
+                <p className="text-gray-400 text-sm mt-1">Manage your teams and enterprise settings</p>
+              </div>
             </div>
             <Button onClick={() => setShowCreateModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white" data-testid="new-org-btn">
               <Plus className="w-4 h-4 mr-2" /> New Organization

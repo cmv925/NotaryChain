@@ -9,7 +9,7 @@ import { Card, CardContent } from '../components/ui/card';
 import {
   FileText, Search, Clock, Users, Shield, ArrowRight,
   Scale, Home, Lock, Scroll, Building, Landmark, Handshake,
-  FileCheck, X, ChevronRight, Star,
+  FileCheck, X, ChevronRight, Star, ArrowLeft,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
@@ -214,6 +214,10 @@ const TemplateLibrary = () => {
       <Navbar />
       <div className="pt-24 sm:pt-32 pb-16 sm:pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          {/* Back Button */}
+          <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white mb-4" data-testid="back-to-dashboard">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
+          </Button>
           {/* Header */}
           <div className="text-center mb-8 sm:mb-10">
             <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2 sm:mb-3" data-testid="template-library-title">

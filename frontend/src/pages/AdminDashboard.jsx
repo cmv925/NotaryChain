@@ -9,7 +9,7 @@ import {
   Eye, UserCheck, UserX, Settings, AlertTriangle, PieChart, Plus,
   Server, HardDrive, Zap, Database, Globe, AlertCircle,
   Lock, Bell, BellOff, Mail, MailX, Save, ToggleLeft, ToggleRight,
-  ShieldCheck, Key, Fingerprint, Network
+  ShieldCheck, Key, Fingerprint, Network, ArrowLeft
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
@@ -329,6 +329,10 @@ const AdminDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white" data-testid="back-to-dashboard">
+                <ArrowLeft className="w-5 h-5 sm:mr-2" /> <span className="hidden sm:inline">Back</span>
+              </Button>
+              <span className="text-gray-600 hidden sm:inline">|</span>
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
                 <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-blue-500" />
                 <span className="text-lg sm:text-xl font-bold text-white">

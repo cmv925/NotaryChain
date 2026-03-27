@@ -8,7 +8,7 @@ import { Input } from '../components/ui/input';
 import { Card, CardContent } from '../components/ui/card';
 import {
   Search, Star, MapPin, Shield, Filter, Users, Award,
-  ChevronRight, Loader2, MessageSquare, Video, Calendar as CalendarIcon,
+  ChevronRight, Loader2, MessageSquare, Video, Calendar as CalendarIcon, ArrowLeft,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import { useTranslation } from 'react-i18next';
@@ -258,6 +258,9 @@ const NotaryMarketplace = () => {
           ) : (
             /* Marketplace Listing */
             <div>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white mb-4" data-testid="back-to-dashboard">
+                <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
+              </Button>
               <div className="mb-8">
                 <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
                   <Users className="w-7 h-7 text-blue-400" />
