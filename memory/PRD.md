@@ -269,6 +269,16 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **Note**: Verifier and Witness agents are SIMULATED (architecture-first). Sealer Agent connected to REAL Hedera Mainnet.
 - **SSE Streaming**: GET /api/ceremony/{id}/stream provides real-time events (ceremony_started, agent_started×3, agent_completed×3, consensus_started, sealing_blockchain, consensus_reached, ceremony_complete)
 - **Hedera Integration**: seal_document() via hedera_service, real HCS topic 0.0.10373605, hcs_submitted=true, explorer URL
+
+### GPT-5.2 Vision Biometrics for Verifier Agent — COMPLETED (Mar 27, 2026)
+- **Service**: `ai_verifier_service.py` using emergentintegrations LlmChat with ImageContent
+- **ID Analysis**: Document type detection, holder name OCR, expiry checks, tampering indicators (font consistency, photo alignment, hologram presence, edge integrity, color consistency)
+- **Face Comparison**: Cross-image similarity scoring, matching features, liveness indicators
+- **Dual Mode**: Real AI when images uploaded, simulated fallback when no images
+- **Frontend**: Image upload zones (ID Document + Selfie) on ceremony form, GPT-5.2 badge on Verifier card, AI BIOMETRICS badge on ceremony header
+- **Images stored separately** in `ceremony_images` collection (not in main ceremony doc) for performance
+- Testing: 100% pass rate (iteration_62)
+
 - Testing: 100% pass rate backend + frontend (iteration_60, iteration_61)
 
 - **Frontend** (`pages/BookingCalendar.jsx`): Enhanced booking experience
@@ -625,7 +635,6 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - `/api/sso/test` — Test SSO configuration validity
 
 ## Upcoming Tasks
-- Plug real biometric API into Verifier Agent (e.g., Onfido, Jumio, or GPT-5.2 Vision)
 - Plug real audit/evidence packaging into Witness Agent
 - Resend Domain Verification (user task — verify domain on resend.com)
 
