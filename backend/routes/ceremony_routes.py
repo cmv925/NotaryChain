@@ -1,0 +1,380 @@
+from fastapi import APIRouter, HTTPException, Depends
+from datetime import datetime, timezone
+from typing import Optional
+from pydantic import BaseModel
+import uuid
+import asyncio
+import random
+import hashlib
+
+router = APIRouter(prefix="/api/ceremony", tags=["ceremony"])
+db = None
+
+def set_db(database):
+    global db
+    db = database
+
+
+# --- Models ---
+
+class CeremonyStartRequest(BaseModel):
+    document_id: Optional[str] = None
+    request_id: Optional[str] = None
+    document_name: Optional[str] = "Untitled Document"
+    signer_name: Optional[str] = "Unknown Signer"
+
+
+class CeremonyResponse(BaseModel):
+    ceremony_id: str
+    status: str
+    message: str
+
+
+# --- Auth helper ---
+
+async def get_current_user(request):
+    from auth import decode_access_token
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    token = auth_header.split(" ", 1)[1]
+    payload = decode_access_token(token)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    user = await db.users.find_one({"email": payload.get("sub")}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    return user
+
+
+# --- Simulated Agent Logic ---
+
+def _generate_hash(data: str) -> str:
+    return hashlib.sha256(data.encode()).hexdigest()[:16]
+
+
+async def _run_verifier_agent(ceremony: dict) -> dict:
+    """Simulated Verifier Agent — Biometric validation, ID forensics, liveness proof"""
+    await asyncio.sleep(random.uniform(2.0, 4.0))
+
+    confidence = random.uniform(0.78, 0.99)
+    passed = confidence > 0.80  # ~95% pass rate
+
+    checks = {
+        "biometric_match": {"score": round(random.uniform(0.85, 0.99), 3), "status": "PASS" if passed else "FAIL"},
+        "id_forensics": {"tampering_detected": False, "document_type": "Government ID", "status": "PASS"},
+        "liveness_proof": {"blink_detected": True, "motion_verified": True, "status": "PASS" if passed else "FAIL"},
+        "face_comparison": {"similarity": round(random.uniform(0.88, 0.98), 3), "threshold": 0.85, "status": "PASS"},
+    }
+
+    return {
+        "status": "passed" if passed else "failed",
+        "verdict": "PASS" if passed else "FAIL",
+        "confidence": round(confidence, 3),
+        "evidence_hash": _generate_hash(f"verifier-{ceremony['ceremony_id']}-{datetime.now(timezone.utc).isoformat()}"),
+        "details": {
+            "checks": checks,
+            "signer": ceremony.get("signer_name", "Unknown"),
+            "processing_time_ms": random.randint(1800, 3500),
+        },
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+async def _run_witness_agent(ceremony: dict) -> dict:
+    """Simulated Witness Agent — Session recording, audit trail, evidence packaging"""
+    await asyncio.sleep(random.uniform(2.5, 4.5))
+
+    confidence = random.uniform(0.82, 0.99)
+    passed = confidence > 0.80
+
+    evidence = {
+        "session_timeline": [
+            {"event": "ceremony_initiated", "timestamp": ceremony["created_at"]},
+            {"event": "document_presented", "timestamp": datetime.now(timezone.utc).isoformat()},
+            {"event": "identity_confirmed", "timestamp": datetime.now(timezone.utc).isoformat()},
+            {"event": "witness_observation_complete", "timestamp": datetime.now(timezone.utc).isoformat()},
+        ],
+        "audit_integrity": {"merkle_root": _generate_hash(f"merkle-{ceremony['ceremony_id']}"), "entries": 4, "status": "VALID"},
+        "evidence_package": {
+            "document_hash": _generate_hash(f"doc-{ceremony.get('document_id', 'none')}"),
+            "screenshots_captured": random.randint(2, 5),
+            "tamper_proof": True,
+        },
+    }
+
+    return {
+        "status": "passed" if passed else "failed",
+        "verdict": "PASS" if passed else "FAIL",
+        "confidence": round(confidence, 3),
+        "evidence_hash": _generate_hash(f"witness-{ceremony['ceremony_id']}-{datetime.now(timezone.utc).isoformat()}"),
+        "details": {
+            "evidence": evidence,
+            "processing_time_ms": random.randint(2200, 4000),
+        },
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+async def _run_sealer_agent(ceremony: dict) -> dict:
+    """Simulated Sealer Agent — Blockchain anchoring, compliance validation, final seal"""
+    await asyncio.sleep(random.uniform(3.0, 5.0))
+
+    confidence = random.uniform(0.85, 0.99)
+    passed = confidence > 0.82
+
+    compliance = {
+        "jurisdiction_check": {"state": "CA", "valid": True, "status": "PASS"},
+        "document_type_check": {"type": ceremony.get("document_name", "General"), "allowed": True, "status": "PASS"},
+        "signer_eligibility": {"age_verified": True, "identity_confirmed": True, "status": "PASS"},
+        "notary_authority": {"commission_valid": True, "ron_certified": True, "status": "PASS"},
+    }
+
+    blockchain = {
+        "network": "Hedera Mainnet",
+        "proposed_topic_id": f"0.0.{random.randint(4000000, 5000000)}",
+        "proposed_message_hash": _generate_hash(f"seal-{ceremony['ceremony_id']}"),
+        "estimated_cost_hbar": round(random.uniform(0.001, 0.01), 4),
+        "ready_to_submit": passed,
+    }
+
+    return {
+        "status": "passed" if passed else "failed",
+        "verdict": "PASS" if passed else "FAIL",
+        "confidence": round(confidence, 3),
+        "evidence_hash": _generate_hash(f"sealer-{ceremony['ceremony_id']}-{datetime.now(timezone.utc).isoformat()}"),
+        "details": {
+            "compliance": compliance,
+            "blockchain": blockchain,
+            "processing_time_ms": random.randint(2800, 4500),
+        },
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+def _evaluate_consensus(agents: dict) -> dict:
+    """2-of-3 Consensus Oracle"""
+    votes = {}
+    pass_count = 0
+    fail_count = 0
+
+    for agent_name in ["verifier", "witness", "sealer"]:
+        agent = agents.get(agent_name, {})
+        verdict = agent.get("verdict")
+        votes[agent_name] = verdict
+        if verdict == "PASS":
+            pass_count += 1
+        elif verdict == "FAIL":
+            fail_count += 1
+
+    if pass_count >= 2:
+        result = "APPROVED"
+        status = "reached"
+    elif fail_count >= 2:
+        result = "REJECTED"
+        status = "reached"
+    else:
+        result = "REVIEW"
+        status = "failed"
+
+    return {
+        "status": status,
+        "votes": votes,
+        "required_votes": 2,
+        "total_votes": 3,
+        "pass_count": pass_count,
+        "fail_count": fail_count,
+        "result": result,
+        "decided_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+# --- Endpoints ---
+
+@router.post("/start")
+async def start_ceremony(req: CeremonyStartRequest, request=None):
+    from starlette.requests import Request
+    if request is None:
+        from fastapi import Request as FReq
+    raw_request = request
+    # Manual auth extraction
+    auth_header = ""
+    if hasattr(raw_request, 'headers'):
+        auth_header = raw_request.headers.get("Authorization", "")
+    user = None
+    if auth_header.startswith("Bearer "):
+        from auth import decode_access_token
+        token = auth_header.split(" ", 1)[1]
+        payload = decode_access_token(token)
+        if payload:
+            user = await db.users.find_one({"email": payload.get("sub")}, {"_id": 0})
+
+    ceremony_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc).isoformat()
+
+    ceremony = {
+        "ceremony_id": ceremony_id,
+        "document_id": req.document_id,
+        "request_id": req.request_id,
+        "document_name": req.document_name,
+        "signer_name": req.signer_name,
+        "initiated_by": user.get("email") if user else "anonymous",
+        "initiated_by_name": user.get("full_name") if user else "Anonymous",
+        "status": "pending",
+        "created_at": now,
+        "agents": {
+            "verifier": {"status": "idle", "started_at": None, "completed_at": None, "verdict": None, "confidence": None, "evidence_hash": None, "details": {}},
+            "witness": {"status": "idle", "started_at": None, "completed_at": None, "verdict": None, "confidence": None, "evidence_hash": None, "details": {}},
+            "sealer": {"status": "idle", "started_at": None, "completed_at": None, "verdict": None, "confidence": None, "evidence_hash": None, "details": {}},
+        },
+        "consensus": {
+            "status": "pending",
+            "votes": {"verifier": None, "witness": None, "sealer": None},
+            "required_votes": 2,
+            "total_votes": 3,
+            "pass_count": 0,
+            "fail_count": 0,
+            "result": None,
+            "decided_at": None,
+        },
+        "blockchain_seal": None,
+    }
+
+    await db.ceremonies.insert_one(ceremony)
+
+    return {"ceremony_id": ceremony_id, "status": "pending", "message": "Ceremony initialized. Call /execute to begin the agent pipeline."}
+
+
+@router.get("/{ceremony_id}")
+async def get_ceremony(ceremony_id: str):
+    ceremony = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
+    if not ceremony:
+        raise HTTPException(status_code=404, detail="Ceremony not found")
+    return ceremony
+
+
+@router.post("/{ceremony_id}/execute")
+async def execute_ceremony(ceremony_id: str):
+    """Execute the 3-agent pipeline sequentially with status updates"""
+    ceremony = await db.ceremonies.find_one({"ceremony_id": ceremony_id})
+    if not ceremony:
+        raise HTTPException(status_code=404, detail="Ceremony not found")
+
+    if ceremony["status"] not in ("pending", "consensus_failed"):
+        raise HTTPException(status_code=400, detail=f"Ceremony is already {ceremony['status']}")
+
+    now = datetime.now(timezone.utc).isoformat()
+
+    # Mark as in_progress
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {"status": "in_progress"}}
+    )
+
+    # --- Phase 1: Verifier Agent ---
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {"agents.verifier.status": "running", "agents.verifier.started_at": now}}
+    )
+    verifier_result = await _run_verifier_agent(ceremony)
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {
+            "agents.verifier.status": verifier_result["status"],
+            "agents.verifier.verdict": verifier_result["verdict"],
+            "agents.verifier.confidence": verifier_result["confidence"],
+            "agents.verifier.evidence_hash": verifier_result["evidence_hash"],
+            "agents.verifier.details": verifier_result["details"],
+            "agents.verifier.completed_at": verifier_result["completed_at"],
+        }}
+    )
+
+    # --- Phase 2: Witness Agent ---
+    now2 = datetime.now(timezone.utc).isoformat()
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {"agents.witness.status": "running", "agents.witness.started_at": now2}}
+    )
+    witness_result = await _run_witness_agent(ceremony)
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {
+            "agents.witness.status": witness_result["status"],
+            "agents.witness.verdict": witness_result["verdict"],
+            "agents.witness.confidence": witness_result["confidence"],
+            "agents.witness.evidence_hash": witness_result["evidence_hash"],
+            "agents.witness.details": witness_result["details"],
+            "agents.witness.completed_at": witness_result["completed_at"],
+        }}
+    )
+
+    # --- Phase 3: Sealer Agent ---
+    now3 = datetime.now(timezone.utc).isoformat()
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {"agents.sealer.status": "running", "agents.sealer.started_at": now3}}
+    )
+    sealer_result = await _run_sealer_agent(ceremony)
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {
+            "agents.sealer.status": sealer_result["status"],
+            "agents.sealer.verdict": sealer_result["verdict"],
+            "agents.sealer.confidence": sealer_result["confidence"],
+            "agents.sealer.evidence_hash": sealer_result["evidence_hash"],
+            "agents.sealer.details": sealer_result["details"],
+            "agents.sealer.completed_at": sealer_result["completed_at"],
+        }}
+    )
+
+    # --- Phase 4: Consensus Oracle ---
+    updated = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
+    consensus = _evaluate_consensus(updated["agents"])
+
+    final_status = "sealed" if consensus["result"] == "APPROVED" else "consensus_failed"
+
+    blockchain_seal = None
+    if consensus["result"] == "APPROVED":
+        blockchain_seal = {
+            "network": "Hedera Mainnet",
+            "topic_id": sealer_result["details"].get("blockchain", {}).get("proposed_topic_id"),
+            "message_hash": sealer_result["details"].get("blockchain", {}).get("proposed_message_hash"),
+            "sealed_at": datetime.now(timezone.utc).isoformat(),
+            "consensus_hash": _generate_hash(f"consensus-{ceremony_id}-{consensus['decided_at']}"),
+        }
+
+    await db.ceremonies.update_one(
+        {"ceremony_id": ceremony_id},
+        {"$set": {
+            "status": final_status,
+            "consensus": consensus,
+            "blockchain_seal": blockchain_seal,
+        }}
+    )
+
+    result = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
+    return result
+
+
+@router.get("/list/my")
+async def list_my_ceremonies(request=None):
+    """List ceremonies for the authenticated user"""
+    auth_header = request.headers.get("Authorization", "") if request else ""
+    user_email = "anonymous"
+    if auth_header.startswith("Bearer "):
+        from auth import decode_access_token
+        token = auth_header.split(" ", 1)[1]
+        payload = decode_access_token(token)
+        if payload:
+            user_email = payload.get("sub", "anonymous")
+
+    ceremonies = []
+    cursor = db.ceremonies.find(
+        {"initiated_by": user_email},
+        {"_id": 0, "ceremony_id": 1, "document_name": 1, "signer_name": 1, "status": 1, "created_at": 1, "consensus.result": 1}
+    ).sort("created_at", -1).limit(50)
+
+    async for c in cursor:
+        ceremonies.append(c)
+
+    return {"ceremonies": ceremonies}

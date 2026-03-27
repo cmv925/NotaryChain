@@ -1,0 +1,94 @@
+{
+  "project_name": "NotaryChain Ceremony Dashboard",
+  "theme": "Dark",
+  "archetype": "4 (Swiss & High-Contrast)",
+  "rationale": "As a web3/crypto dashboard serving as a 'mission control' for a multi-agent AI verification pipeline, it requires absolute authority, clarity, and truth. The Swiss & High-Contrast archetype ensures maximum legibility and functional focus. The dark theme leverages the existing app's colors (#0f1825, #1a2332) while upgrading the default teal to a sharper, more objective Azure Blue and pure functional semantic colors (Emerald/Red/Amber) for absolute clarity in consensus states.",
+  "colors": {
+    "background": "#0f1825",
+    "surface": "#1a2332",
+    "surface_glass": "rgba(26, 35, 50, 0.7)",
+    "primary": "#007AFF",
+    "primary_hover": "#005CE6",
+    "success": "#10B981",
+    "warning": "#F59E0B",
+    "error": "#EF4444",
+    "text_primary": "#FFFFFF",
+    "text_secondary": "#94A3B8",
+    "text_muted": "#64748B",
+    "border": "#334155",
+    "border_focus": "#007AFF"
+  },
+  "typography": {
+    "fonts": {
+      "heading": "Chivo, sans-serif",
+      "body": "IBM Plex Sans, sans-serif",
+      "mono": "Azeret Mono, monospace"
+    },
+    "hierarchy": {
+      "h1": "text-3xl sm:text-4xl tracking-tighter font-bold",
+      "h2": "text-2xl sm:text-3xl tracking-tight font-semibold",
+      "h3": "text-xl sm:text-2xl tracking-tight font-medium",
+      "h4": "text-lg sm:text-xl tracking-tight font-medium",
+      "body": "text-base leading-relaxed",
+      "small": "text-sm",
+      "overline": "text-xs tracking-[0.2em] uppercase font-bold"
+    }
+  },
+  "layout_and_spacing": {
+    "strategy": "The 'Control Room' Grid",
+    "spacing_scale": "Tailwind scale: p-4 for dense widgets, p-6 or p-8 for main sections to give breathing room inside structural boxes.",
+    "grid_classes": "grid grid-cols-1 lg:grid-cols-12 gap-6",
+    "border_radius": "rounded-sm (max 4px) for sharp, technical, and objective feel. Avoid pill-shapes or large radii.",
+    "alignment": "Optical alignment; left-align data and metrics, use structural alignment for the pipeline visualizer to build tension and symmetry."
+  },
+  "surface_strategies": {
+    "dashboard_cards": "Flat background (#1a2332), 1px solid border (#334155), no shadow. On hover: border color brightens to primary or semantic state.",
+    "active_agents": "Use 'The Tracing Beam' or a pulsing border (ring-1 ring-primary) concept for agents currently in 'running' state to signify live AI processing.",
+    "glass_elements": "Use glassmorphism (backdrop-blur-xl bg-[#1a2332]/70) only for sticky headers, maintaining a 1px bottom border."
+  },
+  "motion_and_interactions": {
+    "hover_states": "Buttons and interactive cards must have explicit hover states (e.g., hover:bg-[#243043] hover:text-white). Focus states must use ring-2 ring-primary.",
+    "pipeline_animation": "Use SVG paths with stroke-dashoffset animation or Framer Motion to visualize data packets flowing from the 3 Agent Cards to the Consensus Oracle.",
+    "state_transitions": "Agents transition smoothly: Idle (slate) -> Running (pulsing primary border) -> Passed (emerald) / Failed (red)."
+  },
+  "components": {
+    "buttons": "Shadcn buttons heavily customized. Sharp corners (rounded-sm). Primary buttons use Azure Blue.",
+    "inputs": "Shadcn inputs. Background #0f1825, border #334155. Focus state is critical for accessibility.",
+    "tables": "Shadcn table for Ceremony History. Left-aligned data. Use Monospace font for blockchain hashes. Badges for status.",
+    "badges": "Square badges (rounded-sm) for Agent Status and Oracle Consensus. High-contrast text.",
+    "icons": {
+      "library": "@phosphor-icons/react",
+      "instruction": "Use Phosphor Icons (Duotone or Regular) for a technical, crisp look. Ensure it is installed via yarn add @phosphor-icons/react."
+    }
+  },
+  "visual_pipeline_spec": {
+    "description": "The Multi-Agent Pipeline visualization is the hero of this dashboard.",
+    "layout": "Agents (Verifier, Witness, Sealer) should be laid out structurally (e.g., stacked vertically on the left or in a row), with animated SVG connection lines merging into the large Consensus Oracle node.",
+    "agent_card": "Shows Agent Name, current status badge (Idle, Running, Passed, Failed), confidence score (progress bar or metric), and live logs.",
+    "consensus_oracle": "A larger, central or culminating card showing the '2-of-3' vote tally (e.g., 2 Passed, 1 Failed -> Approved). Displays the final Blockchain Seal and Hash when complete."
+  },
+  "media": {
+    "background_textures": [
+      {
+        "url": "https://images.unsplash.com/photo-1737505599162-d9932323a889?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODB8MHwxfHNlYXJjaHwxfHxkYXJrJTIwbmV0d29yayUyMG5vZGVzJTIwdGVjaG5vbG9neXxlbnwwfHx8fDE3NzQ1NzM1ODd8MA&ixlib=rb-4.1.0&q=85",
+        "category": "abstract_background",
+        "description": "Dark abstract tech nodes, use with opacity-10 or blend-screen in the background of the Consensus Oracle container to give a deep web3 feel."
+      }
+    ]
+  },
+  "accessibility_and_testing": {
+    "contrast": "Ensure all text against #1a2332 and #0f1825 meets APCA/WCAG AA standards. Semantic colors (Red/Green) must be legible against dark slate.",
+    "testing_attributes": "All interactive and key informational elements MUST have data-testid attributes (e.g., data-testid='ceremony-form-submit', data-testid='agent-verifier-status', data-testid='consensus-verdict')."
+  },
+  "instructions_to_main_agent": [
+    "Initialize React app with .js files (no .tsx) and install Tailwind CSS, Shadcn UI primitives, Framer Motion, and @phosphor-icons/react.",
+    "Apply the color palette strictly to tailwind.config.js, overriding the default Shadcn styles. Inject fonts: Chivo (headings), IBM Plex Sans (body), Azeret Mono (mono).",
+    "Build the 'Control Room' layout: Dashboard header navigation and a dense main grid (grid-cols-1 md:grid-cols-12 gap-6 p-6).",
+    "Create the 'Ceremony Initiation Form' widget with document/signer inputs (data-testid included).",
+    "Build the core 'Multi-Agent Pipeline' visualizer. Implement the Agent Cards (Verifier, Witness, Sealer) with dynamic states: Idle, Running, Passed/Failed.",
+    "Draw SVG connection lines linking the Agents to the Consensus Oracle. Animate the stroke to simulate data flow when agents are running or finished.",
+    "Build the 'Consensus Oracle' component that tallies the 2-of-3 votes, calculating the final verdict, and displaying the Blockchain Seal and hash (using Azeret Mono font).",
+    "Add a 'Ceremony History' table below the visualizer using Shadcn Table component.",
+    "Ensure sharp UI corners (rounded-sm) and use pure borders to define sections, avoiding soft shadows."
+  ]
+}
