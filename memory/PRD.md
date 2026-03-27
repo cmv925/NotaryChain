@@ -252,10 +252,10 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 ### i18n Internationalization Setup — COMPLETED (Mar 27, 2026)
 - **Libraries**: `react-i18next`, `i18next`, `i18next-browser-languagedetector`
 - **Languages**: English (EN), Spanish (ES), French (FR)
-- **Translation keys**: nav (6 keys), hero (7 keys), trust (4 keys), auth (12 keys), dashboard (5 keys), common (7 keys)
-- **Pages with i18n applied**: HeroSection, Navbar (desktop + mobile), LoginPage, SignUpPage, Dashboard
+- **Translation keys**: nav (6), hero (7), trust (4), auth (12), dashboard (5), marketplace (22), notary (19), security (22), common (7) = ~80 keys per language
+- **Pages with i18n applied**: HeroSection, Navbar (desktop + mobile), LoginPage, SignUpPage, Dashboard, NotaryMarketplace, NotaryDashboard, SecuritySettings
 - **LanguageSwitcher**: Dropdown component with flag labels, localStorage persistence
-- Testing: 100% pass rate — all 3 languages verified across all applied pages (iteration_58)
+- Testing: 100% pass rate — all 3 languages verified across all pages (iteration_58, iteration_59)
 - **Frontend** (`pages/BookingCalendar.jsx`): Enhanced booking experience
   - Weekly Availability Overview: 7-day grid showing slot count + hours per day
   - Slot Period Grouping: Morning (before noon), Afternoon (12-5pm), Evening (5pm+)
@@ -613,8 +613,8 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - Resend Domain Verification (user task — verify domain on resend.com)
 
 ## Future/Backlog
-- Extend i18n to remaining pages (Marketplace, NotaryDashboard, Settings pages)
 - Add more languages (DE, PT, JA, ZH)
+- Extract translation strings to separate JSON locale files for scalability
 
 ## Test Credentials
 | Role | Email | Password |
