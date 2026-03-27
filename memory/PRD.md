@@ -229,6 +229,33 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - Testing: 100% pass rate (iteration_57)
 
 ### Advanced Availability Calendar Widget — COMPLETED (Mar 26, 2026)
+
+### React Lazy Loading & Performance Optimization — COMPLETED (Mar 27, 2026)
+- **App.js**: 50+ pages converted to `React.lazy()` with `Suspense` fallback (PageLoader spinner)
+- Critical path pages (HomePage, LoginPage, SignUpPage) remain eager-loaded
+- Lazy-loaded routes include: Dashboard, AdminDashboard, Marketplace, BookingCalendar, all AI pages, all transaction pages, SSO callbacks, etc.
+- Testing: 100% pass rate — all routes navigate without blank screens (iteration_58)
+
+### Analytics Dashboard with Recharts Charts — COMPLETED (Mar 27, 2026)
+- **Frontend** (`AdminDashboard.jsx`): Full analytics tab with 7 chart sections
+  - **Summary Cards**: Total Revenue, New Users, Notarizations, Transactions (with data-testid)
+  - **Revenue Trends**: AreaChart with Stripe (purple gradient) and Crypto (orange gradient) dual series
+  - **User Growth**: LineChart with Total Users and New Users dual series
+  - **Payment Distribution**: Donut PieChart with dynamic colors per payment type
+  - **Notarization Volume**: BarChart with Completed/Pending stacked bars
+  - **Top Performing Notaries**: Ranked list with medal badges (#1 gold, #2 silver, #3 bronze)
+  - **Document Types & Transaction Types**: Progress bar visualizations
+- **Period Selector**: 7/30/90/180/365 day range with live data refresh
+- **Backend**: `GET /api/admin/analytics/comprehensive` aggregates data from users, payments, crypto_payments, notarization_requests, transactions collections
+- Testing: 100% pass rate (iteration_58)
+
+### i18n Internationalization Setup — COMPLETED (Mar 27, 2026)
+- **Libraries**: `react-i18next`, `i18next`, `i18next-browser-languagedetector`
+- **Languages**: English (EN), Spanish (ES), French (FR)
+- **Translation keys**: nav (6 keys), hero (7 keys), trust (4 keys), auth (12 keys), dashboard (5 keys), common (7 keys)
+- **Pages with i18n applied**: HeroSection, Navbar (desktop + mobile), LoginPage, SignUpPage, Dashboard
+- **LanguageSwitcher**: Dropdown component with flag labels, localStorage persistence
+- Testing: 100% pass rate — all 3 languages verified across all applied pages (iteration_58)
 - **Frontend** (`pages/BookingCalendar.jsx`): Enhanced booking experience
   - Weekly Availability Overview: 7-day grid showing slot count + hours per day
   - Slot Period Grouping: Morning (before noon), Afternoon (12-5pm), Evening (5pm+)
@@ -586,9 +613,8 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - Resend Domain Verification (user task — verify domain on resend.com)
 
 ## Future/Backlog
-- Performance optimization (lazy loading, code splitting for large pages)
-- Advanced analytics dashboard with chart visualizations
-- Multi-language support (i18n)
+- Extend i18n to remaining pages (Marketplace, NotaryDashboard, Settings pages)
+- Add more languages (DE, PT, JA, ZH)
 
 ## Test Credentials
 | Role | Email | Password |

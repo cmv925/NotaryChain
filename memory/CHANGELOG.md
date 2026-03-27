@@ -1,0 +1,54 @@
+# NotaryChain Changelog
+
+## Mar 27, 2026
+
+### React Lazy Loading & Performance Optimization
+- 50+ pages converted to React.lazy() with Suspense fallback (PageLoader spinner)
+- Critical path pages (HomePage, LoginPage, SignUpPage) remain eager-loaded
+- Testing: 100% pass rate (iteration_58)
+
+### Analytics Dashboard with Recharts Charts
+- Full analytics tab in AdminDashboard with 7 chart sections
+- Summary Cards: Total Revenue, New Users, Notarizations, Transactions
+- Revenue Trends AreaChart (Stripe + Crypto), User Growth LineChart
+- Payment Distribution PieChart, Notarization Volume BarChart
+- Top Performing Notaries list, Document/Transaction Types progress bars
+- Period selector (7/30/90/180/365 days) with live data refresh
+- Testing: 100% pass rate (iteration_58)
+
+### i18n Internationalization Setup
+- Languages: EN, ES, FR with 41 translation keys
+- Applied to: HeroSection, Navbar, LoginPage, SignUpPage, Dashboard
+- LanguageSwitcher dropdown with localStorage persistence
+- Testing: 100% pass rate (iteration_58)
+
+## Mar 26, 2026
+
+### SSO Routes Refactor
+- Split sso_routes.py into sso_common.py, auth0_routes.py, okta_routes.py
+
+### Marketplace UI Enhancement
+- Review submission form, availability preview in notary profiles
+
+### Custom RBAC Policy Builder Visual Editor
+- Grid/list view modes, inline permission toggling
+
+### Advanced Availability Calendar Widget
+- Weekly overview, slot period grouping
+
+### Automated Incident Reporting
+- Backend incident aggregation with PDF export
+
+## Mar 15, 2026
+
+### Configurable Alert Settings, Security Compliance Dashboard
+### S3 Storage Analytics, SOC2 Export PDF
+### Landing Page Refresh, Guided Onboarding Flow
+### Service Degradation Alerts, Audit Log Fix
+### Auth0 + Okta SSO Integration
+
+## Mar 14, 2026
+
+### Hedera Mainnet Migration, Stripe Live Mode
+### Operations Dashboard, Full Session Package Email
+### HBAR Balance Alert Service
