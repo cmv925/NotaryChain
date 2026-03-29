@@ -46,6 +46,11 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { theme, toggle: toggleTheme } = useTheme();
   const { t } = useTranslation();
+
+  const role = user?.role;
+  const isAdmin = role === 'admin';
+  const isNotary = role === 'notary';
+  const isUser = !isAdmin && !isNotary;
   const [stats, setStats] = useState({ total_seals: 0, recent_seals: 0 });
   const [documents, setDocuments] = useState([]);
   const [notaryRequests, setNotaryRequests] = useState([]);
@@ -123,7 +128,11 @@ const Dashboard = () => {
                   </div>
                   <div className="text-left hidden sm:block">
                     <div className="text-white text-sm font-medium leading-none">{user?.full_name}</div>
-                    <div className="text-slate-500 text-[10px] mt-0.5">{user?.email}</div>
+                    <div className="text-slate-500 text-[10px] mt-0.5 flex items-center gap-1.5">
+                      {user?.email}
+                      {isAdmin && <span className="bg-sky-500/20 text-sky-400 border border-sky-500/30 px-1 py-px rounded text-[8px] font-bold">ADMIN</span>}
+                      {isNotary && <span className="bg-violet-500/20 text-violet-400 border border-violet-500/30 px-1 py-px rounded text-[8px] font-bold">NOTARY</span>}
+                    </div>
                   </div>
                   <ChevronDown className="w-3.5 h-3.5 text-slate-500 hidden sm:block" />
                 </button>
@@ -138,12 +147,16 @@ const Dashboard = () => {
                 <DropdownMenuItem onClick={() => navigate('/compliance')} className="hover:bg-slate-800/50 cursor-pointer" data-testid="menu-privacy">
                   <Lock className="w-4 h-4 mr-2" /> Privacy
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/developers')} className="hover:bg-slate-800/50 cursor-pointer" data-testid="menu-api">
-                  <Code className="w-4 h-4 mr-2" /> API
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/organizations')} className="hover:bg-slate-800/50 cursor-pointer" data-testid="menu-org">
-                  <Building2 className="w-4 h-4 mr-2" /> Organizations
-                </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem onClick={() => navigate('/developers')} className="hover:bg-slate-800/50 cursor-pointer" data-testid="menu-api">
+                    <Code className="w-4 h-4 mr-2" /> API
+                  </DropdownMenuItem>
+                )}
+                {(isAdmin || isNotary) && (
+                  <DropdownMenuItem onClick={() => navigate('/organizations')} className="hover:bg-slate-800/50 cursor-pointer" data-testid="menu-org">
+                    <Building2 className="w-4 h-4 mr-2" /> Organizations
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={() => navigate('/my-drafts')} className="hover:bg-slate-800/50 cursor-pointer" data-testid="menu-drafts">
                   <Save className="w-4 h-4 mr-2" /> My Drafts
                 </DropdownMenuItem>
@@ -209,7 +222,9 @@ const Dashboard = () => {
               <BentoAction icon={Video} label="Video Witness" onClick={() => navigate('/video-witness')} data-testid="video-witness-btn" />
               <BentoAction icon={Fingerprint} label="Biometric Passport" onClick={() => navigate('/biometric-passport')} data-testid="biometric-btn" />
               <BentoAction icon={Scale} label="Escrow Intelligence" onClick={() => navigate('/escrow')} data-testid="escrow-btn" />
-              <BentoAction icon={ShieldAlert} label="Fraud Intelligence" onClick={() => navigate('/fraud-intelligence')} data-testid="fraud-intel-btn" />
+              {(isAdmin || isNotary) && (
+                <BentoAction icon={ShieldAlert} label="Fraud Intelligence" onClick={() => navigate('/fraud-intelligence')} data-testid="fraud-intel-btn" />
+              )}
             </div>
           </div>
 
@@ -220,12 +235,21 @@ const Dashboard = () => {
               <BentoAction icon={BookOpen} label="Templates" onClick={() => navigate('/templates')} data-testid="templates-btn" />
               <BentoAction icon={CalendarClock} label="My Bookings" onClick={() => navigate('/my-bookings')} data-testid="bookings-btn" />
               <BentoAction icon={Search} label="Find Notaries" onClick={() => navigate('/marketplace')} data-testid="find-notaries-btn" />
-              <BentoAction icon={FileCheck} label="Approvals" onClick={() => navigate('/approvals')} data-testid="approvals-btn" />
+              {(isAdmin || isNotary) && (
+                <BentoAction icon={FileCheck} label="Approvals" onClick={() => navigate('/approvals')} data-testid="approvals-btn" />
+              )}
               <BentoAction icon={Bell} label="Reminders" onClick={() => navigate('/reminders')} data-testid="reminders-btn" />
-              <BentoAction icon={Brain} label="ANAN Network" onClick={() => navigate('/anan')} data-testid="anan-btn" />
+              {(isAdmin || isNotary) && (
+                <BentoAction icon={Brain} label="ANAN Network" onClick={() => navigate('/anan')} data-testid="anan-btn" />
+              )}
               <BentoAction icon={Palette} label="Branding" onClick={() => navigate('/branding')} data-testid="branding-btn" />
               <BentoAction icon={Sparkles} label="Ceremony Mode" onClick={() => navigate('/ceremony')} data-testid="ceremony-btn" />
-              <BentoAction icon={UserCheck} label="Become a Notary" onClick={() => navigate('/notary-professional')} data-testid="become-notary-btn" />
+              {isUser && (
+                <BentoAction icon={UserCheck} label="Become a Notary" onClick={() => navigate('/notary-professional')} data-testid="become-notary-btn" />
+              )}
+              {isNotary && (
+                <BentoAction icon={UserCheck} label="My Notary Profile" onClick={() => navigate('/notary-professional')} data-testid="notary-profile-btn" />
+              )}
             </div>
           </div>
         </div>
