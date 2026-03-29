@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Shield, ShieldCheck, ShieldOff, Copy, ArrowLeft, RefreshCw, KeyRound, Eye, EyeOff } from 'lucide-react';
+import { Shield, ShieldCheck, ShieldOff, Copy, RefreshCw, KeyRound, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card, CardContent } from '../components/ui/card';
 import { NotificationBell } from '../components/NotificationBell';
 import { toast } from '../hooks/use-toast';
 import { useTranslation } from 'react-i18next';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -152,10 +153,6 @@ const SecuritySettings = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white" data-testid="back-to-dashboard">
-                <ArrowLeft className="w-5 h-5 sm:mr-2" /> <span className="hidden sm:inline">Dashboard</span>
-              </Button>
-              <span className="text-gray-600 hidden sm:inline">|</span>
               <h1 className="text-white font-semibold flex items-center gap-2 text-sm sm:text-base">
                 <Shield className="w-5 h-5 text-blue-500" /> {t('security.title')}
               </h1>
@@ -172,6 +169,7 @@ const SecuritySettings = () => {
       </header>
 
       <div className="max-w-4xl mx-auto px-6 py-8">
+        <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Security Settings' }]} />
         {/* 2FA Status Card */}
         {step === 'status' && (
           <Card className="bg-[#1a2332] border-gray-800" data-testid="2fa-status-card">

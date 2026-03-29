@@ -6,11 +6,12 @@ import Footer from '../components/Footer';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import {
-  Calendar, Clock, ArrowLeft, CheckCircle, XCircle, Loader2,
+  Calendar, Clock, CheckCircle, XCircle, Loader2,
   FileText, User, Video, AlertCircle,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -61,6 +62,7 @@ const MyBookings = () => {
       <Navbar />
       <div className="pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'My Bookings' }]} />
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
@@ -70,9 +72,6 @@ const MyBookings = () => {
               <p className="text-gray-400 text-sm mt-1">Manage your notarization appointments</p>
             </div>
             <div className="flex gap-2">
-              <Button onClick={() => navigate('/dashboard')} variant="outline" className="border-gray-700 text-gray-300" data-testid="back-to-dashboard">
-                <ArrowLeft className="w-4 h-4 mr-1" /> Dashboard
-              </Button>
               <Button onClick={() => navigate('/marketplace')} className="bg-blue-600 hover:bg-blue-700" data-testid="find-notary-btn">
                 Find a Notary
               </Button>

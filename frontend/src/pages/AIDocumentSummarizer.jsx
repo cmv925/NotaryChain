@@ -6,11 +6,12 @@ import Footer from '../components/Footer';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import {
-  FileSearch, Upload, Loader2, ArrowLeft, Clock, FileText,
+  FileSearch, Upload, Loader2, Clock, FileText,
   BookOpen, Users, Calendar, Scale, Tag, ChevronDown, ChevronUp,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -79,6 +80,7 @@ const AIDocumentSummarizer = () => {
       <Navbar />
       <div className="pt-24 pb-16">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'AI Summarizer' }]} />
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
@@ -87,9 +89,6 @@ const AIDocumentSummarizer = () => {
               </h1>
               <p className="text-gray-400 text-sm mt-1">Upload any document for instant AI summary and key terms</p>
             </div>
-            <Button onClick={() => navigate('/dashboard')} variant="outline" className="border-gray-700 text-gray-300" data-testid="back-to-dashboard">
-              <ArrowLeft className="w-4 h-4 mr-1" /> Dashboard
-            </Button>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

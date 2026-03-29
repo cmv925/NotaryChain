@@ -7,8 +7,9 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { 
   Check, CreditCard, Wallet, FileText, Shield, 
-  Loader2, ArrowRight, Sparkles, ArrowLeft
+  Loader2, ArrowRight, Sparkles
 } from 'lucide-react';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
 
@@ -98,10 +99,8 @@ const CheckoutPage = () => {
 
       <div className="pt-32 pb-24">
         <div className="max-w-6xl mx-auto px-6">
-          {/* Back Button */}
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="text-gray-400 hover:text-white mb-4" data-testid="back-button">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back
-          </Button>
+          {/* Breadcrumbs */}
+          <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Pricing', path: '/pricing' }, { label: 'Checkout' }]} />
           {/* Header */}
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/10 border border-blue-500/30 text-blue-400 text-sm mb-6">

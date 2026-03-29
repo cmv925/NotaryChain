@@ -8,7 +8,7 @@ import {
   DollarSign, Star, Award, BarChart3, Filter, Search, ChevronRight,
   Brain, ScanFace, Link2, ExternalLink, Download, Play, History,
   MessageSquare, Bell, Settings, Briefcase, CalendarClock, Sparkles,
-  ClipboardList, ShieldAlert, Gauge, BookOpen, ArrowLeft
+  ClipboardList, ShieldAlert, Gauge, BookOpen
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import NotaryAvailabilitySettings from '../components/NotaryAvailabilitySettings';
@@ -18,6 +18,7 @@ import { Badge } from '../components/ui/badge';
 import { Progress } from '../components/ui/progress';
 import { NotificationBell } from '../components/NotificationBell';
 import { toast } from '../hooks/use-toast';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
@@ -307,10 +308,6 @@ const NotaryDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white" data-testid="back-to-dashboard">
-                <ArrowLeft className="w-5 h-5 sm:mr-2" /> <span className="hidden sm:inline">Back</span>
-              </Button>
-              <span className="text-gray-600 hidden sm:inline">|</span>
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
                 <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-[#00d4aa]" />
                 <span className="text-lg sm:text-xl font-bold text-white">
@@ -447,6 +444,9 @@ const NotaryDashboard = () => {
         )}
 
         {/* Main Content */}
+        {/* Breadcrumbs */}
+        <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Notary Workstation' }]} />
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Left Panel - Request Lists */}
           <div className="lg:col-span-3 space-y-6">

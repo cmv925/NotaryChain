@@ -10,8 +10,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { 
   Plus, Search, Filter, Clock, CheckCircle2, Users, 
   AlertTriangle, ArrowRight, Building2, FileText, Briefcase,
-  Scale, Sparkles, ArrowLeft
+  Scale, Sparkles
 } from 'lucide-react';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -172,10 +173,8 @@ export default function TransactionsPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Back Button */}
-        <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white mb-4" data-testid="back-to-dashboard">
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
-        </Button>
+        {/* Breadcrumbs */}
+        <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Transactions' }]} />
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>

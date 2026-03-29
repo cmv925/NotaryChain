@@ -8,10 +8,11 @@ import { Input } from '../components/ui/input';
 import { Card, CardContent } from '../components/ui/card';
 import {
   Code, Plus, Trash2, Copy, Globe, Palette, Eye, EyeOff,
-  ArrowLeft, Loader2, CheckCircle, Settings, ExternalLink,
+  Loader2, CheckCircle, Settings, ExternalLink,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -95,6 +96,7 @@ const WhiteLabelPage = () => {
       <Navbar />
       <div className="pt-24 pb-16">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'White-Label Embed' }]} />
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
@@ -104,9 +106,6 @@ const WhiteLabelPage = () => {
               <p className="text-gray-400 text-sm mt-1">Embed NotaryChain notarization in your own website</p>
             </div>
             <div className="flex gap-2">
-              <Button onClick={() => navigate('/dashboard')} variant="outline" className="border-gray-700 text-gray-300" data-testid="back-to-dashboard">
-                <ArrowLeft className="w-4 h-4 mr-1" /> Dashboard
-              </Button>
               <Button onClick={() => setShowCreate(true)} className="bg-emerald-600 hover:bg-emerald-700" data-testid="create-embed-btn">
                 <Plus className="w-4 h-4 mr-1" /> New Config
               </Button>

@@ -9,8 +9,9 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent } from '../components/ui/card';
 import {
   FileText, Share2, Lock, Edit, Save, Loader2, CheckCircle,
-  ArrowRight, Send, AlertTriangle, ArrowLeft,
+  ArrowRight, Send, AlertTriangle,
 } from 'lucide-react';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import { toast } from '../hooks/use-toast';
 import { useDraftCollaboration } from '../hooks/useDraftCollaboration';
 import { PresenceBar, FieldCollabIndicator } from '../components/CollaborationPresence';
@@ -119,9 +120,7 @@ const SharedDraftViewer = () => {
       <div className="min-h-screen bg-[#0f1825]">
         <Navbar />
         <div className="pt-32 text-center">
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="text-gray-400 hover:text-white mb-4" data-testid="back-button">
-            <ArrowLeft className="w-4 h-4 mr-1" /> Back
-          </Button>
+          <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Shared Draft' }]} />
           <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
           <p className="text-gray-400">This shared draft was not found or the link has expired.</p>
           <Button onClick={() => navigate('/templates')} className="mt-4 bg-blue-600 text-white">
@@ -138,10 +137,8 @@ const SharedDraftViewer = () => {
       <Navbar />
       <div className="pt-24 sm:pt-28 pb-16 sm:pb-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          {/* Back Button */}
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="text-gray-400 hover:text-white mb-4" data-testid="back-button">
-            <ArrowLeft className="w-4 h-4 mr-1" /> Back
-          </Button>
+          {/* Breadcrumbs */}
+          <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Shared Draft' }]} />
           {/* Shared Banner */}
           <div className="mb-6 p-3 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center gap-2" data-testid="shared-draft-banner">
             <Share2 className="w-4 h-4 text-purple-400" />

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { Upload, FileText, Shield, CheckCircle2, Download, Copy, ExternalLink, ArrowLeft } from 'lucide-react';
+import { Upload, FileText, Shield, CheckCircle2, Download, Copy, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { toast } from '../hooks/use-toast';
@@ -83,10 +84,8 @@ const QuickSealDemo = () => {
       
       <div className="pt-32 pb-24">
         <div className="max-w-5xl mx-auto px-6">
-          {/* Back Button */}
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="text-gray-400 hover:text-white mb-4" data-testid="back-button">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back
-          </Button>
+          {/* Breadcrumbs */}
+          <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Quick Seal' }]} />
           {/* Header */}
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/10 rounded-full border border-yellow-500/30 mb-4">

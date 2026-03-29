@@ -5,7 +5,8 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { CheckCircle, Loader2, FileText, ArrowRight, ExternalLink, ArrowLeft } from 'lucide-react';
+import { CheckCircle, Loader2, FileText, ArrowRight, ExternalLink } from 'lucide-react';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
 
@@ -67,9 +68,7 @@ const PaymentSuccess = () => {
 
       <div className="pt-32 pb-24">
         <div className="max-w-xl mx-auto px-6">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white mb-4" data-testid="back-to-dashboard">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
-          </Button>
+          <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Pricing', path: '/pricing' }, { label: 'Payment Success' }]} />
           <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800">
             <CardContent className="p-8 text-center">
               {status === 'checking' && (

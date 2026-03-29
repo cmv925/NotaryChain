@@ -6,11 +6,12 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card, CardContent } from '../components/ui/card';
 import {
-  Shield, Search, CheckCircle, XCircle, Loader2, ArrowLeft,
+  Shield, Search, CheckCircle, XCircle, Loader2,
   Blocks, FileText, User, Clock, ExternalLink, Copy, ShieldCheck,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -53,9 +54,7 @@ export default function VerifyCertificate() {
       <Navbar />
       <div className="pt-28 sm:pt-32 pb-16 sm:pb-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="text-gray-400 hover:text-white mb-4" data-testid="back-button">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back
-          </Button>
+          <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Verify Certificate' }]} />
 
           {/* Header */}
           <div className="text-center mb-10">

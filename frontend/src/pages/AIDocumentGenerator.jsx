@@ -7,11 +7,12 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card, CardContent } from '../components/ui/card';
 import {
-  Wand2, FileText, Loader2, Send, RefreshCw, ArrowLeft,
+  Wand2, FileText, Loader2, Send, RefreshCw,
   ChevronRight, Clock, Sparkles, PenTool,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -99,6 +100,7 @@ const AIDocumentGenerator = () => {
       <Navbar />
       <div className="pt-24 pb-16">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'AI Document Generator' }]} />
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
@@ -108,9 +110,6 @@ const AIDocumentGenerator = () => {
               <p className="text-gray-400 text-sm mt-1">Create legal documents by describing what you need</p>
             </div>
             <div className="flex gap-2">
-              <Button onClick={() => navigate('/dashboard')} variant="outline" className="border-gray-700 text-gray-300" data-testid="back-to-dashboard">
-                <ArrowLeft className="w-4 h-4 mr-1" /> Dashboard
-              </Button>
               {view !== 'create' && (
                 <Button onClick={() => { setView('create'); setResult(null); }} variant="outline" className="border-purple-500/50 text-purple-400" data-testid="new-document-btn">
                   <Sparkles className="w-4 h-4 mr-1" /> New Document

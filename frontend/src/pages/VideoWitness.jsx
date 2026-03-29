@@ -6,11 +6,12 @@ import Footer from '../components/Footer';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import {
-  Video, Upload, Loader2, ArrowLeft, CheckCircle, AlertCircle,
-  Play, Square, RotateCcw, Shield, Clock, FileText, Eye,
+  Video, Upload, Loader2, CheckCircle, AlertCircle,
+  Play, Square, RotateCcw, Shield, Clock, FileText, Eye, ArrowLeft,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -130,6 +131,7 @@ const VideoWitness = () => {
       <Navbar />
       <div className="pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Video Witness' }]} />
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
@@ -139,9 +141,6 @@ const VideoWitness = () => {
               <p className="text-gray-400 text-sm mt-1">Record identity verification video for your notarization</p>
             </div>
             <div className="flex gap-2">
-              <Button onClick={() => navigate('/dashboard')} variant="outline" className="border-gray-700 text-gray-300" data-testid="back-to-dashboard">
-                <ArrowLeft className="w-4 h-4 mr-1" /> Dashboard
-              </Button>
               <Button onClick={() => { setView(view === 'history' ? 'select' : 'history'); }} variant="outline" className="border-gray-700 text-gray-300" data-testid="toggle-history">
                 {view === 'history' ? <Video className="w-4 h-4 mr-1" /> : <Clock className="w-4 h-4 mr-1" />}
                 {view === 'history' ? 'Record' : 'History'}

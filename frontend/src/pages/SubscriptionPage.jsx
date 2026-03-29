@@ -6,11 +6,12 @@ import { Card, CardContent } from '../components/ui/card';
 import { Progress } from '../components/ui/progress';
 import { NotificationBell } from '../components/NotificationBell';
 import {
-  Shield, ArrowLeft, Crown, Zap, Building2, CreditCard,
+  Shield, Crown, Zap, Building2, CreditCard,
   BarChart3, AlertTriangle, CheckCircle, XCircle, BadgePercent
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -80,10 +81,6 @@ const SubscriptionPage = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white" data-testid="back-to-dashboard">
-                <ArrowLeft className="w-5 h-5 sm:mr-2" /> <span className="hidden sm:inline">Dashboard</span>
-              </Button>
-              <span className="text-gray-600 hidden sm:inline">|</span>
               <h1 className="text-white font-semibold flex items-center gap-2 text-sm sm:text-base">
                 <CreditCard className="w-5 h-5 text-blue-500" /> Subscription
               </h1>
@@ -94,6 +91,7 @@ const SubscriptionPage = () => {
       </header>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+        <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Subscription' }]} />
         {/* Current Plan Card */}
         <Card className="bg-[#1a2332] border-gray-800" data-testid="current-plan-card">
           <CardContent className="p-6 sm:p-8">

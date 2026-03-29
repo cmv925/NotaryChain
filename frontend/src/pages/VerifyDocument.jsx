@@ -8,8 +8,9 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent } from '../components/ui/card';
 import { 
   Shield, Search, CheckCircle, XCircle, FileText, 
-  ExternalLink, Loader2, Upload, Hash, Clock, Link2, ArrowLeft
+  ExternalLink, Loader2, Upload, Hash, Clock, Link2
 } from 'lucide-react';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
 
@@ -104,10 +105,8 @@ const VerifyDocument = () => {
 
       <div className="pt-32 pb-24">
         <div className="max-w-3xl mx-auto px-6">
-          {/* Back Button */}
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="text-gray-400 hover:text-white mb-4" data-testid="back-button">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back
-          </Button>
+          {/* Breadcrumbs */}
+          <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Verify Document' }]} />
           {/* Header */}
           <div className="text-center mb-12">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-600/20 mb-6">

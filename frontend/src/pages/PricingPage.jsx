@@ -4,7 +4,8 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { Check, Zap, Building2, Crown, BadgePercent, ArrowLeft } from 'lucide-react';
+import { Check, Zap, Building2, Crown, BadgePercent } from 'lucide-react';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
@@ -69,9 +70,7 @@ const PricingPage = () => {
       <Navbar />
       <div className="pt-24 sm:pt-32 pb-16 sm:pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="text-gray-400 hover:text-white mb-4" data-testid="back-button">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back
-          </Button>
+          <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Pricing' }]} />
           <div className="text-center mb-10 sm:mb-16">
             <h1 className="text-3xl sm:text-5xl font-bold text-white mb-3 sm:mb-4">Simple, Transparent Pricing</h1>
             <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">

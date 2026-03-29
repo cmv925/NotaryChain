@@ -6,12 +6,13 @@ import { Input } from '../components/ui/input';
 import { Card, CardContent } from '../components/ui/card';
 import {
   Shield, ScanFace, Eye, Lock, CheckCircle, XCircle, Loader2,
-  ArrowLeft, Play, RotateCcw, Fingerprint, FileSearch, Link2,
+  Play, RotateCcw, Fingerprint, FileSearch, Link2,
   ShieldCheck, Vote, Blocks, Clock, ChevronRight, AlertTriangle, Radio, Camera,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
 import { WebcamCapture } from '../components/WebcamCapture';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -439,10 +440,6 @@ const CeremonyDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-slate-400 hover:text-white" data-testid="back-to-dashboard">
-                <ArrowLeft className="w-4 h-4 mr-1" /> Back
-              </Button>
-              <span className="text-[#334155]">|</span>
               <div className="flex items-center gap-2">
                 <Shield className="w-5 h-5 text-blue-500" />
                 <h1 className="text-white font-semibold tracking-tight">Notarization Ceremony</h1>
@@ -456,6 +453,7 @@ const CeremonyDashboard = () => {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Ceremony' }]} />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
           {/* Left Sidebar — History */}
