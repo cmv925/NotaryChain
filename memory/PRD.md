@@ -323,6 +323,17 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **data-testid**: `breadcrumbs`, `breadcrumb-0` (Home), `breadcrumb-1` (Dashboard), `breadcrumb-current`
 - Testing: 100% pass rate — 28/28 tests (iteration_66)
 
+### Dynamic Escrow Intelligence — COMPLETED (Mar 29, 2026)
+- **"Killer Feature"**: Transforms NotaryChain into an AI-powered escrow agent
+- **Use Case**: Real estate closing escrow with AI condition extraction
+- **Backend**: `escrow_routes.py` — 8 endpoints: create, list, get, extract-conditions, deposit, verify-condition, settle, timeline
+- **Frontend**: `EscrowDashboard.jsx` — Full UI with list view, create wizard, detail view (summary cards, progress bar, condition cards with verify buttons, parties/financial/blockchain/timeline sidebars)
+- **DB Schema**: `escrow_agreements` collection with parties, financial, conditions, blockchain, timeline
+- **Flow**: Create → AI Extract Conditions → Deposit Funds → Verify Conditions → Execute Settlement
+- **MOCKED**: AI condition extraction (GPT-5.2), Stripe deposits, HTS tokens, HCS settlement — all return simulated data
+- **Routes**: `/escrow` (list), `/escrow/:escrowId` (detail)
+- Testing: 100% pass rate — 25/25 backend + all frontend verified (iteration_67)
+
 - Testing: 100% pass rate backend + frontend (iteration_60, iteration_61)
 
 - **Frontend** (`pages/BookingCalendar.jsx`): Enhanced booking experience
@@ -684,7 +695,13 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 ## Future/Backlog
 - Add more languages (DE, PT, JA, ZH)
 - Extract translation strings to separate JSON locale files for scalability
-- Dashboard quick-links to new features (Verify Certificate, Ceremony page)
+- Dashboard quick-links to new features (Verify Certificate, Ceremony, Escrow)
+- Connect real GPT-5.2 to AI Condition Extraction (replace mocked extraction)
+- Connect real Stripe Connect for fiat escrow deposits
+- Connect real Hedera Token Service (HTS) for on-chain tokenized escrow
+- Connect real HCS for settlement audit trail (replace mocked settlement)
+- Add webhook-based oracle integrations (FedEx, inspection APIs)
+- Add Freelancer Milestone and Supply Chain escrow templates
 
 ## Test Credentials
 | Role | Email | Password |
