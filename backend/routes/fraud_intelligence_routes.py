@@ -72,8 +72,8 @@ async def _get_user(request: Request):
 
 @router.get("/patterns")
 async def list_fraud_patterns(request: Request):
-    """List all fraud patterns."""
-    await _get_user(request)
+    """List all fraud patterns (admin/notary only)."""
+    await _get_admin(request)
     patterns = []
     async for p in db.fraud_patterns.find({}, {"_id": 0}).sort("severity", -1):
         patterns.append(p)
@@ -204,7 +204,7 @@ async def get_context(request: Request, document_type: str = "general", jurisdic
 @router.get("/stats")
 async def get_fraud_stats(request: Request):
     """Get fraud intelligence overview stats."""
-    await _get_user(request)
+    await _get_admin(request)
     total_patterns = await db.fraud_patterns.count_documents({})
     active_patterns = await db.fraud_patterns.count_documents({"active": True})
     critical = await db.fraud_patterns.count_documents({"severity": "critical", "active": True})
