@@ -315,6 +315,14 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **Integration**: CeremonyDashboard biometric section now has Upload/Cam toggle for both ID Document and Selfie
 - Testing: 100% pass rate (iteration_65)
 
+### Breadcrumb Navigation — COMPLETED (Mar 29, 2026)
+- **Component**: `Breadcrumbs.jsx` — reusable breadcrumb trail with Home icon, ChevronRight separators, clickable parent links
+- **Replaced**: All back buttons across 22+ nested pages with proper breadcrumb trails (e.g., `Home > Dashboard > Templates`)
+- **Hierarchy**: Home-rooted trails for public pages, Dashboard-rooted trails for authenticated tool pages
+- **Root pages excluded**: HomePage, Dashboard, LoginPage, SignUpPage (no breadcrumbs)
+- **data-testid**: `breadcrumbs`, `breadcrumb-0` (Home), `breadcrumb-1` (Dashboard), `breadcrumb-current`
+- Testing: 100% pass rate — 28/28 tests (iteration_66)
+
 - Testing: 100% pass rate backend + frontend (iteration_60, iteration_61)
 
 - **Frontend** (`pages/BookingCalendar.jsx`): Enhanced booking experience
