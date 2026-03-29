@@ -11,6 +11,7 @@ import {
   AlertTriangle, Radio, Users, Fingerprint, Globe,
   Scale, Zap, TrendingUp, ShieldCheck, Vote,
   ArrowRight, FileText, RefreshCw, UserCheck,
+  Copy, Code, X, Target, Award,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
@@ -78,19 +79,24 @@ export default function ANANDashboard() {
   const [sseEvents, setSseEvents] = useState([]);
   const [streaming, setStreaming] = useState(false);
   const eventSourceRef = useRef(null);
+  const [badgeData, setBadgeData] = useState(null);
+  const [showBadge, setShowBadge] = useState(false);
+  const [reputation, setReputation] = useState(null);
 
   const headers = { Authorization: `Bearer ${token}` };
 
   const fetchList = useCallback(async () => {
     try {
-      const [cRes, sRes, bRes] = await Promise.all([
+      const [cRes, sRes, bRes, repRes] = await Promise.all([
         axios.get(`${API}/anan/ceremonies`, { headers }),
         axios.get(`${API}/anan/dashboard/stats`, { headers }),
         axios.get(`${API}/anan/bond/status`, { headers }),
+        axios.get(`${API}/anan/reputation`, { headers }),
       ]);
       setCeremonies(cRes.data.ceremonies);
       setStats(sRes.data);
       setBond(bRes.data);
+      setReputation(repRes.data);
     } catch { /* ignore */ }
     setLoading(false);
   }, [token]);
@@ -241,6 +247,31 @@ export default function ANANDashboard() {
     return () => { if (eventSourceRef.current) eventSourceRef.current.close(); };
   }, []);
 
+  // Badge
+  const fetchBadge = async (cId) => {
+    try {
+      const res = await axios.get(`${API}/anan/badge/${cId}`, { headers });
+      setBadgeData(res.data);
+      setShowBadge(true);
+    } catch {
+      toast({ title: 'Error', description: 'Failed to load badge', variant: 'destructive' });
+    }
+  };
+
+  const handleTuneWeights = async () => {
+    setActionLoading('tune');
+    try {
+      const res = await axios.post(`${API}/anan/reputation/tune`, {}, { headers });
+      if (res.data.tuned) {
+        toast({ title: 'Weights Tuned', description: `New weights: V=${res.data.weights.verifier}, W=${res.data.weights.witness}, S=${res.data.weights.sealer}` });
+      } else {
+        toast({ title: 'Not Tuned', description: res.data.reason || 'Insufficient data' });
+      }
+      setReputation(prev => prev ? { ...prev, current_weights: res.data.weights } : prev);
+    } catch { toast({ title: 'Error', variant: 'destructive' }); }
+    setActionLoading(null);
+  };
+
   // ═══════════════════════════════════════════════════════
   //  LIST VIEW
   // ═══════════════════════════════════════════════════════
@@ -300,6 +331,63 @@ export default function ANANDashboard() {
                 </div>
               </CardContent>
             </Card>
+          )}
+
+          {/* Agent Reputation & Fraud Intel Links */}
+          {reputation && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+              {/* Reputation */}
+              <Card className="bg-[#0d1420] border-[#1a2540]" data-testid="anan-reputation">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <Award className="w-4 h-4 text-violet-400" />
+                      <h3 className="text-white font-bold text-sm">Agent Reputation</h3>
+                    </div>
+                    <Button size="sm" onClick={handleTuneWeights} disabled={actionLoading === 'tune'}
+                      className="bg-violet-600 hover:bg-violet-700 text-[10px] h-7" data-testid="anan-tune-btn">
+                      {actionLoading === 'tune' ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Target className="w-3 h-3 mr-1" />}
+                      Auto-Tune Weights
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                    {Object.entries(reputation.reputations || {}).map(([agent, rep]) => {
+                      const weight = reputation.current_weights?.[agent] || 0;
+                      return (
+                        <div key={agent} className="flex items-center gap-3 text-xs" data-testid={`anan-rep-${agent}`}>
+                          <span className="text-slate-400 w-14 capitalize">{agent}</span>
+                          <div className="flex-1 h-1.5 bg-[#1a2540] rounded-full overflow-hidden">
+                            <div className="h-full bg-violet-500 rounded-full" style={{ width: `${rep.all_time.accuracy}%` }} />
+                          </div>
+                          <span className="text-white font-mono w-10 text-right">{rep.all_time.accuracy}%</span>
+                          <span className="text-slate-600 text-[10px] w-16">wt: {(weight * 100).toFixed(0)}%</span>
+                          <span className="text-slate-600 text-[10px]">({rep.all_time.total} samples)</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Fraud Intel Link */}
+              <Card className="bg-[#0d1420] border-[#1a2540] cursor-pointer hover:border-red-500/30 transition-colors"
+                onClick={() => navigate('/fraud-intelligence')} data-testid="anan-fraud-link">
+                <CardContent className="p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-red-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-bold text-sm">Fraud Intelligence</h3>
+                      <p className="text-slate-500 text-[10px]">
+                        {stats ? `${stats.total_ceremonies > 0 ? 'Active' : 'Ready'} | 8 fraud patterns, 8 RON jurisdictions` : 'Manage threat patterns & RON rules'}
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-slate-600" />
+                </CardContent>
+              </Card>
+            </div>
           )}
 
           {/* Create Form */}
@@ -560,7 +648,15 @@ export default function ANANDashboard() {
         {c.blockchain_seal && (
           <Card className="bg-[#0d1420] border-[#1a2540] mb-6" data-testid="anan-blockchain-seal">
             <CardContent className="p-4">
-              <h3 className="text-white font-bold text-sm mb-3 flex items-center gap-2"><Blocks className="w-4 h-4 text-orange-400" /> Blockchain Seal</h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-white font-bold text-sm flex items-center gap-2"><Blocks className="w-4 h-4 text-orange-400" /> Blockchain Seal</h3>
+                {c.status === 'sealed' && (
+                  <Button size="sm" onClick={() => fetchBadge(c.ceremony_id)}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-[10px] h-7" data-testid="anan-get-badge-btn">
+                    <Code className="w-3 h-3 mr-1" /> Get Embed Badge
+                  </Button>
+                )}
+              </div>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <InfoRow label="Network" value={c.blockchain_seal.network} />
                 <InfoRow label="Topic" value={c.blockchain_seal.topic_id} mono />
@@ -574,6 +670,55 @@ export default function ANANDashboard() {
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {/* Badge Embed Modal */}
+        {showBadge && badgeData && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowBadge(false)}>
+            <Card className="bg-[#0d1420] border-emerald-500/30 max-w-2xl w-full max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()} data-testid="anan-badge-modal">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-white font-bold text-lg flex items-center gap-2"><Shield className="w-5 h-5 text-emerald-400" /> Shareable Verification Badge</h3>
+                  <button onClick={() => setShowBadge(false)} className="text-slate-500 hover:text-white"><X className="w-5 h-5" /></button>
+                </div>
+
+                {/* Preview */}
+                <div className="mb-4 p-4 bg-white/5 rounded-lg border border-[#1a2540] flex justify-center">
+                  <div dangerouslySetInnerHTML={{ __html: badgeData.embed_html }} />
+                </div>
+
+                {/* Static HTML */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-slate-400 text-xs font-bold">Static HTML (Works Everywhere)</label>
+                    <Button size="sm" variant="outline" className="border-[#1a2540] text-slate-400 text-[10px] h-6"
+                      onClick={() => { navigator.clipboard.writeText(badgeData.embed_html); toast({ title: 'Copied HTML!' }); }}
+                      data-testid="badge-copy-html">
+                      <Copy className="w-3 h-3 mr-1" /> Copy
+                    </Button>
+                  </div>
+                  <pre className="bg-[#060a12] border border-[#1a2540] rounded p-3 text-[10px] text-emerald-400 font-mono overflow-x-auto max-h-24 whitespace-pre-wrap">
+                    {badgeData.embed_html}
+                  </pre>
+                </div>
+
+                {/* Dynamic JS */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-slate-400 text-xs font-bold">Dynamic JS Widget (Live Status Updates)</label>
+                    <Button size="sm" variant="outline" className="border-[#1a2540] text-slate-400 text-[10px] h-6"
+                      onClick={() => { navigator.clipboard.writeText(badgeData.embed_js); toast({ title: 'Copied JS widget!' }); }}
+                      data-testid="badge-copy-js">
+                      <Copy className="w-3 h-3 mr-1" /> Copy
+                    </Button>
+                  </div>
+                  <pre className="bg-[#060a12] border border-[#1a2540] rounded p-3 text-[10px] text-cyan-400 font-mono overflow-x-auto max-h-24 whitespace-pre-wrap">
+                    {badgeData.embed_js}
+                  </pre>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )}
 
         {/* Escalation Info */}

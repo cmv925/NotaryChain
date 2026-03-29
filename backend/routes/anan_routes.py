@@ -11,6 +11,7 @@ from typing import Optional
 import uuid
 import json
 import hashlib
+import os
 
 router = APIRouter(prefix="/api/anan", tags=["anan"])
 db = None
@@ -125,6 +126,7 @@ async def execute_anan_ceremony(ceremony_id: str, request: Request):
         raise HTTPException(status_code=400, detail=f"Ceremony is already {ceremony['status']}")
 
     from services.anan_swarm import run_blind_swarm, get_or_init_bond, restock_bond, apply_bond_event
+    from services.fraud_intelligence_service import get_fraud_context
 
     now = datetime.now(timezone.utc).isoformat()
     await db.anan_ceremonies.update_one(
@@ -132,8 +134,12 @@ async def execute_anan_ceremony(ceremony_id: str, request: Request):
         {"$set": {"status": "in_progress"}}
     )
 
+    # Inject fraud context into ceremony data
+    fraud_ctx = await get_fraud_context(db, ceremony.get("document_type", "general"), ceremony.get("jurisdiction", "US-General"))
+    ceremony_with_ctx = {**ceremony, "_fraud_context": fraud_ctx}
+
     # Run blind swarm
-    swarm_result = await run_blind_swarm(ceremony)
+    swarm_result = await run_blind_swarm(ceremony_with_ctx)
     agents = swarm_result["agents"]
     consensus = swarm_result["consensus"]
 
@@ -203,6 +209,10 @@ async def execute_anan_ceremony(ceremony_id: str, request: Request):
 
     await db.anan_ceremonies.update_one({"ceremony_id": ceremony_id}, {"$set": update_data})
 
+    # Record reputation data for agent self-tuning
+    from services.anan_reputation import record_ceremony_outcome
+    await record_ceremony_outcome(db, ceremony_id, agents, consensus["result"])
+
     result = await db.anan_ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
     return result
 
@@ -265,6 +275,11 @@ async def _stream_anan_pipeline(ceremony_id: str):
     await db.anan_ceremonies.update_one({"ceremony_id": ceremony_id}, {"$set": {"status": "in_progress"}})
     yield _sse("ceremony_started", {"ceremony_id": ceremony_id, "protocol": "BLIND_2OF3"})
 
+    # Inject fraud context
+    from services.fraud_intelligence_service import get_fraud_context
+    fraud_ctx = await get_fraud_context(db, ceremony.get("document_type", "general"), ceremony.get("jurisdiction", "US-General"))
+    ceremony_with_ctx = {**ceremony, "_fraud_context": fraud_ctx}
+
     # Phase 1: Signal all agents starting (blind mode)
     yield _sse("blind_phase_started", {"message": "All 3 agents analyzing concurrently in isolation..."})
     for agent_name in ["verifier", "witness", "sealer"]:
@@ -275,9 +290,9 @@ async def _stream_anan_pipeline(ceremony_id: str):
     yield _sse("agents_running", {"agents": ["verifier", "witness", "sealer"]})
 
     # Phase 2: Run all agents concurrently (BLIND)
-    v_task = _run_anan_agent("verifier", VERIFIER_SYSTEM, ceremony)
-    w_task = _run_anan_agent("witness", WITNESS_SYSTEM, ceremony)
-    s_task = _run_anan_agent("sealer", SEALER_SYSTEM, ceremony)
+    v_task = _run_anan_agent("verifier", VERIFIER_SYSTEM, ceremony_with_ctx)
+    w_task = _run_anan_agent("witness", WITNESS_SYSTEM, ceremony_with_ctx)
+    s_task = _run_anan_agent("sealer", SEALER_SYSTEM, ceremony_with_ctx)
 
     v_result, w_result, s_result = await asyncio.gather(v_task, w_task, s_task)
 
@@ -360,6 +375,11 @@ async def _stream_anan_pipeline(ceremony_id: str):
         "completed_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.anan_ceremonies.update_one({"ceremony_id": ceremony_id}, {"$set": update_data})
+
+    # Record reputation data
+    from services.anan_reputation import record_ceremony_outcome
+    scores_dict = {"verifier": v_result, "witness": w_result, "sealer": s_result}
+    await record_ceremony_outcome(db, ceremony_id, scores_dict, consensus["result"])
 
     yield _sse("consensus_reached", {
         "result": consensus["result"],
@@ -507,6 +527,12 @@ async def resolve_escalation(escalation_id: str, req: EscalationResolveRequest, 
         }}
     )
 
+    # Record HITL override for reputation tracking — this is key for accuracy calibration
+    ceremony_full = await db.anan_ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
+    if ceremony_full:
+        from services.anan_reputation import record_ceremony_outcome
+        await record_ceremony_outcome(db, ceremony_id, ceremony_full.get("agents", {}), "ESCALATE", override=decision)
+
     return {
         "escalation_id": escalation_id,
         "ceremony_id": ceremony_id,
@@ -637,3 +663,150 @@ async def _seal_anan_on_hedera(ceremony_id: str, ceremony: dict, consensus: dict
             "consensus_hash": consensus.get("consensus_hash", ""),
             "error": seal_result.get("error", "Unknown error"),
         }
+
+
+# ═══════════════════════════════════════════════════════
+#  AGENT REPUTATION & WEIGHT TUNING
+# ═══════════════════════════════════════════════════════
+
+@router.get("/reputation")
+async def get_agent_reputations(request: Request):
+    """Get all agent reputation stats + current weights."""
+    await _get_user(request)
+    from services.anan_reputation import get_all_reputations
+    from services.anan_swarm import AGENT_WEIGHTS
+
+    reputations = await get_all_reputations(db)
+    return {
+        "reputations": reputations,
+        "current_weights": dict(AGENT_WEIGHTS),
+    }
+
+
+@router.post("/reputation/tune")
+async def tune_agent_weights(request: Request):
+    """Compute and apply tuned weights based on agent accuracy."""
+    user = await _get_user(request)
+    if user.get("role") not in ("admin", "notary"):
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    from services.anan_reputation import apply_tuned_weights
+    result = await apply_tuned_weights(db)
+    return result
+
+
+@router.get("/reputation/history")
+async def get_weight_history(request: Request):
+    """Get weight tuning history."""
+    await _get_user(request)
+    history = []
+    async for h in db.anan_weight_history.find({}, {"_id": 0}).sort("applied_at", -1).limit(20):
+        history.append(h)
+    return {"history": history}
+
+
+# ═══════════════════════════════════════════════════════
+#  SHAREABLE VERIFICATION BADGE
+# ═══════════════════════════════════════════════════════
+
+@router.get("/badge/{ceremony_id}")
+async def get_badge(ceremony_id: str, request: Request):
+    """Get embeddable badge data + HTML snippet for a sealed ceremony."""
+    ceremony = await db.anan_ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
+    if not ceremony:
+        # Also check regular ceremonies
+        ceremony = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
+    if not ceremony:
+        raise HTTPException(status_code=404, detail="Ceremony not found")
+
+    status = ceremony.get("status", "unknown")
+    consensus_hash = ceremony.get("consensus", {}).get("consensus_hash", "")
+    blockchain = ceremony.get("blockchain_seal", {})
+    is_sealed = status == "sealed"
+
+    app_url = os.environ.get("APP_URL", request.base_url._url.rstrip("/"))
+    verify_url = f"{app_url}/verify-certificate/{consensus_hash}" if consensus_hash else ""
+
+    badge_data = {
+        "ceremony_id": ceremony_id,
+        "status": status,
+        "document_name": ceremony.get("document_name", "Document"),
+        "sealed_at": ceremony.get("completed_at") or ceremony.get("created_at", ""),
+        "consensus_hash": consensus_hash,
+        "blockchain_network": blockchain.get("network", ""),
+        "verify_url": verify_url,
+        "is_sealed": is_sealed,
+    }
+
+    # Static HTML badge
+    seal_color = "#10b981" if is_sealed else "#ef4444"
+    status_text = "VERIFIED" if is_sealed else status.upper()
+    onclick_attr = ' onclick="window.open(\'' + verify_url + '\')" style="cursor:pointer"' if verify_url else ''
+    hash_display = consensus_hash[:12] if consensus_hash else "N/A"
+
+    static_html = (
+        '<div style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:6px;'
+        'background:#060a12;border:1px solid ' + seal_color + '40;font-family:system-ui,sans-serif;'
+        'text-decoration:none;color:#fff;font-size:12px;"' + onclick_attr + '>'
+        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + seal_color + '" stroke-width="2">'
+        '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>'
+        '<div>'
+        '<div style="font-weight:700;color:' + seal_color + ';font-size:10px;letter-spacing:1px">' + status_text + '</div>'
+        '<div style="color:#94a3b8;font-size:9px">NotaryChain | ' + hash_display + '...</div>'
+        '</div></div>'
+    )
+
+    # Dynamic JS widget
+    badge_div_id = "nc-badge-" + ceremony_id[:8]
+    dynamic_js = (
+        '<div id="' + badge_div_id + '"></div>\n'
+        '<script>\n'
+        '(function(){\n'
+        '  var d=document.getElementById("' + badge_div_id + '");\n'
+        '  fetch("' + app_url + '/api/anan/badge/' + ceremony_id + '/json")\n'
+        '    .then(function(r){return r.json()}).then(function(b){\n'
+        '      var c=b.is_sealed?"#10b981":"#ef4444",t=b.is_sealed?"VERIFIED":b.status.toUpperCase();\n'
+        '      d.innerHTML=\'<a href="\'+b.verify_url+\'" target="_blank" rel="noopener" '
+        'style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:6px;'
+        'background:#060a12;border:1px solid \'+c+\'40;font-family:system-ui,sans-serif;text-decoration:none;'
+        'color:#fff;font-size:12px">\'+'
+        '\'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="\'+c+\'" stroke-width="2">'
+        '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>\'+'
+        '\'<div><div style="font-weight:700;color:\'+c+\';font-size:10px;letter-spacing:1px">\'+t+\'</div>\'+'
+        '\'<div style="color:#94a3b8;font-size:9px">NotaryChain | \'+b.consensus_hash.slice(0,12)+\'...</div>'
+        '</div></a>\';\n'
+        '    });\n'
+        '})();\n'
+        '</script>'
+    )
+
+    return {
+        **badge_data,
+        "embed_html": static_html,
+        "embed_js": dynamic_js,
+    }
+
+
+@router.get("/badge/{ceremony_id}/json")
+async def get_badge_json(ceremony_id: str):
+    """Public JSON endpoint for dynamic badge widget (no auth required)."""
+    ceremony = await db.anan_ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
+    if not ceremony:
+        ceremony = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
+    if not ceremony:
+        raise HTTPException(status_code=404, detail="Ceremony not found")
+
+    status = ceremony.get("status", "unknown")
+    consensus_hash = ceremony.get("consensus", {}).get("consensus_hash", "")
+    blockchain = ceremony.get("blockchain_seal", {})
+
+    return {
+        "ceremony_id": ceremony_id,
+        "status": status,
+        "is_sealed": status == "sealed",
+        "document_name": ceremony.get("document_name", "Document"),
+        "sealed_at": ceremony.get("completed_at") or ceremony.get("created_at", ""),
+        "consensus_hash": consensus_hash or "N/A",
+        "blockchain_network": blockchain.get("network", ""),
+        "verify_url": "",
+    }

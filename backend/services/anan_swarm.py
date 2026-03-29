@@ -157,6 +157,9 @@ async def _run_anan_agent(agent_name: str, system_prompt: str, ceremony_data: di
         }
 
     # Build analysis prompt with ceremony context
+    fraud_ctx = ceremony_data.get("_fraud_context", "")
+    fraud_section = f"\n\nFRAUD INTELLIGENCE CONTEXT:\n{fraud_ctx}" if fraud_ctx else ""
+
     analysis_prompt = f"""Analyze the following notarization ceremony for your specialized domain:
 
 CEREMONY DATA:
@@ -167,7 +170,7 @@ CEREMONY DATA:
 - Jurisdiction: {ceremony_data.get('jurisdiction', 'US-General')}
 - Has Biometric Data: {ceremony_data.get('has_biometrics', False)}
 - Ceremony Mode: ANAN (Autonomous Notary Agent Network)
-- Created At: {ceremony_data.get('created_at', 'N/A')}
+- Created At: {ceremony_data.get('created_at', 'N/A')}{fraud_section}
 
 Provide your independent analysis score (0-100) and detailed checks."""
 
