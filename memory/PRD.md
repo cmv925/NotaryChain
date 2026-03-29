@@ -359,6 +359,32 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **Spec**: `/app/memory/ANAN_SPEC.md` — Full technical specification document
 - Testing: 93% backend (1 timeout from GPT-5.2 latency, verified working) + 100% frontend (iteration_69)
 
+### Shareable Verification Badge — COMPLETED (Mar 29, 2026)
+- **Backend**: `GET /api/anan/badge/{id}` (auth) returns static HTML + dynamic JS embed code
+- **Backend**: `GET /api/anan/badge/{id}/json` (public, no auth) returns badge JSON for dynamic widget
+- **Frontend**: "Get Embed Badge" button on sealed ceremony detail → modal with badge preview, HTML code, JS widget code, copy buttons
+- **Badge Design**: Dark compact seal showing VERIFIED/status, NotaryChain branding, consensus hash
+- Testing: 100% backend (3/3) + 100% frontend (iteration_70)
+
+### ANAN Phase 2: Dynamic Fraud Intelligence — COMPLETED (Mar 29, 2026)
+- **Backend**: `services/fraud_intelligence_service.py` — 8 pre-seeded fraud patterns (4 critical, 4 high), 8 RON rules (7 enabled, CA disabled)
+- **Backend**: `routes/fraud_intelligence_routes.py` — CRUD for patterns (list, create, toggle, delete) + RON rules (list, get, update) + stats + context
+- **Categories**: identity, document, biometric, transaction fraud patterns
+- **RON Jurisdictions**: FL, TX, VA, NV, OH, IN, CA, NY with full compliance requirements
+- **Injection**: Fraud context automatically injected into ANAN agent GPT-5.2 prompts per ceremony
+- **Frontend**: `FraudIntelligencePage.jsx` — Full admin UI with pattern management, RON rules accordion, search, add/toggle/delete
+- **Routes**: `/fraud-intelligence`
+- Testing: 100% backend (15/15) + 100% frontend (iteration_70)
+
+### ANAN Phase 3: Agent Self-Tuning & Bond Enhancement — COMPLETED (Mar 29, 2026)
+- **Backend**: `services/anan_reputation.py` — Per-agent accuracy tracking (7d, 30d, all-time), rolling accuracy computation
+- **Weight Tuning**: Auto-adjust agent weights (0.15–0.55 range) based on accuracy with gradual convergence
+- **Reputation Recording**: Automatic on ceremony execution + HITL override resolution
+- **Endpoints**: `GET /api/anan/reputation`, `POST /api/anan/reputation/tune`, `GET /api/anan/reputation/history`
+- **Frontend**: Agent Reputation section in ANAN dashboard with accuracy bars, weight display, sample counts, "Auto-Tune Weights" button
+- **Fraud Intel Link**: Card linking to `/fraud-intelligence` from ANAN dashboard
+- Testing: 100% backend (6/6) + 100% frontend (iteration_70)
+
 - Testing: 100% pass rate backend + frontend (iteration_60, iteration_61)
 
 - **Frontend** (`pages/BookingCalendar.jsx`): Enhanced booking experience
@@ -720,17 +746,20 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 ## Future/Backlog
 - Add more languages (DE, PT, JA, ZH)
 - Extract translation strings to separate JSON locale files for scalability
-- Dashboard quick-links to new features (Verify Certificate, Ceremony, Escrow, ANAN)
+- Dashboard quick-links to new features (Verify Certificate, Ceremony, Escrow, ANAN, Fraud Intel)
 - ~~Connect real GPT-5.2 to AI Condition Extraction~~ — DONE (Mar 29, 2026)
 - ~~ANAN Autonomous Notary Agent Network~~ — DONE (Mar 29, 2026)
+- ~~Shareable Verification Badge~~ — DONE (Mar 29, 2026)
+- ~~ANAN Phase 2: Dynamic Fraud Intelligence~~ — DONE (Mar 29, 2026)
+- ~~ANAN Phase 3: Agent Self-Tuning & Bond Enhancement~~ — DONE (Mar 29, 2026)
 - Connect real Stripe Connect for fiat escrow deposits
 - Connect real Hedera Token Service (HTS) for on-chain tokenized escrow
 - Connect real HCS for settlement audit trail (replace mocked settlement)
 - Add webhook-based oracle integrations (FedEx, inspection APIs)
 - Add Freelancer Milestone and Supply Chain escrow templates
-- ANAN Phase 2: Dynamic Fraud Intelligence learning layer, per-jurisdiction RON compliance rules
-- ANAN Phase 3: Smart contract bond management on Hedera, multi-jurisdiction RON automation, agent weight self-tuning
-- Shareable Verification Badge (embeddable widget for public cert verification)
+- ANAN: On-chain Hedera smart contract for real SAN bond management
+- ANAN: Multi-jurisdiction RON automation with real-time rule updates
+- ANAN: Real deepfake detection model integration for biometric verification
 
 ## Test Credentials
 | Role | Email | Password |
