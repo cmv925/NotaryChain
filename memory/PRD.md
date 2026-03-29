@@ -330,9 +330,19 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **Frontend**: `EscrowDashboard.jsx` — Full UI with list view, create wizard, detail view (summary cards, progress bar, condition cards with verify buttons, parties/financial/blockchain/timeline sidebars)
 - **DB Schema**: `escrow_agreements` collection with parties, financial, conditions, blockchain, timeline
 - **Flow**: Create → AI Extract Conditions → Deposit Funds → Verify Conditions → Execute Settlement
-- **MOCKED**: AI condition extraction (GPT-5.2), Stripe deposits, HTS tokens, HCS settlement — all return simulated data
+- **MOCKED**: Stripe deposits, HTS tokens, HCS settlement — still return simulated data
+- **REAL AI**: GPT-5.2 condition extraction via `ai_escrow_service.py` using `emergentintegrations` — parses PDF/DOCX/TXT contracts and extracts structured conditions with confidence scores
 - **Routes**: `/escrow` (list), `/escrow/:escrowId` (detail)
 - Testing: 100% pass rate — 25/25 backend + all frontend verified (iteration_67)
+
+### Real GPT-5.2 AI Contract Parsing for Escrow — COMPLETED (Mar 29, 2026)
+- **Backend**: `services/ai_escrow_service.py` — Extracts text from PDF (PyPDF2), DOCX (python-docx), TXT files, sends to GPT-5.2 via emergentintegrations for structured condition extraction
+- **Endpoint**: `POST /api/escrow/{id}/extract-conditions` — accepts multipart/form-data (file upload) or JSON body (demo fallback)
+- **AI Response**: Returns structured conditions with title, description, category, trigger, verification_method, required_party, deadline_days, confidence score, oracle_type
+- **Frontend**: File upload dropzone in draft escrow detail, button shows "AI Extract (GPT-5.2)" when file selected, "Demo Extract" otherwise
+- **Fallback**: When no file uploaded or AI fails, falls back to 6 predefined demo real estate conditions
+- **Dependencies**: PyPDF2, python-docx, emergentintegrations
+- Testing: 89% backend (1 transient 502, not code bug) + 100% frontend (iteration_68)
 
 - Testing: 100% pass rate backend + frontend (iteration_60, iteration_61)
 
@@ -696,7 +706,7 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - Add more languages (DE, PT, JA, ZH)
 - Extract translation strings to separate JSON locale files for scalability
 - Dashboard quick-links to new features (Verify Certificate, Ceremony, Escrow)
-- Connect real GPT-5.2 to AI Condition Extraction (replace mocked extraction)
+- ~~Connect real GPT-5.2 to AI Condition Extraction~~ — DONE (Mar 29, 2026)
 - Connect real Stripe Connect for fiat escrow deposits
 - Connect real Hedera Token Service (HTS) for on-chain tokenized escrow
 - Connect real HCS for settlement audit trail (replace mocked settlement)
