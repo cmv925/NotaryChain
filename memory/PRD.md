@@ -746,7 +746,7 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 ## Future/Backlog
 - Add more languages (DE, PT, JA, ZH)
 - Extract translation strings to separate JSON locale files for scalability
-- Dashboard quick-links to new features (Verify Certificate, Ceremony, Escrow, ANAN, Fraud Intel)
+- Dashboard quick-links to new features (Verify Certificate, Ceremony, Escrow, ANAN, Fraud Intel) — DONE (Mar 29, 2026)
 - ~~Connect real GPT-5.2 to AI Condition Extraction~~ — DONE (Mar 29, 2026)
 - ~~ANAN Autonomous Notary Agent Network~~ — DONE (Mar 29, 2026)
 - ~~Shareable Verification Badge~~ — DONE (Mar 29, 2026)

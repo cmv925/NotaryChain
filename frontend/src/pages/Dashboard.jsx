@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useWS } from '../contexts/WebSocketContext';
-import { Shield, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp, Settings, CreditCard, Lock, Code, BookOpen, Building2, Save, CalendarClock, Layers, Users, Wand2, FileSearch, Fingerprint, Sparkles, Bell, GitCompareArrows, Palette, UserCheck, Sun, Moon } from 'lucide-react';
+import { Shield, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp, Settings, CreditCard, Lock, Code, BookOpen, Building2, Save, CalendarClock, Layers, Users, Wand2, FileSearch, Fingerprint, Sparkles, Bell, GitCompareArrows, Palette, UserCheck, Sun, Moon, Brain, Scale, ShieldAlert } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { toast } from '../hooks/use-toast';
@@ -449,6 +449,40 @@ const Dashboard = () => {
               <div className="text-left">
                 <div className="font-semibold">Branding</div>
                 <div className="text-sm text-pink-300">Custom appearance</div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => navigate('/anan')}
+              className="bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-700 hover:to-violet-700 text-white px-6 py-6 text-lg justify-start"
+              data-testid="anan-button"
+            >
+              <Brain className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">ANAN Network</div>
+                <div className="text-sm text-cyan-200">AI Agent Swarm</div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => navigate('/escrow')}
+              className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-6 py-6 text-lg justify-start"
+              data-testid="escrow-button"
+            >
+              <Scale className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Escrow Intelligence</div>
+                <div className="text-sm text-emerald-200">AI-powered escrow</div>
+              </div>
+            </Button>
+            <Button
+              onClick={() => navigate('/fraud-intelligence')}
+              variant="outline"
+              className="border-2 border-red-500 text-red-400 hover:bg-red-500/10 px-6 py-6 text-lg justify-start"
+              data-testid="fraud-intel-button"
+            >
+              <ShieldAlert className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Fraud Intelligence</div>
+                <div className="text-sm text-red-300">Threat patterns & RON</div>
               </div>
             </Button>
           </div>
