@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi.responses import StreamingResponse
 from datetime import datetime, timezone
 from typing import Optional
@@ -800,3 +800,189 @@ async def get_certificate(ceremony_id: str):
             "Content-Disposition": f'attachment; filename="NotaryChain_Certificate_{doc_name}.pdf"',
         },
     )
+
+
+# --- Public Certificate Verification ---
+
+@router.get("/verify/certificate/{cert_hash}")
+async def verify_certificate(cert_hash: str):
+    """
+    Public endpoint — anyone can verify a ceremony certificate by its hash.
+    Looks up by ceremony_id, certificate hash, or blockchain consensus_hash.
+    """
+    ceremony = None
+
+    # Try matching by ceremony_id directly
+    ceremony = await db.ceremonies.find_one({"ceremony_id": cert_hash}, {"_id": 0})
+
+    # Try matching by blockchain seal consensus_hash
+    if not ceremony:
+        ceremony = await db.ceremonies.find_one(
+            {"blockchain_seal.consensus_hash": cert_hash}, {"_id": 0}
+        )
+
+    # Try matching by a certificate hash pattern (NC-XXXX from PDF)
+    if not ceremony and cert_hash.startswith("NC-"):
+        raw = cert_hash[3:]
+        async for c in db.ceremonies.find({"status": "sealed"}, {"_id": 0}):
+            computed = hashlib.sha256(
+                f"cert-{c.get('ceremony_id', '')}-{c.get('created_at', '')}".encode()
+            ).hexdigest()[:12].upper()
+            if computed == raw:
+                ceremony = c
+                break
+
+    if not ceremony:
+        return {
+            "verified": False,
+            "message": "No certificate found matching this hash. Ensure you are using the correct Certificate ID, Ceremony ID, or Blockchain Hash."
+        }
+
+    # Build the public verification result (safe subset of data)
+    agents = ceremony.get("agents", {})
+    consensus = ceremony.get("consensus", {})
+    seal = ceremony.get("blockchain_seal", {})
+
+    cert_id_hash = hashlib.sha256(
+        f"cert-{ceremony.get('ceremony_id', '')}-{ceremony.get('created_at', '')}".encode()
+    ).hexdigest()[:12].upper()
+
+    agent_results = []
+    for name in ["verifier", "witness", "sealer"]:
+        a = agents.get(name, {})
+        agent_results.append({
+            "agent": name.capitalize(),
+            "verdict": a.get("verdict", "N/A"),
+            "confidence": round(a.get("confidence", 0) * 100) if a.get("confidence") else None,
+        })
+
+    return {
+        "verified": True,
+        "certificate_id": f"NC-{cert_id_hash}",
+        "ceremony_id": ceremony.get("ceremony_id"),
+        "document_name": ceremony.get("document_name"),
+        "signer_name": ceremony.get("signer_name"),
+        "status": ceremony.get("status"),
+        "created_at": ceremony.get("created_at"),
+        "agents": agent_results,
+        "consensus": {
+            "result": consensus.get("result"),
+            "pass_count": consensus.get("pass_count"),
+            "fail_count": consensus.get("fail_count"),
+            "decided_at": consensus.get("decided_at"),
+        },
+        "blockchain_seal": {
+            "network": seal.get("network") if seal else None,
+            "topic_id": seal.get("topic_id") if seal else None,
+            "transaction_id": seal.get("transaction_id") if seal else None,
+            "sequence_number": seal.get("sequence_number") if seal else None,
+            "consensus_hash": seal.get("consensus_hash") if seal else None,
+            "explorer_url": seal.get("explorer_url") if seal else None,
+            "sealed_at": seal.get("sealed_at") if seal else None,
+        } if seal else None,
+        "message": "This certificate has been verified. The notarization was processed by NotaryChain's Multi-Agent Ceremony Protocol and sealed on Hedera Mainnet."
+    }
+
+
+# --- Ceremony Analytics (Admin) ---
+
+@router.get("/analytics/stats")
+async def get_ceremony_analytics(request: Request = None):
+    """Admin-only: Get ceremony analytics for dashboard."""
+    from fastapi import Request as _R
+    from auth import decode_access_token
+
+    # Auth check
+    auth_header = request.headers.get("Authorization", "") if request else ""
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    token = auth_header.split(" ", 1)[1]
+    payload = decode_access_token(token)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    user = await db.users.find_one({"email": payload.get("sub")}, {"_id": 0})
+    if not user or user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    from datetime import timedelta
+
+    now = datetime.now(timezone.utc)
+    thirty_days_ago = now - timedelta(days=30)
+
+    # Total counts
+    total_ceremonies = await db.ceremonies.count_documents({})
+    sealed_count = await db.ceremonies.count_documents({"status": "sealed"})
+    pending_count = await db.ceremonies.count_documents({"status": {"$in": ["pending", "in_progress"]}})
+    failed_count = await db.ceremonies.count_documents({"consensus.result": "REJECTED"})
+    review_count = await db.ceremonies.count_documents({"consensus.result": "REVIEW"})
+    approved_count = await db.ceremonies.count_documents({"consensus.result": "APPROVED"})
+
+    # Approval rate
+    decided = approved_count + failed_count + review_count
+    approval_rate = round((approved_count / decided * 100), 1) if decided > 0 else 0
+
+    # Ceremonies over time (last 30 days)
+    pipeline_volume = [
+        {"$match": {"created_at": {"$gte": thirty_days_ago.isoformat()}}},
+        {"$addFields": {"date_parsed": {"$dateFromString": {"dateString": "$created_at", "onError": now}}}},
+        {"$group": {
+            "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$date_parsed"}},
+            "total": {"$sum": 1},
+            "approved": {"$sum": {"$cond": [{"$eq": ["$consensus.result", "APPROVED"]}, 1, 0]}},
+            "rejected": {"$sum": {"$cond": [{"$eq": ["$consensus.result", "REJECTED"]}, 1, 0]}},
+            "review": {"$sum": {"$cond": [{"$eq": ["$consensus.result", "REVIEW"]}, 1, 0]}},
+        }},
+        {"$sort": {"_id": 1}},
+    ]
+    volume_raw = await db.ceremonies.aggregate(pipeline_volume).to_list(60)
+    volume = [{"date": v["_id"], "total": v["total"], "approved": v["approved"], "rejected": v["rejected"], "review": v["review"]} for v in volume_raw]
+
+    # Consensus outcomes (pie chart)
+    consensus_outcomes = [
+        {"name": "Approved", "value": approved_count, "color": "#10b981"},
+        {"name": "Rejected", "value": failed_count, "color": "#ef4444"},
+        {"name": "Review", "value": review_count, "color": "#f59e0b"},
+    ]
+
+    # Agent pass rates
+    agent_stats = {}
+    for agent_name in ["verifier", "witness", "sealer"]:
+        pass_q = {f"agents.{agent_name}.verdict": "PASS"}
+        fail_q = {f"agents.{agent_name}.verdict": "FAIL"}
+        passes = await db.ceremonies.count_documents(pass_q)
+        fails = await db.ceremonies.count_documents(fail_q)
+        total_agent = passes + fails
+        agent_stats[agent_name] = {
+            "passes": passes,
+            "fails": fails,
+            "total": total_agent,
+            "pass_rate": round(passes / total_agent * 100, 1) if total_agent > 0 else 0,
+        }
+
+    # Average confidence per agent
+    for agent_name in ["verifier", "witness", "sealer"]:
+        conf_pipeline = [
+            {"$match": {f"agents.{agent_name}.confidence": {"$ne": None}}},
+            {"$group": {"_id": None, "avg_conf": {"$avg": f"$agents.{agent_name}.confidence"}}},
+        ]
+        conf_raw = await db.ceremonies.aggregate(conf_pipeline).to_list(1)
+        avg_conf = round(conf_raw[0]["avg_conf"] * 100, 1) if conf_raw and conf_raw[0].get("avg_conf") else 0
+        agent_stats[agent_name]["avg_confidence"] = avg_conf
+
+    # AI vs simulated split
+    ai_count = await db.ceremonies.count_documents({"has_id_image": True})
+    simulated_count = total_ceremonies - ai_count
+
+    return {
+        "total_ceremonies": total_ceremonies,
+        "sealed_count": sealed_count,
+        "pending_count": pending_count,
+        "approved_count": approved_count,
+        "rejected_count": failed_count,
+        "review_count": review_count,
+        "approval_rate": approval_rate,
+        "volume": volume,
+        "consensus_outcomes": consensus_outcomes,
+        "agent_stats": agent_stats,
+        "ai_vs_simulated": {"ai_biometric": ai_count, "simulated": simulated_count},
+    }

@@ -48,6 +48,8 @@ const AdminDashboard = () => {
   const [opsData, setOpsData] = useState(null);
   const [loadingOps, setLoadingOps] = useState(false);
   const [alertSettings, setAlertSettings] = useState(null);
+  const [ceremonyAnalytics, setCeremonyAnalytics] = useState(null);
+  const [loadingCeremonyAnalytics, setLoadingCeremonyAnalytics] = useState(false);
   const [editingAlerts, setEditingAlerts] = useState(false);
   const [savingAlerts, setSavingAlerts] = useState(false);
   const [alertForm, setAlertForm] = useState(null);
@@ -190,6 +192,18 @@ const AdminDashboard = () => {
       toast({ title: 'Error', description: 'Failed to load storage analytics', variant: 'destructive' });
     } finally {
       setLoadingStorageAnalytics(false);
+    }
+  };
+
+  const fetchCeremonyAnalytics = async () => {
+    setLoadingCeremonyAnalytics(true);
+    try {
+      const response = await axios.get(`${API}/ceremony/analytics/stats`, authHeaders);
+      setCeremonyAnalytics(response.data);
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to load ceremony analytics', variant: 'destructive' });
+    } finally {
+      setLoadingCeremonyAnalytics(false);
     }
   };
 
@@ -469,6 +483,7 @@ const AdminDashboard = () => {
                   setActiveTab(tab.id);
                   if (tab.id === 'audit') fetchAuditLogs();
                   if (tab.id === 'analytics' && !analyticsData) fetchAnalyticsData();
+                  if (tab.id === 'analytics' && !ceremonyAnalytics) fetchCeremonyAnalytics();
                   if (tab.id === 'operations' && !opsData) fetchOpsMetrics();
                   if (tab.id === 'operations' && !alertSettings) fetchAlertSettings();
                   if (tab.id === 'operations' && !storageAnalytics) fetchStorageAnalytics();
@@ -1668,6 +1683,165 @@ const AdminDashboard = () => {
                       )}
                     </CardContent>
                   </Card>
+                </div>
+
+                {/* Ceremony Analytics Widget */}
+                <div className="mt-8" data-testid="ceremony-analytics-widget">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                      <Shield className="w-5 h-5 text-purple-400" /> Ceremony Pipeline Analytics
+                    </h3>
+                    <Button variant="outline" size="sm" onClick={fetchCeremonyAnalytics} disabled={loadingCeremonyAnalytics} className="border-gray-700 text-gray-400 hover:text-white h-8">
+                      {loadingCeremonyAnalytics ? <RefreshCw className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3 mr-1" />}
+                      {loadingCeremonyAnalytics ? '' : 'Refresh'}
+                    </Button>
+                  </div>
+                  {ceremonyAnalytics ? (
+                    <>
+                      {/* Summary Cards */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                        <Card className="bg-[#0f1825] border-gray-800">
+                          <CardContent className="p-4 text-center">
+                            <p className="text-gray-500 text-xs mb-1">Total Ceremonies</p>
+                            <p className="text-2xl font-bold text-white" data-testid="ceremony-total">{ceremonyAnalytics.total_ceremonies}</p>
+                          </CardContent>
+                        </Card>
+                        <Card className="bg-[#0f1825] border-gray-800">
+                          <CardContent className="p-4 text-center">
+                            <p className="text-gray-500 text-xs mb-1">Approval Rate</p>
+                            <p className="text-2xl font-bold text-emerald-400" data-testid="ceremony-approval-rate">{ceremonyAnalytics.approval_rate}%</p>
+                          </CardContent>
+                        </Card>
+                        <Card className="bg-[#0f1825] border-gray-800">
+                          <CardContent className="p-4 text-center">
+                            <p className="text-gray-500 text-xs mb-1">Sealed</p>
+                            <p className="text-2xl font-bold text-blue-400" data-testid="ceremony-sealed">{ceremonyAnalytics.sealed_count}</p>
+                          </CardContent>
+                        </Card>
+                        <Card className="bg-[#0f1825] border-gray-800">
+                          <CardContent className="p-4 text-center">
+                            <p className="text-gray-500 text-xs mb-1">Pending</p>
+                            <p className="text-2xl font-bold text-yellow-400" data-testid="ceremony-pending">{ceremonyAnalytics.pending_count}</p>
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        {/* Consensus Outcomes Pie */}
+                        <Card className="bg-[#0f1825] border-gray-800">
+                          <CardContent className="p-5">
+                            <h4 className="text-white font-medium text-sm mb-4">Consensus Outcomes</h4>
+                            <div className="flex items-center justify-center gap-6">
+                              <div className="relative w-32 h-32">
+                                <svg viewBox="0 0 100 100" className="transform -rotate-90">
+                                  {(() => {
+                                    const items = ceremonyAnalytics.consensus_outcomes.filter(o => o.value > 0);
+                                    const total = items.reduce((s, o) => s + o.value, 0);
+                                    if (total === 0) return <circle cx="50" cy="50" r="40" fill="none" stroke="#374151" strokeWidth="20" />;
+                                    let offset = 0;
+                                    return items.map((o, i) => {
+                                      const pct = o.value / total * 100;
+                                      const dashArray = `${pct * 2.51327} ${251.327 - pct * 2.51327}`;
+                                      const el = <circle key={i} cx="50" cy="50" r="40" fill="none" stroke={o.color} strokeWidth="20" strokeDasharray={dashArray} strokeDashoffset={-offset * 2.51327} />;
+                                      offset += pct;
+                                      return el;
+                                    });
+                                  })()}
+                                </svg>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <span className="text-white font-bold text-sm">{ceremonyAnalytics.total_ceremonies}</span>
+                                </div>
+                              </div>
+                              <div className="space-y-2">
+                                {ceremonyAnalytics.consensus_outcomes.map((o) => (
+                                  <div key={o.name} className="flex items-center gap-2">
+                                    <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: o.color }} />
+                                    <span className="text-gray-400 text-xs">{o.name}</span>
+                                    <span className="text-white text-xs font-bold">{o.value}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        {/* Agent Pass Rates */}
+                        <Card className="bg-[#0f1825] border-gray-800" data-testid="agent-pass-rates">
+                          <CardContent className="p-5">
+                            <h4 className="text-white font-medium text-sm mb-4">Agent Pass Rates</h4>
+                            <div className="space-y-4">
+                              {Object.entries(ceremonyAnalytics.agent_stats).map(([name, stats]) => (
+                                <div key={name}>
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="text-gray-300 text-xs capitalize">{name}</span>
+                                    <span className="text-white text-xs font-bold">{stats.pass_rate}%</span>
+                                  </div>
+                                  <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                                    <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${stats.pass_rate}%` }} />
+                                  </div>
+                                  <div className="flex justify-between text-[10px] text-gray-600 mt-0.5">
+                                    <span>{stats.passes} pass / {stats.fails} fail</span>
+                                    <span>Avg conf: {stats.avg_confidence}%</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      {/* Volume Over Time */}
+                      {ceremonyAnalytics.volume.length > 0 && (
+                        <Card className="bg-[#0f1825] border-gray-800" data-testid="ceremony-volume-chart">
+                          <CardContent className="p-5">
+                            <h4 className="text-white font-medium text-sm mb-4">Ceremony Volume (Last 30 Days)</h4>
+                            <div className="h-44">
+                              <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={ceremonyAnalytics.volume}>
+                                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                                  <XAxis dataKey="date" tick={{ fill: '#64748b', fontSize: 10 }} tickFormatter={(v) => v.slice(5)} />
+                                  <YAxis tick={{ fill: '#64748b', fontSize: 10 }} allowDecimals={false} />
+                                  <Tooltip contentStyle={{ backgroundColor: '#1a2332', border: '1px solid #334155', color: '#fff', fontSize: 12 }} />
+                                  <Bar dataKey="approved" fill="#10b981" stackId="a" name="Approved" />
+                                  <Bar dataKey="rejected" fill="#ef4444" stackId="a" name="Rejected" />
+                                  <Bar dataKey="review" fill="#f59e0b" stackId="a" name="Review" />
+                                </BarChart>
+                              </ResponsiveContainer>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
+
+                      {/* AI vs Simulated */}
+                      <div className="grid grid-cols-2 gap-3 mt-4">
+                        <Card className="bg-[#0f1825] border-gray-800">
+                          <CardContent className="p-4 text-center">
+                            <p className="text-gray-500 text-xs mb-1">AI Biometric</p>
+                            <p className="text-xl font-bold text-purple-400" data-testid="ai-biometric-count">{ceremonyAnalytics.ai_vs_simulated.ai_biometric}</p>
+                          </CardContent>
+                        </Card>
+                        <Card className="bg-[#0f1825] border-gray-800">
+                          <CardContent className="p-4 text-center">
+                            <p className="text-gray-500 text-xs mb-1">Simulated</p>
+                            <p className="text-xl font-bold text-gray-400" data-testid="simulated-count">{ceremonyAnalytics.ai_vs_simulated.simulated}</p>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </>
+                  ) : (
+                    <Card className="bg-[#0f1825] border-gray-800">
+                      <CardContent className="p-8 text-center">
+                        {loadingCeremonyAnalytics ? (
+                          <RefreshCw className="w-8 h-8 text-gray-600 mx-auto animate-spin" />
+                        ) : (
+                          <>
+                            <Shield className="w-10 h-10 text-gray-700 mx-auto mb-2" />
+                            <p className="text-gray-500 text-sm">No ceremony data yet</p>
+                          </>
+                        )}
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               </>
             ) : (

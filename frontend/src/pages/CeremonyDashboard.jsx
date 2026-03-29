@@ -7,10 +7,11 @@ import { Card, CardContent } from '../components/ui/card';
 import {
   Shield, ScanFace, Eye, Lock, CheckCircle, XCircle, Loader2,
   ArrowLeft, Play, RotateCcw, Fingerprint, FileSearch, Link2,
-  ShieldCheck, Vote, Blocks, Clock, ChevronRight, AlertTriangle, Radio,
+  ShieldCheck, Vote, Blocks, Clock, ChevronRight, AlertTriangle, Radio, Camera,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
+import { WebcamCapture } from '../components/WebcamCapture';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -302,6 +303,8 @@ const CeremonyDashboard = () => {
   const [showNew, setShowNew] = useState(!ceremonyId);
   const [form, setForm] = useState({ document_name: '', signer_name: '', id_image_base64: null, selfie_base64: null });
   const [streamLog, setStreamLog] = useState([]);
+  const [idCaptureMode, setIdCaptureMode] = useState('upload'); // 'upload' | 'webcam'
+  const [selfieCaptureMode, setSelfieCaptureMode] = useState('upload'); // 'upload' | 'webcam'
 
   // Fetch ceremony detail
   const fetchCeremony = useCallback(async (id) => {
@@ -531,72 +534,102 @@ const CeremonyDashboard = () => {
                           <span className="text-white text-sm font-medium">AI Biometric Verification</span>
                           <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-sm">GPT-5.2 Vision</span>
                         </div>
-                        <p className="text-slate-500 text-xs mb-3">Upload images to enable real AI-powered identity verification. Without images, the Verifier Agent uses simulated checks.</p>
+                        <p className="text-slate-500 text-xs mb-3">Upload images or use your webcam for real AI-powered identity verification. Without images, the Verifier Agent uses simulated checks.</p>
 
                         <div className="grid grid-cols-2 gap-3">
+                          {/* ID Document */}
                           <div>
-                            <label className="text-slate-300 text-xs block mb-1.5">ID Document</label>
-                            <label
-                              className={`flex flex-col items-center justify-center h-28 border-2 border-dashed rounded-sm cursor-pointer transition-all ${form.id_image_base64 ? 'border-purple-500/50 bg-purple-500/10' : 'border-[#334155] bg-[#0f1825] hover:border-slate-500'}`}
-                              data-testid="upload-id-image"
-                            >
-                              {form.id_image_base64 ? (
-                                <div className="text-center">
-                                  <CheckCircle className="w-6 h-6 text-purple-400 mx-auto mb-1" />
-                                  <span className="text-purple-300 text-[11px]">ID uploaded</span>
-                                </div>
-                              ) : (
-                                <div className="text-center">
-                                  <Fingerprint className="w-6 h-6 text-slate-600 mx-auto mb-1" />
-                                  <span className="text-slate-500 text-[11px]">Drop or click</span>
-                                </div>
-                              )}
-                              <input
-                                type="file"
-                                accept="image/jpeg,image/png,image/webp"
-                                className="hidden"
-                                onChange={e => {
-                                  const file = e.target.files?.[0];
-                                  if (file) {
-                                    const reader = new FileReader();
-                                    reader.onload = () => setForm(f => ({ ...f, id_image_base64: reader.result.split(',')[1] }));
-                                    reader.readAsDataURL(file);
-                                  }
-                                }}
+                            <div className="flex items-center justify-between mb-1.5">
+                              <label className="text-slate-300 text-xs">ID Document</label>
+                              <div className="flex gap-1">
+                                <button onClick={() => { setIdCaptureMode('upload'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors ${idCaptureMode === 'upload' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' : 'text-slate-500 hover:text-slate-300'}`} data-testid="id-mode-upload">Upload</button>
+                                <button onClick={() => { setIdCaptureMode('webcam'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors flex items-center gap-0.5 ${idCaptureMode === 'webcam' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' : 'text-slate-500 hover:text-slate-300'}`} data-testid="id-mode-webcam"><Camera className="w-2.5 h-2.5" />Cam</button>
+                              </div>
+                            </div>
+                            {idCaptureMode === 'webcam' ? (
+                              <WebcamCapture
+                                label="Capture ID"
+                                onCapture={(b64) => setForm(f => ({ ...f, id_image_base64: b64 }))}
+                                onCancel={() => setIdCaptureMode('upload')}
                               />
-                            </label>
+                            ) : (
+                              <label
+                                className={`flex flex-col items-center justify-center h-28 border-2 border-dashed rounded-sm cursor-pointer transition-all ${form.id_image_base64 ? 'border-purple-500/50 bg-purple-500/10' : 'border-[#334155] bg-[#0f1825] hover:border-slate-500'}`}
+                                data-testid="upload-id-image"
+                              >
+                                {form.id_image_base64 ? (
+                                  <div className="text-center">
+                                    <CheckCircle className="w-6 h-6 text-purple-400 mx-auto mb-1" />
+                                    <span className="text-purple-300 text-[11px]">ID uploaded</span>
+                                  </div>
+                                ) : (
+                                  <div className="text-center">
+                                    <Fingerprint className="w-6 h-6 text-slate-600 mx-auto mb-1" />
+                                    <span className="text-slate-500 text-[11px]">Drop or click</span>
+                                  </div>
+                                )}
+                                <input
+                                  type="file"
+                                  accept="image/jpeg,image/png,image/webp"
+                                  className="hidden"
+                                  onChange={e => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                      const reader = new FileReader();
+                                      reader.onload = () => setForm(f => ({ ...f, id_image_base64: reader.result.split(',')[1] }));
+                                      reader.readAsDataURL(file);
+                                    }
+                                  }}
+                                />
+                              </label>
+                            )}
                           </div>
+                          {/* Selfie Photo */}
                           <div>
-                            <label className="text-slate-300 text-xs block mb-1.5">Selfie Photo</label>
-                            <label
-                              className={`flex flex-col items-center justify-center h-28 border-2 border-dashed rounded-sm cursor-pointer transition-all ${form.selfie_base64 ? 'border-blue-500/50 bg-blue-500/10' : 'border-[#334155] bg-[#0f1825] hover:border-slate-500'}`}
-                              data-testid="upload-selfie"
-                            >
-                              {form.selfie_base64 ? (
-                                <div className="text-center">
-                                  <CheckCircle className="w-6 h-6 text-blue-400 mx-auto mb-1" />
-                                  <span className="text-blue-300 text-[11px]">Selfie uploaded</span>
-                                </div>
-                              ) : (
-                                <div className="text-center">
-                                  <ScanFace className="w-6 h-6 text-slate-600 mx-auto mb-1" />
-                                  <span className="text-slate-500 text-[11px]">Drop or click</span>
-                                </div>
-                              )}
-                              <input
-                                type="file"
-                                accept="image/jpeg,image/png,image/webp"
-                                className="hidden"
-                                onChange={e => {
-                                  const file = e.target.files?.[0];
-                                  if (file) {
-                                    const reader = new FileReader();
-                                    reader.onload = () => setForm(f => ({ ...f, selfie_base64: reader.result.split(',')[1] }));
-                                    reader.readAsDataURL(file);
-                                  }
-                                }}
+                            <div className="flex items-center justify-between mb-1.5">
+                              <label className="text-slate-300 text-xs">Selfie Photo</label>
+                              <div className="flex gap-1">
+                                <button onClick={() => { setSelfieCaptureMode('upload'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors ${selfieCaptureMode === 'upload' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' : 'text-slate-500 hover:text-slate-300'}`} data-testid="selfie-mode-upload">Upload</button>
+                                <button onClick={() => { setSelfieCaptureMode('webcam'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors flex items-center gap-0.5 ${selfieCaptureMode === 'webcam' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' : 'text-slate-500 hover:text-slate-300'}`} data-testid="selfie-mode-webcam"><Camera className="w-2.5 h-2.5" />Cam</button>
+                              </div>
+                            </div>
+                            {selfieCaptureMode === 'webcam' ? (
+                              <WebcamCapture
+                                label="Take Selfie"
+                                onCapture={(b64) => setForm(f => ({ ...f, selfie_base64: b64 }))}
+                                onCancel={() => setSelfieCaptureMode('upload')}
                               />
-                            </label>
+                            ) : (
+                              <label
+                                className={`flex flex-col items-center justify-center h-28 border-2 border-dashed rounded-sm cursor-pointer transition-all ${form.selfie_base64 ? 'border-blue-500/50 bg-blue-500/10' : 'border-[#334155] bg-[#0f1825] hover:border-slate-500'}`}
+                                data-testid="upload-selfie"
+                              >
+                                {form.selfie_base64 ? (
+                                  <div className="text-center">
+                                    <CheckCircle className="w-6 h-6 text-blue-400 mx-auto mb-1" />
+                                    <span className="text-blue-300 text-[11px]">Selfie uploaded</span>
+                                  </div>
+                                ) : (
+                                  <div className="text-center">
+                                    <ScanFace className="w-6 h-6 text-slate-600 mx-auto mb-1" />
+                                    <span className="text-slate-500 text-[11px]">Drop or click</span>
+                                  </div>
+                                )}
+                                <input
+                                  type="file"
+                                  accept="image/jpeg,image/png,image/webp"
+                                  className="hidden"
+                                  onChange={e => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                      const reader = new FileReader();
+                                      reader.onload = () => setForm(f => ({ ...f, selfie_base64: reader.result.split(',')[1] }));
+                                      reader.readAsDataURL(file);
+                                    }
+                                  }}
+                                />
+                              </label>
+                            )}
                           </div>
                         </div>
                       </div>

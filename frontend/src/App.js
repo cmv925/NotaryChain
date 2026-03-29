@@ -68,6 +68,7 @@ const OktaCallback = lazy(() => import('./pages/OktaCallback'));
 const OnboardingPage = lazy(() => import('./pages/OnboardingPage'));
 const InvestorDeck = lazy(() => import('./pages/InvestorDeck'));
 const CeremonyDashboard = lazy(() => import('./pages/CeremonyDashboard'));
+const VerifyCertificate = lazy(() => import('./pages/VerifyCertificate'));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
@@ -97,6 +98,8 @@ function App() {
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/demo" element={<QuickSealDemo />} />
             <Route path="/verify" element={<VerifyDocument />} />
+            <Route path="/verify-certificate" element={<VerifyCertificate />} />
+            <Route path="/verify-certificate/:certHash" element={<VerifyCertificate />} />
             <Route path="/investor-deck" element={<InvestorDeck />} />
             <Route
               path="/ceremony"
