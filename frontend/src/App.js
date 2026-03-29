@@ -69,6 +69,7 @@ const OnboardingPage = lazy(() => import('./pages/OnboardingPage'));
 const InvestorDeck = lazy(() => import('./pages/InvestorDeck'));
 const CeremonyDashboard = lazy(() => import('./pages/CeremonyDashboard'));
 const VerifyCertificate = lazy(() => import('./pages/VerifyCertificate'));
+const EscrowDashboard = lazy(() => import('./pages/EscrowDashboard'));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
@@ -122,6 +123,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <OnboardingPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/escrow"
+              element={
+                <ProtectedRoute>
+                  <EscrowDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/escrow/:escrowId"
+              element={
+                <ProtectedRoute>
+                  <EscrowDashboard />
                 </ProtectedRoute>
               }
             />
