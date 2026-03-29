@@ -10,7 +10,7 @@ import os
 
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 if not BASE_URL:
-    BASE_URL = "https://verify-docs-7.preview.emergentagent.com"
+    BASE_URL = "https://ai-conditions-demo.preview.emergentagent.com"
 
 # Test credentials
 DEMO_USER = {"email": "demo@test.com", "password": "Demo123!"}

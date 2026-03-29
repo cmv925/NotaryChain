@@ -128,14 +128,29 @@ export default function EscrowDashboard() {
   };
 
   // ─── AI EXTRACTION ───
+  const [uploadedFile, setUploadedFile] = useState(null);
+
   const handleExtract = async () => {
     if (!currentEscrow) return;
     setActionLoading('extract');
     try {
-      const res = await axios.post(`${API}/escrow/${currentEscrow.escrow_id}/extract-conditions`, {
-        document_name: currentEscrow.document?.name || 'Real Estate Purchase Agreement',
-      }, { headers });
-      toast({ title: 'AI Extraction Complete', description: `${res.data.total} conditions extracted` });
+      let res;
+      if (uploadedFile) {
+        // Upload file for real AI extraction
+        const formData = new FormData();
+        formData.append('file', uploadedFile);
+        res = await axios.post(`${API}/escrow/${currentEscrow.escrow_id}/extract-conditions`, formData, {
+          headers: { ...headers, 'Content-Type': 'multipart/form-data' },
+        });
+      } else {
+        // No file — use demo extraction
+        res = await axios.post(`${API}/escrow/${currentEscrow.escrow_id}/extract-conditions`, {
+          document_name: currentEscrow.document?.name || 'Real Estate Purchase Agreement',
+        }, { headers });
+      }
+      const aiLabel = res.data.ai_powered ? 'GPT-5.2 AI' : 'Demo';
+      toast({ title: `${aiLabel} Extraction Complete`, description: `${res.data.total} conditions extracted` });
+      setUploadedFile(null);
       await fetchEscrow(currentEscrow.escrow_id);
     } catch (err) {
       toast({ title: 'Error', description: err.response?.data?.detail || 'Extraction failed', variant: 'destructive' });
@@ -376,29 +391,76 @@ export default function EscrowDashboard() {
           <div className="lg:col-span-2 space-y-4">
             {/* Action Buttons */}
             <Card className="bg-[#111827] border-[#1e293b]">
-              <CardContent className="p-4 flex flex-wrap gap-2">
+              <CardContent className="p-4">
                 {e.status === 'draft' && (
-                  <Button onClick={handleExtract} disabled={actionLoading === 'extract'} className="bg-purple-600 hover:bg-purple-700" data-testid="extract-conditions-btn">
-                    {actionLoading === 'extract' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Brain className="w-4 h-4 mr-2" />}
-                    AI Extract Conditions
-                  </Button>
+                  <div className="space-y-3">
+                    {/* Document Upload */}
+                    <div className="flex items-center gap-3">
+                      <label
+                        className={`flex-1 flex items-center gap-3 p-3 border-2 border-dashed rounded-lg cursor-pointer transition-all ${uploadedFile ? 'border-purple-500/50 bg-purple-500/5' : 'border-[#1e293b] hover:border-purple-500/30'}`}
+                        data-testid="upload-contract"
+                      >
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${uploadedFile ? 'bg-purple-500/15' : 'bg-[#1e293b]'}`}>
+                          {uploadedFile ? <CheckCircle className="w-5 h-5 text-purple-400" /> : <FileText className="w-5 h-5 text-gray-500" />}
+                        </div>
+                        <div className="flex-1">
+                          {uploadedFile ? (
+                            <>
+                              <p className="text-purple-300 text-sm font-medium">{uploadedFile.name}</p>
+                              <p className="text-purple-400/60 text-[10px]">{(uploadedFile.size / 1024).toFixed(1)} KB — Ready for AI analysis</p>
+                            </>
+                          ) : (
+                            <>
+                              <p className="text-gray-300 text-sm">Upload Contract Document</p>
+                              <p className="text-gray-600 text-[10px]">PDF, DOCX, or TXT — for real GPT-5.2 analysis</p>
+                            </>
+                          )}
+                        </div>
+                        <input
+                          type="file"
+                          accept=".pdf,.docx,.txt,.doc"
+                          className="hidden"
+                          onChange={(ev) => setUploadedFile(ev.target.files?.[0] || null)}
+                        />
+                      </label>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={handleExtract} disabled={actionLoading === 'extract'} className={`${uploadedFile ? 'bg-purple-600 hover:bg-purple-700' : 'bg-gray-700 hover:bg-gray-600'}`} data-testid="extract-conditions-btn">
+                        {actionLoading === 'extract' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Brain className="w-4 h-4 mr-2" />}
+                        {uploadedFile ? 'AI Extract (GPT-5.2)' : 'Demo Extract'}
+                      </Button>
+                      {uploadedFile && (
+                        <Button variant="outline" size="sm" onClick={() => setUploadedFile(null)} className="border-[#1e293b] text-gray-500" data-testid="clear-upload">
+                          Clear
+                        </Button>
+                      )}
+                      {!uploadedFile && (
+                        <span className="text-gray-600 text-[10px] self-center">No file? Uses demo real estate conditions</span>
+                      )}
+                    </div>
+                  </div>
                 )}
                 {e.status === 'active' && e.financial.deposit_status === 'pending' && (
-                  <Button onClick={handleDeposit} disabled={actionLoading === 'deposit'} className="bg-emerald-600 hover:bg-emerald-700" data-testid="deposit-funds-btn">
-                    {actionLoading === 'deposit' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <DollarSign className="w-4 h-4 mr-2" />}
-                    Deposit Funds
-                  </Button>
+                  <div className="flex gap-2 mt-3">
+                    <Button onClick={handleDeposit} disabled={actionLoading === 'deposit'} className="bg-emerald-600 hover:bg-emerald-700" data-testid="deposit-funds-btn">
+                      {actionLoading === 'deposit' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <DollarSign className="w-4 h-4 mr-2" />}
+                      Deposit Funds
+                    </Button>
+                  </div>
                 )}
                 {(e.status === 'conditions_met' || (e.status === 'active' && e.conditions_met_count === e.conditions_total && e.conditions_total > 0)) && (
-                  <Button onClick={handleSettle} disabled={actionLoading === 'settle'} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700" data-testid="settle-escrow-btn">
-                    {actionLoading === 'settle' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ShieldCheck className="w-4 h-4 mr-2" />}
-                    Execute Settlement
-                  </Button>
+                  <div className="flex gap-2 mt-3">
+                    <Button onClick={handleSettle} disabled={actionLoading === 'settle'} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700" data-testid="settle-escrow-btn">
+                      {actionLoading === 'settle' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ShieldCheck className="w-4 h-4 mr-2" />}
+                      Execute Settlement
+                    </Button>
+                  </div>
                 )}
                 {e.status === 'settled' && (
-                  <span className="text-emerald-400 text-sm font-bold flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5" /> Settlement Complete
-                  </span>
+                  <div className="flex items-center gap-2 mt-3">
+                    <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                    <span className="text-emerald-400 text-sm font-bold">Settlement Complete</span>
+                  </div>
                 )}
               </CardContent>
             </Card>
