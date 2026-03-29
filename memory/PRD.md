@@ -344,6 +344,21 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 - **Dependencies**: PyPDF2, python-docx, emergentintegrations
 - Testing: 89% backend (1 transient 502, not code bug) + 100% frontend (iteration_68)
 
+### Autonomous Notary Agent Network (ANAN) — COMPLETED (Mar 29, 2026)
+- **Vision**: Moves NotaryChain from "AI-assisted" to "AI-conducted" notarization
+- **Backend**: `services/anan_swarm.py` — Blind 2-of-3 GPT-5.2 consensus engine with concurrent agent execution via asyncio.gather()
+- **Backend**: `routes/anan_routes.py` — 9 endpoints: ceremony start/execute/get/list/stream, escalations list/resolve, bond status, dashboard stats
+- **Agents**: Verifier (Identity & Biometrics, weight 0.40), Witness (Audit & Evidence, weight 0.30), Sealer (Compliance & Blockchain, weight 0.30)
+- **Consensus Oracle**: Weighted avg >= 70 + min >= 40 + 2+ passes = APPROVED, avg < 40 or min < 15 = REJECTED, else = ESCALATE
+- **HITL Escalation**: Marginal scores or agent divergence → human review queue with approve/reject
+- **SAN Bond**: Virtual $1M E&O Insurance Bond with slash/restock tracking (0.5% of ceremony fees)
+- **SSE Streaming**: Real-time blind phase → score reveal → consensus via EventSource
+- **Frontend**: `ANANDashboard.jsx` — Stats, bond health bar, ceremony list, agent score ring cards, consensus visualization, escalation queue, event log
+- **Hedera Sealing**: Approved ANAN ceremonies sealed on Hedera Mainnet (REAL)
+- **Routes**: `/anan` (list), `/anan/:ceremonyId` (detail)
+- **Spec**: `/app/memory/ANAN_SPEC.md` — Full technical specification document
+- Testing: 93% backend (1 timeout from GPT-5.2 latency, verified working) + 100% frontend (iteration_69)
+
 - Testing: 100% pass rate backend + frontend (iteration_60, iteration_61)
 
 - **Frontend** (`pages/BookingCalendar.jsx`): Enhanced booking experience
@@ -705,13 +720,17 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 ## Future/Backlog
 - Add more languages (DE, PT, JA, ZH)
 - Extract translation strings to separate JSON locale files for scalability
-- Dashboard quick-links to new features (Verify Certificate, Ceremony, Escrow)
+- Dashboard quick-links to new features (Verify Certificate, Ceremony, Escrow, ANAN)
 - ~~Connect real GPT-5.2 to AI Condition Extraction~~ — DONE (Mar 29, 2026)
+- ~~ANAN Autonomous Notary Agent Network~~ — DONE (Mar 29, 2026)
 - Connect real Stripe Connect for fiat escrow deposits
 - Connect real Hedera Token Service (HTS) for on-chain tokenized escrow
 - Connect real HCS for settlement audit trail (replace mocked settlement)
 - Add webhook-based oracle integrations (FedEx, inspection APIs)
 - Add Freelancer Milestone and Supply Chain escrow templates
+- ANAN Phase 2: Dynamic Fraud Intelligence learning layer, per-jurisdiction RON compliance rules
+- ANAN Phase 3: Smart contract bond management on Hedera, multi-jurisdiction RON automation, agent weight self-tuning
+- Shareable Verification Badge (embeddable widget for public cert verification)
 
 ## Test Credentials
 | Role | Email | Password |
