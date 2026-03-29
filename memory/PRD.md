@@ -297,11 +297,23 @@ Multi-tenancy, Organizations, Member management, SSO configuration
 
 ### Universal Back Buttons — COMPLETED (Mar 27, 2026)
 - Added back buttons to 14 nested frontend pages for improved navigation
-- **Pages updated**: AdminDashboard, NotaryDashboard, TransactionsPage, MyDrafts, TemplateLibrary, VerifyDocument, CheckoutPage, OrganizationPage, PaymentSuccess, PricingPage, QuickSealDemo, RequestNotarization, SharedDraftViewer, NotaryMarketplace
-- **Root pages correctly excluded**: HomePage, Dashboard, LoginPage, SignUpPage (no back buttons needed)
-- **Pattern**: Shadcn `<Button variant="ghost">` with `ArrowLeft` icon, navigates to `/dashboard` or `navigate(-1)` as appropriate
-- **data-testid**: `back-to-dashboard` for dashboard-bound buttons, `back-button` for history-based navigation
-- Testing: 100% pass rate — 12/12 pages verified, 3 root pages confirmed excluded (iteration_64)
+- Testing: 100% pass rate (iteration_64)
+
+### Public Certificate Verification Page — COMPLETED (Mar 29, 2026)
+- **Route**: `/verify-certificate` and `/verify-certificate/:certHash` (public, no auth)
+- **Backend**: `GET /api/ceremony/verify/certificate/{hash}` — accepts Ceremony ID, NC-{hash} cert ID, or blockchain consensus hash
+- **Frontend**: `VerifyCertificate.jsx` — search input, auto-verify from URL, verified/not-found result cards, blockchain seal w/ HashScan link
+- Testing: 100% pass rate — 13/13 backend, all frontend scenarios (iteration_65)
+
+### Ceremony Analytics Widget (Admin Dashboard) — COMPLETED (Mar 29, 2026)
+- **Backend**: `GET /api/ceremony/analytics/stats` — admin-only, returns ceremony volume, consensus outcomes, agent pass rates, AI vs simulated
+- **Frontend**: Added to AdminDashboard analytics tab — summary cards, SVG pie chart, progress bar agent rates, stacked bar chart, AI/Simulated split
+- Testing: 100% pass rate (iteration_65)
+
+### Webcam Face Capture in Ceremony Form — COMPLETED (Mar 29, 2026)
+- **Component**: `WebcamCapture.jsx` — reusable webcam capture with start/capture/retake/cancel flow
+- **Integration**: CeremonyDashboard biometric section now has Upload/Cam toggle for both ID Document and Selfie
+- Testing: 100% pass rate (iteration_65)
 
 - Testing: 100% pass rate backend + frontend (iteration_60, iteration_61)
 
@@ -662,11 +674,9 @@ WebSocket presence tracking, cursor/typing indicators, live co-editing
 - Resend Domain Verification (user task — verify domain on resend.com)
 
 ## Future/Backlog
-- Public certificate verification page (`/verify-certificate/:certHash`) — anyone can paste a hash and verify against Hedera blockchain (P2)
-- Ceremony Analytics widget for admin dashboard (P2)
-- Face Capture via webcam directly in ceremony form instead of file uploads (P2)
 - Add more languages (DE, PT, JA, ZH)
 - Extract translation strings to separate JSON locale files for scalability
+- Dashboard quick-links to new features (Verify Certificate, Ceremony page)
 
 ## Test Credentials
 | Role | Email | Password |
