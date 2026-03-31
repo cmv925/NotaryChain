@@ -14,124 +14,98 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 - **Email**: Resend
 - **Infrastructure**: Sentry, cachetools, background tasks, AWS S3 (boto3)
 
-## Completed Features
+## Completed Features (All Tested)
 
-### Phases 1-26: Core + Enterprise Platform — ALL COMPLETED
-Website clone, Demo, Auth (multi-role + 2FA), Notary system, AI Analysis, Blockchain, Stripe, Video, Biometrics, Crypto, Compliance/Audit, Email, Notarization Package, Notary Onboarding, AI Orchestrator, Security, WebSockets, Mobile Responsive, Subscriptions, Notary Professional, GDPR, Infrastructure, Real-time Collaboration, Public API, RON Compliance, Webhooks
+### Core Platform (Phases 1-26) — ALL COMPLETE
+Website, Auth (multi-role + 2FA), Notary system, AI Analysis, Blockchain, Stripe, Video, Biometrics, Crypto, Compliance/Audit, Email, RON, Webhooks, GDPR, Real-time Collaboration, Public API, etc.
 
-### Template System — COMPLETED
-### Enterprise Features — COMPLETED
-### Role-Based Access Control (RBAC) — COMPLETED
-### Full SSO Integration (Auth0 + Okta) — COMPLETED
-### Permission-based UI Rendering — COMPLETED
-### Security Audit & Fixes — COMPLETED
-### Hedera Mainnet Integration — COMPLETED
-### Stripe Live Mode — COMPLETED
-### Operations Dashboard — COMPLETED
-### Full Session Package Email — COMPLETED
-### HBAR Balance Alert Service — COMPLETED
-### Analytics Dashboard with Recharts — COMPLETED
-### i18n Internationalization (EN, ES, FR) — COMPLETED
-### Multi-Agent Notarization Ceremony — COMPLETED
-### GPT-5.2 Vision Biometrics — COMPLETED
-### Real Witness Agent (Merkle Tree) — COMPLETED
-### Ceremony Certificate PDF — COMPLETED
-### Universal Breadcrumbs — COMPLETED
-### Public Certificate Verification — COMPLETED
-### Webcam Face Capture — COMPLETED
-### Dynamic Escrow Intelligence — COMPLETED
-### Real GPT-5.2 AI Contract Parsing for Escrow — COMPLETED
-
-### Autonomous Notary Agent Network (ANAN) — COMPLETED (Mar 29, 2026)
+### ANAN — Autonomous Notary Agent Network — COMPLETE
 - 3-agent GPT-5.2 blind consensus swarm (Verifier, Witness, Sealer)
-- HITL escalation queue, Shareable Verification Badges
 - Dynamic Fraud Intelligence (8 patterns, 8 RON jurisdictions)
 - Agent Reputation & Self-Tuning Weights
+- On-Chain Hedera Bond Management (HCS topic 0.0.10415918 on mainnet)
+- Role-Specific Onboarding Tour (Admin/Notary/User)
 
-### Modernized Bento-grid Dashboard with Role-based Filtering — COMPLETED (Mar 31, 2026)
+### Dynamic Escrow Intelligence — COMPLETE (Apr 1, 2026)
+Transforms legal documents into living, programmable financial instruments.
 
-### On-Chain Hedera Bond Management — COMPLETED (Mar 31, 2026)
-- **Backend**: `HederaBondService` class in `services/hedera_service.py`
-  - Creates dedicated HCS topic for bond events (topic `0.0.10415918` on mainnet)
-  - Records all bond slash/restock events to Hedera HCS as immutable audit trail
-  - Bond state verification by comparing DB balance with on-chain ledger replay
-  - Lazy topic initialization with DB persistence in `system_settings`
-- **Backend**: Updated `anan_swarm.py` — `apply_bond_event()` and `restock_bond()` now submit to HCS alongside MongoDB
-- **New Endpoints**:
-  - `GET /api/anan/bond/status` — Now returns `on_chain` section (enabled, bond_topic_id, network)
-  - `GET /api/anan/bond/ledger` — On-chain bond event history from Hedera mirror node (admin/notary only)
-  - `GET /api/anan/bond/verify` — Verifies bond state DB vs chain (admin/notary only)
-- **Frontend**: ANAN Dashboard bond card now shows ON-CHAIN LEDGER section with ACTIVE badge, topic ID, MAINNET label, and "Verify On-Chain" button
-- Testing: 100% pass rate — 16/16 backend + all frontend (iteration_73)
+**Trust Gap 1: Execution Gap — AI Orchestrator**
+- GPT-5.2 extracts Performance Triggers from contracts
+- Smart vault locks funds until milestones are verified
+- Milestone-based condition tracking with payment percentages
+- Backend: `/api/escrow/create`, `/api/escrow/{id}/extract-conditions`, `/api/escrow/{id}/deposit`
 
-### Role-Specific Onboarding Tour — COMPLETED (Mar 31, 2026)
-- **Frontend**: `OnboardingTour.jsx` rewritten with 3 role-specific step sets:
-  - **Admin Tour** (5 steps): Notifications, ANAN Network, Fraud Intelligence, Escrow, Analytics
-  - **Notary Tour** (5 steps): Notifications, Upload Docs, ANAN Ceremonies, AI Generator, Biometric Passport
-  - **User Tour** (5 steps): Notifications, Upload Docs, AI Generator, Doc Remediation, Escrow
-- Role badge displayed in tour tooltip (e.g., "Admin Tour", "Notary Tour", "User Tour")
-- Dashboard passes `userRole={user?.role}` prop to OnboardingTour
-- Testing: 100% pass rate — all 3 roles verified (iteration_73)
+**Trust Gap 2: Verification Gap — Oracle + AI Vision**
+- Automated oracle verification: shipping_tracker, inspection_service, appraisal_service, title_company_api
+- AI Photo Verification via GPT-5.2 Vision for milestone proof
+- Oracle auto-verifies conditions when data confirms
+- Backend: `/api/escrow/{id}/oracle-verify/{condition_id}`, `/api/escrow/{id}/photo-verify/{condition_id}`
 
-### Additional Completed Features (abbreviated)
-- Landing Page Refresh, Guided Onboarding, Service Degradation Alerts
-- SOC2 Security Export, S3 Storage Dashboard
-- AI Co-pilot, AI Document Generator, AI Summarizer, Video Witness
-- Booking Calendar, Revenue Enhancements, Custom Branding, Dark/Light Theme
-- Approval Workflows, Document Comparison, Smart Reminders
-- Organization Webhooks, Scheduled Reports, Incident Reporting
-- Transaction Timeline, Real-Time Timeline Streaming
-- RBAC Policy Builder, Advanced Calendar Widget, Marketplace Enhancements
-- SSO Routes Refactor, React Lazy Loading, Investor Demo Flow
+**Trust Gap 3: Security Gap — Biometric Proof of Intent**
+- Facial geometry + liveness detection at settlement via GPT-5.2 Vision
+- Per-party biometric status tracking (buyer/seller)
+- Biometric proof stored in escrow audit trail
+- Settlement only proceeds after identity verification
+- Backend: `/api/escrow/{id}/biometric-gate`, `/api/escrow/{id}/settle`
+
+**Frontend**: Fully redesigned EscrowDashboard with Trust Gap sections, Oracle badges, Check Oracle buttons, Biometric Gate UI, Oracle Activity sidebar
+
+**Testing**: 100% pass rate — iteration_74 (16/16 backend + all frontend verified)
+
+### Additional Completed Features
+- Modernized Bento-grid Dashboard with Role-based Filtering
+- Shareable Verification Badges (Static HTML + Dynamic JS embed)
+- Full SSO Integration (Auth0 + Okta)
+- Enterprise Features, RBAC, Permission-based UI
+- Analytics Dashboard, i18n (EN/ES/FR), Operations Dashboard
+- Hedera Mainnet Integration, Stripe Live Mode
+- AI Co-pilot, AI Document Generator, Webcam Face Capture
+- Public Certificate Verification, Universal Breadcrumbs
+- And 40+ more features (see CHANGELOG.md)
 
 ## Architecture
 ```
 /app
 ├── backend/
 │   ├── routes/
-│   │   ├── anan_routes.py         # ANAN ceremonies, bond, reputation, badges
-│   │   ├── fraud_intelligence_routes.py  # Threat patterns & RON rules
-│   │   ├── escrow_routes.py       # AI-powered escrow
+│   │   ├── escrow_routes.py           # Dynamic Escrow Intelligence (3 Trust Gaps)
+│   │   ├── anan_routes.py             # ANAN ceremonies, bond, reputation
+│   │   ├── fraud_intelligence_routes.py
 │   │   └── ... (40+ route files)
 │   ├── services/
-│   │   ├── anan_swarm.py          # GPT-5.2 blind consensus engine + on-chain bond
-│   │   ├── anan_reputation.py     # Agent weight auto-tuning
-│   │   ├── fraud_intelligence_service.py  # Jurisdictional fraud injection
-│   │   ├── hedera_service.py      # HCS + HederaBondService (on-chain bond)
+│   │   ├── escrow_oracle_service.py   # Oracle simulation + GPT-5.2 photo/biometric
+│   │   ├── ai_escrow_service.py       # GPT-5.2 condition extraction
+│   │   ├── anan_swarm.py              # 3-agent consensus + on-chain bond
+│   │   ├── hedera_service.py          # HCS + HederaBondService
 │   │   └── ... (15+ service files)
 │   └── server.py
 └── frontend/src/
-    ├── components/
-    │   ├── OnboardingTour.jsx     # Role-specific guided tours
-    │   └── ... (20+ components)
     ├── pages/
-    │   ├── Dashboard.jsx          # Bento-grid role-based dashboard
-    │   ├── ANANDashboard.jsx      # Swarm agent monitoring + on-chain bond
-    │   ├── FraudIntelligencePage.jsx  # Threat intelligence
-    │   ├── EscrowDashboard.jsx    # AI escrow management
+    │   ├── EscrowDashboard.jsx        # Trust Gap UI (Execution/Verification/Security)
+    │   ├── Dashboard.jsx              # Bento-grid role-based dashboard
+    │   ├── ANANDashboard.jsx          # Swarm monitoring + on-chain bond
     │   └── ... (50+ pages)
     └── App.js
 ```
 
 ## Key API Endpoints
-- `POST /api/anan/ceremony/start` — Init ANAN ceremony
-- `POST /api/anan/ceremony/{id}/execute` — Run blind consensus
-- `GET /api/anan/bond/status` — Bond with on-chain info
-- `GET /api/anan/bond/ledger` — On-chain bond events (admin/notary)
-- `GET /api/anan/bond/verify` — Verify DB vs chain (admin/notary)
-- `POST /api/anan/reputation/tune` — Auto-adjust agent weights
-- `GET /api/anan/badge/{id}` — Embeddable verification badge
+- `POST /api/escrow/create` — Create escrow agreement
+- `POST /api/escrow/{id}/extract-conditions` — AI extract performance triggers
+- `POST /api/escrow/{id}/deposit` — Deposit into smart vault
+- `POST /api/escrow/{id}/verify-condition` — Party confirmation
+- `POST /api/escrow/{id}/oracle-verify/{cid}` — Oracle automated verification
+- `POST /api/escrow/{id}/photo-verify/{cid}` — AI photo evidence verification
+- `POST /api/escrow/{id}/biometric-gate` — Biometric Proof of Intent
+- `POST /api/escrow/{id}/settle` — Execute settlement (HCS sealed)
 
 ## Upcoming Tasks
-- Resend Domain Verification (user task — verify domain on resend.com)
+- Resend Domain Verification (user task — verify domain on resend.com) (P1)
 
 ## Future/Backlog
 - Connect real Hedera Token Service (HTS) for on-chain tokenized escrow (P2)
 - Add Freelancer Milestone and Supply Chain escrow templates (P2)
-- Add more languages (DE, PT, JA, ZH) & extract translation files (P2)
+- Add more languages (DE, PT, JA, ZH) (P2)
 - Auto-learning threat detection from GPT-5.2 responses (P3)
-- ANAN: Multi-jurisdiction RON automation with real-time rule updates (P3)
-- ANAN: Real deepfake detection model integration (P3)
 
 ## Test Credentials
 | Role | Email | Password |
