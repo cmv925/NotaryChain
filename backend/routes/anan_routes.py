@@ -548,17 +548,53 @@ async def resolve_escalation(escalation_id: str, req: EscalationResolveRequest, 
 
 @router.get("/bond/status")
 async def get_bond_status(request: Request):
-    """Get SAN bond status."""
+    """Get SAN bond status including on-chain verification info."""
     await _get_user(request)
     from services.anan_swarm import get_or_init_bond, INITIAL_BOND, BOND_MIN_THRESHOLD
+    from services.hedera_service import hedera_bond_service
+
     bond = await get_or_init_bond(db)
+    bond_service_status = hedera_bond_service.get_status()
+
     return {
         **bond,
         "initial_balance": INITIAL_BOND,
         "min_threshold": BOND_MIN_THRESHOLD,
         "health": "healthy" if bond["balance"] >= BOND_MIN_THRESHOLD else "warning" if bond["balance"] > 0 else "depleted",
         "health_pct": round(bond["balance"] / INITIAL_BOND * 100, 1),
+        "on_chain": {
+            "enabled": bond_service_status.get("sdk_available", False),
+            "bond_topic_id": bond_service_status.get("bond_topic_id"),
+            "network": bond_service_status.get("network"),
+        },
     }
+
+
+@router.get("/bond/ledger")
+async def get_bond_ledger(request: Request):
+    """Get on-chain bond event history from Hedera mirror node."""
+    user = await _get_user(request)
+    if user.get("role") not in ("admin", "notary"):
+        raise HTTPException(status_code=403, detail="Admin or notary access required")
+
+    from services.hedera_service import hedera_bond_service
+    ledger = await hedera_bond_service.get_bond_ledger(limit=100)
+    return ledger
+
+
+@router.get("/bond/verify")
+async def verify_bond_state(request: Request):
+    """Verify bond state by comparing DB balance with on-chain ledger."""
+    user = await _get_user(request)
+    if user.get("role") not in ("admin", "notary"):
+        raise HTTPException(status_code=403, detail="Admin or notary access required")
+
+    from services.anan_swarm import get_or_init_bond
+    from services.hedera_service import hedera_bond_service
+
+    bond = await get_or_init_bond(db)
+    verification = await hedera_bond_service.verify_bond_state(bond["balance"])
+    return verification
 
 
 @router.get("/dashboard/stats")

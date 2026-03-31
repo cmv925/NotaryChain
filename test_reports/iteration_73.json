@@ -1,0 +1,108 @@
+{
+  "summary": "Tested on-chain Hedera bond management endpoints and role-specific onboarding tour. All 16 backend tests passed (100%). All frontend UI tests passed for bond status card and onboarding tour.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_bond_onboarding.py",
+    "/app/test_reports/pytest/pytest_results_bond_onboarding.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_bond_onboarding.py"
+  ],
+  "success_rate": {
+    "backend": "100% (16/16 tests passed)",
+    "frontend": "100% (all UI elements verified)"
+  },
+  "test_credentials": {
+    "admin": "admin@notarychain.com / Admin123!",
+    "notary": "notarytest@test.com / Test123!",
+    "user": "demo@test.com / Demo123!"
+  },
+  "seed_data_creation": "None - used existing test users",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "On-chain bond management and role-specific onboarding tour are fully implemented and working. Bond topic 0.0.10415918 is active on Hedera mainnet. The on-chain ledger is currently empty (0 events) because existing bond mutations pre-date the on-chain feature.",
+  "test_results": {
+    "backend_tests": {
+      "bond_status_endpoint": {
+        "returns_on_chain_section": "PASS - on_chain has enabled, bond_topic_id, network fields",
+        "has_balance_and_health": "PASS - balance, health, health_pct present",
+        "admin_access": "PASS - 200 OK",
+        "notary_access": "PASS - 200 OK",
+        "user_access": "PASS - 200 OK (read-only)",
+        "requires_auth": "PASS - 401 without token"
+      },
+      "bond_ledger_endpoint": {
+        "admin_access": "PASS - 200 OK with events array",
+        "notary_access": "PASS - 200 OK",
+        "user_access_forbidden": "PASS - 403 Forbidden",
+        "requires_auth": "PASS - 401 without token"
+      },
+      "bond_verify_endpoint": {
+        "admin_access": "PASS - 200 OK with verified, db_balance, topic_id",
+        "notary_access": "PASS - 200 OK",
+        "user_access_forbidden": "PASS - 403 Forbidden",
+        "requires_auth": "PASS - 401 without token"
+      },
+      "user_roles": {
+        "admin_role": "PASS - /api/auth/me returns role='admin'",
+        "notary_role": "PASS - /api/auth/me returns role='notary'",
+        "regular_user": "PASS - /api/auth/me returns no special role"
+      }
+    },
+    "frontend_tests": {
+      "anan_dashboard_bond_status": {
+        "bond_status_card": "PASS - data-testid='anan-bond-status' found",
+        "on_chain_active_badge": "PASS - ACTIVE badge displayed",
+        "bond_topic_id": "PASS - Topic: 0.0.10415918 displayed",
+        "mainnet_label": "PASS - MAINNET label visible",
+        "verify_onchain_button": "PASS - Button found and clickable",
+        "verify_button_functionality": "PASS - Shows 'Verification Result - No on-chain events found' toast"
+      },
+      "onboarding_tour_admin": {
+        "overlay_appears": "PASS - Onboarding overlay shown",
+        "tooltip_visible": "PASS - Tooltip with content displayed",
+        "role_badge": "PASS - 'Admin Tour' badge displayed",
+        "admin_specific_steps": "PASS - Step 2 shows ANAN Network (admin-specific)",
+        "navigation_buttons": "PASS - Next/Skip buttons work"
+      },
+      "onboarding_tour_notary": {
+        "role_badge": "PASS - 'Notary Tour' badge displayed"
+      },
+      "onboarding_tour_user": {
+        "role_badge": "PASS - 'User Tour' badge displayed"
+      }
+    }
+  },
+  "features_verified": {
+    "bond_status_on_chain_section": {
+      "enabled": true,
+      "bond_topic_id": "0.0.10415918",
+      "network": "mainnet"
+    },
+    "bond_ledger_access_control": {
+      "admin": "200 OK",
+      "notary": "200 OK",
+      "regular_user": "403 Forbidden"
+    },
+    "bond_verify_access_control": {
+      "admin": "200 OK",
+      "notary": "200 OK",
+      "regular_user": "403 Forbidden"
+    },
+    "onboarding_tour_role_badges": {
+      "admin": "Admin Tour",
+      "notary": "Notary Tour",
+      "user": "User Tour"
+    }
+  }
+}

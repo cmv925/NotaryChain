@@ -469,5 +469,176 @@ class HederaNotaryService:
                 pass
 
 
-# Singleton instance
+class HederaBondService:
+    """
+    On-chain bond management via Hedera Consensus Service (HCS).
+    Records all SAN bond events (slash, restock, init) as immutable HCS messages
+    on a dedicated bond topic, providing a cryptographic audit trail.
+    """
+
+    def __init__(self, notary_service: HederaNotaryService):
+        self._notary = notary_service
+        self._bond_topic_id = None
+        self._db = None
+
+    def set_db(self, database):
+        self._db = database
+
+    async def _ensure_bond_topic(self) -> Optional[str]:
+        """Get or create the dedicated HCS topic for bond events."""
+        if self._bond_topic_id:
+            return self._bond_topic_id
+
+        # Check DB for existing bond topic
+        if self._db is not None:
+            config = await self._db.system_settings.find_one(
+                {"key": "anan_bond_topic"}, {"_id": 0}
+            )
+            if config and config.get("topic_id"):
+                self._bond_topic_id = config["topic_id"]
+                return self._bond_topic_id
+
+        # Create a new topic
+        result = await self._notary.create_topic(memo="NotaryChain SAN Bond Ledger")
+        if result.get("success") and result.get("topic_id"):
+            self._bond_topic_id = result["topic_id"]
+            if self._db is not None:
+                await self._db.system_settings.update_one(
+                    {"key": "anan_bond_topic"},
+                    {"$set": {
+                        "key": "anan_bond_topic",
+                        "topic_id": self._bond_topic_id,
+                        "created_at": datetime.now(timezone.utc).isoformat(),
+                        "network": self._notary.network,
+                    }},
+                    upsert=True,
+                )
+            logger.info(f"Created bond HCS topic: {self._bond_topic_id}")
+            return self._bond_topic_id
+
+        # Fallback: use the default notary topic if bond topic creation fails
+        fallback = self._notary.default_topic_id
+        if fallback:
+            self._bond_topic_id = fallback
+            logger.warning(f"Bond topic creation failed, using default topic: {fallback}")
+        return self._bond_topic_id
+
+    async def record_bond_event(
+        self,
+        event_type: str,
+        amount: float,
+        balance_after: float,
+        ceremony_id: str,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Record a bond event on-chain via HCS.
+        Returns the HCS submission result with sequence number.
+        """
+        topic_id = await self._ensure_bond_topic()
+        if not topic_id:
+            return {"success": False, "error": "No bond topic available", "on_chain": False}
+
+        event_payload = {
+            "type": "SAN_BOND_EVENT",
+            "version": "1.0",
+            "event_type": event_type,
+            "amount": amount,
+            "balance_after": balance_after,
+            "ceremony_id": ceremony_id,
+            "metadata": metadata or {},
+        }
+
+        # Generate event hash for integrity
+        event_json = json.dumps(event_payload, sort_keys=True)
+        event_hash = hashlib.sha256(event_json.encode()).hexdigest()
+        event_payload["event_hash"] = event_hash
+
+        result = await self._notary.submit_message(topic_id, event_payload)
+
+        return {
+            "success": result.get("success", False),
+            "on_chain": result.get("success", False),
+            "topic_id": topic_id,
+            "sequence_number": result.get("sequence_number"),
+            "event_hash": event_hash,
+            "network": self._notary.network,
+            "explorer_url": f"https://hashscan.io/{self._notary.network}/topic/{topic_id}",
+        }
+
+    async def get_bond_ledger(self, limit: int = 50) -> Dict[str, Any]:
+        """
+        Retrieve on-chain bond event history from the mirror node.
+        """
+        topic_id = await self._ensure_bond_topic()
+        if not topic_id:
+            return {"success": False, "events": [], "error": "No bond topic"}
+
+        messages = await self._notary.get_topic_messages(topic_id, limit=limit)
+        bond_events = []
+        for msg in messages:
+            decoded = msg.get("decoded_message")
+            if decoded and decoded.get("type") == "SAN_BOND_EVENT":
+                bond_events.append({
+                    "event_type": decoded.get("event_type"),
+                    "amount": decoded.get("amount"),
+                    "balance_after": decoded.get("balance_after"),
+                    "ceremony_id": decoded.get("ceremony_id"),
+                    "event_hash": decoded.get("event_hash"),
+                    "sequence_number": msg.get("sequence_number"),
+                    "consensus_timestamp": msg.get("consensus_timestamp"),
+                })
+
+        return {
+            "success": True,
+            "topic_id": topic_id,
+            "network": self._notary.network,
+            "events": bond_events,
+            "total": len(bond_events),
+            "explorer_url": f"https://hashscan.io/{self._notary.network}/topic/{topic_id}",
+        }
+
+    async def verify_bond_state(self, db_balance: float) -> Dict[str, Any]:
+        """
+        Verify the current bond state by comparing DB balance with on-chain ledger.
+        Replays all on-chain events to compute the expected balance.
+        """
+        ledger = await self.get_bond_ledger(limit=200)
+        if not ledger.get("success") or not ledger.get("events"):
+            return {
+                "verified": False,
+                "reason": "No on-chain events found" if ledger.get("success") else ledger.get("error", "Ledger unavailable"),
+                "db_balance": db_balance,
+                "chain_balance": None,
+                "topic_id": ledger.get("topic_id"),
+            }
+
+        # The last event's balance_after should match DB
+        last_event = ledger["events"][-1]
+        chain_balance = last_event.get("balance_after", 0)
+        is_match = abs(chain_balance - db_balance) < 0.01
+
+        return {
+            "verified": is_match,
+            "db_balance": db_balance,
+            "chain_balance": chain_balance,
+            "total_on_chain_events": ledger["total"],
+            "last_event": last_event,
+            "topic_id": ledger.get("topic_id"),
+            "network": ledger.get("network"),
+            "explorer_url": ledger.get("explorer_url"),
+        }
+
+    def get_status(self) -> Dict[str, Any]:
+        """Get bond service status."""
+        return {
+            "bond_topic_id": self._bond_topic_id,
+            "notary_configured": self._notary.get_status().get("configured", False),
+            "sdk_available": self._notary.get_status().get("sdk_available", False),
+            "network": self._notary.network,
+        }
+
+
+# Singleton instances
 hedera_service = HederaNotaryService()
+hedera_bond_service = HederaBondService(hedera_service)

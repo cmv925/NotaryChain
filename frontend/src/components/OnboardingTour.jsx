@@ -4,7 +4,73 @@ import { Button } from './ui/button';
 
 const TOUR_KEY = 'nc_tour_completed';
 
-const STEPS = [
+const ADMIN_STEPS = [
+  {
+    target: '[data-testid="notification-bell"]',
+    title: 'Notifications',
+    content: 'Monitor platform-wide alerts, escalations, and system events.',
+    position: 'bottom',
+  },
+  {
+    target: '[data-testid="bento-anan"]',
+    title: 'ANAN Network',
+    content: 'The Autonomous Notary Agent Network — manage AI agent swarms, bond health, and escalation queues.',
+    position: 'bottom',
+  },
+  {
+    target: '[data-testid="bento-fraud"]',
+    title: 'Fraud Intelligence',
+    content: 'Configure threat patterns and RON jurisdiction rules that feed into ANAN agent analysis.',
+    position: 'bottom',
+  },
+  {
+    target: '[data-testid="bento-escrow"]',
+    title: 'Escrow Intelligence',
+    content: 'AI-powered smart escrow management with GPT-5.2 contract parsing.',
+    position: 'bottom',
+  },
+  {
+    target: '[data-testid="bento-analytics"]',
+    title: 'Analytics & Operations',
+    content: 'Platform analytics, security compliance, service health, and ops monitoring.',
+    position: 'right',
+  },
+];
+
+const NOTARY_STEPS = [
+  {
+    target: '[data-testid="notification-bell"]',
+    title: 'Notifications',
+    content: 'Get alerts for new booking requests, ceremony escalations, and approvals.',
+    position: 'bottom',
+  },
+  {
+    target: '[data-testid="upload-document-button"]',
+    title: 'Upload Documents',
+    content: 'Upload documents for AI analysis, notarization, or blockchain sealing.',
+    position: 'bottom',
+  },
+  {
+    target: '[data-testid="bento-anan"]',
+    title: 'ANAN Ceremonies',
+    content: 'Run AI-powered autonomous notarization ceremonies and resolve escalations.',
+    position: 'bottom',
+  },
+  {
+    target: '[data-testid="ai-generator-button"]',
+    title: 'AI Document Generator',
+    content: 'Create legal documents from natural language descriptions using AI.',
+    position: 'right',
+  },
+  {
+    target: '[data-testid="biometric-passport-button"]',
+    title: 'Biometric Passport',
+    content: 'Generate tamper-proof identity credentials with multi-modal biometrics.',
+    position: 'left',
+  },
+];
+
+const USER_STEPS = [
   {
     target: '[data-testid="notification-bell"]',
     title: 'Notifications',
@@ -30,17 +96,25 @@ const STEPS = [
     position: 'right',
   },
   {
-    target: '[data-testid="biometric-passport-button"]',
-    title: 'Biometric Passport',
-    content: 'Generate tamper-proof identity credentials with multi-modal biometrics.',
-    position: 'left',
+    target: '[data-testid="bento-escrow"]',
+    title: 'Escrow Intelligence',
+    content: 'AI-powered escrow for contracts — automated condition verification and settlement.',
+    position: 'bottom',
   },
 ];
 
-export function OnboardingTour() {
+function getStepsForRole(role) {
+  if (role === 'admin') return ADMIN_STEPS;
+  if (role === 'notary') return NOTARY_STEPS;
+  return USER_STEPS;
+}
+
+export function OnboardingTour({ userRole }) {
   const [active, setActive] = useState(false);
   const [step, setStep] = useState(0);
   const [pos, setPos] = useState({ top: 0, left: 0 });
+
+  const steps = getStepsForRole(userRole);
 
   useEffect(() => {
     const done = localStorage.getItem(TOUR_KEY);
@@ -52,7 +126,7 @@ export function OnboardingTour() {
 
   useEffect(() => {
     if (!active) return;
-    const el = document.querySelector(STEPS[step]?.target);
+    const el = document.querySelector(steps[step]?.target);
     if (el) {
       const rect = el.getBoundingClientRect();
       el.style.position = 'relative';
@@ -63,10 +137,10 @@ export function OnboardingTour() {
       let top = rect.bottom + 12;
       let left = rect.left + rect.width / 2 - tooltipW / 2;
 
-      if (STEPS[step].position === 'right') {
+      if (steps[step].position === 'right') {
         top = rect.top;
         left = rect.right + 12;
-      } else if (STEPS[step].position === 'left') {
+      } else if (steps[step].position === 'left') {
         top = rect.top;
         left = rect.left - tooltipW - 12;
       }
@@ -82,7 +156,7 @@ export function OnboardingTour() {
         el.style.boxShadow = '';
       };
     }
-  }, [active, step]);
+  }, [active, step, steps]);
 
   const close = () => {
     setActive(false);
@@ -90,7 +164,7 @@ export function OnboardingTour() {
   };
 
   const next = () => {
-    if (step < STEPS.length - 1) setStep(step + 1);
+    if (step < steps.length - 1) setStep(step + 1);
     else close();
   };
 
@@ -100,39 +174,41 @@ export function OnboardingTour() {
 
   if (!active) return null;
 
+  const roleLabel = userRole === 'admin' ? 'Admin' : userRole === 'notary' ? 'Notary' : 'User';
+
   return (
     <>
-      {/* Overlay */}
-      <div className="fixed inset-0 bg-black/60 z-[10000]" onClick={close} />
+      <div className="fixed inset-0 bg-black/60 z-[10000]" onClick={close} data-testid="onboarding-overlay" />
 
-      {/* Tooltip */}
       <div
         className="fixed z-[10002] w-[300px] bg-[#1a2332] border border-gray-700 rounded-xl shadow-2xl p-4"
         style={{ top: pos.top, left: pos.left }}
         data-testid="onboarding-tooltip"
       >
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[10px] text-gray-500">{step + 1} of {STEPS.length}</span>
-          <button onClick={close} className="text-gray-500 hover:text-white"><X className="w-4 h-4" /></button>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-gray-500">{step + 1} of {steps.length}</span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold" data-testid="onboarding-role-badge">{roleLabel} Tour</span>
+          </div>
+          <button onClick={close} className="text-gray-500 hover:text-white" data-testid="onboarding-close-btn"><X className="w-4 h-4" /></button>
         </div>
-        <h3 className="text-white font-semibold text-sm mb-1">{STEPS[step]?.title}</h3>
-        <p className="text-gray-400 text-xs mb-3">{STEPS[step]?.content}</p>
+        <h3 className="text-white font-semibold text-sm mb-1">{steps[step]?.title}</h3>
+        <p className="text-gray-400 text-xs mb-3">{steps[step]?.content}</p>
         <div className="flex items-center justify-between">
-          <button onClick={close} className="text-gray-500 text-xs hover:text-white">Skip tour</button>
+          <button onClick={close} className="text-gray-500 text-xs hover:text-white" data-testid="onboarding-skip-btn">Skip tour</button>
           <div className="flex gap-2">
             {step > 0 && (
-              <Button size="sm" variant="ghost" onClick={prev} className="text-gray-400 h-7 px-2">
+              <Button size="sm" variant="ghost" onClick={prev} className="text-gray-400 h-7 px-2" data-testid="onboarding-prev-btn">
                 <ChevronLeft className="w-3 h-3 mr-1" /> Back
               </Button>
             )}
-            <Button size="sm" onClick={next} className="bg-[#00d4aa] hover:bg-[#00b894] text-black h-7 px-3">
-              {step < STEPS.length - 1 ? <>Next <ChevronRight className="w-3 h-3 ml-1" /></> : 'Done'}
+            <Button size="sm" onClick={next} className="bg-[#00d4aa] hover:bg-[#00b894] text-black h-7 px-3" data-testid="onboarding-next-btn">
+              {step < steps.length - 1 ? <>Next <ChevronRight className="w-3 h-3 ml-1" /></> : 'Done'}
             </Button>
           </div>
         </div>
-        {/* Progress dots */}
         <div className="flex justify-center gap-1 mt-3">
-          {STEPS.map((_, i) => (
+          {steps.map((_, i) => (
             <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === step ? 'bg-[#00d4aa]' : 'bg-gray-700'}`} />
           ))}
         </div>

@@ -106,7 +106,8 @@ from services.email_service import email_service
 from services import notification_service as notif_svc_module
 expiry_service.set_dependencies(db, notif_svc_module, email_service)
 reminder_service.set_dependencies(db, notif_svc_module)
-from services.hedera_service import hedera_service
+from services.hedera_service import hedera_service, hedera_bond_service
+hedera_bond_service.set_db(db)
 hbar_alert_service.set_dependencies(db, hedera_service, notif_svc_module, email_service)
 service_health_monitor.set_dependencies(db, notif_svc_module, email_service)
 

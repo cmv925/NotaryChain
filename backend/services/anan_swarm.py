@@ -347,7 +347,7 @@ async def get_or_init_bond(db) -> dict:
 
 
 async def apply_bond_event(db, event_type: str, ceremony_id: str) -> dict:
-    """Apply a slash or restock event to the SAN bond."""
+    """Apply a slash event to the SAN bond (MongoDB + on-chain HCS)."""
     bond = await get_or_init_bond(db)
     amount = SLASH_AMOUNTS.get(event_type, 0)
     new_balance = max(0, bond["balance"] - amount)
@@ -369,11 +369,28 @@ async def apply_bond_event(db, event_type: str, ceremony_id: str) -> dict:
             "$push": {"events": {"$each": [event], "$slice": -100}},
         },
     )
+
+    # Record on-chain via HCS
+    try:
+        from services.hedera_service import hedera_bond_service
+        hcs_result = await hedera_bond_service.record_bond_event(
+            event_type=f"slash:{event_type}",
+            amount=-amount,
+            balance_after=new_balance,
+            ceremony_id=ceremony_id,
+        )
+        event["on_chain"] = hcs_result.get("on_chain", False)
+        event["hcs_sequence"] = hcs_result.get("sequence_number")
+        event["hcs_topic"] = hcs_result.get("topic_id")
+    except Exception as ex:
+        event["on_chain"] = False
+        event["hcs_error"] = str(ex)
+
     return event
 
 
 async def restock_bond(db, ceremony_fee: float, ceremony_id: str) -> dict:
-    """Restock bond from ceremony fees."""
+    """Restock bond from ceremony fees (MongoDB + on-chain HCS)."""
     restock_amount = round(ceremony_fee * CEREMONY_FEE_RESTOCK_PCT, 2)
     bond = await get_or_init_bond(db)
     new_balance = bond["balance"] + restock_amount
@@ -395,4 +412,21 @@ async def restock_bond(db, ceremony_fee: float, ceremony_id: str) -> dict:
             "$push": {"events": {"$each": [event], "$slice": -100}},
         },
     )
+
+    # Record on-chain via HCS
+    try:
+        from services.hedera_service import hedera_bond_service
+        hcs_result = await hedera_bond_service.record_bond_event(
+            event_type="fee_restock",
+            amount=restock_amount,
+            balance_after=new_balance,
+            ceremony_id=ceremony_id,
+        )
+        event["on_chain"] = hcs_result.get("on_chain", False)
+        event["hcs_sequence"] = hcs_result.get("sequence_number")
+        event["hcs_topic"] = hcs_result.get("topic_id")
+    except Exception as ex:
+        event["on_chain"] = False
+        event["hcs_error"] = str(ex)
+
     return event

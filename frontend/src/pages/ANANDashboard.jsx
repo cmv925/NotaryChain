@@ -313,22 +313,60 @@ export default function ANANDashboard() {
           {/* Bond Status */}
           {bond && (
             <Card className="bg-[#0d1420] border-[#1a2540] mb-6" data-testid="anan-bond-status">
-              <CardContent className="p-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                    <Shield className="w-5 h-5 text-emerald-400" />
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-emerald-400" />
+                    </div>
+                    <div>
+                      <p className="text-slate-400 text-[10px] uppercase tracking-wider">SAN E&O Insurance Bond</p>
+                      <p className="text-white font-bold">${bond.balance?.toLocaleString()} <span className="text-slate-500 text-xs font-normal">/ $1,000,000</span></p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-slate-400 text-[10px] uppercase tracking-wider">SAN E&O Insurance Bond</p>
-                    <p className="text-white font-bold">${bond.balance?.toLocaleString()} <span className="text-slate-500 text-xs font-normal">/ $1,000,000</span></p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-48 h-2 bg-[#1a2540] rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full transition-all ${bond.health === 'healthy' ? 'bg-emerald-500' : bond.health === 'warning' ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${bond.health_pct}%` }} />
+                    </div>
+                    <span className={`text-xs font-bold ${bond.health === 'healthy' ? 'text-emerald-400' : bond.health === 'warning' ? 'text-amber-400' : 'text-red-400'}`}>{bond.health_pct}%</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-48 h-2 bg-[#1a2540] rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full transition-all ${bond.health === 'healthy' ? 'bg-emerald-500' : bond.health === 'warning' ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${bond.health_pct}%` }} />
+                {/* On-Chain Status */}
+                {bond.on_chain && (
+                  <div className="mt-3 pt-3 border-t border-[#1a2540] flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Blocks className="w-3.5 h-3.5 text-orange-400" />
+                      <span className="text-[10px] text-slate-500 uppercase tracking-wider">On-Chain Ledger</span>
+                      {bond.on_chain.enabled ? (
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold" data-testid="bond-chain-active">ACTIVE</span>
+                      ) : (
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-500/10 text-slate-400 border border-slate-500/20 font-bold">SDK PENDING</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {bond.on_chain.bond_topic_id && (
+                        <span className="text-[10px] text-slate-500 font-mono" data-testid="bond-topic-id">Topic: {bond.on_chain.bond_topic_id}</span>
+                      )}
+                      {bond.on_chain.network && (
+                        <span className="text-[10px] text-orange-400 font-bold uppercase">{bond.on_chain.network}</span>
+                      )}
+                      <Button size="sm" variant="outline" className="border-[#1a2540] text-slate-400 text-[10px] h-6"
+                        onClick={async () => {
+                          try {
+                            const res = await axios.get(`${API}/anan/bond/verify`, { headers });
+                            if (res.data.verified) {
+                              toast({ title: 'Bond Verified', description: `Chain balance matches DB: $${res.data.chain_balance?.toLocaleString()}` });
+                            } else {
+                              toast({ title: 'Verification Result', description: res.data.reason || `DB: $${res.data.db_balance} | Chain: $${res.data.chain_balance}`, variant: 'destructive' });
+                            }
+                          } catch { toast({ title: 'Verify unavailable', variant: 'destructive' }); }
+                        }}
+                        data-testid="bond-verify-btn">
+                        <ShieldCheck className="w-3 h-3 mr-1" /> Verify On-Chain
+                      </Button>
+                    </div>
                   </div>
-                  <span className={`text-xs font-bold ${bond.health === 'healthy' ? 'text-emerald-400' : bond.health === 'warning' ? 'text-amber-400' : 'text-red-400'}`}>{bond.health_pct}%</span>
-                </div>
+                )}
               </CardContent>
             </Card>
           )}

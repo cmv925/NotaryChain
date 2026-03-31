@@ -387,7 +387,7 @@ const Dashboard = () => {
           )}
         </div>
       </div>
-      <OnboardingTour />
+      <OnboardingTour userRole={user?.role} />
     </div>
   );
 };
