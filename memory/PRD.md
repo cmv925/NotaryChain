@@ -20,29 +20,20 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 ### ANAN — Autonomous Notary Agent Network — COMPLETE
 ### On-Chain Hedera Bond Management — COMPLETE
 ### Role-Specific Onboarding Tour — COMPLETE
+### Dynamic Escrow Intelligence (3 Trust Gaps) — COMPLETE
+### Real-Time WebSocket Escrow Notifications — COMPLETE
 
-### Dynamic Escrow Intelligence — COMPLETE (Apr 1, 2026)
-**Trust Gap 1: Execution** — AI Orchestrator extracts Performance Triggers, locks funds in smart vault
-**Trust Gap 2: Verification** — Oracle-based automated verification (shipping, inspection, appraisal, title) + AI Photo Verification via GPT-5.2 Vision
-**Trust Gap 3: Security** — Biometric Proof of Intent via GPT-5.2 Vision (facial geometry + liveness)
-
-### Real-Time WebSocket Escrow Notifications — COMPLETE (Apr 1, 2026)
-- Backend emits WebSocket events for: `escrow_oracle`, `escrow_biometric`, `escrow_settlement`, `escrow_photo_verified`
-- `_emit_escrow_event` helper resolves buyer/seller/creator emails to user IDs and calls `broadcast_event`
-- Frontend subscribes via `useWS()` hook, shows toast notifications, auto-refreshes escrow data
-- **LIVE** indicator in escrow detail header shows WebSocket connection status
-- **Live Events feed** card in sidebar shows real-time event stream with timestamps
-- Testing: 100% pass rate — iteration_75 (22/22 backend + all frontend)
-
-## Key API Endpoints
-- `POST /api/escrow/create` — Create escrow
-- `POST /api/escrow/{id}/extract-conditions` — AI extract performance triggers
-- `POST /api/escrow/{id}/deposit` — Deposit into smart vault
-- `POST /api/escrow/{id}/verify-condition` — Party confirmation
-- `POST /api/escrow/{id}/oracle-verify/{cid}` — Oracle automated verification (+ WS emit)
-- `POST /api/escrow/{id}/photo-verify/{cid}` — AI photo verification (+ WS emit)
-- `POST /api/escrow/{id}/biometric-gate` — Biometric Proof of Intent (+ WS emit)
-- `POST /api/escrow/{id}/settle` — Execute settlement (+ WS emit)
+### Investor Deck & Features List Update — COMPLETE (Apr 1, 2026)
+- **17 slides** (was 16): Added new "3 Trust Gaps We Solve" slide
+- **Updated stats**: 85+ features (was 67+), 250+ endpoints (was 200+), 9 integrations (was 7)
+- **11 Trademarkable Innovations** (was 8): Added AI Orchestrator, ANAN, Biometric Proof of Intent, Dynamic Fraud Intelligence, SAN Bond Ledger, Oracle Verification
+- **6 major feature cards**: ANAN Network, Escrow Intelligence, AI Orchestrator, Biometric Passport, Blockchain+Bond, Enterprise RBAC
+- **6-phase AI Pipeline** (was 4): Added ANAN Blind Consensus and Escrow Settlement phases
+- **12 feature categories** (was 8): Added Escrow Intelligence, ANAN Agent Network, Real-Time & WebSocket, Templates & Documents
+- **Updated architecture**: 15 core services, ANAN Swarm, Escrow Oracle, Fraud Intelligence
+- **Updated tech stack**: GPT-5.2 (AI + Vision) replacing old references
+- **Market slide**: Added $5.4T global escrow market TAM
+- Testing: 100% pass rate — iteration_76
 
 ## Upcoming Tasks
 - Resend Domain Verification (user task) (P1)
