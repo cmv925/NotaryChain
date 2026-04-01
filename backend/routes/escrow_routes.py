@@ -32,6 +32,35 @@ async def _get_user(request: Request):
     return user
 
 
+async def _emit_escrow_event(escrow: dict, event_type: str, data: dict):
+    """Push real-time escrow event to buyer, seller, and admins via WebSocket."""
+    from services.notification_service import broadcast_event
+    target_emails = set()
+    buyer_email = escrow.get("parties", {}).get("buyer", {}).get("email")
+    seller_email = escrow.get("parties", {}).get("seller", {}).get("email")
+    creator_email = escrow.get("created_by")
+    if buyer_email:
+        target_emails.add(buyer_email)
+    if seller_email:
+        target_emails.add(seller_email)
+    if creator_email:
+        target_emails.add(creator_email)
+
+    # Resolve user IDs from emails
+    target_ids = []
+    async for u in db.users.find({"email": {"$in": list(target_emails)}}, {"_id": 0, "id": 1, "email": 1}):
+        uid = u.get("id") or u.get("email")
+        if uid:
+            target_ids.append(uid)
+
+    payload = {
+        "escrow_id": escrow.get("escrow_id"),
+        "title": escrow.get("title"),
+        **data,
+    }
+    await broadcast_event(event_type, payload, target_ids if target_ids else None)
+
+
 # ═══════════════════════════════════════════════════════
 #  ESCROW CRUD
 # ═══════════════════════════════════════════════════════
@@ -521,6 +550,17 @@ async def oracle_verify_condition(escrow_id: str, condition_id: str, request: Re
         }}
     )
 
+    # Emit real-time WebSocket event to buyer & seller
+    await _emit_escrow_event(escrow, "escrow_oracle", {
+        "condition_id": condition_id,
+        "condition_title": target["title"],
+        "oracle_source": oracle_result["source"],
+        "condition_met": oracle_result["condition_met"],
+        "confidence": oracle_result["confidence"],
+        "met_count": met_count,
+        "total": total,
+    })
+
     return {
         "escrow_id": escrow_id,
         "condition_id": condition_id,
@@ -605,6 +645,17 @@ async def photo_verify_condition(escrow_id: str, condition_id: str, request: Req
             },
         }}
     )
+
+    # Emit real-time WebSocket event
+    await _emit_escrow_event(escrow, "escrow_photo_verified", {
+        "condition_id": condition_id,
+        "condition_title": target["title"],
+        "verified": ai_result["verified"],
+        "evidence_quality": ai_result.get("evidence_quality", "unknown"),
+        "confidence": ai_result.get("confidence", 0),
+        "met_count": met_count,
+        "total": total,
+    })
 
     return {
         "escrow_id": escrow_id,
@@ -703,6 +754,15 @@ async def biometric_settlement_gate(escrow_id: str, request: Request):
             },
         }
     )
+
+    # Emit real-time WebSocket event
+    await _emit_escrow_event(escrow, "escrow_biometric", {
+        "party_role": party_role,
+        "verified": bio_result["verified"],
+        "confidence": bio_result.get("confidence", 0),
+        "both_parties_verified": both_verified,
+        "proof_id": proof["proof_id"],
+    })
 
     return {
         "escrow_id": escrow_id,
@@ -813,6 +873,14 @@ async def settle_escrow(escrow_id: str, request: Request):
             "category": "settlement",
         }}}
     )
+
+    # Emit real-time WebSocket event
+    await _emit_escrow_event(escrow, "escrow_settlement", {
+        "status": "settled",
+        "amount_released": escrow["financial"]["escrow_amount"],
+        "settlement_hash": settlement_hash[:16],
+        "hcs_submitted": settlement_tx.get("hcs_submitted", False),
+    })
 
     return {
         "escrow_id": escrow_id,

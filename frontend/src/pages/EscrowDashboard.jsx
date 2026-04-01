@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useWS } from '../contexts/WebSocketContext';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Input } from '../components/ui/input';
@@ -12,7 +13,7 @@ import {
   Fingerprint, Brain, Globe, Landmark, Home, Scale,
   Building2, User, Users, Sparkles, Radio, Camera,
   Truck, ClipboardCheck, ImageIcon, Scan, Zap,
-  ArrowDownToLine, ArrowUpFromLine, Network,
+  ArrowDownToLine, ArrowUpFromLine, Network, Wifi, WifiOff,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
@@ -40,6 +41,7 @@ export default function EscrowDashboard() {
   const { escrowId } = useParams();
   const navigate = useNavigate();
   const { user, token } = useAuth();
+  const { connected: wsConnected, subscribe } = useWS();
   const [view, setView] = useState(escrowId ? 'detail' : 'list');
   const [escrows, setEscrows] = useState([]);
   const [currentEscrow, setCurrentEscrow] = useState(null);
@@ -49,6 +51,7 @@ export default function EscrowDashboard() {
   const [uploadedFile, setUploadedFile] = useState(null);
   const webcamRef = useRef(null);
   const [showBiometricModal, setShowBiometricModal] = useState(false);
+  const [liveEvents, setLiveEvents] = useState([]);
 
   const headers = { Authorization: `Bearer ${token}` };
 
@@ -74,6 +77,66 @@ export default function EscrowDashboard() {
     if (escrowId) { fetchEscrow(escrowId); setView('detail'); }
     else fetchEscrows();
   }, [token, escrowId]);
+
+  // WebSocket subscriptions for real-time escrow events
+  useEffect(() => {
+    if (!subscribe) return;
+    const unsubs = [];
+
+    const handleEvent = (msg) => {
+      const data = msg.data || {};
+      const evtEscrowId = data.escrow_id;
+      const escrowTitle = data.title || 'Escrow';
+      const now = new Date().toLocaleTimeString();
+
+      // Show toast for the event
+      if (msg.event === 'escrow_oracle') {
+        const met = data.condition_met;
+        toast({
+          title: `Oracle: ${met ? 'Condition Verified' : 'Not Yet Met'}`,
+          description: `${data.oracle_source}: "${data.condition_title}" (${data.met_count}/${data.total}) — ${escrowTitle}`,
+          variant: met ? 'default' : 'destructive',
+        });
+      } else if (msg.event === 'escrow_biometric') {
+        toast({
+          title: data.verified ? 'Biometric Gate: Passed' : 'Biometric Gate: Failed',
+          description: `${data.party_role?.charAt(0).toUpperCase() + data.party_role?.slice(1)} identity ${data.verified ? 'confirmed' : 'not confirmed'} — ${escrowTitle}`,
+          variant: data.verified ? 'default' : 'destructive',
+        });
+      } else if (msg.event === 'escrow_settlement') {
+        toast({
+          title: 'Settlement Complete!',
+          description: `$${data.amount_released?.toLocaleString()} released. Hash: ${data.settlement_hash}... — ${escrowTitle}`,
+        });
+      } else if (msg.event === 'escrow_photo_verified') {
+        toast({
+          title: data.verified ? 'Photo Evidence: Verified' : 'Photo Evidence: Insufficient',
+          description: `"${data.condition_title}" — Quality: ${data.evidence_quality} — ${escrowTitle}`,
+          variant: data.verified ? 'default' : 'destructive',
+        });
+      }
+
+      // Add to live events feed
+      setLiveEvents(prev => [{
+        id: Date.now(),
+        event: msg.event,
+        data,
+        time: now,
+      }, ...prev].slice(0, 20));
+
+      // Auto-refresh current escrow if it matches
+      if (evtEscrowId && currentEscrow?.escrow_id === evtEscrowId) {
+        fetchEscrow(evtEscrowId);
+      }
+    };
+
+    unsubs.push(subscribe('escrow_oracle', handleEvent));
+    unsubs.push(subscribe('escrow_biometric', handleEvent));
+    unsubs.push(subscribe('escrow_settlement', handleEvent));
+    unsubs.push(subscribe('escrow_photo_verified', handleEvent));
+
+    return () => unsubs.forEach(u => u && u());
+  }, [subscribe, currentEscrow?.escrow_id]);
 
   const openEscrow = (id) => navigate(`/escrow/${id}`);
 
@@ -293,7 +356,13 @@ export default function EscrowDashboard() {
               <p className="text-gray-500 text-xs">{e.escrow_type === 'real_estate' ? 'Real Estate Escrow' : 'Escrow Agreement'} &#8212; {e.escrow_id.slice(0, 8)}</p>
             </div>
           </div>
-          <StatusBadge status={e.status} />
+          <div className="flex items-center gap-2">
+            <StatusBadge status={e.status} />
+            <div className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border ${wsConnected ? 'text-emerald-400 border-emerald-500/20 bg-emerald-500/10' : 'text-gray-500 border-gray-700 bg-gray-800'}`} data-testid="ws-status-indicator">
+              {wsConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
+              {wsConnected ? 'LIVE' : 'OFFLINE'}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -544,6 +613,41 @@ export default function EscrowDashboard() {
                     {e.blockchain.settlement_tx?.explorer_url && (
                       <a href={e.blockchain.settlement_tx.explorer_url} target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300 text-[10px] flex items-center gap-1 mt-1"><Globe className="w-3 h-3" /> View on HashScan</a>
                     )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Live WebSocket Events */}
+            {liveEvents.length > 0 && (
+              <Card className="bg-[#111827] border-emerald-500/20" data-testid="escrow-live-events">
+                <CardContent className="p-4">
+                  <h3 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
+                    <Radio className="w-4 h-4 text-emerald-400 animate-pulse" /> Live Events
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">REAL-TIME</span>
+                  </h3>
+                  <div className="space-y-2">
+                    {liveEvents.slice(0, 8).map((evt) => {
+                      const icon = evt.event === 'escrow_oracle' ? Globe
+                        : evt.event === 'escrow_biometric' ? Fingerprint
+                        : evt.event === 'escrow_settlement' ? ShieldCheck
+                        : evt.event === 'escrow_photo_verified' ? ImageIcon
+                        : Zap;
+                      const IconComponent = icon;
+                      const isPositive = evt.data?.condition_met || evt.data?.verified || evt.event === 'escrow_settlement';
+                      const label = evt.event === 'escrow_oracle' ? `Oracle: ${evt.data?.oracle_source || 'Unknown'}`
+                        : evt.event === 'escrow_biometric' ? `Biometric: ${evt.data?.party_role || 'unknown'}`
+                        : evt.event === 'escrow_settlement' ? 'Settlement executed'
+                        : evt.event === 'escrow_photo_verified' ? `Photo: ${evt.data?.condition_title || 'Evidence'}`
+                        : evt.event;
+                      return (
+                        <div key={evt.id} className="flex items-center gap-2">
+                          <IconComponent className={`w-3 h-3 flex-shrink-0 ${isPositive ? 'text-emerald-400' : 'text-red-400'}`} />
+                          <span className="text-gray-300 text-[10px] flex-1 truncate">{label}</span>
+                          <span className="text-gray-600 text-[10px]">{evt.time}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>
