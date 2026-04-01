@@ -14,92 +14,38 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 - **Email**: Resend
 - **Infrastructure**: Sentry, cachetools, background tasks, AWS S3 (boto3)
 
-## Completed Features (All Tested)
+## Completed Features
 
 ### Core Platform (Phases 1-26) — ALL COMPLETE
-Website, Auth (multi-role + 2FA), Notary system, AI Analysis, Blockchain, Stripe, Video, Biometrics, Crypto, Compliance/Audit, Email, RON, Webhooks, GDPR, Real-time Collaboration, Public API, etc.
-
 ### ANAN — Autonomous Notary Agent Network — COMPLETE
-- 3-agent GPT-5.2 blind consensus swarm (Verifier, Witness, Sealer)
-- Dynamic Fraud Intelligence (8 patterns, 8 RON jurisdictions)
-- Agent Reputation & Self-Tuning Weights
-- On-Chain Hedera Bond Management (HCS topic 0.0.10415918 on mainnet)
-- Role-Specific Onboarding Tour (Admin/Notary/User)
+### On-Chain Hedera Bond Management — COMPLETE
+### Role-Specific Onboarding Tour — COMPLETE
 
 ### Dynamic Escrow Intelligence — COMPLETE (Apr 1, 2026)
-Transforms legal documents into living, programmable financial instruments.
+**Trust Gap 1: Execution** — AI Orchestrator extracts Performance Triggers, locks funds in smart vault
+**Trust Gap 2: Verification** — Oracle-based automated verification (shipping, inspection, appraisal, title) + AI Photo Verification via GPT-5.2 Vision
+**Trust Gap 3: Security** — Biometric Proof of Intent via GPT-5.2 Vision (facial geometry + liveness)
 
-**Trust Gap 1: Execution Gap — AI Orchestrator**
-- GPT-5.2 extracts Performance Triggers from contracts
-- Smart vault locks funds until milestones are verified
-- Milestone-based condition tracking with payment percentages
-- Backend: `/api/escrow/create`, `/api/escrow/{id}/extract-conditions`, `/api/escrow/{id}/deposit`
-
-**Trust Gap 2: Verification Gap — Oracle + AI Vision**
-- Automated oracle verification: shipping_tracker, inspection_service, appraisal_service, title_company_api
-- AI Photo Verification via GPT-5.2 Vision for milestone proof
-- Oracle auto-verifies conditions when data confirms
-- Backend: `/api/escrow/{id}/oracle-verify/{condition_id}`, `/api/escrow/{id}/photo-verify/{condition_id}`
-
-**Trust Gap 3: Security Gap — Biometric Proof of Intent**
-- Facial geometry + liveness detection at settlement via GPT-5.2 Vision
-- Per-party biometric status tracking (buyer/seller)
-- Biometric proof stored in escrow audit trail
-- Settlement only proceeds after identity verification
-- Backend: `/api/escrow/{id}/biometric-gate`, `/api/escrow/{id}/settle`
-
-**Frontend**: Fully redesigned EscrowDashboard with Trust Gap sections, Oracle badges, Check Oracle buttons, Biometric Gate UI, Oracle Activity sidebar
-
-**Testing**: 100% pass rate — iteration_74 (16/16 backend + all frontend verified)
-
-### Additional Completed Features
-- Modernized Bento-grid Dashboard with Role-based Filtering
-- Shareable Verification Badges (Static HTML + Dynamic JS embed)
-- Full SSO Integration (Auth0 + Okta)
-- Enterprise Features, RBAC, Permission-based UI
-- Analytics Dashboard, i18n (EN/ES/FR), Operations Dashboard
-- Hedera Mainnet Integration, Stripe Live Mode
-- AI Co-pilot, AI Document Generator, Webcam Face Capture
-- Public Certificate Verification, Universal Breadcrumbs
-- And 40+ more features (see CHANGELOG.md)
-
-## Architecture
-```
-/app
-├── backend/
-│   ├── routes/
-│   │   ├── escrow_routes.py           # Dynamic Escrow Intelligence (3 Trust Gaps)
-│   │   ├── anan_routes.py             # ANAN ceremonies, bond, reputation
-│   │   ├── fraud_intelligence_routes.py
-│   │   └── ... (40+ route files)
-│   ├── services/
-│   │   ├── escrow_oracle_service.py   # Oracle simulation + GPT-5.2 photo/biometric
-│   │   ├── ai_escrow_service.py       # GPT-5.2 condition extraction
-│   │   ├── anan_swarm.py              # 3-agent consensus + on-chain bond
-│   │   ├── hedera_service.py          # HCS + HederaBondService
-│   │   └── ... (15+ service files)
-│   └── server.py
-└── frontend/src/
-    ├── pages/
-    │   ├── EscrowDashboard.jsx        # Trust Gap UI (Execution/Verification/Security)
-    │   ├── Dashboard.jsx              # Bento-grid role-based dashboard
-    │   ├── ANANDashboard.jsx          # Swarm monitoring + on-chain bond
-    │   └── ... (50+ pages)
-    └── App.js
-```
+### Real-Time WebSocket Escrow Notifications — COMPLETE (Apr 1, 2026)
+- Backend emits WebSocket events for: `escrow_oracle`, `escrow_biometric`, `escrow_settlement`, `escrow_photo_verified`
+- `_emit_escrow_event` helper resolves buyer/seller/creator emails to user IDs and calls `broadcast_event`
+- Frontend subscribes via `useWS()` hook, shows toast notifications, auto-refreshes escrow data
+- **LIVE** indicator in escrow detail header shows WebSocket connection status
+- **Live Events feed** card in sidebar shows real-time event stream with timestamps
+- Testing: 100% pass rate — iteration_75 (22/22 backend + all frontend)
 
 ## Key API Endpoints
-- `POST /api/escrow/create` — Create escrow agreement
+- `POST /api/escrow/create` — Create escrow
 - `POST /api/escrow/{id}/extract-conditions` — AI extract performance triggers
 - `POST /api/escrow/{id}/deposit` — Deposit into smart vault
 - `POST /api/escrow/{id}/verify-condition` — Party confirmation
-- `POST /api/escrow/{id}/oracle-verify/{cid}` — Oracle automated verification
-- `POST /api/escrow/{id}/photo-verify/{cid}` — AI photo evidence verification
-- `POST /api/escrow/{id}/biometric-gate` — Biometric Proof of Intent
-- `POST /api/escrow/{id}/settle` — Execute settlement (HCS sealed)
+- `POST /api/escrow/{id}/oracle-verify/{cid}` — Oracle automated verification (+ WS emit)
+- `POST /api/escrow/{id}/photo-verify/{cid}` — AI photo verification (+ WS emit)
+- `POST /api/escrow/{id}/biometric-gate` — Biometric Proof of Intent (+ WS emit)
+- `POST /api/escrow/{id}/settle` — Execute settlement (+ WS emit)
 
 ## Upcoming Tasks
-- Resend Domain Verification (user task — verify domain on resend.com) (P1)
+- Resend Domain Verification (user task) (P1)
 
 ## Future/Backlog
 - Connect real Hedera Token Service (HTS) for on-chain tokenized escrow (P2)
