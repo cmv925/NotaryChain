@@ -1,109 +1,115 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Lock, Shield, Brain, Fingerprint, Link2, Users, FileCheck, ChevronRight, Send, CheckCircle, Layers, Eye, Globe, Zap, BarChart3, ArrowRight, Award, Server, Database, Cpu, GitBranch, Activity, Box, Radio, CreditCard, Calendar, FileText, Settings, UserCheck, Video, Bell } from 'lucide-react';
+import { Lock, Shield, Brain, Fingerprint, Link2, Users, FileCheck, ChevronRight, Send, CheckCircle, Layers, Eye, Globe, Zap, BarChart3, ArrowRight, Award, Server, Database, Cpu, GitBranch, Activity, Box, Radio, CreditCard, Calendar, FileText, Settings, UserCheck, Video, Bell, Scale, Network, Blocks, Vote, Wifi } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
 /* ═══════════════════ DATA ═══════════════════ */
 
 const PLATFORM_STATS = [
-  { label: 'Features Shipped', value: '67+' },
-  { label: 'API Endpoints', value: '200+' },
-  { label: 'Integrations', value: '7' },
+  { label: 'Features Shipped', value: '85+' },
+  { label: 'API Endpoints', value: '250+' },
+  { label: 'Integrations', value: '9' },
   { label: 'Test Pass Rate', value: '100%' },
 ];
 
 const TRADEMARKS = [
   { name: 'NotaryChain', feature: 'Platform name', reason: 'Unique brand combining notary + blockchain' },
-  { name: 'AI Co-pilot', feature: 'Intelligent notary assistant', reason: 'Distinctive AI assistant branding for legal/notary vertical' },
-  { name: 'AI Transaction Orchestrator', feature: '4-phase automated transaction execution', reason: 'Novel end-to-end AI-guided notarization workflow' },
+  { name: 'AI Orchestrator', feature: 'GPT-5.2-powered escrow condition extraction and enforcement', reason: 'Novel AI system that converts contracts into programmable financial instruments' },
+  { name: 'Autonomous Notary Agent Network', feature: '3-agent GPT-5.2 blind consensus swarm for notarization', reason: 'Industry-first AI swarm architecture for autonomous document verification' },
   { name: 'Biometric Passport', feature: 'Unified identity credential via face verification', reason: 'Unique identity verification concept for notarization' },
+  { name: 'Biometric Proof of Intent', feature: 'Facial geometry + liveness gate for escrow settlement', reason: 'Novel identity-bound escrow release mechanism eliminating fraud' },
+  { name: 'Dynamic Fraud Intelligence', feature: 'Self-tuning jurisdictional fraud patterns injected into AI agents', reason: 'Adaptive threat detection for RON compliance' },
+  { name: 'SAN Bond Ledger', feature: 'On-chain Hedera HCS immutable insurance bond audit trail', reason: 'Cryptographic accountability for AI agent performance' },
+  { name: 'Oracle Verification', feature: 'External data feed integration for autonomous escrow condition verification', reason: 'Trustless milestone verification eliminating intermediaries' },
   { name: 'AI Conductor Mode', feature: 'LLM-guided step-by-step transaction execution', reason: 'Distinctive AI-guided workflow branding' },
   { name: 'Evidence Package', feature: 'Automated settlement audit trail generation', reason: 'Novel automated compliance artifact' },
   { name: 'Document Remediation', feature: 'AI clause analysis & fix suggestions', reason: 'Unique AI-powered document healing concept' },
-  { name: 'Smart Reminders', feature: 'Context-aware intelligent notification system', reason: 'AI-driven reminder system for legal workflows' },
 ];
 
 const FEATURES = [
   {
+    icon: Vote,
+    title: 'ANAN: Autonomous Notary Agent Network',
+    trademark: true,
+    description: 'Industry-first 3-agent GPT-5.2 swarm that performs blind consensus voting on every notarization. Verifier, Witness, and Sealer agents independently analyze documents, then reach consensus without seeing each other\'s votes. Includes dynamic fraud intelligence, agent reputation auto-tuning, and a $1M on-chain insurance bond.',
+    stats: ['3-agent blind consensus', 'GPT-5.2 swarm AI', '$1M on-chain bond', 'Self-tuning weights'],
+    color: '#8b5cf6',
+  },
+  {
+    icon: Scale,
+    title: 'Dynamic Escrow Intelligence',
+    trademark: true,
+    description: 'Transforms legal documents into programmable financial instruments. The AI Orchestrator extracts performance triggers from contracts, oracle networks verify milestones autonomously, and biometric proof of intent ensures funds move only between verified individuals. Real-time WebSocket notifications keep all parties synchronized.',
+    stats: ['3 Trust Gaps solved', 'Oracle verification', 'Biometric settlement', 'Real-time WebSocket'],
+    color: '#f59e0b',
+  },
+  {
     icon: Brain,
     title: 'AI Transaction Orchestrator',
     trademark: true,
-    description: 'Autonomous AI engine that manages the entire notarization lifecycle. Identifies document types, suggests signers, validates compliance, and orchestrates multi-party transactions end-to-end.',
+    description: 'Autonomous AI engine powered by GPT-5.2 that manages the entire notarization lifecycle. Identifies document types, suggests signers, validates compliance, and orchestrates multi-party transactions end-to-end with real-time streaming status.',
     stats: ['95% automation rate', 'Sub-second decisions', '11 orchestration stages'],
     color: '#3b82f6',
   },
   {
     icon: Fingerprint,
-    title: 'Biometric Passport',
+    title: 'Biometric Passport & Proof of Intent',
     trademark: true,
-    description: 'Military-grade facial recognition creates a unique, tamper-proof biometric identity for every participant. Ensures irrefutable identity verification that exceeds court admissibility standards.',
-    stats: ['TensorFlow.js deep learning', 'Liveness detection', 'Court-admissible proof'],
-    color: '#8b5cf6',
+    description: 'Military-grade facial recognition creates tamper-proof biometric identities. GPT-5.2 Vision performs liveness detection and 3D facial geometry analysis. The Biometric Proof of Intent ties escrow settlement keys directly to verified identities, preventing unauthorized fund releases.',
+    stats: ['GPT-5.2 Vision analysis', 'Liveness detection', 'Court-admissible proof', 'Escrow settlement gate'],
+    color: '#a855f7',
   },
   {
-    icon: Link2,
-    title: 'Blockchain Sealing Engine',
+    icon: Blocks,
+    title: 'Blockchain Sealing & On-Chain Bond',
     trademark: false,
-    description: 'Every notarized document is cryptographically sealed on the Hedera Hashgraph network, creating an immutable, timestamped proof of authenticity that can never be altered or disputed.',
-    stats: ['Hedera Hashgraph', 'SHA-256 hashing', 'Immutable ledger'],
+    description: 'Every notarized document and escrow lifecycle is cryptographically sealed on Hedera Hashgraph mainnet. The SAN Bond Ledger records all agent performance events on-chain, creating an immutable, verifiable audit trail that can never be altered or disputed.',
+    stats: ['Hedera Mainnet', 'On-chain bond ledger', 'SHA-256 hashing', 'Immutable audit trail'],
     color: '#06b6d4',
   },
   {
     icon: Shield,
-    title: 'Enterprise RBAC & SSO',
+    title: 'Enterprise RBAC, SSO & Fraud Intelligence',
     trademark: false,
-    description: 'Granular role-based access control with 23 permissions across 7 categories, custom roles, single sign-on integration, and organization-wide security policies. Built for enterprise compliance at scale.',
-    stats: ['23 permissions', 'SAML/OIDC ready', 'Permission-gated UI'],
+    description: 'Granular role-based access control with 23 permissions across 7 categories. Single sign-on via Auth0 and Okta. Dynamic Fraud Intelligence injects jurisdictional RON compliance rules and threat patterns into AI agent analysis in real-time.',
+    stats: ['23 permissions', 'Auth0 + Okta SSO', '8 fraud patterns', '8 RON jurisdictions'],
     color: '#10b981',
-  },
-  {
-    icon: FileCheck,
-    title: 'Smart Document Templates',
-    trademark: false,
-    description: 'AI-powered document generation and a comprehensive template library with field extraction, auto-population, and intelligent validation. From creation to notarization in minutes.',
-    stats: ['5+ template types', 'AI field detection', 'Batch processing'],
-    color: '#f59e0b',
-  },
-  {
-    icon: Users,
-    title: 'Real-Time Collaboration',
-    trademark: false,
-    description: 'WebSocket-powered live sessions for multi-party notarizations. Video conferencing, real-time notifications, co-editing, and a full audit trail of every action.',
-    stats: ['Live video sessions', 'WebSocket events', 'Complete audit trail'],
-    color: '#ef4444',
   },
 ];
 
 const AI_PIPELINE = [
-  { phase: '01', name: 'Document Remediation', trademark: true, desc: 'AI analyzes clauses, identifies issues, and suggests fixes before notarization begins.', color: '#3b82f6' },
-  { phase: '02', name: 'Biometric Passport', trademark: true, desc: 'Unified biometric identity credential created via client-side face detection and liveness challenges.', color: '#8b5cf6' },
-  { phase: '03', name: 'AI Conductor Mode', trademark: true, desc: 'LLM-guided step-by-step transaction execution with real-time compliance validation.', color: '#06b6d4' },
-  { phase: '04', name: 'Evidence Package', trademark: true, desc: 'Automated settlement audit trail with blockchain sealing and exportable compliance artifacts.', color: '#10b981' },
+  { phase: '01', name: 'Document Remediation', trademark: true, desc: 'GPT-5.2 analyzes clauses, identifies issues, and suggests fixes before notarization begins.', color: '#3b82f6' },
+  { phase: '02', name: 'ANAN Blind Consensus', trademark: true, desc: '3-agent AI swarm (Verifier, Witness, Sealer) independently analyze and vote. 2-of-3 consensus required.', color: '#8b5cf6' },
+  { phase: '03', name: 'Biometric Passport', trademark: true, desc: 'GPT-5.2 Vision biometric identity credential with liveness detection and 3D facial geometry.', color: '#a855f7' },
+  { phase: '04', name: 'AI Conductor Mode', trademark: true, desc: 'LLM-guided step-by-step transaction execution with real-time compliance validation and streaming.', color: '#06b6d4' },
+  { phase: '05', name: 'Escrow Settlement', trademark: true, desc: 'Oracle-verified conditions trigger autonomous fund release. Biometric Proof of Intent gates settlement.', color: '#f59e0b' },
+  { phase: '06', name: 'Blockchain Sealing', trademark: false, desc: 'Lifecycle hash sealed on Hedera HCS. Bond events recorded. Immutable audit trail generated.', color: '#10b981' },
 ];
 
 const FEATURE_CATEGORIES = [
   { name: 'Core Notarization', count: 7, icon: FileText, color: '#3b82f6' },
-  { name: 'AI & Intelligence', count: 7, icon: Brain, color: '#8b5cf6' },
-  { name: 'Security & Identity', count: 8, icon: Shield, color: '#ef4444' },
-  { name: 'Blockchain & Verification', count: 4, icon: Link2, color: '#06b6d4' },
+  { name: 'AI & Intelligence', count: 12, icon: Brain, color: '#8b5cf6' },
+  { name: 'Security & Identity', count: 10, icon: Shield, color: '#ef4444' },
+  { name: 'Blockchain & Verification', count: 7, icon: Link2, color: '#06b6d4' },
+  { name: 'Escrow Intelligence', count: 8, icon: Scale, color: '#f59e0b' },
+  { name: 'ANAN Agent Network', count: 6, icon: Vote, color: '#a855f7' },
   { name: 'Payments & Subscriptions', count: 5, icon: CreditCard, color: '#10b981' },
-  { name: 'Organization & Enterprise', count: 12, icon: Users, color: '#f59e0b' },
-  { name: 'Real-Time & Collaboration', count: 5, icon: Radio, color: '#ec4899' },
+  { name: 'Organization & Enterprise', count: 12, icon: Users, color: '#f97316' },
+  { name: 'Real-Time & WebSocket', count: 7, icon: Wifi, color: '#ec4899' },
   { name: 'Templates & Documents', count: 5, icon: FileCheck, color: '#14b8a6' },
-  { name: 'Marketplace & Booking', count: 4, icon: Calendar, color: '#a855f7' },
-  { name: 'User Experience', count: 5, icon: Eye, color: '#f97316' },
-  { name: 'Admin & Monitoring', count: 5, icon: Settings, color: '#6366f1' },
+  { name: 'Marketplace & Booking', count: 4, icon: Calendar, color: '#6366f1' },
+  { name: 'Admin & Monitoring', count: 7, icon: Settings, color: '#64748b' },
 ];
 
 const DEEP_METRICS = [
-  { label: 'Total Features', value: '67+' },
-  { label: 'AI Features', value: '7' },
-  { label: 'Trademarkable IP', value: '8' },
+  { label: 'Total Features', value: '85+' },
+  { label: 'AI Features', value: '12' },
+  { label: 'Trademarkable IP', value: '11' },
   { label: 'RBAC Permissions', value: '23' },
-  { label: 'Webhook Events', value: '11' },
-  { label: 'Report Sections', value: '5' },
-  { label: 'Subscription Tiers', value: '3' },
-  { label: 'Feature Categories', value: '11' },
+  { label: 'Oracle Types', value: '4' },
+  { label: 'AI Agents', value: '3' },
+  { label: 'Trust Gaps Solved', value: '3' },
+  { label: 'Feature Categories', value: '12' },
 ];
 
 /* ═══════════════════ PASSWORD GATE ═══════════════════ */
@@ -170,12 +176,12 @@ function HeroSlide({ visible }) {
   return (
     <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="text-center max-w-4xl mx-auto py-20 px-6">
-        <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-6">Enterprise-Grade Digital Notarization</p>
+        <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-6">Enterprise-Grade Digital Notarization + AI Escrow</p>
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-          The Future of <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">Notarization</span> is Here
+          The Future of <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">Trust</span> is Here
         </h1>
         <p className="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed mb-10">
-          NotaryChain fuses AI orchestration, biometric identity, and blockchain immutability into a single platform that transforms how documents are authenticated and trusted.
+          NotaryChain fuses autonomous AI agent swarms, biometric identity, oracle-verified escrow, and blockchain immutability into a single platform that transforms how documents are authenticated and value is exchanged.
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-2xl mx-auto">
           {PLATFORM_STATS.map((s) => (
@@ -198,7 +204,7 @@ function IPSlide({ visible }) {
       <div className="max-w-5xl mx-auto px-6 py-12">
         <div className="text-center mb-10">
           <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">Intellectual Property</p>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">8 Trademarkable Innovations</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">11 Trademarkable Innovations</h2>
           <p className="text-gray-500 text-sm max-w-xl mx-auto">Proprietary workflow innovations that form a defensible technology moat.</p>
         </div>
         <div className="grid sm:grid-cols-2 gap-3">
@@ -212,6 +218,47 @@ function IPSlide({ visible }) {
               <p className="text-gray-600 text-[11px] italic">{t.reason}</p>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════ SLIDE: TRUST GAPS ═══════════════════ */
+
+function TrustGapsSlide({ visible }) {
+  const gaps = [
+    { num: '1', title: 'The Execution Gap', subtitle: 'From Signature to Action', desc: 'AI Orchestrator extracts "Performance Triggers" from contracts and holds funds in a smart vault that only opens when milestones are verified. No more dead zones between signing and payment.', color: '#f59e0b', icon: Zap },
+    { num: '2', title: 'The Verification Gap', subtitle: 'Eliminating Subjective Disputes', desc: 'Oracle networks (shipping trackers, inspection databases, AI photo analysis) autonomously verify milestones. When data confirms completion, escrow settles instantly. No intermediaries.', color: '#06b6d4', icon: Network },
+    { num: '3', title: 'The Security Gap', subtitle: 'Biometric Proof of Intent', desc: 'The escrow "key" is tied to GPT-5.2 Vision biometric verification. Funds release only when the recipient\'s identity is confirmed via 3D facial geometry and liveness detection at settlement.', color: '#a855f7', icon: Fingerprint },
+  ];
+  return (
+    <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+      <div className="max-w-5xl mx-auto px-6 py-12">
+        <div className="text-center mb-10">
+          <p className="text-amber-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">Core Innovation</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">3 Trust Gaps We Solve</h2>
+          <p className="text-gray-500 text-sm max-w-2xl mx-auto">Traditional escrow is slow, expensive, and reliant on human intermediaries. We replace trust with mathematics.</p>
+        </div>
+        <div className="space-y-4">
+          {gaps.map((g) => {
+            const GIcon = g.icon;
+            return (
+              <div key={g.num} className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-6 hover:border-white/[0.12] transition-colors flex gap-6 items-start">
+                <div className="w-14 h-14 rounded-2xl border border-white/[0.08] flex items-center justify-center shrink-0" style={{ background: `${g.color}10` }}>
+                  <GIcon className="w-7 h-7" style={{ color: g.color }} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-3 mb-1">
+                    <span className="text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full" style={{ color: g.color, background: `${g.color}15`, border: `1px solid ${g.color}30` }}>GAP {g.num}</span>
+                    <h3 className="text-white font-semibold text-lg">{g.title}</h3>
+                  </div>
+                  <p className="text-gray-600 text-xs italic mb-2">{g.subtitle}</p>
+                  <p className="text-gray-400 text-sm leading-relaxed">{g.desc}</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -262,12 +309,11 @@ function AIPipelineSlide({ visible }) {
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="text-center mb-10">
           <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">Core Innovation</p>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">4-Phase AI Orchestration Pipeline</h2>
-          <p className="text-gray-500 text-sm max-w-xl mx-auto">End-to-end autonomous transaction execution powered by Google Gemini.</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">6-Phase AI Orchestration Pipeline</h2>
+          <p className="text-gray-500 text-sm max-w-xl mx-auto">End-to-end autonomous transaction execution powered by GPT-5.2.</p>
         </div>
         <div className="relative">
-          {/* Connecting line */}
-          <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-blue-500/50 via-purple-500/50 to-emerald-500/50 hidden sm:block" />
+          <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-blue-500/50 via-purple-500/50 via-cyan-500/50 to-emerald-500/50 hidden sm:block" />
           <div className="space-y-6">
             {AI_PIPELINE.map((p, i) => (
               <div key={p.phase} className="flex items-start gap-6 relative">
@@ -315,7 +361,6 @@ function FeatureBreakdownSlide({ visible }) {
               </div>
             );
           })}
-          {/* Summary card */}
           <div className="bg-blue-600/10 border border-blue-500/20 rounded-xl p-4 flex flex-col justify-center items-center">
             <div className="text-2xl font-bold text-blue-400">{totalFeatures}</div>
             <div className="text-blue-300 text-xs mt-1">Total Features</div>
@@ -337,45 +382,40 @@ function ArchitectureSlide({ visible }) {
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Architecture Overview</h2>
         </div>
         <div className="space-y-3">
-          {/* Frontend Layer */}
           <div className="bg-white/[0.02] border border-blue-500/20 rounded-xl p-5">
             <div className="flex items-center gap-3 mb-3">
               <Eye className="w-5 h-5 text-blue-400" />
               <h3 className="text-white font-semibold text-sm">Frontend — React SPA</h3>
             </div>
             <div className="flex flex-wrap gap-2">
-              {['Auth & Dashboard', 'Notary Portal', 'Admin Panel', 'AI Tools', 'Org Management', 'RBAC & SSO', 'Biometric Verification', 'Real-Time Collab'].map(m => (
+              {['Bento Dashboard', 'ANAN Monitor', 'Escrow Intelligence', 'Fraud Intelligence', 'Biometric Gate', 'Notary Portal', 'Admin Panel', 'AI Tools', 'Role-Based Onboarding'].map(m => (
                 <span key={m} className="text-[11px] text-gray-400 bg-blue-500/5 border border-blue-500/10 rounded-md px-2.5 py-1">{m}</span>
               ))}
             </div>
           </div>
-          {/* Arrow */}
-          <div className="flex justify-center text-gray-700 text-xs">HTTPS / WebSocket</div>
-          {/* API Gateway */}
+          <div className="flex justify-center text-gray-700 text-xs">HTTPS / WebSocket (Real-Time Events)</div>
           <div className="bg-white/[0.02] border border-purple-500/20 rounded-xl p-5">
             <div className="flex items-center gap-3 mb-3">
               <Server className="w-5 h-5 text-purple-400" />
               <h3 className="text-white font-semibold text-sm">API Gateway — FastAPI</h3>
             </div>
             <div className="flex flex-wrap gap-2">
-              {['JWT Auth', 'RBAC Middleware', 'Rate Limiting (SlowAPI)', 'CORS'].map(m => (
+              {['JWT Auth + 2FA', 'RBAC Middleware', 'Rate Limiting', 'SSO (Auth0/Okta)', 'WebSocket Manager'].map(m => (
                 <span key={m} className="text-[11px] text-gray-400 bg-purple-500/5 border border-purple-500/10 rounded-md px-2.5 py-1">{m}</span>
               ))}
             </div>
           </div>
-          {/* Service Layer */}
           <div className="bg-white/[0.02] border border-cyan-500/20 rounded-xl p-5">
             <div className="flex items-center gap-3 mb-3">
               <Box className="w-5 h-5 text-cyan-400" />
-              <h3 className="text-white font-semibold text-sm">Service Layer — 9 Core Services</h3>
+              <h3 className="text-white font-semibold text-sm">Service Layer — 15 Core Services</h3>
             </div>
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-              {['Document', 'Notary', 'AI Engine (Gemini)', 'Payment (Stripe)', 'Blockchain (Hedera)', 'Organization & RBAC', 'Webhook Delivery', 'Scheduled Reports', 'Real-Time WS'].map(m => (
+              {['ANAN Swarm (GPT-5.2)', 'Escrow Oracle', 'Fraud Intelligence', 'AI Engine', 'Biometric Vision', 'Hedera HCS + Bond', 'Payment (Stripe)', 'Agent Reputation', 'Document Pipeline', 'Email (Resend)', 'Notification WS', 'Webhook Delivery', 'S3 Storage', 'HBAR Alerts', 'Scheduled Reports'].map(m => (
                 <span key={m} className="text-[11px] text-center text-gray-400 bg-cyan-500/5 border border-cyan-500/10 rounded-md px-2 py-1.5">{m}</span>
               ))}
             </div>
           </div>
-          {/* Background & DB */}
           <div className="grid sm:grid-cols-2 gap-3">
             <div className="bg-white/[0.02] border border-amber-500/20 rounded-xl p-5">
               <div className="flex items-center gap-3 mb-3">
@@ -383,7 +423,7 @@ function ArchitectureSlide({ visible }) {
                 <h3 className="text-white font-semibold text-sm">Background Workers</h3>
               </div>
               <div className="flex flex-wrap gap-2">
-                {['Doc Expiry Checker', 'Smart Reminders', 'Report Generation'].map(m => (
+                {['Doc Expiry', 'Smart Reminders', 'Report Gen', 'HBAR Monitor', 'Service Health'].map(m => (
                   <span key={m} className="text-[11px] text-gray-400 bg-amber-500/5 border border-amber-500/10 rounded-md px-2.5 py-1">{m}</span>
                 ))}
               </div>
@@ -391,10 +431,10 @@ function ArchitectureSlide({ visible }) {
             <div className="bg-white/[0.02] border border-emerald-500/20 rounded-xl p-5">
               <div className="flex items-center gap-3 mb-3">
                 <Database className="w-5 h-5 text-emerald-400" />
-                <h3 className="text-white font-semibold text-sm">MongoDB</h3>
+                <h3 className="text-white font-semibold text-sm">MongoDB + Hedera HCS</h3>
               </div>
               <div className="flex flex-wrap gap-2">
-                {['Users', 'Documents', 'Transactions', 'Orgs', 'RBAC Roles', 'Webhooks', 'Activity Logs', 'Reports'].map(m => (
+                {['Users', 'Documents', 'ANAN Ceremonies', 'Escrow Agreements', 'Fraud Patterns', 'Bond Ledger', 'Orgs', 'RBAC Roles'].map(m => (
                   <span key={m} className="text-[11px] text-gray-400 bg-emerald-500/5 border border-emerald-500/10 rounded-md px-2.5 py-1">{m}</span>
                 ))}
               </div>
@@ -410,10 +450,10 @@ function ArchitectureSlide({ visible }) {
 
 function TechSlide({ visible }) {
   const layers = [
-    { icon: Eye, label: 'Frontend', items: ['React 18 (SPA)', 'React Router v6', 'TailwindCSS + Shadcn/UI', 'TensorFlow.js + MediaPipe', 'react-pdf', 'Axios'], color: '#3b82f6' },
-    { icon: Zap, label: 'Backend', items: ['FastAPI (async Python)', 'Motor (async MongoDB)', 'ReportLab (PDF gen)', 'AsyncIO scheduler', 'SlowAPI (rate limiting)'], color: '#8b5cf6' },
-    { icon: Layers, label: 'Integrations', items: ['Google Gemini (AI)', 'Stripe (payments)', 'Hedera Hashgraph', 'Daily.co (video)', 'Resend (email)', 'CoinGecko (crypto)'], color: '#06b6d4' },
-    { icon: Shield, label: 'Security', items: ['JWT + TOTP 2FA', 'SAML/OIDC SSO', 'Custom RBAC engine', 'HMAC-SHA256 webhooks', 'Sentry monitoring'], color: '#10b981' },
+    { icon: Eye, label: 'Frontend', items: ['React 18 (SPA)', 'React Router v6', 'TailwindCSS + Shadcn/UI', 'WebSocket (real-time)', 'TensorFlow.js', 'Recharts analytics'], color: '#3b82f6' },
+    { icon: Zap, label: 'Backend', items: ['FastAPI (async Python)', 'Motor (async MongoDB)', 'ReportLab (PDF gen)', 'SSE streaming', 'SlowAPI (rate limiting)'], color: '#8b5cf6' },
+    { icon: Layers, label: 'Integrations', items: ['GPT-5.2 (AI + Vision)', 'Stripe (payments)', 'Hedera Hashgraph', 'Auth0 + Okta (SSO)', 'AWS S3 (storage)', 'Resend (email)'], color: '#06b6d4' },
+    { icon: Shield, label: 'Security', items: ['JWT + TOTP 2FA', 'Auth0/Okta SSO', 'Custom RBAC engine', 'Biometric Vision AI', 'Sentry monitoring'], color: '#10b981' },
   ];
   return (
     <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
@@ -450,8 +490,8 @@ function InfraSlide({ visible }) {
   const items = [
     { icon: Box, label: 'Deployment', desc: 'Kubernetes — containerized, scalable, production-grade', color: '#3b82f6' },
     { icon: GitBranch, label: 'CI/CD', desc: 'Emergent Platform — preview environments per branch', color: '#8b5cf6' },
-    { icon: Activity, label: 'Monitoring', desc: 'Sentry error tracking — real-time alerting', color: '#ef4444' },
-    { icon: Cpu, label: 'Graceful Degradation', desc: 'ML & blockchain features degrade safely in resource-constrained environments', color: '#10b981' },
+    { icon: Activity, label: 'Monitoring', desc: 'Sentry error tracking, HBAR balance alerts, service health monitor', color: '#ef4444' },
+    { icon: Cpu, label: 'Graceful Degradation', desc: 'ML, blockchain & AI features degrade safely in resource-constrained environments', color: '#10b981' },
   ];
   return (
     <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
@@ -516,17 +556,17 @@ function MarketSlide({ visible }) {
           </div>
           <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6">
             <Globe className="w-7 h-7 text-cyan-400 mx-auto mb-3" />
-            <div className="text-3xl font-bold text-white mb-1">43 States</div>
-            <p className="text-gray-500 text-xs">Now permit remote online notarization in the US</p>
+            <div className="text-3xl font-bold text-white mb-1">$5.4T</div>
+            <p className="text-gray-500 text-xs">Global escrow market addressable with AI-powered automation</p>
           </div>
           <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6">
             <Zap className="w-7 h-7 text-emerald-400 mx-auto mb-3" />
-            <div className="text-3xl font-bold text-white mb-1">67+</div>
+            <div className="text-3xl font-bold text-white mb-1">85+</div>
             <p className="text-gray-500 text-xs">Enterprise features shipped and tested at 100% pass rate</p>
           </div>
         </div>
         <p className="text-gray-400 leading-relaxed max-w-2xl mx-auto text-sm">
-          The regulatory landscape is rapidly evolving in favor of digital notarization. NotaryChain is the most feature-complete platform in this space, with AI-first architecture and <span className="text-white font-medium">8 trademarkable innovations</span> that create a defensible technological moat.
+          The regulatory landscape is rapidly evolving in favor of digital notarization and AI-verified escrow. NotaryChain is the most feature-complete platform in this space, with autonomous AI agent swarms, oracle-verified smart escrow, and <span className="text-white font-medium">11 trademarkable innovations</span> that create a defensible technological moat.
         </p>
       </div>
     </section>
@@ -599,7 +639,7 @@ function ProgressBar({ current, total }) {
 
 /* ═══════════════════ NAV DOTS ═══════════════════ */
 
-const SLIDE_LABELS = ['Intro', 'IP Portfolio', 'AI Orchestrator', 'Biometric', 'Blockchain', 'RBAC', 'Templates', 'Collaboration', 'AI Pipeline', 'Features', 'Architecture', 'Tech Stack', 'Infra', 'Metrics', 'Market', 'Contact'];
+const SLIDE_LABELS = ['Intro', 'IP Portfolio', 'Trust Gaps', 'ANAN Network', 'Escrow Intelligence', 'AI Orchestrator', 'Biometric', 'Blockchain + Bond', 'RBAC + Fraud Intel', 'AI Pipeline', 'Features', 'Architecture', 'Tech Stack', 'Infra', 'Metrics', 'Market', 'Contact'];
 
 function NavDots({ current, total, onGo }) {
   return (
@@ -619,8 +659,8 @@ function NavDots({ current, total, onGo }) {
 /* ═══════════════════ MAIN DECK ═══════════════════ */
 
 function DeckPresentation() {
-  // hero + ip + 6 features + ai_pipeline + feature_breakdown + architecture + tech + infra + metrics + market + contact = 16
-  const totalSlides = 16;
+  // hero + ip + trust_gaps + 6 features + ai_pipeline + feature_breakdown + architecture + tech + infra + metrics + market + contact = 17
+  const totalSlides = 17;
   const [current, setCurrent] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
   const containerRef = useRef(null);
@@ -657,19 +697,19 @@ function DeckPresentation() {
 
   const goTo = (i) => { setAutoPlay(false); setCurrent(i); };
 
-  // Map slide index to component
   const slideMap = [
     <HeroSlide visible={current === 0} />,
     <IPSlide visible={current === 1} />,
-    ...FEATURES.map((f, i) => <FeatureSlide key={f.title} feature={f} visible={current === i + 2} index={i} />),
-    <AIPipelineSlide visible={current === 8} />,
-    <FeatureBreakdownSlide visible={current === 9} />,
-    <ArchitectureSlide visible={current === 10} />,
-    <TechSlide visible={current === 11} />,
-    <InfraSlide visible={current === 12} />,
-    <MetricsSlide visible={current === 13} />,
-    <MarketSlide visible={current === 14} />,
-    <ContactSlide visible={current === 15} />,
+    <TrustGapsSlide visible={current === 2} />,
+    ...FEATURES.map((f, i) => <FeatureSlide key={f.title} feature={f} visible={current === i + 3} index={i} />),
+    <AIPipelineSlide visible={current === 9} />,
+    <FeatureBreakdownSlide visible={current === 10} />,
+    <ArchitectureSlide visible={current === 11} />,
+    <TechSlide visible={current === 12} />,
+    <InfraSlide visible={current === 13} />,
+    <MetricsSlide visible={current === 14} />,
+    <MarketSlide visible={current === 15} />,
+    <ContactSlide visible={current === 16} />,
   ];
 
   return (
