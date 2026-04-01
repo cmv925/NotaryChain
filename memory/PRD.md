@@ -33,7 +33,16 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 - **Feature Breakdown**: 12 categories, 90+ total features
 - **Architecture + Tech Stack + Infrastructure + Metrics + Market + Contact** slides
 - Password gate: `NotaryChain2026!`
-- Testing: iterations 76-78, all 100%
+
+### Suite of 5 AI Features — COMPLETE (Apr 1, 2026)
+- **AI Document Risk Scoring**: GPT-5.2 analyzes documents for legal risks, missing clauses, anomalies, compliance flags. Returns 0-100 risk score with breakdown.
+- **AI Document Summarization**: GPT-5.2 generates plain-English summaries with key terms, parties, critical dates, financial obligations, action items.
+- **Smart Notary Matching**: AI-powered scoring engine matching documents to best notary by specialization, jurisdiction, rating, availability, response time.
+- **Fraud Detection Dashboard**: Admin/Notary-only analytics showing threat level, ceremony stats, duplicate document detection, velocity anomalies, geo mismatches.
+- **Voice-Authenticated Ceremonies**: Voice biometric verification with phrase matching, liveness detection, synthetic speech risk analysis.
+- **AI Analysis History**: Persisted analysis records per user for audit trail.
+- Frontend: AI Intelligence Hub at /ai-intelligence with 5 tabbed sections, accessible from Dashboard.
+- Testing: iteration 79, 100% (17/17 backend, all frontend verified)
 
 ## Upcoming Tasks
 - Resend Domain Verification (user task) (P1)
@@ -43,6 +52,7 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 - Add Freelancer Milestone and Supply Chain escrow templates (P2)
 - Add more languages (DE, PT, JA, ZH) (P2)
 - Auto-learning threat detection from GPT-5.2 responses (P3)
+- Update Investor Deck with AI Intelligence Hub features (P2)
 
 ## Test Credentials
 | Role | Email | Password |
