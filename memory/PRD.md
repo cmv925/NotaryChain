@@ -9,10 +9,8 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 - **Authentication**: JWT with roles, 2FA/TOTP, API Keys
 - **AI**: OpenAI GPT-5.2 via emergent-integrations
 - **Blockchain**: Hedera Hashgraph (Mainnet)
-- **Video**: Daily.co (RON)
-- **Payments**: Stripe (Live Mode)
-- **Email**: Resend
-- **Infrastructure**: Sentry, cachetools, background tasks, AWS S3 (boto3)
+- **Video**: Daily.co (RON), **Payments**: Stripe (Live Mode)
+- **Email**: Resend, **Infrastructure**: Sentry, AWS S3
 
 ## Completed Features
 
@@ -22,18 +20,21 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 ### Role-Specific Onboarding Tour — COMPLETE
 ### Dynamic Escrow Intelligence (3 Trust Gaps) — COMPLETE
 ### Real-Time WebSocket Escrow Notifications — COMPLETE
+### Investor Deck & Features List Update — COMPLETE
 
-### Investor Deck & Features List Update — COMPLETE (Apr 1, 2026)
-- **17 slides** (was 16): Added new "3 Trust Gaps We Solve" slide
-- **Updated stats**: 85+ features (was 67+), 250+ endpoints (was 200+), 9 integrations (was 7)
-- **11 Trademarkable Innovations** (was 8): Added AI Orchestrator, ANAN, Biometric Proof of Intent, Dynamic Fraud Intelligence, SAN Bond Ledger, Oracle Verification
-- **6 major feature cards**: ANAN Network, Escrow Intelligence, AI Orchestrator, Biometric Passport, Blockchain+Bond, Enterprise RBAC
-- **6-phase AI Pipeline** (was 4): Added ANAN Blind Consensus and Escrow Settlement phases
-- **12 feature categories** (was 8): Added Escrow Intelligence, ANAN Agent Network, Real-Time & WebSocket, Templates & Documents
-- **Updated architecture**: 15 core services, ANAN Swarm, Escrow Oracle, Fraud Intelligence
-- **Updated tech stack**: GPT-5.2 (AI + Vision) replacing old references
-- **Market slide**: Added $5.4T global escrow market TAM
-- Testing: 100% pass rate — iteration_76
+### Interactive Demo Walkthrough Slide — COMPLETE (Apr 1, 2026)
+- **18 slides** (was 17): New slide 11 — "Escrow Lifecycle Walkthrough"
+- **6 interactive steps**: Contract Upload, AI Extraction, Fund Deposit, Oracle Verification, Biometric Gate, Settlement
+- **Step 1**: Document card (PDF name, pages, word count), GPT-5.2 parsing animation, stats
+- **Step 2**: 6 AI-extracted performance triggers with method badges (Oracle, Party, AI Photo, Biometric)
+- **Step 3**: Animated smart vault ($350K LOCKED), Stripe PI + HTS Token details
+- **Step 4**: 3 oracle cards (Title, Inspection, Appraisal) with VERIFIED badges and animated confidence bars
+- **Step 5**: Buyer/Seller biometric cards with liveness indicators, "BOTH PARTIES VERIFIED" badge
+- **Step 6**: Settlement card ($350K RELEASED), hash, HCS topic, "SEALED ON HEDERA MAINNET FOREVER"
+- **Trust Score** progress bar (17% → 100%)
+- **Auto-Play** button for automatic step progression (3.5s intervals)
+- **CSS animations**: fadeSlideUp, fadeIn, scaleIn, growWidth in index.css
+- Testing: 100% pass rate — iteration_77 (15/15 frontend tests)
 
 ## Upcoming Tasks
 - Resend Domain Verification (user task) (P1)
