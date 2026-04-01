@@ -72,6 +72,7 @@ const VerifyCertificate = lazy(() => import('./pages/VerifyCertificate'));
 const EscrowDashboard = lazy(() => import('./pages/EscrowDashboard'));
 const ANANDashboard = lazy(() => import('./pages/ANANDashboard'));
 const FraudIntelligencePage = lazy(() => import('./pages/FraudIntelligencePage'));
+const AIIntelligenceHub = lazy(() => import('./pages/AIIntelligenceHub'));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
@@ -489,6 +490,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <BrandingPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ai-intelligence"
+              element={
+                <ProtectedRoute>
+                  <AIIntelligenceHub />
                 </ProtectedRoute>
               }
             />

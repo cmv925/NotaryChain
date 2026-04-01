@@ -208,6 +208,7 @@ const Dashboard = () => {
           <div className="border border-slate-800 p-6 rounded-lg bg-[#0f1825]" data-testid="ai-section">
             <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-5">AI Intelligence</h3>
             <div className="space-y-2">
+              <BentoAction icon={Brain} label="AI Intelligence Hub" desc="Risk, Match, Voice" onClick={() => navigate('/ai-intelligence')} accent data-testid="ai-hub-btn" />
               <BentoAction icon={Wand2} label="AI Doc Generator" onClick={() => navigate('/ai-generator')} data-testid="ai-gen-btn" />
               <BentoAction icon={FileSearch} label="AI Summarizer" onClick={() => navigate('/ai-summarizer')} data-testid="ai-summarizer-btn" />
               <BentoAction icon={GitCompareArrows} label="Doc Compare" onClick={() => navigate('/doc-compare')} data-testid="doc-compare-btn" />
