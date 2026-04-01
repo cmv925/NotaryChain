@@ -965,6 +965,129 @@ function DemoSettlement({ step }) {
   );
 }
 
+/* ═══════════════════ SLIDE: COMPETITIVE COMPARISON ═══════════════════ */
+
+const COMPETITORS = [
+  { name: 'Traditional Notary', type: 'legacy', color: '#64748b' },
+  { name: 'DocuSign', type: 'incumbent', color: '#4f46e5' },
+  { name: 'Notarize', type: 'incumbent', color: '#0ea5e9' },
+  { name: 'NotaryChain', type: 'us', color: '#f59e0b' },
+];
+
+const COMPARISON_FEATURES = [
+  { category: 'AI & Automation', features: [
+    { name: 'AI Document Analysis', trad: false, docu: 'basic', nota: 'basic', nc: true },
+    { name: 'AI Condition Extraction', trad: false, docu: false, nota: false, nc: true },
+    { name: 'Autonomous Agent Swarm', trad: false, docu: false, nota: false, nc: true },
+    { name: 'Self-Tuning AI Reputation', trad: false, docu: false, nota: false, nc: true },
+  ]},
+  { category: 'Escrow & Finance', features: [
+    { name: 'Smart Escrow Vault', trad: false, docu: false, nota: false, nc: true },
+    { name: 'Oracle Verification', trad: false, docu: false, nota: false, nc: true },
+    { name: 'Milestone Payments', trad: 'manual', docu: false, nota: false, nc: true },
+    { name: 'Biometric Settlement Gate', trad: false, docu: false, nota: false, nc: true },
+  ]},
+  { category: 'Security & Identity', features: [
+    { name: 'Biometric Verification', trad: false, docu: false, nota: 'basic', nc: true },
+    { name: 'Blockchain Immutability', trad: false, docu: false, nota: false, nc: true },
+    { name: 'On-Chain Audit Trail', trad: false, docu: false, nota: false, nc: true },
+    { name: 'Dynamic Fraud Intelligence', trad: false, docu: false, nota: false, nc: true },
+  ]},
+  { category: 'Enterprise & Platform', features: [
+    { name: 'SSO (Auth0 + Okta)', trad: false, docu: true, nota: 'basic', nc: true },
+    { name: 'Granular RBAC (23 perms)', trad: false, docu: 'basic', nota: false, nc: true },
+    { name: 'Real-Time WebSocket', trad: false, docu: false, nota: false, nc: true },
+    { name: 'Public API + Webhooks', trad: false, docu: true, nota: 'basic', nc: true },
+  ]},
+];
+
+function CellBadge({ val }) {
+  if (val === true) return <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20"><CheckCircle className="w-3.5 h-3.5 text-emerald-400" /></span>;
+  if (val === false) return <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/[0.04]"><span className="w-2 h-px bg-gray-700 block" /></span>;
+  return <span className="text-[9px] text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded px-1.5 py-0.5 uppercase font-bold">{val}</span>;
+}
+
+function CompetitiveSlide({ visible }) {
+  const totalNc = COMPARISON_FEATURES.reduce((a, c) => a + c.features.filter(f => f.nc === true).length, 0);
+  const totalDocu = COMPARISON_FEATURES.reduce((a, c) => a + c.features.filter(f => f.docu === true).length, 0);
+  const totalNota = COMPARISON_FEATURES.reduce((a, c) => a + c.features.filter(f => f.nota === true).length, 0);
+  const totalTrad = COMPARISON_FEATURES.reduce((a, c) => a + c.features.filter(f => f.trad === true).length, 0);
+
+  return (
+    <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} data-testid="competitive-comparison-slide">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="text-center mb-6">
+          <p className="text-red-400 tracking-[0.25em] uppercase text-xs font-medium mb-3">Competitive Landscape</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-1">NotaryChain vs The Market</h2>
+          <p className="text-gray-500 text-sm max-w-xl mx-auto">16 critical capabilities across AI, escrow, security, and enterprise. Only one platform has them all.</p>
+        </div>
+
+        {/* Scoreboard */}
+        <div className="grid grid-cols-4 gap-3 mb-5">
+          {COMPETITORS.map((c) => {
+            const score = c.name === 'NotaryChain' ? totalNc : c.name === 'DocuSign' ? totalDocu : c.name === 'Notarize' ? totalNota : totalTrad;
+            const total = 16;
+            const pct = Math.round((score / total) * 100);
+            const isUs = c.type === 'us';
+            return (
+              <div key={c.name} className={`rounded-xl p-4 text-center border ${isUs ? 'bg-amber-500/5 border-amber-500/25' : 'bg-white/[0.02] border-white/[0.06]'}`} data-testid={`competitor-${c.name.toLowerCase().replace(/\s/g, '-')}`}>
+                <p className={`text-xs font-semibold mb-1 ${isUs ? 'text-amber-400' : 'text-gray-400'}`}>{c.name}</p>
+                <p className={`text-2xl font-bold ${isUs ? 'text-amber-400' : 'text-white'}`}>{score}<span className="text-gray-600 text-sm font-normal">/{total}</span></p>
+                <div className="w-full h-1.5 bg-white/[0.06] rounded-full mt-2 overflow-hidden">
+                  <div className="h-full rounded-full transition-all duration-700" style={{ width: `${pct}%`, background: c.color }} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Feature Matrix */}
+        <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl overflow-hidden">
+          {/* Header */}
+          <div className="grid grid-cols-[1fr,1fr,80px,80px,80px,80px] gap-0 border-b border-white/[0.06] bg-white/[0.02]">
+            <div className="px-4 py-2.5"><span className="text-gray-600 text-[10px] uppercase tracking-wider">Category</span></div>
+            <div className="px-4 py-2.5"><span className="text-gray-600 text-[10px] uppercase tracking-wider">Capability</span></div>
+            {COMPETITORS.map(c => (
+              <div key={c.name} className="px-2 py-2.5 text-center">
+                <span className={`text-[10px] font-bold ${c.type === 'us' ? 'text-amber-400' : 'text-gray-500'}`}>
+                  {c.name === 'Traditional Notary' ? 'Trad.' : c.name === 'NotaryChain' ? 'NC' : c.name}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Rows */}
+          {COMPARISON_FEATURES.map((cat, ci) => (
+            <React.Fragment key={cat.category}>
+              {cat.features.map((f, fi) => (
+                <div key={f.name} className={`grid grid-cols-[1fr,1fr,80px,80px,80px,80px] gap-0 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors ${fi === 0 ? 'border-t border-white/[0.06]' : ''}`}>
+                  {fi === 0 ? (
+                    <div className="px-4 py-2 flex items-center" style={{ gridRow: `span ${cat.features.length}` }}>
+                      <span className="text-gray-400 text-xs font-medium">{cat.category}</span>
+                    </div>
+                  ) : <div />}
+                  <div className="px-4 py-2 flex items-center"><span className="text-gray-300 text-xs">{f.name}</span></div>
+                  <div className="px-2 py-2 flex items-center justify-center"><CellBadge val={f.trad} /></div>
+                  <div className="px-2 py-2 flex items-center justify-center"><CellBadge val={f.docu} /></div>
+                  <div className="px-2 py-2 flex items-center justify-center"><CellBadge val={f.nota} /></div>
+                  <div className="px-2 py-2 flex items-center justify-center"><CellBadge val={f.nc} /></div>
+                </div>
+              ))}
+            </React.Fragment>
+          ))}
+        </div>
+
+        {/* Bottom Insight */}
+        <div className="mt-4 text-center">
+          <p className="text-gray-500 text-xs">
+            NotaryChain delivers <span className="text-amber-400 font-bold">{totalNc}x the capability</span> of traditional notary services and <span className="text-amber-400 font-bold">{Math.round(totalNc / Math.max(totalDocu, 1))}x more features</span> than the closest digital competitor.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ═══════════════════ PROGRESS BAR ═══════════════════ */
 
 function ProgressBar({ current, total }) {
@@ -977,7 +1100,7 @@ function ProgressBar({ current, total }) {
 
 /* ═══════════════════ NAV DOTS ═══════════════════ */
 
-const SLIDE_LABELS = ['Intro', 'IP Portfolio', 'Trust Gaps', 'ANAN Network', 'Escrow Intelligence', 'AI Orchestrator', 'Biometric', 'Blockchain + Bond', 'RBAC + Fraud Intel', 'AI Pipeline', 'Live Demo', 'Features', 'Architecture', 'Tech Stack', 'Infra', 'Metrics', 'Market', 'Contact'];
+const SLIDE_LABELS = ['Intro', 'IP Portfolio', 'Trust Gaps', 'ANAN Network', 'Escrow Intelligence', 'AI Orchestrator', 'Biometric', 'Blockchain + Bond', 'RBAC + Fraud Intel', 'AI Pipeline', 'Live Demo', 'Features', 'Architecture', 'Tech Stack', 'Infra', 'Metrics', 'Competitive', 'Market', 'Contact'];
 
 function NavDots({ current, total, onGo }) {
   return (
@@ -997,8 +1120,8 @@ function NavDots({ current, total, onGo }) {
 /* ═══════════════════ MAIN DECK ═══════════════════ */
 
 function DeckPresentation() {
-  // hero + ip + trust_gaps + 6 features + ai_pipeline + demo + feature_breakdown + architecture + tech + infra + metrics + market + contact = 18
-  const totalSlides = 18;
+  // hero + ip + trust_gaps + 6 features + ai_pipeline + demo + feature_breakdown + architecture + tech + infra + metrics + competitive + market + contact = 19
+  const totalSlides = 19;
   const [current, setCurrent] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
   const containerRef = useRef(null);
@@ -1047,8 +1170,9 @@ function DeckPresentation() {
     <TechSlide visible={current === 13} />,
     <InfraSlide visible={current === 14} />,
     <MetricsSlide visible={current === 15} />,
-    <MarketSlide visible={current === 16} />,
-    <ContactSlide visible={current === 17} />,
+    <CompetitiveSlide visible={current === 16} />,
+    <MarketSlide visible={current === 17} />,
+    <ContactSlide visible={current === 18} />,
   ];
 
   return (
