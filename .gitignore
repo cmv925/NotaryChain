@@ -98,6 +98,11 @@ frontend/node_modules/.cache/default-development/10.pack_
 frontend/node_modules/.cache/default-development/16.pack
 -e 
 # Environment files
+backend/.env
+*.env
+*.env.*
+-e 
+# Environment files
 *.env
 *.env.*
 -e 
