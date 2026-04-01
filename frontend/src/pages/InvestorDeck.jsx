@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Lock, Shield, Brain, Fingerprint, Link2, Users, FileCheck, ChevronRight, Send, CheckCircle, Layers, Eye, Globe, Zap, BarChart3, ArrowRight, Award, Server, Database, Cpu, GitBranch, Activity, Box, Radio, CreditCard, Calendar, FileText, Settings, UserCheck, Video, Bell, Scale, Network, Blocks, Vote, Wifi } from 'lucide-react';
+import { Lock, Shield, Brain, Fingerprint, Link2, Users, FileCheck, ChevronRight, Send, CheckCircle, Layers, Eye, Globe, Zap, BarChart3, ArrowRight, Award, Server, Database, Cpu, GitBranch, Activity, Box, Radio, CreditCard, Calendar, FileText, Settings, UserCheck, Video, Bell, Scale, Network, Blocks, Vote, Wifi, ShieldCheck } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -627,6 +627,344 @@ function ContactSlide({ visible }) {
   );
 }
 
+/* ═══════════════════ SLIDE: LIVE DEMO WALKTHROUGH ═══════════════════ */
+
+const DEMO_STEPS = [
+  {
+    phase: 1,
+    label: 'Contract Upload',
+    title: 'Upload & AI Parsing',
+    desc: 'A real estate purchase agreement is uploaded. The AI Orchestrator (GPT-5.2) scans the full text in under 3 seconds.',
+    icon: FileText,
+    color: '#3b82f6',
+    animClass: 'animate-slideUp',
+    detail: 'Purchase_Agreement_123_Main_St.pdf',
+    detailSub: '14 pages · 8,204 words · PDF/A compliant',
+  },
+  {
+    phase: 2,
+    label: 'AI Extraction',
+    title: 'Performance Triggers Extracted',
+    desc: 'GPT-5.2 identifies 6 contractual milestones that must be verified before funds can move. Each is mapped to a verification method.',
+    icon: Brain,
+    color: '#8b5cf6',
+    animClass: 'animate-slideUp',
+    triggers: [
+      { name: 'Home Inspection', method: 'Oracle', pct: 0 },
+      { name: 'Mortgage Approval', method: 'Party', pct: 0 },
+      { name: 'Title Search Clear', method: 'Oracle', pct: 0 },
+      { name: 'Appraisal Meets Price', method: 'Oracle', pct: 0 },
+      { name: 'Final Walk-Through', method: 'AI Photo', pct: 0 },
+      { name: 'Closing: Biometric Gate', method: 'Biometric', pct: 100 },
+    ],
+  },
+  {
+    phase: 3,
+    label: 'Fund Deposit',
+    title: 'Smart Vault Locked',
+    desc: 'Buyer deposits $350,000 via Stripe. Funds are tokenized on Hedera and held in a smart contract vault. Neither party can touch the funds.',
+    icon: Lock,
+    color: '#10b981',
+    animClass: 'animate-scaleIn',
+    vault: { amount: 350000, token: '0.0.7841923', status: 'LOCKED' },
+  },
+  {
+    phase: 4,
+    label: 'Oracle Verification',
+    title: 'Autonomous Milestone Checks',
+    desc: 'External oracles query real data sources — title companies, inspection databases, shipping APIs. Conditions auto-verify when data confirms completion.',
+    icon: Globe,
+    color: '#06b6d4',
+    animClass: 'animate-slideUp',
+    oracles: [
+      { name: 'First American Title', result: 'Clear title — 0 liens', status: 'verified', conf: 99 },
+      { name: 'National Inspection Registry', result: 'Score: 92/100 — Passed', status: 'verified', conf: 97 },
+      { name: 'Metro Valuation Services', result: '$365K appraisal > $350K price', status: 'verified', conf: 94 },
+    ],
+  },
+  {
+    phase: 5,
+    label: 'Biometric Gate',
+    title: 'Proof of Intent',
+    desc: 'At settlement, both buyer and seller verify their identity via live webcam. GPT-5.2 Vision confirms liveness and 3D facial geometry. No imposters.',
+    icon: Fingerprint,
+    color: '#a855f7',
+    animClass: 'animate-scaleIn',
+    bio: { buyer: { name: 'John Doe', conf: 98, liveness: true }, seller: { name: 'Jane Smith', conf: 97, liveness: true } },
+  },
+  {
+    phase: 6,
+    label: 'Settlement',
+    title: 'Trustless Release',
+    desc: 'All conditions met. Both identities confirmed. The smart vault opens autonomously — $350,000 released to the seller. Lifecycle hash sealed on Hedera mainnet forever.',
+    icon: ShieldCheck,
+    color: '#f59e0b',
+    animClass: 'animate-scaleIn',
+    settlement: { hash: 'a4f8c1e9...d73b20f1', topic: '0.0.10373605', amount: 350000, network: 'Hedera Mainnet' },
+  },
+];
+
+function DemoWalkthroughSlide({ visible }) {
+  const [activeStep, setActiveStep] = useState(0);
+  const [animating, setAnimating] = useState(false);
+  const [autoDemo, setAutoDemo] = useState(false);
+
+  useEffect(() => {
+    if (!visible) { setActiveStep(0); setAutoDemo(false); return; }
+  }, [visible]);
+
+  useEffect(() => {
+    if (!autoDemo || !visible) return;
+    const timer = setInterval(() => {
+      setAnimating(true);
+      setTimeout(() => {
+        setActiveStep(s => {
+          if (s >= DEMO_STEPS.length - 1) { setAutoDemo(false); return s; }
+          return s + 1;
+        });
+        setAnimating(false);
+      }, 300);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [autoDemo, visible]);
+
+  const goStep = (i) => {
+    if (i === activeStep) return;
+    setAutoDemo(false);
+    setAnimating(true);
+    setTimeout(() => { setActiveStep(i); setAnimating(false); }, 200);
+  };
+
+  const step = DEMO_STEPS[activeStep];
+  const StepIcon = step.icon;
+
+  return (
+    <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} data-testid="demo-walkthrough-slide">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="text-center mb-6">
+          <p className="text-amber-400 tracking-[0.25em] uppercase text-xs font-medium mb-3">Interactive Demo</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-1">Escrow Lifecycle Walkthrough</h2>
+          <p className="text-gray-500 text-sm max-w-xl mx-auto">Watch how a $350K real estate transaction flows through all 3 Trust Gaps.</p>
+        </div>
+
+        {/* Step Timeline Bar */}
+        <div className="flex items-center justify-center gap-1 mb-6">
+          {DEMO_STEPS.map((s, i) => {
+            const SIcon = s.icon;
+            const isActive = i === activeStep;
+            const isPast = i < activeStep;
+            return (
+              <React.Fragment key={i}>
+                <button onClick={() => goStep(i)} data-testid={`demo-step-${i + 1}`}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all text-xs font-medium border ${isActive ? 'border-white/20 bg-white/[0.06] text-white scale-105' : isPast ? 'border-emerald-500/20 bg-emerald-500/5 text-emerald-400' : 'border-white/[0.06] bg-white/[0.02] text-gray-600 hover:text-gray-400 hover:border-white/10'}`}>
+                  <SIcon className="w-3.5 h-3.5" style={{ color: isActive ? s.color : isPast ? '#10b981' : undefined }} />
+                  <span className="hidden sm:inline">{s.label}</span>
+                  <span className="sm:hidden">{s.phase}</span>
+                </button>
+                {i < DEMO_STEPS.length - 1 && (
+                  <div className={`w-4 h-px ${isPast ? 'bg-emerald-500/40' : 'bg-white/[0.08]'}`} />
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
+
+        {/* Main Demo Area */}
+        <div className={`transition-all duration-500 ${animating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+          <div className="grid lg:grid-cols-5 gap-4">
+            {/* Left: Context */}
+            <div className="lg:col-span-2 flex flex-col gap-3">
+              <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 flex-1">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-xl border border-white/[0.08] flex items-center justify-center" style={{ background: `${step.color}10` }}>
+                    <StepIcon className="w-6 h-6" style={{ color: step.color }} />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full" style={{ color: step.color, background: `${step.color}15`, border: `1px solid ${step.color}30` }}>Phase {step.phase}</span>
+                    <h3 className="text-white font-bold text-lg mt-1">{step.title}</h3>
+                  </div>
+                </div>
+                <p className="text-gray-400 text-sm leading-relaxed">{step.desc}</p>
+              </div>
+              {/* Progress */}
+              <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-600 text-[10px] uppercase tracking-wider">Trust Score</span>
+                  <span className="text-white font-bold text-sm">{Math.round(((activeStep + 1) / DEMO_STEPS.length) * 100)}%</span>
+                </div>
+                <div className="w-32 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                  <div className="h-full rounded-full transition-all duration-700" style={{ width: `${((activeStep + 1) / DEMO_STEPS.length) * 100}%`, background: `linear-gradient(90deg, ${step.color}, ${step.color}cc)` }} />
+                </div>
+                <button onClick={() => { setAutoDemo(d => !d); if (!autoDemo) setActiveStep(0); }} className="text-[10px] px-2.5 py-1 rounded-md border border-white/[0.08] text-gray-400 hover:text-white transition-colors" data-testid="demo-autoplay">
+                  {autoDemo ? 'Stop' : 'Auto-Play'}
+                </button>
+              </div>
+            </div>
+
+            {/* Right: Visualization */}
+            <div className="lg:col-span-3 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 min-h-[300px] flex flex-col justify-center">
+              {activeStep === 0 && <DemoUpload step={step} />}
+              {activeStep === 1 && <DemoTriggers step={step} />}
+              {activeStep === 2 && <DemoVault step={step} />}
+              {activeStep === 3 && <DemoOracles step={step} />}
+              {activeStep === 4 && <DemoBiometric step={step} />}
+              {activeStep === 5 && <DemoSettlement step={step} />}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── Demo Sub-Visualizations ─── */
+
+function DemoUpload({ step }) {
+  return (
+    <div className="text-center space-y-4">
+      <div className="inline-flex items-center gap-4 bg-blue-500/5 border border-blue-500/15 rounded-xl px-6 py-4 animate-[fadeSlideUp_0.6s_ease-out]">
+        <div className="w-14 h-16 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center"><FileText className="w-7 h-7 text-blue-400" /></div>
+        <div className="text-left">
+          <p className="text-white font-semibold text-sm">{step.detail}</p>
+          <p className="text-gray-500 text-xs">{step.detailSub}</p>
+        </div>
+        <CheckCircle className="w-5 h-5 text-emerald-400 animate-[fadeIn_1s_ease-out_0.4s_both]" />
+      </div>
+      <div className="flex items-center justify-center gap-2 animate-[fadeIn_0.8s_ease-out_0.6s_both]">
+        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+        <span className="text-blue-400 text-xs font-medium">GPT-5.2 parsing document...</span>
+        <Brain className="w-4 h-4 text-purple-400 animate-pulse" />
+      </div>
+      <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto animate-[fadeIn_0.8s_ease-out_1s_both]">
+        {['Clauses Found: 42', 'Parties: 2', 'Conditions: 6'].map(t => (
+          <div key={t} className="bg-white/[0.03] border border-white/[0.06] rounded-lg px-2 py-1.5 text-center">
+            <span className="text-gray-400 text-[10px]">{t}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DemoTriggers({ step }) {
+  return (
+    <div className="space-y-2">
+      <p className="text-gray-500 text-[10px] uppercase tracking-wider mb-3 flex items-center gap-2">
+        <Brain className="w-3 h-3 text-purple-400" /> AI-Extracted Performance Triggers
+      </p>
+      {step.triggers.map((t, i) => (
+        <div key={i} className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] rounded-lg px-4 py-2.5 opacity-0 animate-[fadeSlideUp_0.4s_ease-out_both]" style={{ animationDelay: `${i * 120}ms` }}>
+          <span className="w-5 h-5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[9px] font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
+          <span className="text-white text-sm flex-1">{t.name}</span>
+          <span className={`text-[10px] px-2 py-0.5 rounded-full border ${t.method === 'Oracle' ? 'text-cyan-400 border-cyan-500/20 bg-cyan-500/10' : t.method === 'Biometric' ? 'text-purple-400 border-purple-500/20 bg-purple-500/10' : t.method === 'AI Photo' ? 'text-amber-400 border-amber-500/20 bg-amber-500/10' : 'text-gray-400 border-gray-600 bg-gray-800'}`}>{t.method}</span>
+          {t.pct > 0 && <span className="text-amber-400 text-[10px] font-bold">{t.pct}%</span>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DemoVault({ step }) {
+  return (
+    <div className="text-center space-y-5">
+      <div className="inline-block relative">
+        <div className="w-32 h-32 rounded-2xl bg-emerald-500/5 border-2 border-emerald-500/30 flex flex-col items-center justify-center mx-auto animate-[pulse_2s_ease-in-out_infinite]">
+          <Lock className="w-10 h-10 text-emerald-400 mb-1" />
+          <span className="text-emerald-400 text-lg font-bold">${(step.vault.amount / 1000).toFixed(0)}K</span>
+          <span className="text-emerald-400/60 text-[9px] uppercase tracking-wider">{step.vault.status}</span>
+        </div>
+        <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 animate-ping" />
+      </div>
+      <div className="flex items-center justify-center gap-6 animate-[fadeIn_0.6s_ease-out_0.5s_both]">
+        <div className="text-center"><p className="text-[10px] text-gray-600">Stripe PI</p><p className="text-white font-mono text-xs">pi_escrow_8f2a...</p></div>
+        <div className="w-px h-8 bg-white/[0.06]" />
+        <div className="text-center"><p className="text-[10px] text-gray-600">HTS Token</p><p className="text-white font-mono text-xs">{step.vault.token}</p></div>
+      </div>
+      <p className="text-gray-500 text-xs max-w-sm mx-auto animate-[fadeIn_0.6s_ease-out_0.8s_both]">Funds are tokenized on Hedera and cryptographically locked. Neither party can access until all conditions are met.</p>
+    </div>
+  );
+}
+
+function DemoOracles({ step }) {
+  return (
+    <div className="space-y-3">
+      <p className="text-gray-500 text-[10px] uppercase tracking-wider mb-2 flex items-center gap-2">
+        <Globe className="w-3 h-3 text-cyan-400 animate-spin" style={{ animationDuration: '4s' }} /> Querying External Oracles...
+      </p>
+      {step.oracles.map((o, i) => (
+        <div key={i} className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-4 opacity-0 animate-[fadeSlideUp_0.5s_ease-out_both]" style={{ animationDelay: `${i * 400}ms` }}>
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-white font-medium text-sm">{o.name}</span>
+            <span className="flex items-center gap-1 text-emerald-400 text-[10px] font-bold"><CheckCircle className="w-3 h-3" /> VERIFIED</span>
+          </div>
+          <p className="text-gray-500 text-xs">{o.result}</p>
+          <div className="flex items-center gap-2 mt-2">
+            <div className="flex-1 h-1 bg-white/[0.06] rounded-full overflow-hidden">
+              <div className="h-full bg-emerald-500 rounded-full animate-[growWidth_1s_ease-out_both]" style={{ animationDelay: `${i * 400 + 300}ms`, width: `${o.conf}%` }} />
+            </div>
+            <span className="text-emerald-400 text-[10px] font-mono">{o.conf}%</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DemoBiometric({ step }) {
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        {Object.entries(step.bio).map(([role, data]) => (
+          <div key={role} className="bg-white/[0.02] border border-purple-500/15 rounded-xl p-5 text-center animate-[fadeSlideUp_0.5s_ease-out_both]" style={{ animationDelay: role === 'buyer' ? '0ms' : '300ms' }}>
+            <div className="w-16 h-16 rounded-full bg-purple-500/10 border-2 border-purple-500/30 mx-auto mb-3 flex items-center justify-center relative">
+              <Fingerprint className="w-8 h-8 text-purple-400" />
+              <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center"><CheckCircle className="w-3 h-3 text-white" /></div>
+            </div>
+            <p className="text-white font-semibold text-sm mb-0.5">{data.name}</p>
+            <p className="text-gray-600 text-[10px] uppercase tracking-wider mb-2">{role}</p>
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-emerald-400 text-[10px] flex items-center gap-1"><Eye className="w-3 h-3" /> Liveness</span>
+              <span className="text-purple-400 text-[10px] font-bold">{data.conf}%</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="text-center animate-[fadeIn_0.6s_ease-out_0.8s_both]">
+        <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-2">
+          <Shield className="w-4 h-4 text-emerald-400" />
+          <span className="text-emerald-400 text-xs font-bold">BIOMETRIC GATE: BOTH PARTIES VERIFIED</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DemoSettlement({ step }) {
+  return (
+    <div className="text-center space-y-5">
+      <div className="inline-block relative">
+        <div className="w-32 h-32 rounded-2xl bg-amber-500/5 border-2 border-amber-500/30 flex flex-col items-center justify-center mx-auto animate-[pulse_2s_ease-in-out_infinite]">
+          <ShieldCheck className="w-10 h-10 text-amber-400 mb-1" />
+          <span className="text-amber-400 text-lg font-bold">${(step.settlement.amount / 1000).toFixed(0)}K</span>
+          <span className="text-amber-400/60 text-[9px] uppercase tracking-wider">RELEASED</span>
+        </div>
+        <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 animate-ping" />
+      </div>
+      <div className="space-y-1.5 max-w-sm mx-auto animate-[fadeIn_0.6s_ease-out_0.5s_both]">
+        <div className="flex items-center justify-between text-xs"><span className="text-gray-500">Settlement Hash</span><span className="text-white font-mono">{step.settlement.hash}</span></div>
+        <div className="flex items-center justify-between text-xs"><span className="text-gray-500">HCS Topic</span><span className="text-white font-mono">{step.settlement.topic}</span></div>
+        <div className="flex items-center justify-between text-xs"><span className="text-gray-500">Network</span><span className="text-amber-400 font-bold">{step.settlement.network}</span></div>
+      </div>
+      <div className="animate-[fadeIn_0.6s_ease-out_1s_both]">
+        <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full px-5 py-2">
+          <Blocks className="w-4 h-4 text-amber-400" />
+          <span className="text-amber-400 text-xs font-bold tracking-wider">SEALED ON HEDERA MAINNET FOREVER</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ═══════════════════ PROGRESS BAR ═══════════════════ */
 
 function ProgressBar({ current, total }) {
@@ -639,7 +977,7 @@ function ProgressBar({ current, total }) {
 
 /* ═══════════════════ NAV DOTS ═══════════════════ */
 
-const SLIDE_LABELS = ['Intro', 'IP Portfolio', 'Trust Gaps', 'ANAN Network', 'Escrow Intelligence', 'AI Orchestrator', 'Biometric', 'Blockchain + Bond', 'RBAC + Fraud Intel', 'AI Pipeline', 'Features', 'Architecture', 'Tech Stack', 'Infra', 'Metrics', 'Market', 'Contact'];
+const SLIDE_LABELS = ['Intro', 'IP Portfolio', 'Trust Gaps', 'ANAN Network', 'Escrow Intelligence', 'AI Orchestrator', 'Biometric', 'Blockchain + Bond', 'RBAC + Fraud Intel', 'AI Pipeline', 'Live Demo', 'Features', 'Architecture', 'Tech Stack', 'Infra', 'Metrics', 'Market', 'Contact'];
 
 function NavDots({ current, total, onGo }) {
   return (
@@ -659,8 +997,8 @@ function NavDots({ current, total, onGo }) {
 /* ═══════════════════ MAIN DECK ═══════════════════ */
 
 function DeckPresentation() {
-  // hero + ip + trust_gaps + 6 features + ai_pipeline + feature_breakdown + architecture + tech + infra + metrics + market + contact = 17
-  const totalSlides = 17;
+  // hero + ip + trust_gaps + 6 features + ai_pipeline + demo + feature_breakdown + architecture + tech + infra + metrics + market + contact = 18
+  const totalSlides = 18;
   const [current, setCurrent] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
   const containerRef = useRef(null);
@@ -703,13 +1041,14 @@ function DeckPresentation() {
     <TrustGapsSlide visible={current === 2} />,
     ...FEATURES.map((f, i) => <FeatureSlide key={f.title} feature={f} visible={current === i + 3} index={i} />),
     <AIPipelineSlide visible={current === 9} />,
-    <FeatureBreakdownSlide visible={current === 10} />,
-    <ArchitectureSlide visible={current === 11} />,
-    <TechSlide visible={current === 12} />,
-    <InfraSlide visible={current === 13} />,
-    <MetricsSlide visible={current === 14} />,
-    <MarketSlide visible={current === 15} />,
-    <ContactSlide visible={current === 16} />,
+    <DemoWalkthroughSlide visible={current === 10} />,
+    <FeatureBreakdownSlide visible={current === 11} />,
+    <ArchitectureSlide visible={current === 12} />,
+    <TechSlide visible={current === 13} />,
+    <InfraSlide visible={current === 14} />,
+    <MetricsSlide visible={current === 15} />,
+    <MarketSlide visible={current === 16} />,
+    <ContactSlide visible={current === 17} />,
   ];
 
   return (
