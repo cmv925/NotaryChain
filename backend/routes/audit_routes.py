@@ -160,7 +160,7 @@ async def get_audit_logs(
     Requires admin role.
     """
     # Check admin role
-    user_doc = await db.users.find_one({"email": current_user.email})
+    user_doc = await db.users.find_one({"email": current_user.email}, {"_id": 0})
     if not user_doc or user_doc.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
     
@@ -222,7 +222,7 @@ async def get_audit_log_detail(
 ):
     """Get detailed audit log entry"""
     # Check admin role
-    user_doc = await db.users.find_one({"email": current_user.email})
+    user_doc = await db.users.find_one({"email": current_user.email}, {"_id": 0})
     if not user_doc or user_doc.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
     
@@ -245,7 +245,7 @@ async def get_audit_stats(
 ):
     """Get audit log statistics"""
     # Check admin role
-    user_doc = await db.users.find_one({"email": current_user.email})
+    user_doc = await db.users.find_one({"email": current_user.email}, {"_id": 0})
     if not user_doc or user_doc.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
     
@@ -310,7 +310,7 @@ async def export_audit_logs(
 ):
     """Export audit logs for compliance reporting"""
     # Check admin role
-    user_doc = await db.users.find_one({"email": current_user.email})
+    user_doc = await db.users.find_one({"email": current_user.email}, {"_id": 0})
     if not user_doc or user_doc.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
     
@@ -367,7 +367,7 @@ async def get_user_activity(
 ):
     """Get activity logs for a specific user"""
     # Check admin role or self
-    user_doc = await db.users.find_one({"email": current_user.email})
+    user_doc = await db.users.find_one({"email": current_user.email}, {"_id": 0})
     is_admin = user_doc and user_doc.get("role") == "admin"
     is_self = current_user.id == user_id
     

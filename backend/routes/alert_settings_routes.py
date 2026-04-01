@@ -38,7 +38,7 @@ def set_db(database):
 
 
 async def _check_admin(current_user: User):
-    user_doc = await db.users.find_one({"email": current_user.email})
+    user_doc = await db.users.find_one({"email": current_user.email}, {"_id": 0})
     if not user_doc or user_doc.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
 

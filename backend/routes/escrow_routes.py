@@ -171,10 +171,17 @@ async def list_escrows(request: Request):
 @router.get("/{escrow_id}")
 async def get_escrow(escrow_id: str, request: Request):
     """Get escrow agreement details."""
-    await _get_user(request)
+    user = await _get_user(request)
     escrow = await db.escrow_agreements.find_one({"escrow_id": escrow_id}, {"_id": 0})
     if not escrow:
         raise HTTPException(status_code=404, detail="Escrow not found")
+    # Verify user is a party or admin
+    email = user["email"]
+    is_party = (escrow.get("created_by") == email
+                or escrow.get("parties", {}).get("buyer", {}).get("email") == email
+                or escrow.get("parties", {}).get("seller", {}).get("email") == email)
+    if not is_party and user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="You do not have access to this escrow")
     return escrow
 
 
@@ -788,6 +795,14 @@ async def settle_escrow(escrow_id: str, request: Request):
     escrow = await db.escrow_agreements.find_one({"escrow_id": escrow_id}, {"_id": 0})
     if not escrow:
         raise HTTPException(status_code=404, detail="Escrow not found")
+
+    # Only allow parties or admin to settle
+    email = user["email"]
+    is_party = (escrow.get("created_by") == email
+                or escrow.get("parties", {}).get("buyer", {}).get("email") == email
+                or escrow.get("parties", {}).get("seller", {}).get("email") == email)
+    if not is_party and user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Only escrow parties can settle")
 
     if escrow["status"] not in ("conditions_met", "active"):
         raise HTTPException(status_code=400, detail=f"Cannot settle escrow in '{escrow['status']}' status")

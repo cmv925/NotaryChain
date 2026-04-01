@@ -20,29 +20,22 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 ### Role-Specific Onboarding Tour — COMPLETE
 ### Dynamic Escrow Intelligence (3 Trust Gaps) — COMPLETE
 ### Real-Time WebSocket Escrow Notifications — COMPLETE
+### Investor Deck (19 slides) — COMPLETE
+### Suite of 5 AI Features — COMPLETE
 
-### Investor Deck — COMPLETE (Apr 1, 2026)
-- **19 slides** total with autoplay + keyboard/mouse navigation
-- **Updated stats**: 85+ features, 250+ endpoints, 9 integrations, 100% test pass
-- **11 Trademarkable Innovations** (IP Portfolio slide)
-- **3 Trust Gaps** slide (Execution, Verification, Security)
-- **6 feature cards**: ANAN, Escrow Intelligence, AI Orchestrator, Biometric, Blockchain+Bond, RBAC
-- **6-phase AI Pipeline** slide
-- **Interactive Demo Walkthrough** (slide 11): 6-step escrow lifecycle with animated visualizations, Auto-Play, Trust Score progress bar
-- **Competitive Comparison** (slide 17): NotaryChain vs Traditional Notary, DocuSign, Notarize — 16/16 capabilities feature matrix with scoreboard
-- **Feature Breakdown**: 12 categories, 90+ total features
-- **Architecture + Tech Stack + Infrastructure + Metrics + Market + Contact** slides
-- Password gate: `NotaryChain2026!`
+### Security & Authorization Hardening — COMPLETE (Apr 1, 2026)
+**Auth enforcement:**
+- ceremony_routes.py: Added auth to `get_ceremony`, `execute_ceremony`, `stream_ceremony`, `get_certificate`, `list_my_ceremonies` (previously wide open)
+- escrow_routes.py: Added party verification on `get_escrow` (user must be buyer/seller/creator or admin), `settle_escrow` (only parties or admin can settle)
 
-### Suite of 5 AI Features — COMPLETE (Apr 1, 2026)
-- **AI Document Risk Scoring**: GPT-5.2 analyzes documents for legal risks, missing clauses, anomalies, compliance flags. Returns 0-100 risk score with breakdown.
-- **AI Document Summarization**: GPT-5.2 generates plain-English summaries with key terms, parties, critical dates, financial obligations, action items.
-- **Smart Notary Matching**: AI-powered scoring engine matching documents to best notary by specialization, jurisdiction, rating, availability, response time.
-- **Fraud Detection Dashboard**: Admin/Notary-only analytics showing threat level, ceremony stats, duplicate document detection, velocity anomalies, geo mismatches.
-- **Voice-Authenticated Ceremonies**: Voice biometric verification with phrase matching, liveness detection, synthetic speech risk analysis.
-- **AI Analysis History**: Persisted analysis records per user for audit trail.
-- Frontend: AI Intelligence Hub at /ai-intelligence with 5 tabbed sections, accessible from Dashboard.
-- Testing: iteration 79, 100% (17/17 backend, all frontend verified)
+**Data consistency fixes:**
+- Fixed MongoDB `_id` ObjectId leaks: ceremony_routes.py (all find_one queries now use `{"_id": 0}`), admin_routes.py (check_admin), audit_routes.py (5 admin check queries), alert_settings_routes.py
+- Input validation: capped `limit` parameter in AI analysis history to 100
+
+**Access control:**
+- Ceremony endpoints now verify `initiated_by` matches user email (or admin)
+- Escrow endpoints verify user is a party (buyer/seller/creator) or admin
+- Fraud analytics restricted to admin/notary roles only
 
 ## Upcoming Tasks
 - Resend Domain Verification (user task) (P1)

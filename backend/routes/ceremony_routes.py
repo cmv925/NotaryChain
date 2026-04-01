@@ -399,19 +399,26 @@ async def start_ceremony(req: CeremonyStartRequest, request=None):
 
 
 @router.get("/{ceremony_id}")
-async def get_ceremony(ceremony_id: str):
+async def get_ceremony(ceremony_id: str, request: Request = None):
+    user = await get_current_user(request)
     ceremony = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
     if not ceremony:
         raise HTTPException(status_code=404, detail="Ceremony not found")
+    # Only allow the ceremony initiator or admin to view
+    if ceremony.get("initiated_by") != user.get("email") and user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="You do not have access to this ceremony")
     return ceremony
 
 
 @router.post("/{ceremony_id}/execute")
-async def execute_ceremony(ceremony_id: str):
+async def execute_ceremony(ceremony_id: str, request: Request = None):
     """Execute the 3-agent pipeline sequentially with status updates"""
-    ceremony = await db.ceremonies.find_one({"ceremony_id": ceremony_id})
+    user = await get_current_user(request)
+    ceremony = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
     if not ceremony:
         raise HTTPException(status_code=404, detail="Ceremony not found")
+    if ceremony.get("initiated_by") != user.get("email") and user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="You do not have access to this ceremony")
 
     if ceremony["status"] not in ("pending", "consensus_failed"):
         raise HTTPException(status_code=400, detail=f"Ceremony is already {ceremony['status']}")
@@ -571,7 +578,7 @@ async def _seal_on_hedera(ceremony_id: str, ceremony: dict, consensus: dict) -> 
 
 async def _run_ceremony_pipeline(ceremony_id: str):
     """Generator that runs the 3-agent pipeline and yields SSE events."""
-    ceremony = await db.ceremonies.find_one({"ceremony_id": ceremony_id})
+    ceremony = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
     if not ceremony:
         yield _sse_event("error", {"message": "Ceremony not found"})
         return
@@ -695,11 +702,14 @@ def _sse_event(event_type: str, data: dict) -> str:
 
 
 @router.get("/{ceremony_id}/stream")
-async def stream_ceremony(ceremony_id: str):
+async def stream_ceremony(ceremony_id: str, request: Request = None):
     """SSE endpoint — streams real-time agent status updates during ceremony execution."""
-    ceremony = await db.ceremonies.find_one({"ceremony_id": ceremony_id})
+    user = await get_current_user(request)
+    ceremony = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
     if not ceremony:
         raise HTTPException(status_code=404, detail="Ceremony not found")
+    if ceremony.get("initiated_by") != user.get("email") and user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="You do not have access to this ceremony")
 
     if ceremony["status"] not in ("pending", "consensus_failed"):
         raise HTTPException(status_code=400, detail=f"Ceremony is already {ceremony['status']}")
@@ -716,16 +726,10 @@ async def stream_ceremony(ceremony_id: str):
 
 
 @router.get("/list/my")
-async def list_my_ceremonies(request=None):
+async def list_my_ceremonies(request: Request = None):
     """List ceremonies for the authenticated user"""
-    auth_header = request.headers.get("Authorization", "") if request else ""
-    user_email = "anonymous"
-    if auth_header.startswith("Bearer "):
-        from auth import decode_access_token
-        token = auth_header.split(" ", 1)[1]
-        payload = decode_access_token(token)
-        if payload:
-            user_email = payload.get("sub", "anonymous")
+    user = await get_current_user(request)
+    user_email = user.get("email")
 
     ceremonies = []
     cursor = db.ceremonies.find(
@@ -770,9 +774,17 @@ async def _generate_and_store_certificate(ceremony_id: str):
 
 
 @router.get("/{ceremony_id}/certificate")
-async def get_certificate(ceremony_id: str):
+async def get_certificate(ceremony_id: str, request: Request = None):
     """Download the ceremony certificate PDF."""
+    user = await get_current_user(request)
     from fastapi.responses import Response
+
+    # Verify access
+    ceremony_check = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0, "initiated_by": 1})
+    if not ceremony_check:
+        raise HTTPException(status_code=404, detail="Ceremony not found")
+    if ceremony_check.get("initiated_by") != user.get("email") and user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="You do not have access to this certificate")
 
     cert = await db.ceremony_certificates.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
     if not cert:

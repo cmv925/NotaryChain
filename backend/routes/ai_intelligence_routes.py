@@ -185,6 +185,7 @@ async def voice_auth_endpoint(body: VoiceAuthRequest, request: Request):
 async def get_analysis_history(request: Request, limit: int = 20):
     """Get recent AI analysis history for the current user."""
     user = await _get_user(request)
+    limit = min(limit, 100)  # Cap to prevent excessive queries
     analyses = []
     cursor = db.ai_analyses.find(
         {"user_email": user.get("email")},
