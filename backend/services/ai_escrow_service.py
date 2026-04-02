@@ -8,8 +8,11 @@ import json
 import uuid
 import hashlib
 import tempfile
+import logging
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -187,9 +190,10 @@ async def extract_conditions_from_text(document_text: str, document_name: str = 
         }
 
     except Exception as ex:
+        logger.warning(f"AI escrow condition extraction failed: {ex}")
         return {
             "success": False,
-            "error": str(ex),
+            "error": "AI analysis temporarily unavailable",
             "conditions": [],
             "ai_model": "gpt-5.2",
         }

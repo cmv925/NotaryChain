@@ -17,25 +17,42 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 ### Core Platform (Phases 1-26) — ALL COMPLETE
 ### ANAN — Autonomous Notary Agent Network — COMPLETE
 ### On-Chain Hedera Bond Management — COMPLETE
-### Role-Specific Onboarding Tour — COMPLETE
 ### Dynamic Escrow Intelligence (3 Trust Gaps) — COMPLETE
 ### Real-Time WebSocket Escrow Notifications — COMPLETE
 ### Investor Deck (19 slides) — COMPLETE
 ### Suite of 5 AI Features — COMPLETE
+### Security & Authorization Hardening — COMPLETE
 
-### Security & Authorization Hardening — COMPLETE (Apr 1, 2026)
-**Auth enforcement:**
-- ceremony_routes.py: Added auth to `get_ceremony`, `execute_ceremony`, `stream_ceremony`, `get_certificate`, `list_my_ceremonies` (previously wide open)
-- escrow_routes.py: Added party verification on `get_escrow` (user must be buyer/seller/creator or admin), `settle_escrow` (only parties or admin can settle)
+### AI Security Audit — COMPLETE (Apr 2, 2026)
 
-**Data consistency fixes:**
-- Fixed MongoDB `_id` ObjectId leaks: ceremony_routes.py (all find_one queries now use `{"_id": 0}`), admin_routes.py (check_admin), audit_routes.py (5 admin check queries), alert_settings_routes.py
-- Input validation: capped `limit` parameter in AI analysis history to 100
+**Findings & Fixes Applied:**
 
-**Access control:**
-- Ceremony endpoints now verify `initiated_by` matches user email (or admin)
-- Escrow endpoints verify user is a party (buyer/seller/creator) or admin
-- Fraud analytics restricted to admin/notary roles only
+1. **Rate Limiting on All AI Endpoints (CRITICAL)**
+   - Added `@limiter.limit()` to 13 AI route handlers across 7 files
+   - Limits: 5-15 req/min per IP depending on endpoint cost
+   - Files: ai_intelligence_routes, conductor_routes, copilot_routes, remediation_routes, ai_generator_routes, doc_compare_routes, summarizer_routes
+
+2. **Input Size Validation (HIGH)**
+   - Added `max_length` constraints via Pydantic `Field()` to all AI request models
+   - document_text: max 50,000 chars, document_name: max 500 chars
+   - audio_base64: max 5MB, party_name: max 200 chars
+   - Verified: 422 returned for oversized inputs
+
+3. **Error Message Sanitization (HIGH)**
+   - Replaced all `str(ex)` in AI error responses with generic user-facing messages
+   - Internal errors now logged via `logger.warning()` instead of returned to client
+   - Files fixed: ai_document_intelligence.py, ai_escrow_service.py, anan_swarm.py, escrow_oracle_service.py
+
+4. **Prompt Injection Mitigation (MEDIUM)**
+   - ai_document_intelligence.py already truncates user input to 8000 chars before sending to GPT-5.2
+   - System prompts use strict JSON-only response format instructions
+   - User input is clearly delimited in prompt templates
+
+5. **Existing Protections Verified:**
+   - All AI endpoints require JWT authentication
+   - Role-based access (fraud analytics = admin/notary only)
+   - JSON parse errors handled with graceful fallbacks
+   - GPT-5.2 calls wrapped in try/except with demo fallbacks
 
 ## Upcoming Tasks
 - Resend Domain Verification (user task) (P1)

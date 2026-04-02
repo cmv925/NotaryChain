@@ -3,10 +3,11 @@ AI Document Summarizer Routes
 Upload any document and get AI-generated summary + key terms.
 """
 
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from models import User
 from routes.auth_routes import get_current_user
+from middleware.security import limiter
 from emergentintegrations.llm.chat import LlmChat, UserMessage, FileContentWithMimeType
 from services.storage_service import storage_service
 from datetime import datetime, timezone
@@ -38,7 +39,9 @@ def set_db(database):
 
 
 @router.post("/summarize")
+@limiter.limit("5/minute")
 async def summarize_document(
+    request: Request,
     file: UploadFile = File(...),
     detail_level: str = Form("standard"),
     current_user: User = Depends(get_current_user),

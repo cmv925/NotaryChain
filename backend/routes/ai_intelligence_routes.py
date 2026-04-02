@@ -4,13 +4,19 @@ Endpoints for: Risk Scoring, Smart Notary Matching, Fraud Detection Dashboard,
 AI Document Summarization, Voice-Authenticated Ceremonies.
 """
 from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime, timezone
+from middleware.security import limiter
 import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/ai-intelligence", tags=["ai-intelligence"])
 db = None
+
+MAX_DOCUMENT_LENGTH = 50000  # chars
 
 
 def set_db(database):
@@ -46,11 +52,12 @@ async def _require_admin_or_notary(request: Request):
 # ══════════════════════════════════════════════
 
 class RiskScoreRequest(BaseModel):
-    document_text: str
-    document_name: str = "Untitled Document"
+    document_text: str = Field(..., max_length=50000)
+    document_name: str = Field(default="Untitled Document", max_length=500)
 
 
 @router.post("/risk-score")
+@limiter.limit("10/minute")
 async def risk_score_endpoint(body: RiskScoreRequest, request: Request):
     """Score a document for legal risk factors using GPT-5.2."""
     user = await _get_user(request)
@@ -80,11 +87,12 @@ async def risk_score_endpoint(body: RiskScoreRequest, request: Request):
 # ══════════════════════════════════════════════
 
 class SummarizeRequest(BaseModel):
-    document_text: str
-    document_name: str = "Untitled Document"
+    document_text: str = Field(..., max_length=50000)
+    document_name: str = Field(default="Untitled Document", max_length=500)
 
 
 @router.post("/summarize")
+@limiter.limit("10/minute")
 async def summarize_endpoint(body: SummarizeRequest, request: Request):
     """Generate a plain-English summary of a legal document."""
     user = await _get_user(request)
@@ -113,12 +121,13 @@ async def summarize_endpoint(body: SummarizeRequest, request: Request):
 # ══════════════════════════════════════════════
 
 class MatchNotaryRequest(BaseModel):
-    document_type: str = "contract"
-    jurisdiction: str = "All States"
-    urgency: str = "normal"
+    document_type: str = Field(default="contract", max_length=100)
+    jurisdiction: str = Field(default="All States", max_length=200)
+    urgency: str = Field(default="normal", max_length=20)
 
 
 @router.post("/match-notary")
+@limiter.limit("15/minute")
 async def match_notary_endpoint(body: MatchNotaryRequest, request: Request):
     """AI-powered notary recommendation engine."""
     user = await _get_user(request)
@@ -133,6 +142,7 @@ async def match_notary_endpoint(body: MatchNotaryRequest, request: Request):
 # ══════════════════════════════════════════════
 
 @router.get("/fraud-analytics")
+@limiter.limit("20/minute")
 async def fraud_analytics_endpoint(request: Request):
     """Admin-facing fraud detection analytics dashboard data."""
     user = await _require_admin_or_notary(request)
@@ -147,12 +157,13 @@ async def fraud_analytics_endpoint(request: Request):
 # ══════════════════════════════════════════════
 
 class VoiceAuthRequest(BaseModel):
-    audio_base64: str = ""
-    party_name: str
-    expected_phrase: Optional[str] = None
+    audio_base64: str = Field(default="", max_length=5000000)
+    party_name: str = Field(..., max_length=200)
+    expected_phrase: Optional[str] = Field(default=None, max_length=500)
 
 
 @router.post("/voice-auth")
+@limiter.limit("5/minute")
 async def voice_auth_endpoint(body: VoiceAuthRequest, request: Request):
     """Voice biometric verification for ceremony authentication."""
     user = await _get_user(request)

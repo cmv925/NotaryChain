@@ -3,7 +3,7 @@ AI Document Remediation Routes
 Analyzes documents to suggest and insert missing legal clauses.
 """
 
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 from typing import Optional, List
@@ -15,6 +15,7 @@ import logging
 
 from models import User
 from routes.auth_routes import get_current_user
+from middleware.security import limiter
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 logger = logging.getLogger(__name__)
@@ -42,7 +43,9 @@ class ApplyClauseRequest(BaseModel):
 
 
 @router.post("/analyze")
+@limiter.limit("10/minute")
 async def analyze_for_remediation(
+    request: Request,
     body: RemediateTextRequest,
     current_user: User = Depends(get_current_user),
 ):
@@ -135,7 +138,9 @@ Respond with a JSON object:
 
 
 @router.post("/apply-clauses")
+@limiter.limit("10/minute")
 async def apply_suggested_clauses(
+    request: Request,
     body: ApplyClauseRequest,
     current_user: User = Depends(get_current_user),
 ):

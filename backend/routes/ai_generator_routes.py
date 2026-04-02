@@ -3,7 +3,7 @@ AI Document Generator Routes
 Generate legal documents from natural language descriptions using Gemini.
 """
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 from typing import Optional
@@ -15,6 +15,7 @@ import logging
 
 from models import User
 from routes.auth_routes import get_current_user
+from middleware.security import limiter
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 logger = logging.getLogger(__name__)
@@ -59,7 +60,9 @@ async def get_document_types():
 
 
 @router.post("/generate")
+@limiter.limit("5/minute")
 async def generate_document(
+    request: Request,
     body: GenerateRequest,
     current_user: User = Depends(get_current_user),
 ):
@@ -135,7 +138,9 @@ Make the document thorough, legally sound, and professionally written. Use [BLAN
 
 
 @router.post("/refine")
+@limiter.limit("5/minute")
 async def refine_document(
+    request: Request,
     body: RefineRequest,
     current_user: User = Depends(get_current_user),
 ):

@@ -7,8 +7,11 @@ import os
 import uuid
 import random
 import hashlib
+import logging
 from datetime import datetime, timezone, timedelta
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 EMERGENT_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
 
@@ -195,10 +198,11 @@ Consider: Is the subject relevant? Is the quality sufficient? Are there any sign
         }
 
     except Exception as ex:
+        logger.warning(f"AI photo verification failed: {ex}")
         return {
             "verified": False,
             "ai_powered": False,
-            "error": str(ex),
+            "error": "AI verification temporarily unavailable",
             "confidence": 0,
         }
 
@@ -284,10 +288,11 @@ Check for:
         }
 
     except Exception as ex:
+        logger.warning(f"AI biometric verification failed: {ex}")
         return {
             "verified": False,
             "liveness": False,
             "ai_powered": False,
-            "error": str(ex),
+            "error": "Biometric verification temporarily unavailable",
             "confidence": 0,
         }

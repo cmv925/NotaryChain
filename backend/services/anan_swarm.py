@@ -7,8 +7,11 @@ import uuid
 import json
 import hashlib
 import asyncio
+import logging
 from datetime import datetime, timezone
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -203,15 +206,16 @@ Provide your independent analysis score (0-100) and detailed checks."""
             "completed_at": datetime.now(timezone.utc).isoformat(),
         }
     except Exception as ex:
+        logger.warning(f"ANAN agent {agent_name} error: {ex}")
         return {
             "agent": agent_name,
             "score": 50,
             "verdict": "FAIL",
-            "reasoning": f"Agent error: {str(ex)}",
+            "reasoning": "Agent encountered an internal error",
             "checks": {},
             "risk_level": "high",
             "ai_powered": False,
-            "error": str(ex),
+            "error": "Agent processing error",
             "completed_at": datetime.now(timezone.utc).isoformat(),
         }
 

@@ -4,7 +4,7 @@ LLM-powered orchestrator that guides each participant through their steps.
 Provides contextual instructions, AI interviews, and real-time guidance.
 """
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 from typing import Optional
@@ -15,6 +15,7 @@ import logging
 
 from models import User
 from routes.auth_routes import get_current_user
+from middleware.security import limiter
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 logger = logging.getLogger(__name__)
@@ -41,7 +42,9 @@ class ConductorChatRequest(BaseModel):
 
 
 @router.post("/guide")
+@limiter.limit("10/minute")
 async def get_participant_guidance(
+    request: Request,
     body: ConductorGuideRequest,
     current_user: User = Depends(get_current_user),
 ):
@@ -167,7 +170,9 @@ Return a JSON object:
 
 
 @router.post("/chat")
+@limiter.limit("15/minute")
 async def conductor_chat(
+    request: Request,
     body: ConductorChatRequest,
     current_user: User = Depends(get_current_user),
 ):

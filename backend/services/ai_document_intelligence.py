@@ -8,8 +8,11 @@ import uuid
 import hashlib
 import json
 import random
+import logging
 from datetime import datetime, timezone
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 EMERGENT_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
 
@@ -89,7 +92,8 @@ Provide comprehensive risk assessment."""
         return result
     except Exception as ex:
         fallback = _demo_risk_score(doc_name)
-        fallback["ai_error"] = str(ex)
+        fallback["ai_error"] = "AI analysis unavailable, showing demo results"
+        logger.warning(f"AI risk scoring failed: {ex}")
         return fallback
 
 
@@ -166,7 +170,8 @@ Make it understandable for someone with no legal background."""
         return result
     except Exception as ex:
         fallback = _demo_summary(doc_name)
-        fallback["ai_error"] = str(ex)
+        fallback["ai_error"] = "AI summarization unavailable, showing demo results"
+        logger.warning(f"AI summarization failed: {ex}")
         return fallback
 
 
@@ -397,7 +402,8 @@ Perform the voice biometric analysis."""
         return result
     except Exception as ex:
         fallback = _demo_voice_result(party_name)
-        fallback["ai_error"] = str(ex)
+        fallback["ai_error"] = "Voice analysis unavailable, showing demo results"
+        logger.warning(f"AI voice verification failed: {ex}")
         return fallback
 
 
