@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useWS } from '../contexts/WebSocketContext';
-import { Shield, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp, Settings, CreditCard, Lock, Code, BookOpen, Building2, Save, CalendarClock, Layers, Users, Wand2, FileSearch, Fingerprint, Sparkles, Bell, GitCompareArrows, Palette, UserCheck, Sun, Moon, Brain, Scale, ShieldAlert, ChevronRight, FileCheck, Search, Hammer } from 'lucide-react';
+import { Shield, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp, Settings, CreditCard, Lock, Code, BookOpen, Building2, Save, CalendarClock, Layers, Users, Wand2, FileSearch, Fingerprint, Sparkles, Bell, GitCompareArrows, Palette, UserCheck, Sun, Moon, Brain, Scale, ShieldAlert, ChevronRight, FileCheck, Search, Hammer, RotateCcw, Timer, Globe } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../components/ui/dropdown-menu';
@@ -245,6 +245,9 @@ const Dashboard = () => {
               )}
               <BentoAction icon={Palette} label="Branding" onClick={() => navigate('/branding')} data-testid="branding-btn" />
               <BentoAction icon={Sparkles} label="Ceremony Mode" onClick={() => navigate('/ceremony')} data-testid="ceremony-btn" />
+              <BentoAction icon={Users} label="Multi-Signature" desc="2+ signers" onClick={() => navigate('/multi-signature')} data-testid="multi-sig-btn" />
+              <BentoAction icon={Timer} label="Cert Expiration" desc="Renewal & tracking" onClick={() => navigate('/certificate-expiration')} data-testid="cert-expiry-btn" />
+              <BentoAction icon={Globe} label="Public Audit Trail" onClick={() => window.open('/audit-trail', '_blank')} data-testid="audit-trail-btn" />
               {isUser && (
                 <BentoAction icon={UserCheck} label="Become a Notary" onClick={() => navigate('/notary-professional')} data-testid="become-notary-btn" />
               )}

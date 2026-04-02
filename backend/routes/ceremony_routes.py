@@ -335,10 +335,7 @@ def _evaluate_consensus(agents: dict) -> dict:
 # --- Endpoints ---
 
 @router.post("/start")
-async def start_ceremony(req: CeremonyStartRequest, request=None):
-    from starlette.requests import Request
-    if request is None:
-        from fastapi import Request as FReq
+async def start_ceremony(req: CeremonyStartRequest, request: Request = None):
     raw_request = request
     # Manual auth extraction
     auth_header = ""

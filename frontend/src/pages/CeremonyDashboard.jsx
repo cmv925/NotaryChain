@@ -678,6 +678,12 @@ const CeremonyDashboard = () => {
                       </Button>
                     </a>
                   )}
+                  {(ceremony.status === 'sealed' || ceremony.status === 'consensus_failed') && (
+                    <Button variant="outline" onClick={() => navigate(`/ceremony-replay/${ceremony.ceremony_id}`)}
+                      className="border-sky-500/50 text-sky-400 hover:bg-sky-500/10 rounded-sm" data-testid="replay-ceremony-btn">
+                      <Play className="w-4 h-4 mr-2" /> Replay
+                    </Button>
+                  )}
                 </div>
 
                 {/* Agent Pipeline */}

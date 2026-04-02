@@ -73,6 +73,10 @@ const EscrowDashboard = lazy(() => import('./pages/EscrowDashboard'));
 const ANANDashboard = lazy(() => import('./pages/ANANDashboard'));
 const FraudIntelligencePage = lazy(() => import('./pages/FraudIntelligencePage'));
 const AIIntelligenceHub = lazy(() => import('./pages/AIIntelligenceHub'));
+const PublicAuditTrail = lazy(() => import('./pages/PublicAuditTrail'));
+const CeremonyReplay = lazy(() => import('./pages/CeremonyReplay'));
+const MultiSignature = lazy(() => import('./pages/MultiSignature'));
+const CertificateExpiration = lazy(() => import('./pages/CertificateExpiration'));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
@@ -105,6 +109,7 @@ function App() {
             <Route path="/verify-certificate" element={<VerifyCertificate />} />
             <Route path="/verify-certificate/:certHash" element={<VerifyCertificate />} />
             <Route path="/investor-deck" element={<InvestorDeck />} />
+            <Route path="/audit-trail" element={<PublicAuditTrail />} />
             <Route
               path="/ceremony"
               element={
@@ -498,6 +503,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AIIntelligenceHub />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ceremony-replay/:ceremonyId"
+              element={
+                <ProtectedRoute>
+                  <CeremonyReplay />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/multi-signature"
+              element={
+                <ProtectedRoute>
+                  <MultiSignature />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/certificate-expiration"
+              element={
+                <ProtectedRoute>
+                  <CertificateExpiration />
                 </ProtectedRoute>
               }
             />

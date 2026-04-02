@@ -1,15 +1,18 @@
 """
 Ceremony Certificate PDF Generator
 Auto-generates a professional certificate when consensus is APPROVED.
+Includes QR code linking to public verification endpoint.
 """
 import io
 import hashlib
+import os
+import qrcode
 from datetime import datetime, timezone
 
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 
@@ -178,6 +181,31 @@ def generate_ceremony_certificate(ceremony: dict) -> bytes:
             ("TOPPADDING", (0, 0), (-1, -1), 3),
         ]))
         elements.append(seal_table)
+
+    # ===== QR CODE =====
+    base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://notarychain.com")
+    verify_url = f"{base_url}/verify-certificate/NC-{cert_hash}"
+    qr_buf = io.BytesIO()
+    qr_img = qrcode.make(verify_url, box_size=4, border=2)
+    qr_img.save(qr_buf, format="PNG")
+    qr_buf.seek(0)
+    qr_flowable = Image(qr_buf, width=1.1 * inch, height=1.1 * inch)
+
+    qr_table = Table(
+        [[qr_flowable, Paragraph(
+            f"<b>Scan to Verify</b><br/>"
+            f"<font size='7' color='#6b7280'>Certificate ID: NC-{cert_hash}</font><br/>"
+            f"<font size='6' color='#3b82f6'>{verify_url}</font>",
+            ParagraphStyle("QRText", parent=styles["Normal"], fontSize=9, textColor=brand_dark, leading=13),
+        )]],
+        colWidths=[1.4 * inch, 5.1 * inch],
+    )
+    qr_table.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("LEFTPADDING", (1, 0), (1, 0), 12),
+    ]))
+    elements.append(qr_table)
+    elements.append(Spacer(1, 10))
 
     # ===== FOOTER =====
     elements.append(Spacer(1, 20))
