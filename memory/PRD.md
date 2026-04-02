@@ -5,7 +5,7 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 
 ## Tech Stack
 - **Frontend**: React, React Router, TailwindCSS, Shadcn UI, TensorFlow.js
-- **Backend**: FastAPI, MongoDB (Motor), ReportLab/fpdf2 (PDF generation)
+- **Backend**: FastAPI, MongoDB (Motor), ReportLab/fpdf2/qrcode (PDF + QR generation)
 - **Authentication**: JWT with roles, 2FA/TOTP, API Keys
 - **AI**: OpenAI GPT-5.2 via emergent-integrations
 - **Blockchain**: Hedera Hashgraph (Mainnet)
@@ -22,37 +22,27 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 ### Investor Deck (19 slides) — COMPLETE
 ### Suite of 5 AI Features — COMPLETE
 ### Security & Authorization Hardening — COMPLETE
+### AI Security Audit (Rate Limiting, Input Validation) — COMPLETE
 
-### AI Security Audit — COMPLETE (Apr 2, 2026)
+### Platform Features Suite — COMPLETE (Apr 2, 2026)
 
-**Findings & Fixes Applied:**
+1. **Public Audit Trail Explorer** — Public-facing `/audit-trail` page showing anonymized platform stats (notarizations, blockchain seals, users, approval rate, uptime), 14-day volume chart, recent seals. No auth required.
 
-1. **Rate Limiting on All AI Endpoints (CRITICAL)**
-   - Added `@limiter.limit()` to 13 AI route handlers across 7 files
-   - Limits: 5-15 req/min per IP depending on endpoint cost
-   - Files: ai_intelligence_routes, conductor_routes, copilot_routes, remediation_routes, ai_generator_routes, doc_compare_routes, summarizer_routes
+2. **QR Code on Certificates** — Auto-generated QR code on every PDF certificate linking to `/verify-certificate/NC-{certHash}` for instant mobile verification. Uses `qrcode` library.
 
-2. **Input Size Validation (HIGH)**
-   - Added `max_length` constraints via Pydantic `Field()` to all AI request models
-   - document_text: max 50,000 chars, document_name: max 500 chars
-   - audio_base64: max 5MB, party_name: max 200 chars
-   - Verified: 422 returned for oversized inputs
+3. **Multi-Signature Ceremonies** — Support 2-10 signers per ceremony. Create, track, and sign multi-sig ceremonies with individual biometric verification. Prevents double-signing. Status: awaiting_signatures → all_signed.
 
-3. **Error Message Sanitization (HIGH)**
-   - Replaced all `str(ex)` in AI error responses with generic user-facing messages
-   - Internal errors now logged via `logger.warning()` instead of returned to client
-   - Files fixed: ai_document_intelligence.py, ai_escrow_service.py, anan_swarm.py, escrow_oracle_service.py
+4. **Certificate Expiration & Renewal** — Set validity periods (30-3650 days) on notarized certificates. Track expiring certificates with configurable time windows. One-click renewal extends validity.
 
-4. **Prompt Injection Mitigation (MEDIUM)**
-   - ai_document_intelligence.py already truncates user input to 8000 chars before sending to GPT-5.2
-   - System prompts use strict JSON-only response format instructions
-   - User input is clearly delimited in prompt templates
+5. **Ceremony Replay** — Animated step-by-step visualization of past ceremony agent pipeline (Initiation → Verifier → Witness → Sealer → Consensus → Blockchain Seal). Play/Pause/Reset controls with progress bar.
 
-5. **Existing Protections Verified:**
-   - All AI endpoints require JWT authentication
-   - Role-based access (fraud analytics = admin/notary only)
-   - JSON parse errors handled with graceful fallbacks
-   - GPT-5.2 calls wrapped in try/except with demo fallbacks
+6. **Document Versioning** — Track multiple versions of documents across ceremonies with version timeline, status, and blockchain seal info.
+
+**Testing**: iteration 80, 100% (24/24 backend, all frontend verified)
+
+## Remaining Features (Not Yet Implemented)
+- **Real-Time Notifications (Push/Email)** — Email notifications when ceremony progresses through stages (P1)
+- **Mobile-First PWA** — Service worker, offline certificate viewing, push notifications (P2)
 
 ## Upcoming Tasks
 - Resend Domain Verification (user task) (P1)
@@ -62,7 +52,7 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 - Add Freelancer Milestone and Supply Chain escrow templates (P2)
 - Add more languages (DE, PT, JA, ZH) (P2)
 - Auto-learning threat detection from GPT-5.2 responses (P3)
-- Update Investor Deck with AI Intelligence Hub features (P2)
+- Update Investor Deck with new platform features (P2)
 
 ## Test Credentials
 | Role | Email | Password |
