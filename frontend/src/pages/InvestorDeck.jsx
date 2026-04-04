@@ -6,10 +6,10 @@ const API = process.env.REACT_APP_BACKEND_URL;
 /* ═══════════════════ DATA ═══════════════════ */
 
 const PLATFORM_STATS = [
-  { label: 'Features Shipped', value: '85+' },
+  { label: 'Features Shipped', value: '90+' },
   { label: 'API Endpoints', value: '250+' },
   { label: 'Integrations', value: '9' },
-  { label: 'Test Pass Rate', value: '100%' },
+  { label: 'Internal Tests', value: 'Passing' },
 ];
 
 const TRADEMARKS = [
@@ -17,10 +17,10 @@ const TRADEMARKS = [
   { name: 'AI Orchestrator', feature: 'GPT-5.2-powered escrow condition extraction and enforcement', reason: 'Novel AI system that converts contracts into programmable financial instruments' },
   { name: 'Autonomous Notary Agent Network', feature: '3-agent GPT-5.2 blind consensus swarm for notarization', reason: 'Industry-first AI swarm architecture for autonomous document verification' },
   { name: 'Biometric Passport', feature: 'Unified identity credential via face verification', reason: 'Unique identity verification concept for notarization' },
-  { name: 'Biometric Proof of Intent', feature: 'Facial geometry + liveness gate for escrow settlement', reason: 'Novel identity-bound escrow release mechanism eliminating fraud' },
+  { name: 'Biometric Proof of Intent', feature: 'Facial geometry + liveness gate for escrow settlement', reason: 'Novel identity-bound escrow release mechanism designed to reduce fraud risk' },
   { name: 'Dynamic Fraud Intelligence', feature: 'Self-tuning jurisdictional fraud patterns injected into AI agents', reason: 'Adaptive threat detection for RON compliance' },
-  { name: 'SAN Bond Ledger', feature: 'On-chain Hedera HCS immutable insurance bond audit trail', reason: 'Cryptographic accountability for AI agent performance' },
-  { name: 'Oracle Verification', feature: 'External data feed integration for autonomous escrow condition verification', reason: 'Trustless milestone verification eliminating intermediaries' },
+  { name: 'SAN Bond Ledger', feature: 'On-chain Hedera HCS bond audit trail', reason: 'Cryptographic accountability for AI agent performance' },
+  { name: 'Oracle Verification', feature: 'External data feed integration for autonomous escrow condition verification', reason: 'Programmatic milestone verification reducing intermediary dependency' },
   { name: 'AI Conductor Mode', feature: 'LLM-guided step-by-step transaction execution', reason: 'Distinctive AI-guided workflow branding' },
   { name: 'Evidence Package', feature: 'Automated settlement audit trail generation', reason: 'Novel automated compliance artifact' },
   { name: 'Document Remediation', feature: 'AI clause analysis & fix suggestions', reason: 'Unique AI-powered document healing concept' },
@@ -31,8 +31,8 @@ const FEATURES = [
     icon: Vote,
     title: 'ANAN: Autonomous Notary Agent Network',
     trademark: true,
-    description: 'Industry-first 3-agent GPT-5.2 swarm that performs blind consensus voting on every notarization. Verifier, Witness, and Sealer agents independently analyze documents, then reach consensus without seeing each other\'s votes. Includes dynamic fraud intelligence, agent reputation auto-tuning, and a $1M on-chain insurance bond.',
-    stats: ['3-agent blind consensus', 'GPT-5.2 swarm AI', '$1M on-chain bond', 'Self-tuning weights'],
+    description: 'Industry-first 3-agent GPT-5.2 swarm that performs blind consensus voting on every notarization. Verifier, Witness, and Sealer agents independently analyze documents, then reach consensus without seeing each other\'s votes. Includes dynamic fraud intelligence and agent reputation auto-tuning.',
+    stats: ['3-agent blind consensus', 'GPT-5.2 swarm AI', 'Virtual bond reserve', 'Self-tuning weights'],
     color: '#8b5cf6',
   },
   {
@@ -48,23 +48,23 @@ const FEATURES = [
     title: 'AI Transaction Orchestrator',
     trademark: true,
     description: 'Autonomous AI engine powered by GPT-5.2 that manages the entire notarization lifecycle. Identifies document types, suggests signers, validates compliance, and orchestrates multi-party transactions end-to-end with real-time streaming status.',
-    stats: ['95% automation rate', 'Sub-second decisions', '11 orchestration stages'],
+    stats: ['High automation rate', 'Sub-second decisions', '11 orchestration stages'],
     color: '#3b82f6',
   },
   {
     icon: Fingerprint,
     title: 'Biometric Passport & Proof of Intent',
     trademark: true,
-    description: 'Military-grade facial recognition creates tamper-proof biometric identities. GPT-5.2 Vision performs liveness detection and 3D facial geometry analysis. The Biometric Proof of Intent ties escrow settlement keys directly to verified identities, preventing unauthorized fund releases.',
-    stats: ['GPT-5.2 Vision analysis', 'Liveness detection', 'Court-admissible proof', 'Escrow settlement gate'],
+    description: 'Advanced facial recognition creates biometric identities with liveness detection. GPT-5.2 Vision performs facial geometry analysis and anti-spoofing checks. The Biometric Proof of Intent ties escrow settlement keys directly to verified identities, adding a security layer against unauthorized fund releases.',
+    stats: ['GPT-5.2 Vision analysis', 'Liveness detection', 'Identity-bound proof', 'Escrow settlement gate'],
     color: '#a855f7',
   },
   {
     icon: Blocks,
     title: 'Blockchain Sealing & On-Chain Bond',
     trademark: false,
-    description: 'Every notarized document and escrow lifecycle is cryptographically sealed on Hedera Hashgraph mainnet. The SAN Bond Ledger records all agent performance events on-chain, creating an immutable, verifiable audit trail that can never be altered or disputed.',
-    stats: ['Hedera Mainnet', 'On-chain bond ledger', 'SHA-256 hashing', 'Immutable audit trail'],
+    description: 'Every notarized document and escrow lifecycle is cryptographically sealed on Hedera Hashgraph mainnet. The SAN Bond Ledger records all agent performance events on-chain, creating a verifiable audit trail designed for tamper resistance and long-term integrity.',
+    stats: ['Hedera Mainnet', 'On-chain bond ledger', 'SHA-256 hashing', 'Tamper-resistant trail'],
     color: '#06b6d4',
   },
   {
@@ -229,7 +229,7 @@ function IPSlide({ visible }) {
 function TrustGapsSlide({ visible }) {
   const gaps = [
     { num: '1', title: 'The Execution Gap', subtitle: 'From Signature to Action', desc: 'AI Orchestrator extracts "Performance Triggers" from contracts and holds funds in a smart vault that only opens when milestones are verified. No more dead zones between signing and payment.', color: '#f59e0b', icon: Zap },
-    { num: '2', title: 'The Verification Gap', subtitle: 'Eliminating Subjective Disputes', desc: 'Oracle networks (shipping trackers, inspection databases, AI photo analysis) autonomously verify milestones. When data confirms completion, escrow settles instantly. No intermediaries.', color: '#06b6d4', icon: Network },
+    { num: '2', title: 'The Verification Gap', subtitle: 'Reducing Subjective Disputes', desc: 'Oracle networks (shipping trackers, inspection databases, AI photo analysis) autonomously verify milestones. When data confirms completion, escrow settlement is triggered programmatically, minimizing the need for manual intermediaries.', color: '#06b6d4', icon: Network },
     { num: '3', title: 'The Security Gap', subtitle: 'Biometric Proof of Intent', desc: 'The escrow "key" is tied to GPT-5.2 Vision biometric verification. Funds release only when the recipient\'s identity is confirmed via 3D facial geometry and liveness detection at settlement.', color: '#a855f7', icon: Fingerprint },
   ];
   return (
@@ -238,7 +238,7 @@ function TrustGapsSlide({ visible }) {
         <div className="text-center mb-10">
           <p className="text-amber-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">Core Innovation</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">3 Trust Gaps We Solve</h2>
-          <p className="text-gray-500 text-sm max-w-2xl mx-auto">Traditional escrow is slow, expensive, and reliant on human intermediaries. We replace trust with mathematics.</p>
+          <p className="text-gray-500 text-sm max-w-2xl mx-auto">Traditional escrow is slow, expensive, and reliant on human intermediaries. We augment trust with cryptographic verification and AI-driven automation.</p>
         </div>
         <div className="space-y-4">
           {gaps.map((g) => {
@@ -552,21 +552,24 @@ function MarketSlide({ visible }) {
           <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6">
             <BarChart3 className="w-7 h-7 text-blue-400 mx-auto mb-3" />
             <div className="text-3xl font-bold text-white mb-1">$18.6B</div>
-            <p className="text-gray-500 text-xs">Global e-notarization market by 2030 (CAGR 19.2%)</p>
+            <p className="text-gray-500 text-xs">Global e-notarization market by 2030 (est. CAGR 19.2%)*</p>
           </div>
           <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6">
             <Globe className="w-7 h-7 text-cyan-400 mx-auto mb-3" />
             <div className="text-3xl font-bold text-white mb-1">$5.4T</div>
-            <p className="text-gray-500 text-xs">Global escrow market addressable with AI-powered automation</p>
+            <p className="text-gray-500 text-xs">Total addressable escrow market (management estimate)*</p>
           </div>
           <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6">
             <Zap className="w-7 h-7 text-emerald-400 mx-auto mb-3" />
-            <div className="text-3xl font-bold text-white mb-1">85+</div>
-            <p className="text-gray-500 text-xs">Enterprise features shipped and tested at 100% pass rate</p>
+            <div className="text-3xl font-bold text-white mb-1">90+</div>
+            <p className="text-gray-500 text-xs">Enterprise features shipped and tested</p>
           </div>
         </div>
         <p className="text-gray-400 leading-relaxed max-w-2xl mx-auto text-sm">
-          The regulatory landscape is rapidly evolving in favor of digital notarization and AI-verified escrow. NotaryChain is the most feature-complete platform in this space, with autonomous AI agent swarms, oracle-verified smart escrow, and <span className="text-white font-medium">11 trademarkable innovations</span> that create a defensible technological moat.
+          The regulatory landscape is rapidly evolving in favor of digital notarization and AI-verified escrow. NotaryChain is building toward one of the most feature-complete platforms in this space, with autonomous AI agent swarms, oracle-verified smart escrow, and <span className="text-white font-medium">11 trademarkable innovations</span> that create a defensible technological moat.
+        </p>
+        <p className="text-gray-600 text-[9px] mt-6 max-w-xl mx-auto">
+          *Market estimates based on third-party research reports and management projections. Actual market sizes may vary. This presentation does not constitute an offer to sell securities. Forward-looking statements involve risks and uncertainties. Past performance of internal test suites does not guarantee commercial outcomes.
         </p>
       </div>
     </section>
@@ -622,6 +625,11 @@ function ContactSlide({ visible }) {
             {status === 'error' && <p className="text-red-400 text-sm text-center">Something went wrong. Please try again.</p>}
           </form>
         )}
+        <div className="mt-10 text-center">
+          <p className="text-gray-700 text-[8px] leading-relaxed max-w-md mx-auto">
+            CONFIDENTIAL — This presentation is for informational purposes only and does not constitute an offer to sell or solicitation of an offer to buy any securities. Forward-looking statements involve risks and uncertainties. NotaryChain is a technology platform and does not itself provide notary, legal, or financial services. All performance claims reflect internal test environments unless otherwise noted. Biometric data is processed in accordance with applicable privacy laws. Consult your own legal and financial advisors before making investment decisions.
+          </p>
+        </div>
       </div>
     </section>
   );
