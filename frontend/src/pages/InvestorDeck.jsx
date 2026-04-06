@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Lock, Shield, Brain, Fingerprint, Link2, Users, FileCheck, ChevronRight, Send, CheckCircle, Layers, Eye, Globe, Zap, BarChart3, ArrowRight, Award, Server, Database, Cpu, GitBranch, Activity, Box, Radio, CreditCard, Calendar, FileText, Settings, UserCheck, Video, Bell, Scale, Network, Blocks, Vote, Wifi, ShieldCheck } from 'lucide-react';
+import { Lock, Shield, Brain, Fingerprint, Link2, Users, FileCheck, ChevronRight, Send, CheckCircle, Layers, Eye, Globe, Zap, BarChart3, ArrowRight, Award, Server, Database, Cpu, GitBranch, Activity, Box, Radio, CreditCard, Calendar, FileText, Settings, UserCheck, Video, Bell, Scale, Network, Blocks, Vote, Wifi, ShieldCheck, Download, Loader2 } from 'lucide-react';
+import html2canvas from 'html2canvas-pro';
+import { jsPDF } from 'jspdf';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -1132,7 +1134,9 @@ function DeckPresentation() {
   const totalSlides = 19;
   const [current, setCurrent] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
+  const [exporting, setExporting] = useState(false);
   const containerRef = useRef(null);
+  const slideRef = useRef(null);
 
   useEffect(() => {
     if (!autoPlay) return;
@@ -1166,6 +1170,42 @@ function DeckPresentation() {
 
   const goTo = (i) => { setAutoPlay(false); setCurrent(i); };
 
+  const exportToPDF = async () => {
+    setExporting(true);
+    setAutoPlay(false);
+    const savedSlide = current;
+
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [1920, 1080] });
+    const slideContainer = slideRef.current;
+
+    for (let i = 0; i < totalSlides; i++) {
+      setCurrent(i);
+      // Wait for slide transition + render
+      await new Promise(r => setTimeout(r, 600));
+
+      try {
+        const canvas = await html2canvas(slideContainer, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#080c14',
+          width: slideContainer.offsetWidth,
+          height: slideContainer.offsetHeight,
+          logging: false,
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.92);
+        if (i > 0) pdf.addPage([1920, 1080], 'landscape');
+        pdf.addImage(imgData, 'JPEG', 0, 0, 1920, 1080);
+      } catch (err) {
+        console.error(`Failed to capture slide ${i + 1}:`, err);
+      }
+    }
+
+    pdf.save('NotaryChain_Investor_Deck.pdf');
+    setCurrent(savedSlide);
+    setExporting(false);
+  };
+
   const slideMap = [
     <HeroSlide visible={current === 0} />,
     <IPSlide visible={current === 1} />,
@@ -1192,6 +1232,11 @@ function DeckPresentation() {
         {autoPlay ? 'Pause' : 'Play'}
       </button>
 
+      <button data-testid="download-pdf-btn" onClick={exportToPDF} disabled={exporting}
+        className="fixed top-6 right-6 z-50 flex items-center gap-2 text-xs text-gray-400 hover:text-white transition-colors bg-white/[0.04] border border-white/[0.08] rounded-full px-4 py-2 backdrop-blur-sm disabled:opacity-50">
+        {exporting ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Exporting...</> : <><Download className="w-3.5 h-3.5" /> Download PDF</>}
+      </button>
+
       <div className="fixed bottom-6 left-6 z-50 text-xs text-gray-600 font-mono">
         {String(current + 1).padStart(2, '0')} / {String(totalSlides).padStart(2, '0')}
       </div>
@@ -1205,7 +1250,7 @@ function DeckPresentation() {
         </button>
       </div>
 
-      <div className="min-h-screen flex items-center justify-center">
+      <div ref={slideRef} className="min-h-screen flex items-center justify-center">
         {slideMap[current]}
       </div>
     </div>
