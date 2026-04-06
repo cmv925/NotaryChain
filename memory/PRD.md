@@ -25,38 +25,33 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 ### AI Security Audit (Rate Limiting, Input Validation) — COMPLETE
 
 ### Platform Features Suite — COMPLETE (Apr 2, 2026)
-
-1. **Public Audit Trail Explorer** — Public-facing `/audit-trail` page showing anonymized platform stats (notarizations, blockchain seals, users, approval rate, uptime), 14-day volume chart, recent seals. No auth required.
-
-2. **QR Code on Certificates** — Auto-generated QR code on every PDF certificate linking to `/verify-certificate/NC-{certHash}` for instant mobile verification. Uses `qrcode` library.
-
-3. **Multi-Signature Ceremonies** — Support 2-10 signers per ceremony. Create, track, and sign multi-sig ceremonies with individual biometric verification. Prevents double-signing. Status: awaiting_signatures -> all_signed.
-
-4. **Certificate Expiration & Renewal** — Set validity periods (30-3650 days) on notarized certificates. Track expiring certificates with configurable time windows. One-click renewal extends validity.
-
-5. **Ceremony Replay** — Animated step-by-step visualization of past ceremony agent pipeline (Initiation -> Verifier -> Witness -> Sealer -> Consensus -> Blockchain Seal). Play/Pause/Reset controls with progress bar.
-
-6. **Document Versioning** — Track multiple versions of documents across ceremonies with version timeline, status, and blockchain seal info.
-
-**Testing**: iteration 80, 100% (24/24 backend, all frontend verified)
+1. Public Audit Trail Explorer
+2. QR Code on Certificates
+3. Multi-Signature Ceremonies
+4. Certificate Expiration & Renewal
+5. Ceremony Replay
+6. Document Versioning
 
 ### Mobile-First PWA & HTS Tokenized Escrow — COMPLETE (Apr 6, 2026)
-
-1. **Mobile-First PWA** — Service worker with multi-tier caching (static cache-first, API network-first, certificate offline caching), push notification support, installable manifest with 192px and 512px icons, standalone display mode.
-
-2. **Hedera Token Service (HTS) Tokenized Escrow** — Full HTS fungible token lifecycle for escrow agreements:
-   - **Tokenize**: Create HTS fungible tokens representing escrow value (real on-chain via Hedera SDK)
-   - **Transfer**: Transfer tokens to buyer/seller on settlement
-   - **Burn**: Burn all remaining tokens on cancellation
-   - **Verify**: Verify token existence on Hedera Mirror Node with on-chain data
-   - **List & Info**: View all user tokens and detailed token info with operations history
-   - Frontend: Dedicated `/tokenized-escrow` page with token list, detail panel, tokenize modal, transfer modal, operations history, and on-chain verification
-   - Dashboard: Navigation button in Security & Identity section
+1. **Mobile-First PWA** — Service worker with multi-tier caching, push notifications, installable manifest.
+2. **HTS Tokenized Escrow** — Full HTS fungible token lifecycle (tokenize, transfer, burn, verify on-chain).
+   - Frontend: `/tokenized-escrow` page with token list, detail panel, operations history.
+   - Dashboard navigation: Tokenized Escrow button in Security & Identity section.
 
 **Testing**: iteration 81, 100% (22/22 backend, all frontend verified)
 
+### HTS Real-Time Push Notifications — COMPLETE (Apr 6, 2026)
+1. **WebSocket Events** — Real-time `hts_mint`, `hts_transfer`, `hts_burn` events broadcast to all escrow parties via WebSocket.
+2. **Persistent Notifications** — Each HTS event creates a notification in the DB with type='hts' and link='/tokenized-escrow', visible in the notification bell.
+3. **Frontend Live Feed** — Live Events section on `/tokenized-escrow` showing real-time MINT/TRANSFER/BURN events with timestamps.
+4. **Auto-Refresh** — Token list and detail panel auto-update when WebSocket events arrive.
+5. **Connection Indicator** — Live/Offline badge in header showing WebSocket connection status.
+6. **Toast Notifications** — Contextual toast messages for each event type.
+
+**Testing**: iteration 82, 100% (14/14 backend, all frontend verified)
+
 ## Remaining Features (Not Yet Implemented)
-- **Real-Time Notifications (Push/Email)** — Email notifications when ceremony progresses through stages (P1)
+- **Real-Time Notifications for Ceremony Stages** — Email/push notifications when ceremony progresses through stages (P1)
 
 ## Upcoming Tasks
 - Resend Domain Verification (user task) (P1)
