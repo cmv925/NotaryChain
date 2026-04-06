@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useWS } from '../contexts/WebSocketContext';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Input } from '../components/ui/input';
@@ -9,6 +10,7 @@ import {
   Shield, Loader2, CheckCircle, XCircle, Eye,
   Copy, RefreshCw, AlertTriangle, Hash, Layers,
   TrendingDown, Activity, ChevronRight, Search,
+  Radio,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
@@ -37,6 +39,7 @@ function StatusBadge({ status }) {
 
 export default function TokenizedEscrow() {
   const { user, token } = useAuth();
+  const { connected: wsConnected, subscribe } = useWS();
   const [tokens, setTokens] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedToken, setSelectedToken] = useState(null);
@@ -44,6 +47,7 @@ export default function TokenizedEscrow() {
   const [actionLoading, setActionLoading] = useState(null);
   const [verifyResult, setVerifyResult] = useState(null);
   const [escrows, setEscrows] = useState([]);
+  const [liveEvents, setLiveEvents] = useState([]);
 
   // Tokenize form
   const [form, setForm] = useState({ escrow_id: '', token_name: 'NCROW', token_symbol: 'NCR', initial_supply: 1000 });
@@ -73,6 +77,39 @@ export default function TokenizedEscrow() {
     fetchTokens();
     fetchEscrows();
   }, [token]);
+
+  // WebSocket subscriptions for real-time HTS events
+  useEffect(() => {
+    if (!subscribe) return;
+    const unsubs = [];
+
+    const handleHtsEvent = (msg) => {
+      const data = msg.data || {};
+      const now = new Date().toLocaleTimeString();
+
+      if (msg.event === 'hts_mint') {
+        toast({ title: 'Token Minted', description: `${data.token_symbol} — ${data.amount?.toLocaleString()} tokens minted${data.on_chain ? ' (on-chain)' : ''}` });
+      } else if (msg.event === 'hts_transfer') {
+        toast({ title: 'Token Transfer', description: `${data.amount?.toLocaleString()} ${data.token_symbol} transferred to ${data.to_party}` });
+      } else if (msg.event === 'hts_burn') {
+        toast({ title: 'Tokens Burned', description: `${data.amount?.toLocaleString()} ${data.token_symbol} tokens burned`, variant: 'destructive' });
+      }
+
+      setLiveEvents(prev => [{ id: Date.now(), event: msg.event, data, time: now }, ...prev].slice(0, 20));
+
+      // Auto-refresh token list and selected token
+      fetchTokens();
+      if (selectedToken?.escrow_id === data.escrow_id) {
+        axios.get(`${API}/hts/token/${data.escrow_id}`, { headers }).then(res => setSelectedToken(res.data)).catch(() => {});
+      }
+    };
+
+    unsubs.push(subscribe('hts_mint', handleHtsEvent));
+    unsubs.push(subscribe('hts_transfer', handleHtsEvent));
+    unsubs.push(subscribe('hts_burn', handleHtsEvent));
+
+    return () => unsubs.forEach(u => u && u());
+  }, [subscribe, selectedToken?.escrow_id]);
 
   const handleTokenize = async () => {
     if (!form.escrow_id) {
@@ -177,6 +214,9 @@ export default function TokenizedEscrow() {
             <Coins className="w-6 h-6 text-amber-500" />
             <span className="text-lg font-bold text-white tracking-tight">
               HTS <span className="text-amber-500">Tokenized Escrow</span>
+            </span>
+            <span className={`flex items-center gap-1.5 text-[10px] px-2 py-0.5 rounded-full border ${wsConnected ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-slate-500 bg-slate-800/50 border-slate-700'}`} data-testid="ws-status">
+              <Radio className="w-3 h-3" /> {wsConnected ? 'Live' : 'Offline'}
             </span>
           </div>
           <Button onClick={() => setShowTokenize(true)} size="sm" className="bg-amber-600 hover:bg-amber-700 text-white" data-testid="tokenize-btn">
@@ -509,6 +549,34 @@ export default function TokenizedEscrow() {
                     )}
                   </CardContent>
                 </Card>
+
+                {/* Live Events Feed */}
+                {liveEvents.length > 0 && (
+                  <Card className="bg-[#162032] border-slate-800 text-white" data-testid="live-events-feed">
+                    <CardContent className="p-0">
+                      <div className="px-5 py-4 border-b border-slate-800 flex items-center gap-2">
+                        <Radio className="w-4 h-4 text-emerald-500 animate-pulse" />
+                        <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400">Live Events</h3>
+                        <span className="text-[10px] text-slate-600 ml-auto">{liveEvents.length} events</span>
+                      </div>
+                      <div className="divide-y divide-slate-800/50 max-h-48 overflow-y-auto">
+                        {liveEvents.map((evt) => {
+                          const evtColors = { hts_mint: 'text-emerald-400 bg-emerald-500/10', hts_transfer: 'text-sky-400 bg-sky-500/10', hts_burn: 'text-red-400 bg-red-500/10' };
+                          const evtLabels = { hts_mint: 'MINT', hts_transfer: 'TRANSFER', hts_burn: 'BURN' };
+                          return (
+                            <div key={evt.id} className="px-5 py-2.5 flex items-center gap-3" data-testid={`live-event-${evt.id}`}>
+                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${evtColors[evt.event] || 'text-slate-400 bg-slate-800'}`}>
+                                {evtLabels[evt.event] || evt.event}
+                              </span>
+                              <span className="text-xs text-slate-300 flex-1 truncate">{evt.data?.message || evt.event}</span>
+                              <span className="text-[10px] text-slate-600 flex-shrink-0">{evt.time}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             )}
           </div>

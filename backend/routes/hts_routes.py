@@ -42,6 +42,41 @@ def _get_hedera_config():
     return account_id, network, mirror
 
 
+async def _emit_hts_event(escrow_id: str, event_type: str, data: dict, actor_email: str):
+    """Broadcast real-time HTS event to escrow parties and create persistent notifications."""
+    from services.notification_service import broadcast_event, create_notification
+
+    escrow = await db.escrow_agreements.find_one({"escrow_id": escrow_id}, {"_id": 0})
+    target_emails = set()
+    if escrow:
+        for src in [escrow.get("created_by"),
+                     escrow.get("parties", {}).get("buyer", {}).get("email"),
+                     escrow.get("parties", {}).get("seller", {}).get("email")]:
+            if src:
+                target_emails.add(src)
+    target_emails.add(actor_email)
+
+    target_ids = []
+    async for u in db.users.find({"email": {"$in": list(target_emails)}}, {"_id": 0, "id": 1, "email": 1}):
+        uid = u.get("id") or u.get("email")
+        if uid:
+            target_ids.append(uid)
+
+    payload = {"escrow_id": escrow_id, "title": escrow.get("title", "Escrow") if escrow else "Escrow", **data}
+    await broadcast_event(event_type, payload, target_ids if target_ids else None)
+
+    # Persistent notification for each party
+    notif_titles = {
+        "hts_mint": "Token Minted",
+        "hts_transfer": "Token Transfer",
+        "hts_burn": "Tokens Burned",
+    }
+    notif_title = notif_titles.get(event_type, "HTS Event")
+    notif_msg = data.get("message", f"{event_type} on escrow {escrow_id}")
+    for uid in target_ids:
+        await create_notification(uid, notif_title, notif_msg, notif_type="hts", link="/tokenized-escrow", metadata=payload)
+
+
 # ══════════════════════════════════════════════
 #  TOKENIZE ESCROW
 # ══════════════════════════════════════════════
@@ -122,6 +157,16 @@ async def tokenize_escrow(body: TokenizeRequest, request: Request):
         }}}
     )
 
+    # Emit real-time notification
+    await _emit_hts_event(body.escrow_id, "hts_mint", {
+        "token_id": token_id,
+        "token_symbol": body.token_symbol,
+        "amount": body.initial_supply,
+        "on_chain": hts_result.get("success", False),
+        "by": email,
+        "message": f"{body.token_symbol} token minted with {body.initial_supply:,} supply on {network}",
+    }, email)
+
     return {
         "token_id": token_id,
         "escrow_id": body.escrow_id,
@@ -185,6 +230,18 @@ async def transfer_tokens(body: TransferRequest, request: Request):
         }
     )
 
+    # Emit real-time notification
+    await _emit_hts_event(body.escrow_id, "hts_transfer", {
+        "token_id": token["token_id"],
+        "token_symbol": token["token_symbol"],
+        "amount": body.amount,
+        "to_party": body.to_party,
+        "remaining_supply": token["current_supply"] - body.amount,
+        "on_chain": transfer_result.get("success", False),
+        "by": user["email"],
+        "message": f"{body.amount:,} {token['token_symbol']} transferred to {body.to_party}",
+    }, user["email"])
+
     return {
         "transfer_id": tx_id,
         "amount": body.amount,
@@ -229,6 +286,16 @@ async def burn_tokens(escrow_id: str, request: Request):
             "$push": {"operations": op},
         }
     )
+
+    # Emit real-time notification
+    await _emit_hts_event(escrow_id, "hts_burn", {
+        "token_id": token["token_id"],
+        "token_symbol": token["token_symbol"],
+        "amount": burn_amount,
+        "on_chain": burn_result.get("success", False),
+        "by": user["email"],
+        "message": f"{burn_amount:,} {token['token_symbol']} tokens burned",
+    }, user["email"])
 
     return {
         "burned": burn_amount,
