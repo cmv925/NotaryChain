@@ -14,7 +14,7 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # Import route modules
-from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes, notary_professional_routes, gdpr_routes, infra_routes, ws_routes, api_key_routes, public_api_routes, ron_compliance_routes, webhook_routes, template_routes, organization_routes, draft_routes, vault_routes, expiry_routes, draft_collab_routes, bulk_routes, marketplace_routes, embed_routes, booking_routes, copilot_routes, ai_generator_routes, summarizer_routes, witness_routes, remediation_routes, biometric_passport_routes, conductor_routes, evidence_package_routes, timeline_routes, reminder_routes, approval_routes, doc_compare_routes, branding_routes, rbac_routes, sso_routes, auth0_routes, okta_routes, org_activity_routes, org_webhook_routes, scheduled_reports_routes, investor_deck_routes, ops_dashboard_routes, alert_settings_routes, security_compliance_routes, soc2_export_routes, incident_routes, ceremony_routes, escrow_routes, anan_routes, fraud_intelligence_routes, ai_intelligence_routes, platform_features_routes
+from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes, notary_professional_routes, gdpr_routes, infra_routes, ws_routes, api_key_routes, public_api_routes, ron_compliance_routes, webhook_routes, template_routes, organization_routes, draft_routes, vault_routes, expiry_routes, draft_collab_routes, bulk_routes, marketplace_routes, embed_routes, booking_routes, copilot_routes, ai_generator_routes, summarizer_routes, witness_routes, remediation_routes, biometric_passport_routes, conductor_routes, evidence_package_routes, timeline_routes, reminder_routes, approval_routes, doc_compare_routes, branding_routes, rbac_routes, sso_routes, auth0_routes, okta_routes, org_activity_routes, org_webhook_routes, scheduled_reports_routes, investor_deck_routes, ops_dashboard_routes, alert_settings_routes, security_compliance_routes, soc2_export_routes, incident_routes, ceremony_routes, escrow_routes, anan_routes, fraud_intelligence_routes, ai_intelligence_routes, platform_features_routes, hts_routes
 from middleware.security import setup_security, health_check, limiter
 from services.notification_service import set_db as set_notification_db, set_ws_manager
 from services.ws_manager import ws_manager
@@ -93,6 +93,7 @@ anan_routes.set_db(db)
 fraud_intelligence_routes.set_db(db)
 ai_intelligence_routes.set_db(db)
 platform_features_routes.set_db(db)
+hts_routes.set_db(db)
 
 # Webhook service needs db too
 from services import webhook_service
@@ -212,6 +213,7 @@ app.include_router(anan_routes.router)
 app.include_router(fraud_intelligence_routes.router)
 app.include_router(ai_intelligence_routes.router)
 app.include_router(platform_features_routes.router)
+app.include_router(hts_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -352,6 +354,11 @@ async def create_indexes():
         await db.bookings.create_index("notary_id")
         await db.bookings.create_index([("notary_id", 1), ("date", 1), ("start_time", 1)])
         await db.notary_availability.create_index("notary_id", unique=True)
+
+        # HTS Token indexes
+        await db.hts_tokens.create_index("escrow_id", unique=True)
+        await db.hts_tokens.create_index("created_by")
+        await db.hts_tokens.create_index("token_id")
 
         # ANAN indexes
         await db.anan_ceremonies.create_index("ceremony_id", unique=True)

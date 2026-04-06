@@ -77,6 +77,7 @@ const PublicAuditTrail = lazy(() => import('./pages/PublicAuditTrail'));
 const CeremonyReplay = lazy(() => import('./pages/CeremonyReplay'));
 const MultiSignature = lazy(() => import('./pages/MultiSignature'));
 const CertificateExpiration = lazy(() => import('./pages/CertificateExpiration'));
+const TokenizedEscrow = lazy(() => import('./pages/TokenizedEscrow'));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
@@ -527,6 +528,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <CertificateExpiration />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tokenized-escrow"
+              element={
+                <ProtectedRoute>
+                  <TokenizedEscrow />
                 </ProtectedRoute>
               }
             />
