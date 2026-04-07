@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from '../hooks/use-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { User, Scale } from 'lucide-react';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const SignUpPage = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    role: 'user',
   });
   const [loading, setLoading] = useState(false);
 
@@ -45,7 +47,7 @@ const SignUpPage = () => {
 
     setLoading(true);
 
-    const result = await signup(formData.fullName, formData.email, formData.password);
+    const result = await signup(formData.fullName, formData.email, formData.password, formData.role);
 
     if (result.success) {
       toast({
@@ -86,6 +88,45 @@ const SignUpPage = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Role Selector */}
+              <div>
+                <Label className="text-white mb-3 block">I am signing up as</Label>
+                <div className="grid grid-cols-2 gap-3" data-testid="role-selector">
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, role: 'user' })}
+                    className={`flex items-center gap-3 p-4 rounded-lg border-2 transition-all duration-200 text-left ${
+                      formData.role === 'user'
+                        ? 'border-blue-500 bg-blue-500/10 text-white'
+                        : 'border-gray-700 bg-[#0a0f1a] text-gray-400 hover:border-gray-600'
+                    }`}
+                    data-testid="role-user-btn"
+                  >
+                    <User className={`w-5 h-5 flex-shrink-0 ${formData.role === 'user' ? 'text-blue-400' : 'text-gray-500'}`} />
+                    <div>
+                      <p className="font-medium text-sm">Regular User</p>
+                      <p className="text-[11px] text-gray-500 mt-0.5">Request notarizations</p>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, role: 'notary' })}
+                    className={`flex items-center gap-3 p-4 rounded-lg border-2 transition-all duration-200 text-left ${
+                      formData.role === 'notary'
+                        ? 'border-violet-500 bg-violet-500/10 text-white'
+                        : 'border-gray-700 bg-[#0a0f1a] text-gray-400 hover:border-gray-600'
+                    }`}
+                    data-testid="role-notary-btn"
+                  >
+                    <Scale className={`w-5 h-5 flex-shrink-0 ${formData.role === 'notary' ? 'text-violet-400' : 'text-gray-500'}`} />
+                    <div>
+                      <p className="font-medium text-sm">Notary</p>
+                      <p className="text-[11px] text-gray-500 mt-0.5">Provide notary services</p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
               <div>
                 <Label htmlFor="fullName" className="text-white mb-2 block">
                   {t('auth.full_name')}

@@ -88,6 +88,9 @@ async def signup(request: Request, user_data: UserCreate, background_tasks: Back
         )
     
     # Create new user
+    allowed_roles = {"user", "notary"}
+    chosen_role = user_data.role if user_data.role in allowed_roles else "user"
+
     user = User(
         email=clean_email,
         full_name=user_data.full_name
@@ -95,6 +98,7 @@ async def signup(request: Request, user_data: UserCreate, background_tasks: Back
     
     user_dict = user.dict()
     user_dict["hashed_password"] = get_password_hash(user_data.password)
+    user_dict["role"] = chosen_role
     
     await db.users.insert_one(user_dict)
     
