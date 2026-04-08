@@ -95,6 +95,10 @@ ai_intelligence_routes.set_db(db)
 platform_features_routes.set_db(db)
 hts_routes.set_db(db)
 
+# Feature gate middleware needs db
+from middleware.feature_gate import set_db as set_gate_db
+set_gate_db(db)
+
 # Webhook service needs db too
 from services import webhook_service
 webhook_service.set_db(db)

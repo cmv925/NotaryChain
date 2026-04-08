@@ -91,6 +91,8 @@ class TokenizeRequest(BaseModel):
 @router.post("/tokenize")
 async def tokenize_escrow(body: TokenizeRequest, request: Request):
     """Create an HTS fungible token representing escrow value."""
+    from middleware.feature_gate import enforce_feature_gate
+    await enforce_feature_gate(request, "hts_tokens")
     user = await _get_user(request)
     account_id, network, mirror = _get_hedera_config()
 

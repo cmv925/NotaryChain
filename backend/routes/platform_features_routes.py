@@ -366,6 +366,8 @@ class MultiSigStartRequest(BaseModel):
 @router.post("/multi-sig/start")
 async def start_multi_sig_ceremony(body: MultiSigStartRequest, request: Request):
     """Start a multi-signature ceremony requiring 2+ signers."""
+    from middleware.feature_gate import enforce_feature_gate
+    await enforce_feature_gate(request, "multi_signature")
     user = await _get_user(request)
     ceremony_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc).isoformat()

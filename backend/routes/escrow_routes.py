@@ -68,6 +68,8 @@ async def _emit_escrow_event(escrow: dict, event_type: str, data: dict):
 @router.post("/create")
 async def create_escrow(request: Request):
     """Create a new escrow agreement."""
+    from middleware.feature_gate import enforce_feature_gate
+    await enforce_feature_gate(request, "escrow_intelligence")
     user = await _get_user(request)
     body = await request.json()
 

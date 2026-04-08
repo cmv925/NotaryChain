@@ -61,6 +61,8 @@ async def _get_user(request: Request):
 @router.post("/ceremony/start")
 async def start_anan_ceremony(req: ANANCeremonyRequest, request: Request):
     """Initialize an ANAN-mode ceremony with blind scoring protocol."""
+    from middleware.feature_gate import enforce_feature_gate
+    await enforce_feature_gate(request, "anan")
     user = await _get_user(request)
 
     ceremony_id = str(uuid.uuid4())

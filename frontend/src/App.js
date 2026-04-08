@@ -3,7 +3,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import { GatedRoute } from './components/GatedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { Toaster } from './components/ui/toaster';
@@ -94,6 +96,7 @@ function App() {
     <ThemeProvider>
     <div className="App">
       <AuthProvider>
+        <SubscriptionProvider>
         <WebSocketProvider>
         <BrowserRouter>
           <Suspense fallback={<PageLoader />}>
@@ -139,7 +142,9 @@ function App() {
               path="/escrow"
               element={
                 <ProtectedRoute>
-                  <EscrowDashboard />
+                  <GatedRoute feature="escrow_intelligence" title="Escrow Intelligence" description="Smart contract-based escrow with AI-verified conditions. Requires Enterprise plan.">
+                    <EscrowDashboard />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -147,7 +152,9 @@ function App() {
               path="/escrow/:escrowId"
               element={
                 <ProtectedRoute>
-                  <EscrowDashboard />
+                  <GatedRoute feature="escrow_intelligence" title="Escrow Intelligence" description="Smart contract-based escrow with AI-verified conditions. Requires Enterprise plan.">
+                    <EscrowDashboard />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -155,7 +162,9 @@ function App() {
               path="/anan"
               element={
                 <ProtectedRoute>
-                  <ANANDashboard />
+                  <GatedRoute feature="anan" title="Autonomous Notary Agent Network" description="Blind 2-of-3 AI consensus, SAN bond tracking, and agent reputation. Requires Enterprise plan.">
+                    <ANANDashboard />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -163,7 +172,9 @@ function App() {
               path="/anan/:ceremonyId"
               element={
                 <ProtectedRoute>
-                  <ANANDashboard />
+                  <GatedRoute feature="anan" title="Autonomous Notary Agent Network" description="Blind 2-of-3 AI consensus, SAN bond tracking, and agent reputation. Requires Enterprise plan.">
+                    <ANANDashboard />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -171,7 +182,9 @@ function App() {
               path="/fraud-intelligence"
               element={
                 <ProtectedRoute>
-                  <FraudIntelligencePage />
+                  <GatedRoute feature="fraud_intelligence" title="Fraud Intelligence" description="AI-powered fraud detection and analytics dashboard. Requires Enterprise plan.">
+                    <FraudIntelligencePage />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -343,7 +356,9 @@ function App() {
               path="/organizations"
               element={
                 <ProtectedRoute>
-                  <OrganizationPage />
+                  <GatedRoute feature="organization" title="Organization Management" description="Multi-seat team management with RBAC. Requires Enterprise plan.">
+                    <OrganizationPage />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -367,7 +382,9 @@ function App() {
               path="/bulk-notarization"
               element={
                 <ProtectedRoute>
-                  <BulkNotarization />
+                  <GatedRoute feature="bulk_notarization" title="Bulk Notarization" description="Process multiple notarizations in batch. Requires Enterprise plan.">
+                    <BulkNotarization />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -383,7 +400,9 @@ function App() {
               path="/white-label"
               element={
                 <ProtectedRoute>
-                  <WhiteLabelPage />
+                  <GatedRoute feature="white_label" title="White Label Branding" description="Customize the platform with your own branding. Requires Enterprise plan.">
+                    <WhiteLabelPage />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -407,7 +426,9 @@ function App() {
               path="/ai-generator"
               element={
                 <ProtectedRoute>
-                  <AIDocumentGenerator />
+                  <GatedRoute feature="ai_generator" title="AI Document Generator" description="AI-powered legal document generation. Requires Professional plan.">
+                    <AIDocumentGenerator />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -415,7 +436,9 @@ function App() {
               path="/ai-summarizer"
               element={
                 <ProtectedRoute>
-                  <AIDocumentSummarizer />
+                  <GatedRoute feature="ai_summarizer" title="AI Document Summarizer" description="AI-powered legal document summarization. Requires Professional plan.">
+                    <AIDocumentSummarizer />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -423,7 +446,9 @@ function App() {
               path="/video-witness"
               element={
                 <ProtectedRoute>
-                  <VideoWitness />
+                  <GatedRoute feature="video_witness" title="Video Witness" description="Remote video notarization sessions. Requires Professional plan.">
+                    <VideoWitness />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -431,7 +456,9 @@ function App() {
               path="/document-remediation"
               element={
                 <ProtectedRoute>
-                  <DocumentRemediation />
+                  <GatedRoute feature="doc_remediation" title="Document Remediation" description="AI-powered document remediation and compliance fixes. Requires Professional plan.">
+                    <DocumentRemediation />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -439,7 +466,9 @@ function App() {
               path="/biometric-passport"
               element={
                 <ProtectedRoute>
-                  <BiometricPassportPage />
+                  <GatedRoute feature="biometric_passport" title="Biometric Passport" description="Advanced biometric identity verification. Requires Professional plan.">
+                    <BiometricPassportPage />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -503,7 +532,9 @@ function App() {
               path="/ai-intelligence"
               element={
                 <ProtectedRoute>
-                  <AIIntelligenceHub />
+                  <GatedRoute feature="ai_intelligence_hub" title="AI Intelligence Hub" description="5 AI-powered features: Risk Scoring, Summarizer, Notary Matching, Fraud Detection, Voice Auth. Requires Enterprise plan.">
+                    <AIIntelligenceHub />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -511,7 +542,9 @@ function App() {
               path="/ceremony-replay/:ceremonyId"
               element={
                 <ProtectedRoute>
-                  <CeremonyReplay />
+                  <GatedRoute feature="ceremony_replay" title="Ceremony Replay" description="Step-by-step animated replay of past ceremony agent pipelines. Requires Professional plan.">
+                    <CeremonyReplay />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -519,7 +552,9 @@ function App() {
               path="/multi-signature"
               element={
                 <ProtectedRoute>
-                  <MultiSignature />
+                  <GatedRoute feature="multi_signature" title="Multi-Signature Ceremonies" description="Support for 2-10 signers per ceremony with individual biometric verification. Requires Enterprise plan.">
+                    <MultiSignature />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -527,7 +562,9 @@ function App() {
               path="/certificate-expiration"
               element={
                 <ProtectedRoute>
-                  <CertificateExpiration />
+                  <GatedRoute feature="certificate_expiration" title="Certificate Expiration" description="Set validity periods and track expiring certificates. Requires Professional plan.">
+                    <CertificateExpiration />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -535,7 +572,9 @@ function App() {
               path="/tokenized-escrow"
               element={
                 <ProtectedRoute>
-                  <TokenizedEscrow />
+                  <GatedRoute feature="hts_tokens" title="HTS Tokenized Escrow" description="On-chain Hedera Token Service for tokenized escrow agreements. Requires Enterprise plan.">
+                    <TokenizedEscrow />
+                  </GatedRoute>
                 </ProtectedRoute>
               }
             />
@@ -543,6 +582,7 @@ function App() {
           </Suspense>
         </BrowserRouter>
         </WebSocketProvider>
+        </SubscriptionProvider>
         <Toaster />
       </AuthProvider>
     </div>

@@ -60,6 +60,8 @@ class RiskScoreRequest(BaseModel):
 @limiter.limit("10/minute")
 async def risk_score_endpoint(body: RiskScoreRequest, request: Request):
     """Score a document for legal risk factors using GPT-5.2."""
+    from middleware.feature_gate import enforce_feature_gate
+    await enforce_feature_gate(request, "ai_intelligence_hub")
     user = await _get_user(request)
     from services.ai_document_intelligence import score_document_risk
 
@@ -95,6 +97,8 @@ class SummarizeRequest(BaseModel):
 @limiter.limit("10/minute")
 async def summarize_endpoint(body: SummarizeRequest, request: Request):
     """Generate a plain-English summary of a legal document."""
+    from middleware.feature_gate import enforce_feature_gate
+    await enforce_feature_gate(request, "ai_intelligence_hub")
     user = await _get_user(request)
     from services.ai_document_intelligence import summarize_document
 
@@ -130,6 +134,8 @@ class MatchNotaryRequest(BaseModel):
 @limiter.limit("15/minute")
 async def match_notary_endpoint(body: MatchNotaryRequest, request: Request):
     """AI-powered notary recommendation engine."""
+    from middleware.feature_gate import enforce_feature_gate
+    await enforce_feature_gate(request, "ai_intelligence_hub")
     user = await _get_user(request)
     from services.ai_document_intelligence import match_notary
 
@@ -166,6 +172,8 @@ class VoiceAuthRequest(BaseModel):
 @limiter.limit("5/minute")
 async def voice_auth_endpoint(body: VoiceAuthRequest, request: Request):
     """Voice biometric verification for ceremony authentication."""
+    from middleware.feature_gate import enforce_feature_gate
+    await enforce_feature_gate(request, "ai_intelligence_hub")
     user = await _get_user(request)
     from services.ai_document_intelligence import verify_voice_biometric
 

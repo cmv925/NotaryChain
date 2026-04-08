@@ -46,65 +46,82 @@ PLANS = {
         "discount_pct": 0,
         "features": [
             "3 notarizations per month",
-            "Basic document analysis",
+            "Quick Seal (blockchain timestamp)",
+            "Public Audit Trail access",
+            "Certificate verification (QR)",
+            "Basic dashboard",
             "Email support",
-            "Standard processing",
-            "No per-document discount",
         ],
         "limits": {
             "notarizations_per_month": 3,
-            "ai_analyses_per_month": 5,
+            "ai_analyses_per_month": 2,
             "transactions_per_month": 1,
             "document_storage_mb": 100,
             "video_sessions": False,
             "blockchain_sealing": False,
             "priority_support": False,
         },
+        "gated_features": [],
     },
     "pro": {
         "id": "pro",
         "name": "Professional",
-        "price": 29.00,
+        "price": 49.00,
         "interval": "month",
-        "description": "For professionals and small businesses",
+        "description": "For notaries and power users",
         "discount_pct": 15,
         "features": [
-            "25 notarizations per month",
-            "AI document analysis",
+            "Unlimited notarizations",
+            "AI Document Summarizer & Generator",
+            "AI Doc Compare & Remediation",
+            "Ceremony Replay & Versioning",
+            "Certificate Expiration & Renewal",
+            "Reminders & Bookings",
+            "Biometric Passport",
             "Blockchain sealing",
-            "Video notarization sessions",
-            "Priority support",
+            "Video notarization (RON)",
             "1 GB document storage",
             "15% per-document discount",
+            "Priority support",
         ],
         "limits": {
-            "notarizations_per_month": 25,
-            "ai_analyses_per_month": 50,
-            "transactions_per_month": 10,
+            "notarizations_per_month": 999999,
+            "ai_analyses_per_month": 100,
+            "transactions_per_month": 50,
             "document_storage_mb": 1024,
             "video_sessions": True,
             "blockchain_sealing": True,
-            "priority_support": False,
+            "priority_support": True,
         },
+        "gated_features": [
+            "ai_summarizer", "ai_generator", "doc_compare", "doc_remediation",
+            "ceremony_replay", "certificate_expiration", "biometric_passport",
+            "video_witness", "document_versioning",
+        ],
     },
     "enterprise": {
         "id": "enterprise",
         "name": "Enterprise",
-        "price": 99.00,
+        "price": 199.00,
         "interval": "month",
-        "description": "For organizations and high-volume users",
+        "description": "For firms and organizations",
         "discount_pct": 35,
         "features": [
-            "Unlimited notarizations",
-            "Advanced AI analysis",
-            "Blockchain sealing",
-            "Video notarization sessions",
-            "Priority support",
+            "Everything in Professional",
+            "AI Intelligence Hub (5 AI features)",
+            "ANAN (Autonomous Notary Network)",
+            "Escrow Intelligence + HTS Tokens",
+            "Multi-Signature Ceremonies",
+            "Bulk Notarization",
+            "Organization Management + RBAC",
+            "Auth0/Okta SSO integration",
+            "White Label / Branding",
+            "Scheduled Reports & Webhooks",
+            "API Access (Developer Portal)",
+            "Fraud Intelligence Dashboard",
             "10 GB document storage",
-            "Transaction orchestrator",
-            "Custom blueprints",
-            "Dedicated account manager",
             "35% per-document discount",
+            "Dedicated account manager",
         ],
         "limits": {
             "notarizations_per_month": 999999,
@@ -115,8 +132,45 @@ PLANS = {
             "blockchain_sealing": True,
             "priority_support": True,
         },
+        "gated_features": [
+            "ai_summarizer", "ai_generator", "doc_compare", "doc_remediation",
+            "ceremony_replay", "certificate_expiration", "biometric_passport",
+            "video_witness", "document_versioning",
+            "ai_intelligence_hub", "anan", "escrow_intelligence", "hts_tokens",
+            "multi_signature", "bulk_notarization", "organization", "sso",
+            "white_label", "scheduled_reports", "api_access", "fraud_intelligence",
+        ],
     },
 }
+
+# Feature → minimum plan required
+FEATURE_PLAN_MAP = {
+    # Pro features
+    "ai_summarizer": "pro",
+    "ai_generator": "pro",
+    "doc_compare": "pro",
+    "doc_remediation": "pro",
+    "ceremony_replay": "pro",
+    "certificate_expiration": "pro",
+    "biometric_passport": "pro",
+    "video_witness": "pro",
+    "document_versioning": "pro",
+    # Enterprise features
+    "ai_intelligence_hub": "enterprise",
+    "anan": "enterprise",
+    "escrow_intelligence": "enterprise",
+    "hts_tokens": "enterprise",
+    "multi_signature": "enterprise",
+    "bulk_notarization": "enterprise",
+    "organization": "enterprise",
+    "sso": "enterprise",
+    "white_label": "enterprise",
+    "scheduled_reports": "enterprise",
+    "api_access": "enterprise",
+    "fraud_intelligence": "enterprise",
+}
+
+PLAN_HIERARCHY = {"free": 0, "pro": 1, "enterprise": 2}
 
 
 class SubscribeRequest(BaseModel):
@@ -466,6 +520,88 @@ async def cancel_subscription(
 
 
 # ============ USAGE CHECK (for middleware) ============
+
+async def get_user_plan(user_id: str) -> str:
+    """Get the current plan ID for a user."""
+    sub = await db.subscriptions.find_one(
+        {"user_id": user_id, "status": {"$in": ["active", "trialing"]}},
+        {"_id": 0, "plan_id": 1}
+    )
+    return sub["plan_id"] if sub else "free"
+
+
+async def check_feature_access(user_id: str, feature: str) -> dict:
+    """Check if user's plan grants access to a specific feature."""
+    user_plan = await get_user_plan(user_id)
+    required_plan = FEATURE_PLAN_MAP.get(feature)
+
+    if not required_plan:
+        return {"allowed": True, "user_plan": user_plan}
+
+    user_level = PLAN_HIERARCHY.get(user_plan, 0)
+    required_level = PLAN_HIERARCHY.get(required_plan, 0)
+
+    return {
+        "allowed": user_level >= required_level,
+        "user_plan": user_plan,
+        "required_plan": required_plan,
+        "feature": feature,
+    }
+
+
+def require_feature(feature: str):
+    """FastAPI dependency that gates an endpoint behind a plan feature."""
+    async def _check(current_user: User = Depends(get_current_user)):
+        result = await check_feature_access(current_user.id, feature)
+        if not result["allowed"]:
+            plan = PLANS.get(result["required_plan"], {})
+            raise HTTPException(
+                status_code=403,
+                detail={
+                    "error": "upgrade_required",
+                    "message": f"This feature requires the {plan.get('name', result['required_plan'])} plan or higher.",
+                    "required_plan": result["required_plan"],
+                    "required_plan_name": plan.get("name", ""),
+                    "required_plan_price": plan.get("price", 0),
+                    "current_plan": result["user_plan"],
+                    "feature": feature,
+                }
+            )
+        return current_user
+    return _check
+
+
+@router.get("/feature-access/{feature}")
+async def check_feature(feature: str, current_user: User = Depends(get_current_user)):
+    """Check if the current user can access a specific feature."""
+    result = await check_feature_access(current_user.id, feature)
+    plan_info = PLANS.get(result.get("required_plan", "free"), {})
+    return {
+        **result,
+        "required_plan_name": plan_info.get("name", ""),
+        "required_plan_price": plan_info.get("price", 0),
+    }
+
+
+@router.get("/feature-map")
+async def get_feature_map(current_user: User = Depends(get_current_user)):
+    """Get full feature access map for the current user."""
+    user_plan = await get_user_plan(current_user.id)
+    user_level = PLAN_HIERARCHY.get(user_plan, 0)
+    is_admin = current_user.role == "admin" if hasattr(current_user, 'role') else False
+    # Check role from DB
+    if not is_admin:
+        user_doc = await db.users.find_one({"id": current_user.id}, {"_id": 0, "role": 1})
+        is_admin = user_doc.get("role") == "admin" if user_doc else False
+    features = {}
+    for feature, required_plan in FEATURE_PLAN_MAP.items():
+        required_level = PLAN_HIERARCHY.get(required_plan, 0)
+        features[feature] = {
+            "allowed": is_admin or user_level >= required_level,
+            "required_plan": required_plan,
+        }
+    return {"user_plan": user_plan, "features": features}
+
 
 async def check_plan_limit(user_id: str, resource: str) -> dict:
     """Check if user has exceeded their plan limit for a resource"""

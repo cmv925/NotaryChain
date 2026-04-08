@@ -1,0 +1,136 @@
+{
+  "summary": "Subscription Paywall/Gating System Testing - All tests passed. Backend: 23/23 tests passed (100%). Frontend: All UI components verified working including pricing page, upgrade gates, and admin bypass.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_subscription_paywall.py",
+    "/app/test_reports/pytest/pytest_results_subscription.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_subscription_paywall.py"
+  ],
+  "success_rate": {
+    "backend": "100% (23/23 tests passed)",
+    "frontend": "100% (all paywall features verified)"
+  },
+  "test_credentials": {
+    "admin": "admin@notarychain.com / Admin123!",
+    "free_user": "demo@test.com / Demo123!",
+    "notary": "notarytest@test.com / Test123!"
+  },
+  "seed_data_creation": "None - used existing test users",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Subscription paywall/gating system fully tested. Three tiers: Starter ($0), Professional ($49), Enterprise ($199). Feature gates working correctly - free users see UpgradeGate component with lock icon, plan name, price, and 'Upgrade Now' button linking to /pricing. Admin users bypass all gates. Backend returns 403 with structured upgrade_required error for gated endpoints.",
+  "test_results": {
+    "backend_tests": {
+      "subscription_plans": {
+        "test_plans_endpoint_returns_3_plans": "PASS - GET /api/subscriptions/plans returns 3 plans",
+        "test_free_plan_price_is_zero": "PASS - Starter plan has $0 price",
+        "test_pro_plan_price_is_49": "PASS - Professional plan has $49 price",
+        "test_enterprise_plan_price_is_199": "PASS - Enterprise plan has $199 price",
+        "test_plans_have_features_list": "PASS - All plans have features array"
+      },
+      "feature_map": {
+        "test_feature_map_requires_auth": "PASS - Returns 401/403 without auth",
+        "test_feature_map_returns_all_features": "PASS - Returns all 21 gated features",
+        "test_free_user_all_features_denied": "PASS - Free user gets allowed=false for all features",
+        "test_admin_all_features_allowed": "PASS - Admin gets allowed=true for all features (bypass)"
+      },
+      "feature_access": {
+        "test_feature_access_ai_intelligence_denied_for_free": "PASS - ai_intelligence_hub returns allowed=false for free user"
+      },
+      "ai_intelligence_gating": {
+        "test_risk_score_returns_403_for_free_user": "PASS - POST /api/ai-intelligence/risk-score returns 403 with upgrade_required",
+        "test_risk_score_returns_200_for_admin": "PASS - Admin bypasses gate, returns 200",
+        "test_summarize_returns_403_for_free_user": "PASS - POST /api/ai-intelligence/summarize returns 403",
+        "test_match_notary_returns_403_for_free_user": "PASS - POST /api/ai-intelligence/match-notary returns 403",
+        "test_voice_auth_returns_403_for_free_user": "PASS - POST /api/ai-intelligence/voice-auth returns 403"
+      },
+      "escrow_gating": {
+        "test_escrow_create_returns_403_for_free_user": "PASS - POST /api/escrow/create returns 403 with upgrade_required",
+        "test_escrow_create_returns_200_for_admin": "PASS - Admin bypasses gate, returns 200"
+      },
+      "anan_gating": {
+        "test_anan_ceremony_start_returns_403_for_free_user": "PASS - POST /api/anan/ceremony/start returns 403",
+        "test_anan_ceremony_start_returns_200_for_admin": "PASS - Admin bypasses gate, returns 200"
+      },
+      "hts_gating": {
+        "test_hts_tokenize_returns_403_for_free_user": "PASS - POST /api/hts/tokenize returns 403"
+      },
+      "notary_user_gating": {
+        "test_notary_gated_on_ai_intelligence": "PASS - Notary user (non-admin) is gated on enterprise features",
+        "test_notary_gated_on_escrow": "PASS - Notary user is gated on escrow"
+      },
+      "upgrade_error_structure": {
+        "test_upgrade_error_has_all_required_fields": "PASS - 403 response contains: error, message, required_plan, required_plan_name, required_plan_price, current_plan, feature"
+      }
+    },
+    "frontend_tests": {
+      "pricing_page": {
+        "page_loads": "PASS - /pricing route works",
+        "three_plan_cards": "PASS - data-testid='plan-card-free', 'plan-card-pro', 'plan-card-enterprise' all found",
+        "starter_price": "PASS - Shows $0/month",
+        "professional_price": "PASS - Shows $49/month with 15% off badge",
+        "enterprise_price": "PASS - Shows $199/month with 35% off badge",
+        "subscribe_buttons": "PASS - Subscribe buttons present for paid plans"
+      },
+      "upgrade_gate_ai_intelligence": {
+        "gate_shown_for_free_user": "PASS - data-testid='upgrade-gate-ai_intelligence_hub' found",
+        "lock_icon": "PASS - Lock icon displayed",
+        "enterprise_price": "PASS - Shows 'Enterprise | $199 /mo'",
+        "upgrade_button": "PASS - data-testid='upgrade-gate-btn' with 'Upgrade Now' text",
+        "current_plan_indicator": "PASS - Shows 'Currently on: Free plan'"
+      },
+      "upgrade_gate_escrow": {
+        "gate_shown_for_free_user": "PASS - data-testid='upgrade-gate-escrow_intelligence' found",
+        "enterprise_price": "PASS - Shows 'Enterprise | $199 /mo'",
+        "upgrade_button": "PASS - Upgrade Now button present"
+      },
+      "upgrade_gate_tokenized_escrow": {
+        "gate_shown_for_free_user": "PASS - data-testid='upgrade-gate-hts_tokens' found",
+        "enterprise_price": "PASS - Shows 'Enterprise | $199 /mo'",
+        "upgrade_button": "PASS - Upgrade Now button present"
+      },
+      "admin_bypass": {
+        "ai_intelligence_accessible": "PASS - Admin sees full AI Intelligence Hub page (not gated)",
+        "all_tabs_visible": "PASS - Risk Scoring, Summarizer, Notary Match, Fraud Dashboard, Voice Auth tabs visible",
+        "interactive_elements": "PASS - Form inputs and Analyze Risk button present"
+      },
+      "upgrade_button_navigation": {
+        "redirects_to_pricing": "PASS - Clicking 'Upgrade Now' navigates to /pricing"
+      }
+    }
+  },
+  "features_verified": {
+    "backend_plans_endpoint": "PASS - GET /api/subscriptions/plans returns 3 plans with correct prices ($0, $49, $199)",
+    "backend_feature_map": "PASS - GET /api/subscriptions/feature-map returns all 21 features with allowed/denied status",
+    "backend_admin_bypass": "PASS - Admin user gets allowed=true for all features",
+    "backend_free_user_denied": "PASS - Free user gets allowed=false for all features",
+    "backend_ai_intelligence_gated": "PASS - POST /api/ai-intelligence/* returns 403 for free user",
+    "backend_escrow_gated": "PASS - POST /api/escrow/create returns 403 for free user",
+    "backend_anan_gated": "PASS - POST /api/anan/ceremony/start returns 403 for free user",
+    "backend_hts_gated": "PASS - POST /api/hts/tokenize returns 403 for free user",
+    "backend_upgrade_error_structure": "PASS - 403 responses include upgrade_required error with plan details",
+    "frontend_pricing_page": "PASS - Shows 3 plan cards with correct prices",
+    "frontend_upgrade_gate_ai": "PASS - Free user sees upgrade gate on /ai-intelligence",
+    "frontend_upgrade_gate_escrow": "PASS - Free user sees upgrade gate on /escrow",
+    "frontend_upgrade_gate_tokenized": "PASS - Free user sees upgrade gate on /tokenized-escrow",
+    "frontend_admin_bypass": "PASS - Admin user sees full AI Intelligence Hub page",
+    "frontend_upgrade_button": "PASS - Upgrade Now button links to /pricing"
+  },
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": [],
+    "note": "Stripe checkout creates real sessions - no mocked APIs"
+  }
+}
