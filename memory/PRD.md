@@ -22,47 +22,43 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 ### Investor Deck (19 slides) — COMPLETE
 ### Suite of 5 AI Features — COMPLETE
 ### Security & Authorization Hardening — COMPLETE
-### AI Security Audit (Rate Limiting, Input Validation) — COMPLETE
+### AI Security Audit — COMPLETE
+### Platform Features Suite — COMPLETE
+### Mobile-First PWA — COMPLETE
+### HTS Tokenized Escrow — COMPLETE
+### HTS Real-Time Push Notifications — COMPLETE
+### Signup Role Selection (User/Notary) — COMPLETE
 
-### Platform Features Suite — COMPLETE (Apr 2, 2026)
-1. Public Audit Trail Explorer
-2. QR Code on Certificates
-3. Multi-Signature Ceremonies
-4. Certificate Expiration & Renewal
-5. Ceremony Replay
-6. Document Versioning
+### Subscription Paywall/Gating System — COMPLETE (Apr 8, 2026)
+Full 3-tier subscription system with Stripe integration:
 
-### Mobile-First PWA & HTS Tokenized Escrow — COMPLETE (Apr 6, 2026)
-1. **Mobile-First PWA** — Service worker with multi-tier caching, push notifications, installable manifest.
-2. **HTS Tokenized Escrow** — Full HTS fungible token lifecycle (tokenize, transfer, burn, verify on-chain).
-   - Frontend: `/tokenized-escrow` page with token list, detail panel, operations history.
-   - Dashboard navigation: Tokenized Escrow button in Security & Identity section.
+**Tier Pricing:**
+| Tier | Price | Features |
+|------|-------|----------|
+| Starter | $0/mo | 3 notarizations, Quick Seal, Audit Trail, QR Verify, Basic Dashboard |
+| Professional | $49/mo | Unlimited notarizations, AI Summarizer/Generator, Doc Compare, Ceremony Replay, Certificate Expiry, Biometric Passport, Video RON, 15% discount |
+| Enterprise | $199/mo | Everything in Pro + AI Intelligence Hub, ANAN, Escrow Intelligence, HTS Tokens, Multi-Sig, Bulk Notarization, Org Management, SSO, White Label, API Access, Fraud Intelligence, 35% discount |
 
-**Testing**: iteration 81, 100% (22/22 backend, all frontend verified)
+**Implementation:**
+- Backend: `FEATURE_PLAN_MAP` (21 features), `enforce_feature_gate` middleware, `feature-map` + `feature-access` endpoints
+- Frontend: `SubscriptionContext` (plan caching), `UpgradeGate` component (lock UI with plan/price), `GatedRoute` wrapper in App.js
+- Admin bypass at both backend (role check) and frontend (feature-map override)
+- 403 responses include structured `upgrade_required` error with plan details
+- Stripe checkout for Pro and Enterprise subscriptions
 
-### HTS Real-Time Push Notifications — COMPLETE (Apr 6, 2026)
-1. **WebSocket Events** — Real-time `hts_mint`, `hts_transfer`, `hts_burn` events broadcast to all escrow parties via WebSocket.
-2. **Persistent Notifications** — Each HTS event creates a notification in the DB with type='hts' and link='/tokenized-escrow', visible in the notification bell.
-3. **Frontend Live Feed** — Live Events section on `/tokenized-escrow` showing real-time MINT/TRANSFER/BURN events with timestamps.
-4. **Auto-Refresh** — Token list and detail panel auto-update when WebSocket events arrive.
-5. **Connection Indicator** — Live/Offline badge in header showing WebSocket connection status.
-6. **Toast Notifications** — Contextual toast messages for each event type.
+**Testing**: iteration 83, 100% (23/23 backend, all frontend verified)
 
-**Testing**: iteration 82, 100% (14/14 backend, all frontend verified)
-
-## Remaining Features (Not Yet Implemented)
-- **Real-Time Notifications for Ceremony Stages** — Email/push notifications when ceremony progresses through stages (P1)
-
-## Upcoming Tasks
-- Resend Domain Verification (user task) (P1)
+## Remaining / Upcoming Tasks
+- Real-Time Notifications for Ceremony Stage Progressions (P1)
+- Resend Domain Verification (P1, user action)
 
 ## Future/Backlog
 - GoHighLevel CRM integration (P2)
-- Freelancer Milestone and Supply Chain escrow templates (P2)
+- Freelancer Milestone & Supply Chain escrow templates (P2)
 - Add more languages (DE, PT, JA, ZH) (P2)
 - Auto-learning threat detection from GPT-5.2 responses (P3)
 - Embeddable Trust Badge for 3rd party websites (P3)
-- Update Investor Deck with new platform features (P2)
+- Update Investor Deck with paywall features (P2)
 
 ## Test Credentials
 | Role | Email | Password |
@@ -70,4 +66,5 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 | Admin | admin@notarychain.com | Admin123! |
 | User | demo@test.com | Demo123! |
 | Notary | notarytest@test.com | Test123! |
+| Notary2 | notary2@test.com | Notary123! |
 | Investor Deck | N/A | NotaryChain2026! |
