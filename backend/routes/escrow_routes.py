@@ -170,6 +170,24 @@ async def list_escrows(request: Request):
     return {"escrows": escrows, "total": len(escrows)}
 
 
+@router.get("/templates")
+async def get_escrow_templates(request: Request):
+    """Get available escrow templates."""
+    user = await _get_user(request)
+    templates = []
+    for t in ESCROW_TEMPLATES.values():
+        templates.append({
+            "id": t["id"],
+            "name": t["name"],
+            "description": t["description"],
+            "icon": t["icon"],
+            "milestones": len(t["conditions"]),
+            "default_parties": t["default_parties"],
+        })
+    return {"templates": templates}
+
+
+
 @router.get("/{escrow_id}")
 async def get_escrow(escrow_id: str, request: Request):
     """Get escrow agreement details."""
@@ -243,6 +261,70 @@ REAL_ESTATE_CONDITIONS = [
 ]
 
 
+FREELANCER_CONDITIONS = [
+    {
+        "type": "milestone", "category": "kickoff",
+        "title": "Project Kickoff & Scope Agreement",
+        "description": "Both parties agree on project scope, timeline, and deliverables. Initial deposit released to freelancer.",
+        "trigger": "kickoff_confirmed", "verification_method": "party_confirmation",
+        "required_party": "both", "deadline_days": 3, "confidence": 0.99,
+        "oracle_type": None, "payment_pct": 10,
+    },
+    {
+        "type": "milestone", "category": "milestone_1",
+        "title": "Milestone 1 — First Deliverable",
+        "description": "Freelancer submits first deliverable (e.g. wireframes, prototype, draft). Client reviews within 5 days.",
+        "trigger": "milestone_1_submitted", "verification_method": "party_confirmation",
+        "required_party": "buyer", "deadline_days": 14, "confidence": 0.93,
+        "oracle_type": None, "payment_pct": 25,
+    },
+    {
+        "type": "milestone", "category": "review_1",
+        "title": "Client Review & Revision Round",
+        "description": "Client provides feedback. Freelancer implements one round of revisions within 7 days.",
+        "trigger": "revision_approved", "verification_method": "party_confirmation",
+        "required_party": "buyer", "deadline_days": 21, "confidence": 0.90,
+        "oracle_type": None, "payment_pct": 0,
+    },
+    {
+        "type": "milestone", "category": "milestone_2",
+        "title": "Milestone 2 — Second Deliverable",
+        "description": "Freelancer delivers the second major milestone (e.g. functional build, final design, beta version).",
+        "trigger": "milestone_2_submitted", "verification_method": "ai_photo_verification",
+        "required_party": "buyer", "deadline_days": 30, "confidence": 0.92,
+        "oracle_type": "ai_photo_verification", "payment_pct": 25,
+    },
+    {
+        "type": "milestone", "category": "final_delivery",
+        "title": "Final Delivery & Acceptance",
+        "description": "Freelancer submits final deliverables. Client confirms acceptance. Remaining escrow funds released.",
+        "trigger": "final_accepted", "verification_method": "biometric_confirmation",
+        "required_party": "both", "deadline_days": 45, "confidence": 0.97,
+        "oracle_type": None, "payment_pct": 40,
+    },
+]
+
+
+ESCROW_TEMPLATES = {
+    "real_estate": {
+        "id": "real_estate",
+        "name": "Real Estate Purchase",
+        "description": "Standard real estate escrow with inspection, financing, title, appraisal, and closing milestones.",
+        "icon": "building",
+        "conditions": REAL_ESTATE_CONDITIONS,
+        "default_parties": {"buyer": "Buyer", "seller": "Seller"},
+    },
+    "freelancer": {
+        "id": "freelancer",
+        "name": "Freelancer Milestone",
+        "description": "Progressive milestone-based escrow for freelance projects with kickoff, deliverables, review, and final acceptance.",
+        "icon": "briefcase",
+        "conditions": FREELANCER_CONDITIONS,
+        "default_parties": {"buyer": "Client", "seller": "Freelancer"},
+    },
+}
+
+
 @router.post("/{escrow_id}/extract-conditions")
 async def extract_conditions(escrow_id: str, request: Request):
     """AI-powered condition extraction from uploaded contract document."""
@@ -280,9 +362,9 @@ async def extract_conditions(escrow_id: str, request: Request):
             conditions = result["conditions"]
             used_ai = True
         else:
-            conditions = _generate_mock_conditions(now)
+            conditions = _generate_mock_conditions(now, escrow.get("escrow_type", "real_estate"))
     else:
-        conditions = _generate_mock_conditions(now)
+        conditions = _generate_mock_conditions(now, escrow.get("escrow_type", "real_estate"))
 
     await db.escrow_agreements.update_one(
         {"escrow_id": escrow_id},
@@ -316,9 +398,11 @@ async def extract_conditions(escrow_id: str, request: Request):
     }
 
 
-def _generate_mock_conditions(now: str) -> list:
+def _generate_mock_conditions(now: str, escrow_type: str = "real_estate") -> list:
+    template = ESCROW_TEMPLATES.get(escrow_type, ESCROW_TEMPLATES["real_estate"])
+    template_conditions = template["conditions"]
     conditions = []
-    for c in REAL_ESTATE_CONDITIONS:
+    for c in template_conditions:
         cond = {**c}
         cond["condition_id"] = str(uuid.uuid4())[:8]
         cond["status"] = "pending"

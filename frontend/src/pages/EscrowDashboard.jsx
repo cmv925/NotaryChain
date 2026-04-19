@@ -12,7 +12,7 @@ import {
   ShieldCheck, AlertTriangle, Lock, Unlock, Eye,
   Fingerprint, Brain, Globe, Landmark, Home, Scale,
   Building2, User, Users, Sparkles, Radio, Camera,
-  Truck, ClipboardCheck, ImageIcon, Scan, Zap,
+  Truck, ClipboardCheck, ImageIcon, Scan, Zap, Briefcase,
   ArrowDownToLine, ArrowUpFromLine, Network, Wifi, WifiOff,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
@@ -141,16 +141,16 @@ export default function EscrowDashboard() {
   const openEscrow = (id) => navigate(`/escrow/${id}`);
 
   // ─── FORM STATE ───
-  const [createForm, setCreateForm] = useState({ title: '', description: '', buyer_name: '', seller_name: '', seller_email: '', escrow_amount: '', document_name: '' });
+  const [createForm, setCreateForm] = useState({ title: '', description: '', buyer_name: '', seller_name: '', seller_email: '', escrow_amount: '', document_name: '', escrow_type: 'real_estate' });
 
   const handleCreate = async () => {
     if (!createForm.title || !createForm.escrow_amount) { toast({ title: 'Error', description: 'Title and escrow amount required', variant: 'destructive' }); return; }
     setActionLoading('create');
     try {
-      const res = await axios.post(`${API}/escrow/create`, { ...createForm, escrow_amount: parseFloat(createForm.escrow_amount), escrow_type: 'real_estate' }, { headers });
+      const res = await axios.post(`${API}/escrow/create`, { ...createForm, escrow_amount: parseFloat(createForm.escrow_amount) }, { headers });
       toast({ title: 'Escrow Created', description: `"${createForm.title}" created` });
       setShowCreate(false);
-      setCreateForm({ title: '', description: '', buyer_name: '', seller_name: '', seller_email: '', escrow_amount: '', document_name: '' });
+      setCreateForm({ title: '', description: '', buyer_name: '', seller_name: '', seller_email: '', escrow_amount: '', document_name: '', escrow_type: 'real_estate' });
       navigate(`/escrow/${res.data.escrow_id}`);
     } catch (err) { toast({ title: 'Error', description: err.response?.data?.detail || 'Failed', variant: 'destructive' }); }
     setActionLoading(null);
@@ -282,6 +282,24 @@ export default function EscrowDashboard() {
             <Card className="bg-[#111827] border-amber-500/30 mb-6" data-testid="create-escrow-form">
               <CardContent className="p-6">
                 <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2"><Sparkles className="w-5 h-5 text-amber-400" /> New Escrow Agreement</h2>
+                {/* Template Selector */}
+                <div className="mb-5">
+                  <label className="text-gray-400 text-xs block mb-2">Escrow Template</label>
+                  <div className="grid grid-cols-2 gap-3" data-testid="template-selector">
+                    <button type="button" onClick={() => setCreateForm(f => ({ ...f, escrow_type: 'real_estate' }))}
+                      className={`flex items-center gap-3 p-3.5 rounded-lg border-2 transition-all text-left ${createForm.escrow_type === 'real_estate' ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-[#1e293b] bg-[#0d1420] text-gray-400 hover:border-gray-600'}`}
+                      data-testid="template-real-estate">
+                      <Home className={`w-5 h-5 flex-shrink-0 ${createForm.escrow_type === 'real_estate' ? 'text-amber-400' : 'text-gray-500'}`} />
+                      <div><p className="font-medium text-sm">Real Estate</p><p className="text-[11px] text-gray-500">6 milestones, inspection to closing</p></div>
+                    </button>
+                    <button type="button" onClick={() => setCreateForm(f => ({ ...f, escrow_type: 'freelancer' }))}
+                      className={`flex items-center gap-3 p-3.5 rounded-lg border-2 transition-all text-left ${createForm.escrow_type === 'freelancer' ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-[#1e293b] bg-[#0d1420] text-gray-400 hover:border-gray-600'}`}
+                      data-testid="template-freelancer">
+                      <Briefcase className={`w-5 h-5 flex-shrink-0 ${createForm.escrow_type === 'freelancer' ? 'text-amber-400' : 'text-gray-500'}`} />
+                      <div><p className="font-medium text-sm">Freelancer</p><p className="text-[11px] text-gray-500">5 milestones, kickoff to delivery</p></div>
+                    </button>
+                  </div>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div><label className="text-gray-400 text-xs block mb-1">Agreement Title *</label><Input value={createForm.title} onChange={e => setCreateForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g. 123 Main St Purchase" className="bg-[#0d1420] border-[#1e293b] text-white" data-testid="escrow-title-input" /></div>
                   <div><label className="text-gray-400 text-xs block mb-1">Escrow Amount (USD) *</label><Input type="number" value={createForm.escrow_amount} onChange={e => setCreateForm(f => ({ ...f, escrow_amount: e.target.value }))} placeholder="350000" className="bg-[#0d1420] border-[#1e293b] text-white" data-testid="escrow-amount-input" /></div>
@@ -353,7 +371,7 @@ export default function EscrowDashboard() {
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center"><Scale className="w-5 h-5 text-white" /></div>
             <div>
               <h1 className="text-white font-bold text-lg">{e.title}</h1>
-              <p className="text-gray-500 text-xs">{e.escrow_type === 'real_estate' ? 'Real Estate Escrow' : 'Escrow Agreement'} &#8212; {e.escrow_id.slice(0, 8)}</p>
+              <p className="text-gray-500 text-xs">{e.escrow_type === 'freelancer' ? 'Freelancer Escrow' : e.escrow_type === 'real_estate' ? 'Real Estate Escrow' : 'Escrow Agreement'} &#8212; {e.escrow_id.slice(0, 8)}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">

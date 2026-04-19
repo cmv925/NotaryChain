@@ -17,6 +17,54 @@ def set_db(database):
     db = database
 
 
+async def _emit_ceremony_stage(ceremony_id: str, stage: str, result: dict, initiator_email: str):
+    """Broadcast real-time notification for a ceremony stage progression."""
+    from services.notification_service import broadcast_event, create_notification
+
+    stage_labels = {
+        "verifier": "Verifier Agent",
+        "witness": "Witness Agent",
+        "sealer": "Sealer Agent",
+        "consensus": "Consensus Oracle",
+        "blockchain_seal": "Blockchain Seal",
+    }
+    label = stage_labels.get(stage, stage)
+    verdict = result.get("verdict") or result.get("result", "")
+    confidence = result.get("confidence")
+    status = result.get("status", "")
+
+    conf_str = f" ({confidence:.0%})" if confidence else ""
+    message = f"{label}: {verdict}{conf_str}" if verdict else f"{label}: {status}"
+
+    # Find user IDs for the ceremony initiator
+    target_ids = []
+    async for u in db.users.find({"email": initiator_email}, {"_id": 0, "id": 1}):
+        if u.get("id"):
+            target_ids.append(u["id"])
+
+    payload = {
+        "ceremony_id": ceremony_id,
+        "stage": stage,
+        "verdict": verdict,
+        "confidence": confidence,
+        "status": status,
+        "message": message,
+    }
+
+    event_name = f"ceremony_stage_{stage}"
+    await broadcast_event(event_name, payload, target_ids if target_ids else None)
+
+    # Persistent notification
+    await create_notification(
+        user_id=target_ids[0] if target_ids else initiator_email,
+        title=f"Ceremony: {label}",
+        message=message,
+        notif_type="ceremony",
+        link=f"/ceremony/{ceremony_id}",
+        metadata=payload,
+    )
+
+
 # --- Models ---
 
 class CeremonyStartRequest(BaseModel):
@@ -445,6 +493,7 @@ async def execute_ceremony(ceremony_id: str, request: Request = None):
             "agents.verifier.completed_at": verifier_result["completed_at"],
         }}
     )
+    await _emit_ceremony_stage(ceremony_id, "verifier", verifier_result, ceremony.get("initiated_by", ""))
 
     # --- Phase 2: Witness Agent ---
     now2 = datetime.now(timezone.utc).isoformat()
@@ -465,6 +514,7 @@ async def execute_ceremony(ceremony_id: str, request: Request = None):
         }}
     )
 
+    await _emit_ceremony_stage(ceremony_id, "witness", witness_result, ceremony.get("initiated_by", ""))
     # --- Phase 3: Sealer Agent ---
     now3 = datetime.now(timezone.utc).isoformat()
     await db.ceremonies.update_one(
@@ -483,6 +533,7 @@ async def execute_ceremony(ceremony_id: str, request: Request = None):
             "agents.sealer.completed_at": sealer_result["completed_at"],
         }}
     )
+    await _emit_ceremony_stage(ceremony_id, "sealer", sealer_result, ceremony.get("initiated_by", ""))
 
     # --- Phase 4: Consensus Oracle ---
     updated = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
@@ -503,6 +554,9 @@ async def execute_ceremony(ceremony_id: str, request: Request = None):
         }}
     )
 
+    await _emit_ceremony_stage(ceremony_id, "consensus", consensus, ceremony.get("initiated_by", ""))
+    if blockchain_seal:
+        await _emit_ceremony_stage(ceremony_id, "blockchain_seal", {"status": "sealed", "verdict": "ON-CHAIN", "confidence": None}, ceremony.get("initiated_by", ""))
     # Auto-generate certificate PDF on APPROVED
     if final_status == "sealed":
         await _generate_and_store_certificate(ceremony_id)
