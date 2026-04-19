@@ -1059,14 +1059,14 @@ function CompetitiveSlide({ visible }) {
         <div className="text-center mb-6">
           <p className="text-red-400 tracking-[0.25em] uppercase text-xs font-medium mb-3">Competitive Landscape</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-1">NotaryChain vs The Market</h2>
-          <p className="text-gray-500 text-sm max-w-xl mx-auto">21 critical capabilities across AI, escrow, security, and enterprise. Only one platform has them all.</p>
+          <p className="text-gray-500 text-sm max-w-xl mx-auto">20 critical capabilities across AI, escrow, security, and enterprise. Only one platform has them all.</p>
         </div>
 
         {/* Scoreboard */}
         <div className="grid grid-cols-4 gap-3 mb-5">
           {COMPETITORS.map((c) => {
             const score = c.name === 'NotaryChain' ? totalNc : c.name === 'DocuSign' ? totalDocu : c.name === 'Notarize' ? totalNota : totalTrad;
-            const total = 21;
+            const total = 20;
             const pct = Math.round((score / total) * 100);
             const isUs = c.type === 'us';
             return (
