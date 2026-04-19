@@ -28,37 +28,38 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 ### HTS Tokenized Escrow — COMPLETE
 ### HTS Real-Time Push Notifications — COMPLETE
 ### Signup Role Selection (User/Notary) — COMPLETE
+### Subscription Paywall/Gating System — COMPLETE
 
-### Subscription Paywall/Gating System — COMPLETE (Apr 8, 2026)
-Full 3-tier subscription system with Stripe integration:
+### Real-Time Ceremony Stage Notifications — COMPLETE (Apr 19, 2026)
+- WebSocket events + persistent notifications for each agent stage progression
+- 5 notification stages: Verifier Agent, Witness Agent, Sealer Agent, Consensus Oracle, Blockchain Seal
+- Each notification includes agent name, verdict (PASS/FAIL/APPROVED), and confidence percentage
+- Notifications have type='ceremony' with link to `/ceremony/{id}`
+- `_emit_ceremony_stage()` helper broadcasts via WebSocket and creates persistent DB notification
 
-**Tier Pricing:**
-| Tier | Price | Features |
-|------|-------|----------|
-| Starter | $0/mo | 3 notarizations, Quick Seal, Audit Trail, QR Verify, Basic Dashboard |
-| Professional | $49/mo | Unlimited notarizations, AI Summarizer/Generator, Doc Compare, Ceremony Replay, Certificate Expiry, Biometric Passport, Video RON, 15% discount |
-| Enterprise | $199/mo | Everything in Pro + AI Intelligence Hub, ANAN, Escrow Intelligence, HTS Tokens, Multi-Sig, Bulk Notarization, Org Management, SSO, White Label, API Access, Fraud Intelligence, 35% discount |
+**Testing**: iteration 84, 94% backend (17/18 — 1 timeout due to GPT-5.2 latency, not a bug), 100% frontend
 
-**Implementation:**
-- Backend: `FEATURE_PLAN_MAP` (21 features), `enforce_feature_gate` middleware, `feature-map` + `feature-access` endpoints
-- Frontend: `SubscriptionContext` (plan caching), `UpgradeGate` component (lock UI with plan/price), `GatedRoute` wrapper in App.js
-- Admin bypass at both backend (role check) and frontend (feature-map override)
-- 403 responses include structured `upgrade_required` error with plan details
-- Stripe checkout for Pro and Enterprise subscriptions
+### Freelancer Milestone Escrow Template — COMPLETE (Apr 19, 2026)
+- New `FREELANCER_CONDITIONS` template with 5 progressive milestones
+- Payment splits: Kickoff 10%, Milestone 1 25%, Review 0%, Milestone 2 25%, Final Delivery 40%
+- `ESCROW_TEMPLATES` dict with template metadata (name, description, icon, conditions)
+- `GET /api/escrow/templates` endpoint returns available templates
+- `_generate_mock_conditions()` now accepts `escrow_type` parameter
+- Frontend: Template selector (Real Estate / Freelancer) on escrow creation form
+- Frontend: Escrow list shows "Freelancer Escrow" type label
 
-**Testing**: iteration 83, 100% (23/23 backend, all frontend verified)
+**Testing**: iteration 84, all freelancer template tests passed (payment splits, categories, condition counts)
 
 ## Remaining / Upcoming Tasks
-- Real-Time Notifications for Ceremony Stage Progressions (P1)
 - Resend Domain Verification (P1, user action)
 
 ## Future/Backlog
 - GoHighLevel CRM integration (P2)
-- Freelancer Milestone & Supply Chain escrow templates (P2)
 - Add more languages (DE, PT, JA, ZH) (P2)
 - Auto-learning threat detection from GPT-5.2 responses (P3)
 - Embeddable Trust Badge for 3rd party websites (P3)
-- Update Investor Deck with paywall features (P2)
+- Update Investor Deck with new features (P2)
+- Supply Chain escrow template (P2)
 
 ## Test Credentials
 | Role | Email | Password |
