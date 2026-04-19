@@ -28,6 +28,7 @@ const TRADEMARKS = [
   { name: 'Document Remediation', feature: 'AI clause analysis & fix suggestions', reason: 'Unique AI-powered document healing concept' },
   { name: 'Auto-Learning Threat Detection', feature: 'GPT-5.2 responses auto-generate fraud patterns', reason: 'Self-improving threat intelligence that learns from every ceremony' },
   { name: 'Tokenized Escrow (HTS)', feature: 'Hedera Token Service fungible tokens for escrow value', reason: 'On-chain tokenized escrow combining DeFi with legal notarization' },
+  { name: 'Transaction Orchestrator', feature: 'Blueprint-driven multi-party transaction engine with AI risk scoring', reason: 'Turns a notary tool into a full transaction management platform — larger TAM' },
 ];
 
 const FEATURES = [
@@ -103,6 +104,14 @@ const FEATURES = [
     stats: ['3 tiers', '21 gated features', 'Stripe checkout', 'Server + client gates'],
     color: '#8b5cf6',
   },
+  {
+    icon: GitBranch,
+    title: 'Transaction Orchestrator',
+    trademark: true,
+    description: 'Full lifecycle engine for complex multi-party transactions — from draft to blockchain settlement. Blueprint-driven workflows (Real Estate Closing, Business Contract, Estate Settlement) coordinate 6+ participant roles across dependency-ordered task graphs. AI Risk Engine scores live transactions (0-100), flags overdue tasks, detects blocked chains, and suggests next-best actions. Every event sealed on a dedicated Hedera HCS topic with on-chain audit trail. In-app messaging keeps all parties in context.',
+    stats: ['3 system blueprints', '6+ participant roles', 'AI risk scoring', 'Hedera on-chain audit'],
+    color: '#0ea5e9',
+  },
 ];
 
 const AI_PIPELINE = [
@@ -132,7 +141,7 @@ const FEATURE_CATEGORIES = [
 const DEEP_METRICS = [
   { label: 'Total Features', value: '100+' },
   { label: 'AI Features', value: '14' },
-  { label: 'Trademarkable IP', value: '13' },
+  { label: 'Trademarkable IP', value: '14' },
   { label: 'RBAC Permissions', value: '23' },
   { label: 'Oracle Types', value: '4' },
   { label: 'AI Agents', value: '3' },
@@ -1035,6 +1044,7 @@ const COMPARISON_FEATURES = [
   { category: 'Enterprise & Platform', features: [
     { name: 'SSO (Auth0 + Okta)', trad: false, docu: true, nota: 'basic', nc: true },
     { name: 'Granular RBAC (23 perms)', trad: false, docu: 'basic', nota: false, nc: true },
+    { name: 'Transaction Orchestrator', trad: false, docu: false, nota: false, nc: true },
     { name: 'Real-Time WebSocket', trad: false, docu: false, nota: false, nc: true },
     { name: 'Public API + Webhooks', trad: false, docu: true, nota: 'basic', nc: true },
     { name: '3-Tier Subscription Paywall', trad: false, docu: true, nota: true, nc: true },
@@ -1059,14 +1069,14 @@ function CompetitiveSlide({ visible }) {
         <div className="text-center mb-6">
           <p className="text-red-400 tracking-[0.25em] uppercase text-xs font-medium mb-3">Competitive Landscape</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-1">NotaryChain vs The Market</h2>
-          <p className="text-gray-500 text-sm max-w-xl mx-auto">20 critical capabilities across AI, escrow, security, and enterprise. Only one platform has them all.</p>
+          <p className="text-gray-500 text-sm max-w-xl mx-auto">22 critical capabilities across AI, escrow, security, and enterprise. Only one platform has them all.</p>
         </div>
 
         {/* Scoreboard */}
         <div className="grid grid-cols-4 gap-3 mb-5">
           {COMPETITORS.map((c) => {
             const score = c.name === 'NotaryChain' ? totalNc : c.name === 'DocuSign' ? totalDocu : c.name === 'Notarize' ? totalNota : totalTrad;
-            const total = 20;
+            const total = 22;
             const pct = Math.round((score / total) * 100);
             const isUs = c.type === 'us';
             return (
