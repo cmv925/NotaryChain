@@ -561,6 +561,15 @@ async def execute_ceremony(ceremony_id: str, request: Request = None):
     if final_status == "sealed":
         await _generate_and_store_certificate(ceremony_id)
 
+    # Auto-learning threat detection: analyze this ceremony for new patterns
+    try:
+        from services.threat_learning_service import analyze_ceremony_response
+        completed = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
+        if completed:
+            await analyze_ceremony_response(db, completed)
+    except Exception as e:
+        logger.warning(f"Threat analysis skipped: {e}")
+
     result = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
     return result
 

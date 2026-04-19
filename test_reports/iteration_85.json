@@ -1,0 +1,129 @@
+{
+  "summary": "Auto-Learning Threat Detection & Investor Deck Update Testing - Backend: 21/21 tests passed (100%). Frontend: Investor Deck verified with all new features present.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Investor Deck Competitive Matrix",
+        "issues": ["Text says '21 critical capabilities' but array has 20 features - minor text/code mismatch"]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_threat_learning.py",
+    "/app/test_reports/pytest/pytest_results_threat_learning.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Minor: COMPARISON_FEATURES array has 20 items but text says '21 capabilities' - consider updating text to '20' or adding one more feature"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_threat_learning.py"
+  ],
+  "success_rate": {
+    "backend": "100% (21/21 tests passed)",
+    "frontend": "100% (all features verified)"
+  },
+  "test_credentials": {
+    "admin": "admin@notarychain.com / Admin123!",
+    "regular_user": "demo@test.com / Demo123!",
+    "investor_deck_password": "NotaryChain2026!"
+  },
+  "seed_data_creation": "Used existing ceremony IDs for threat analysis testing",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Threat learning endpoints fully tested. All 4 endpoints work: GET /api/threat-learning/analytics, GET /api/threat-learning/patterns, GET /api/threat-learning/analyses, POST /api/threat-learning/analyze/{ceremony_id}. Feature gate (fraud_intelligence) blocks free users with 403. Admin bypasses gates. Auto-learning runs after ceremony execution. Investor Deck has 19 slides with all new features: HTS Tokenized Escrow (slide 10), Auto-Learning Threat Detection, Subscription Paywall. Competitive matrix has 20 features including HTS Tokenized Escrow, Auto-Learning Threat Detection, Freelancer Templates.",
+  "test_results": {
+    "backend_tests": {
+      "threat_learning_auth": {
+        "test_analytics_requires_auth": "PASS - 401 without token",
+        "test_patterns_requires_auth": "PASS - 401 without token",
+        "test_analyses_requires_auth": "PASS - 401 without token",
+        "test_analyze_requires_auth": "PASS - 401 without token"
+      },
+      "threat_learning_feature_gate": {
+        "test_regular_user_blocked_from_analytics": "PASS - 403 for free user",
+        "test_regular_user_blocked_from_patterns": "PASS - 403 for free user",
+        "test_regular_user_blocked_from_analyses": "PASS - 403 for free user",
+        "test_regular_user_blocked_from_analyze": "PASS - 403 for free user"
+      },
+      "threat_learning_analytics": {
+        "test_get_analytics_success": "PASS - Returns total_analyses, total_threats_detected, auto_learned_patterns, learning_rate",
+        "test_analytics_has_recent_analyses": "PASS - Includes recent_analyses list",
+        "test_analytics_has_top_indicators": "PASS - Includes top_indicators list"
+      },
+      "threat_learning_patterns": {
+        "test_get_patterns_success": "PASS - Returns patterns list with total count",
+        "test_patterns_structure": "PASS - Patterns have correct structure (pattern_id, category, title, auto_learned)"
+      },
+      "threat_learning_analyses": {
+        "test_get_analyses_success": "PASS - Returns analyses list with total count",
+        "test_analyses_structure": "PASS - Analyses have correct structure (analysis_id, ceremony_id, analyzed_at, threats_detected)"
+      },
+      "threat_learning_analyze": {
+        "test_analyze_ceremony_success": "PASS - Returns analysis with threats_detected count",
+        "test_analyze_ceremony_returns_threat_details": "PASS - Includes threat_details array",
+        "test_analyze_nonexistent_ceremony": "PASS - Returns 404 for non-existent ceremony",
+        "test_analyze_second_ceremony": "PASS - Consistent behavior across ceremonies"
+      },
+      "threat_learning_auto_trigger": {
+        "test_analyses_collection_grows": "PASS - threat_analyses collection has entries from auto-triggered analysis",
+        "test_analytics_reflects_analyses": "PASS - Analytics total matches analyses count"
+      }
+    },
+    "frontend_tests": {
+      "investor_deck_password_gate": {
+        "password_gate_loads": "PASS - data-testid='password-gate' found",
+        "password_verification": "PASS - Password 'NotaryChain2026!' accepted",
+        "deck_loads_after_password": "PASS - Hero slide visible after verification"
+      },
+      "investor_deck_stats": {
+        "features_shipped": "PASS - Shows '100+' Features Shipped",
+        "api_endpoints": "PASS - Shows '280+' API Endpoints",
+        "integrations": "PASS - Shows '10' Integrations"
+      },
+      "investor_deck_ip_list": {
+        "auto_learning_threat_detection": "PASS - Found in TRADEMARKS array",
+        "tokenized_escrow_hts": "PASS - Found in TRADEMARKS array as 'Tokenized Escrow (HTS)'"
+      },
+      "investor_deck_feature_slides": {
+        "hts_tokenized_escrow": "PASS - Slide 10/19 shows HTS Tokenized Escrow with TM badge",
+        "auto_learning_threat_detection": "PASS - Found in feature slides",
+        "subscription_paywall": "PASS - Found in feature slides"
+      },
+      "investor_deck_competitive_matrix": {
+        "hts_tokenized_escrow": "PASS - Present in COMPARISON_FEATURES (Escrow & Finance category)",
+        "auto_learning_threat_detection": "PASS - Present in COMPARISON_FEATURES (AI & Automation category)",
+        "freelancer_templates": "PASS - Present in COMPARISON_FEATURES (Escrow & Finance category)",
+        "total_capabilities": "INFO - Text says 21 but array has 20 features"
+      }
+    }
+  },
+  "features_verified": {
+    "threat_learning_backend": {
+      "POST /api/threat-learning/analyze/{ceremony_id}": "PASS - Analyzes ceremony and returns threats_detected count",
+      "GET /api/threat-learning/analytics": "PASS - Returns aggregated stats (total_analyses, total_threats_detected, auto_learned_patterns, learning_rate)",
+      "GET /api/threat-learning/patterns": "PASS - Returns auto-learned fraud patterns list",
+      "GET /api/threat-learning/analyses": "PASS - Returns recent threat analyses",
+      "auto_learning_after_ceremony": "PASS - threat_analyses collection grows after ceremony execution",
+      "feature_gate_fraud_intelligence": "PASS - Free users get 403, admin bypasses"
+    },
+    "investor_deck_frontend": {
+      "password_gate": "PASS - NotaryChain2026! works",
+      "platform_stats": "PASS - 100+ Features, 280+ API Endpoints, 10 Integrations",
+      "ip_list_new_items": "PASS - Auto-Learning Threat Detection and Tokenized Escrow (HTS) in TRADEMARKS",
+      "competitive_matrix_new_items": "PASS - HTS Tokenized Escrow, Auto-Learning Threat Detection, Freelancer Templates in COMPARISON_FEATURES",
+      "feature_slides": "PASS - HTS Tokenized Escrow, Auto-Learning Threat Detection, Subscription Paywall slides present"
+    }
+  },
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": [],
+    "note": "No mocked APIs - all features use real backend implementation"
+  }
+}

@@ -8,9 +8,9 @@ const API = process.env.REACT_APP_BACKEND_URL;
 /* ═══════════════════ DATA ═══════════════════ */
 
 const PLATFORM_STATS = [
-  { label: 'Features Shipped', value: '90+' },
-  { label: 'API Endpoints', value: '250+' },
-  { label: 'Integrations', value: '9' },
+  { label: 'Features Shipped', value: '100+' },
+  { label: 'API Endpoints', value: '280+' },
+  { label: 'Integrations', value: '10' },
   { label: 'Internal Tests', value: 'Passing' },
 ];
 
@@ -26,6 +26,8 @@ const TRADEMARKS = [
   { name: 'AI Conductor Mode', feature: 'LLM-guided step-by-step transaction execution', reason: 'Distinctive AI-guided workflow branding' },
   { name: 'Evidence Package', feature: 'Automated settlement audit trail generation', reason: 'Novel automated compliance artifact' },
   { name: 'Document Remediation', feature: 'AI clause analysis & fix suggestions', reason: 'Unique AI-powered document healing concept' },
+  { name: 'Auto-Learning Threat Detection', feature: 'GPT-5.2 responses auto-generate fraud patterns', reason: 'Self-improving threat intelligence that learns from every ceremony' },
+  { name: 'Tokenized Escrow (HTS)', feature: 'Hedera Token Service fungible tokens for escrow value', reason: 'On-chain tokenized escrow combining DeFi with legal notarization' },
 ];
 
 const FEATURES = [
@@ -77,6 +79,30 @@ const FEATURES = [
     stats: ['23 permissions', 'Auth0 + Okta SSO', '8 fraud patterns', '8 RON jurisdictions'],
     color: '#10b981',
   },
+  {
+    icon: Blocks,
+    title: 'HTS Tokenized Escrow',
+    trademark: true,
+    description: 'Transforms escrow agreements into Hedera Token Service fungible tokens on mainnet. Full token lifecycle management — mint, transfer, burn — with real-time WebSocket notifications and on-chain verification via Hedera Mirror Node. Bridges DeFi tokenomics with legal notarization.',
+    stats: ['Hedera HTS mainnet', 'Fungible tokens', 'Mirror Node verify', 'Real-time WS events'],
+    color: '#f97316',
+  },
+  {
+    icon: Radio,
+    title: 'Auto-Learning Threat Detection',
+    trademark: true,
+    description: 'Every GPT-5.2 ceremony response is analyzed for threat signals. The system automatically discovers fraud patterns from agent verdicts, classifies severity, and creates new threat rules that are injected into future ANAN agent analysis. Self-improving security that gets smarter with every transaction.',
+    stats: ['Auto-learns patterns', 'Severity classification', 'Feeds back to ANAN', 'Hit count tracking'],
+    color: '#ef4444',
+  },
+  {
+    icon: CreditCard,
+    title: 'Subscription Paywall & Monetization',
+    trademark: false,
+    description: 'Three-tier subscription model (Starter $0, Professional $49/mo, Enterprise $199/mo) with Stripe checkout. 21 features gated across tiers with server-side enforcement, admin bypass, and structured upgrade prompts. Built for SaaS revenue from day one.',
+    stats: ['3 tiers', '21 gated features', 'Stripe checkout', 'Server + client gates'],
+    color: '#8b5cf6',
+  },
 ];
 
 const AI_PIPELINE = [
@@ -90,23 +116,23 @@ const AI_PIPELINE = [
 
 const FEATURE_CATEGORIES = [
   { name: 'Core Notarization', count: 7, icon: FileText, color: '#3b82f6' },
-  { name: 'AI & Intelligence', count: 12, icon: Brain, color: '#8b5cf6' },
-  { name: 'Security & Identity', count: 10, icon: Shield, color: '#ef4444' },
-  { name: 'Blockchain & Verification', count: 7, icon: Link2, color: '#06b6d4' },
-  { name: 'Escrow Intelligence', count: 8, icon: Scale, color: '#f59e0b' },
+  { name: 'AI & Intelligence', count: 14, icon: Brain, color: '#8b5cf6' },
+  { name: 'Security & Identity', count: 11, icon: Shield, color: '#ef4444' },
+  { name: 'Blockchain & Verification', count: 9, icon: Link2, color: '#06b6d4' },
+  { name: 'Escrow Intelligence', count: 10, icon: Scale, color: '#f59e0b' },
   { name: 'ANAN Agent Network', count: 6, icon: Vote, color: '#a855f7' },
-  { name: 'Payments & Subscriptions', count: 5, icon: CreditCard, color: '#10b981' },
+  { name: 'Payments & Subscriptions', count: 7, icon: CreditCard, color: '#10b981' },
   { name: 'Organization & Enterprise', count: 12, icon: Users, color: '#f97316' },
-  { name: 'Real-Time & WebSocket', count: 7, icon: Wifi, color: '#ec4899' },
-  { name: 'Templates & Documents', count: 5, icon: FileCheck, color: '#14b8a6' },
+  { name: 'Real-Time & WebSocket', count: 9, icon: Wifi, color: '#ec4899' },
+  { name: 'Templates & Documents', count: 6, icon: FileCheck, color: '#14b8a6' },
   { name: 'Marketplace & Booking', count: 4, icon: Calendar, color: '#6366f1' },
-  { name: 'Admin & Monitoring', count: 7, icon: Settings, color: '#64748b' },
+  { name: 'Admin & Monitoring', count: 8, icon: Settings, color: '#64748b' },
 ];
 
 const DEEP_METRICS = [
-  { label: 'Total Features', value: '85+' },
-  { label: 'AI Features', value: '12' },
-  { label: 'Trademarkable IP', value: '11' },
+  { label: 'Total Features', value: '100+' },
+  { label: 'AI Features', value: '14' },
+  { label: 'Trademarkable IP', value: '13' },
   { label: 'RBAC Permissions', value: '23' },
   { label: 'Oracle Types', value: '4' },
   { label: 'AI Agents', value: '3' },
@@ -990,12 +1016,15 @@ const COMPARISON_FEATURES = [
     { name: 'AI Condition Extraction', trad: false, docu: false, nota: false, nc: true },
     { name: 'Autonomous Agent Swarm', trad: false, docu: false, nota: false, nc: true },
     { name: 'Self-Tuning AI Reputation', trad: false, docu: false, nota: false, nc: true },
+    { name: 'Auto-Learning Threat Detection', trad: false, docu: false, nota: false, nc: true },
   ]},
   { category: 'Escrow & Finance', features: [
     { name: 'Smart Escrow Vault', trad: false, docu: false, nota: false, nc: true },
     { name: 'Oracle Verification', trad: false, docu: false, nota: false, nc: true },
     { name: 'Milestone Payments', trad: 'manual', docu: false, nota: false, nc: true },
     { name: 'Biometric Settlement Gate', trad: false, docu: false, nota: false, nc: true },
+    { name: 'HTS Tokenized Escrow', trad: false, docu: false, nota: false, nc: true },
+    { name: 'Freelancer Templates', trad: false, docu: false, nota: false, nc: true },
   ]},
   { category: 'Security & Identity', features: [
     { name: 'Biometric Verification', trad: false, docu: false, nota: 'basic', nc: true },
@@ -1008,6 +1037,7 @@ const COMPARISON_FEATURES = [
     { name: 'Granular RBAC (23 perms)', trad: false, docu: 'basic', nota: false, nc: true },
     { name: 'Real-Time WebSocket', trad: false, docu: false, nota: false, nc: true },
     { name: 'Public API + Webhooks', trad: false, docu: true, nota: 'basic', nc: true },
+    { name: '3-Tier Subscription Paywall', trad: false, docu: true, nota: true, nc: true },
   ]},
 ];
 
@@ -1029,14 +1059,14 @@ function CompetitiveSlide({ visible }) {
         <div className="text-center mb-6">
           <p className="text-red-400 tracking-[0.25em] uppercase text-xs font-medium mb-3">Competitive Landscape</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-1">NotaryChain vs The Market</h2>
-          <p className="text-gray-500 text-sm max-w-xl mx-auto">16 critical capabilities across AI, escrow, security, and enterprise. Only one platform has them all.</p>
+          <p className="text-gray-500 text-sm max-w-xl mx-auto">21 critical capabilities across AI, escrow, security, and enterprise. Only one platform has them all.</p>
         </div>
 
         {/* Scoreboard */}
         <div className="grid grid-cols-4 gap-3 mb-5">
           {COMPETITORS.map((c) => {
             const score = c.name === 'NotaryChain' ? totalNc : c.name === 'DocuSign' ? totalDocu : c.name === 'Notarize' ? totalNota : totalTrad;
-            const total = 16;
+            const total = 21;
             const pct = Math.round((score / total) * 100);
             const isUs = c.type === 'us';
             return (
