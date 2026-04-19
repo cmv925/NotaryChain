@@ -9,7 +9,7 @@
 **Requested Amount:** $500,000 USD (Phase 1)  
 **Duration:** 18 Months  
 **Phase 2 Intent:** Growth grant application upon milestone achievement  
-**Date:** February 2026  
+**Date:** April 2026  
 
 ---
 
