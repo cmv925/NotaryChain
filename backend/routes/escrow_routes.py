@@ -305,6 +305,58 @@ FREELANCER_CONDITIONS = [
 ]
 
 
+SUPPLY_CHAIN_CONDITIONS = [
+    {
+        "type": "milestone", "category": "purchase_order",
+        "title": "Purchase Order Confirmation",
+        "description": "Supplier confirms receipt and acceptance of the purchase order including quantities, specs, and delivery terms.",
+        "trigger": "po_confirmed", "verification_method": "party_confirmation",
+        "required_party": "seller", "deadline_days": 3, "confidence": 0.98,
+        "oracle_type": None, "payment_pct": 10,
+    },
+    {
+        "type": "milestone", "category": "production",
+        "title": "Production & Quality Inspection",
+        "description": "Goods produced and pass factory quality inspection. Photo evidence of inspected batch required.",
+        "trigger": "production_complete", "verification_method": "ai_photo_verification",
+        "required_party": "seller", "deadline_days": 21, "confidence": 0.92,
+        "oracle_type": "ai_photo_verification", "payment_pct": 20,
+    },
+    {
+        "type": "milestone", "category": "shipment",
+        "title": "Shipment Dispatched (Bill of Lading)",
+        "description": "Goods handed to carrier. Bill of lading and tracking number issued. Shipment tracker oracle verifies dispatch.",
+        "trigger": "shipment_dispatched", "verification_method": "oracle",
+        "required_party": None, "deadline_days": 28, "confidence": 0.95,
+        "oracle_type": "shipping_tracker", "payment_pct": 20,
+    },
+    {
+        "type": "milestone", "category": "customs",
+        "title": "Customs Clearance",
+        "description": "Goods cleared through customs at destination port. Customs broker confirms clearance and duty payment.",
+        "trigger": "customs_cleared", "verification_method": "oracle",
+        "required_party": None, "deadline_days": 40, "confidence": 0.90,
+        "oracle_type": "shipping_tracker", "payment_pct": 10,
+    },
+    {
+        "type": "milestone", "category": "delivery",
+        "title": "Delivery & Receipt of Goods",
+        "description": "Goods delivered to buyer's facility. Proof of delivery (POD) issued by carrier. Buyer confirms receipt.",
+        "trigger": "delivery_confirmed", "verification_method": "oracle",
+        "required_party": None, "deadline_days": 50, "confidence": 0.94,
+        "oracle_type": "shipping_tracker", "payment_pct": 20,
+    },
+    {
+        "type": "milestone", "category": "final_inspection",
+        "title": "Final Inspection & Acceptance",
+        "description": "Buyer inspects delivered goods against PO specs. Confirms acceptance or raises discrepancy within 5 business days.",
+        "trigger": "final_inspection_passed", "verification_method": "biometric_confirmation",
+        "required_party": "buyer", "deadline_days": 55, "confidence": 0.96,
+        "oracle_type": None, "payment_pct": 20,
+    },
+]
+
+
 ESCROW_TEMPLATES = {
     "real_estate": {
         "id": "real_estate",
@@ -321,6 +373,14 @@ ESCROW_TEMPLATES = {
         "icon": "briefcase",
         "conditions": FREELANCER_CONDITIONS,
         "default_parties": {"buyer": "Client", "seller": "Freelancer"},
+    },
+    "supply_chain": {
+        "id": "supply_chain",
+        "name": "Supply Chain / Trade Finance",
+        "description": "Cross-border trade escrow covering purchase order, production, shipment, customs, delivery, and final inspection — backed by shipping oracles and biometric acceptance.",
+        "icon": "truck",
+        "conditions": SUPPLY_CHAIN_CONDITIONS,
+        "default_parties": {"buyer": "Buyer / Importer", "seller": "Supplier / Exporter"},
     },
 }
 

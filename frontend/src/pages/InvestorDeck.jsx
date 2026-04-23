@@ -1010,6 +1010,284 @@ function DemoSettlement({ step }) {
   );
 }
 
+/* ═══════════════════ SLIDE: TRANSACTION ORCHESTRATOR DEEP DIVE ═══════════════════ */
+
+const ORCHESTRATOR_BLUEPRINTS = [
+  {
+    id: 'bp_real_estate_closing',
+    name: 'Real Estate Closing',
+    color: '#0ea5e9',
+    estDays: 45,
+    roles: ['buyer', 'seller', 'agent', 'lender', 'title_company', 'notary'],
+    steps: [
+      { id: 's1', name: 'Purchase Agreement', owner: 'buyer + seller', deps: [], crit: true },
+      { id: 's2', name: 'Title Search', owner: 'title_company', deps: ['s1'] },
+      { id: 's3', name: 'Loan Application', owner: 'buyer + lender', deps: ['s1'] },
+      { id: 's4', name: 'Inspection', owner: 'buyer', deps: ['s1'] },
+      { id: 's5', name: 'Appraisal', owner: 'lender', deps: ['s3'] },
+      { id: 's6', name: 'Final Loan Approval', owner: 'lender', deps: ['s3', 's5'], crit: true },
+      { id: 's7', name: 'Closing Disclosure', owner: 'all parties', deps: ['s2', 's6'] },
+      { id: 's8', name: 'Final Walkthrough', owner: 'buyer', deps: ['s7'] },
+      { id: 's9', name: 'Closing Meeting', owner: 'buyer + seller + notary', deps: ['s7', 's8'], crit: true },
+      { id: 's10', name: 'Funds Transfer & Recording', owner: 'title + lender', deps: ['s9'], crit: true },
+    ],
+    risk: 34,
+    risks: [
+      { factor: 'Appraisal falls below purchase price', prob: 'medium', mitigation: 'AI re-scores transaction, triggers renegotiation flow' },
+      { factor: 'Title lien discovered', prob: 'low', mitigation: 'Oracle verification at Title Search step halts progression' },
+      { factor: 'Mortgage approval delays', prob: 'medium', mitigation: 'AI flags overdue dependency and alerts lender' },
+    ],
+    nba: 'Lender approval pending 3 days — escalate to relationship manager',
+  },
+  {
+    id: 'bp_business_contract',
+    name: 'Business Contract',
+    color: '#8b5cf6',
+    estDays: 14,
+    roles: ['owner', 'signer', 'attorney', 'reviewer', 'notary'],
+    steps: [
+      { id: 's1', name: 'Draft Contract Upload', owner: 'owner', deps: [], crit: true },
+      { id: 's2', name: 'Legal Review', owner: 'attorney', deps: ['s1'] },
+      { id: 's3', name: 'Revisions & Negotiation', owner: 'owner + attorney', deps: ['s2'] },
+      { id: 's4', name: 'Compliance Check', owner: 'reviewer', deps: ['s3'] },
+      { id: 's5', name: 'Signer Review', owner: 'signer', deps: ['s3'] },
+      { id: 's6', name: 'Execution & Notarization', owner: 'all + notary', deps: ['s4', 's5'], crit: true },
+      { id: 's7', name: 'Hedera Seal', owner: 'system', deps: ['s6'], crit: true },
+    ],
+    risk: 22,
+    risks: [
+      { factor: 'Counter-party redlines beyond scope', prob: 'medium', mitigation: 'AI document remediation suggests standard language' },
+      { factor: 'Regulatory filing deadline missed', prob: 'low', mitigation: 'AI overdue detection + auto-escalation' },
+    ],
+    nba: 'Attorney review overdue — send reminder + escalate within 24h',
+  },
+  {
+    id: 'bp_estate_settlement',
+    name: 'Estate Settlement',
+    color: '#f59e0b',
+    estDays: 90,
+    roles: ['executor', 'beneficiaries', 'attorney', 'court', 'notary'],
+    steps: [
+      { id: 's1', name: 'Will / Testament Filed', owner: 'executor + court', deps: [], crit: true },
+      { id: 's2', name: 'Asset Inventory', owner: 'executor', deps: ['s1'] },
+      { id: 's3', name: 'Beneficiary Notifications', owner: 'attorney', deps: ['s1'] },
+      { id: 's4', name: 'Debt & Tax Settlement', owner: 'executor + attorney', deps: ['s2'] },
+      { id: 's5', name: 'Asset Distribution Plan', owner: 'attorney', deps: ['s2', 's3'] },
+      { id: 's6', name: 'Court Approval', owner: 'court', deps: ['s4', 's5'], crit: true },
+      { id: 's7', name: 'Final Distribution', owner: 'executor + beneficiaries', deps: ['s6'], crit: true },
+    ],
+    risk: 58,
+    risks: [
+      { factor: 'Beneficiary contest', prob: 'high', mitigation: 'AI detects dispute signals, escalates to mediation' },
+      { factor: 'Hidden debts discovered', prob: 'medium', mitigation: 'Oracle credit-bureau check during Inventory phase' },
+      { factor: 'Tax filing deadline lapse', prob: 'medium', mitigation: 'AI deadline tracker triggers 14-day early warning' },
+    ],
+    nba: 'High-risk transaction — schedule mediation call with beneficiaries this week',
+  },
+];
+
+const ORCHESTRATOR_CAPABILITIES = [
+  { icon: GitBranch, label: 'Blueprint Engine', desc: '3 system blueprints + custom', color: '#0ea5e9' },
+  { icon: Users, label: 'Multi-Party Roles', desc: '6+ participant roles per deal', color: '#8b5cf6' },
+  { icon: Brain, label: 'AI Risk Engine', desc: 'Live 0-100 risk scoring', color: '#ef4444' },
+  { icon: Activity, label: 'Dependency Graph', desc: 'Task chains & critical path', color: '#10b981' },
+  { icon: Blocks, label: 'On-Chain Audit', desc: 'Dedicated Hedera HCS topic', color: '#f59e0b' },
+  { icon: Send, label: 'In-App Messaging', desc: 'Context-aware chat per txn', color: '#ec4899' },
+];
+
+function RiskMeter({ score, color }) {
+  // 0-30 green, 31-60 amber, 61-100 red
+  const ringColor = score >= 61 ? '#ef4444' : score >= 31 ? '#f59e0b' : '#10b981';
+  const label = score >= 61 ? 'HIGH RISK' : score >= 31 ? 'MODERATE' : 'LOW RISK';
+  const circumference = 2 * Math.PI * 42;
+  const offset = circumference - (score / 100) * circumference;
+  return (
+    <div className="relative inline-block">
+      <svg width="110" height="110" viewBox="0 0 110 110" className="-rotate-90">
+        <circle cx="55" cy="55" r="42" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" />
+        <circle cx="55" cy="55" r="42" fill="none" stroke={ringColor} strokeWidth="6"
+          strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={offset}
+          style={{ transition: 'stroke-dashoffset 800ms ease-out, stroke 400ms ease-out' }} />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-2xl font-bold" style={{ color: ringColor }}>{score}</span>
+        <span className="text-[8px] tracking-[0.15em] font-bold" style={{ color: ringColor }}>{label}</span>
+      </div>
+    </div>
+  );
+}
+
+function TaskGraph({ steps, color }) {
+  return (
+    <div className="space-y-1.5">
+      {steps.map((s, i) => (
+        <div key={s.id} className="flex items-center gap-2 bg-white/[0.02] border border-white/[0.06] rounded-md px-2.5 py-1.5 opacity-0 animate-[fadeSlideUp_0.35s_ease-out_both] hover:border-white/[0.15] transition-colors" style={{ animationDelay: `${i * 50}ms` }}>
+          <span className="w-5 h-5 rounded flex items-center justify-center text-[9px] font-bold flex-shrink-0"
+            style={{ background: `${color}15`, color, border: `1px solid ${color}33` }}>
+            {i + 1}
+          </span>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5">
+              <span className="text-white text-[11px] font-medium truncate">{s.name}</span>
+              {s.crit && <span className="text-[8px] px-1 py-0.5 rounded bg-red-500/15 text-red-400 border border-red-500/20 font-bold">CRIT</span>}
+            </div>
+            <p className="text-gray-600 text-[9px] truncate">{s.owner}</p>
+          </div>
+          {s.deps.length > 0 && (
+            <span className="text-[8px] text-gray-600 font-mono flex-shrink-0">↖ {s.deps.join(',')}</span>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function TransactionOrchestratorDeepDiveSlide({ visible }) {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const active = ORCHESTRATOR_BLUEPRINTS[activeIdx];
+
+  useEffect(() => {
+    if (!visible) setActiveIdx(0);
+  }, [visible]);
+
+  return (
+    <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} data-testid="orchestrator-deep-dive-slide">
+      <div className="max-w-6xl mx-auto px-6 py-6">
+        <div className="text-center mb-5">
+          <p className="text-sky-400 tracking-[0.25em] uppercase text-xs font-medium mb-2.5">Deep Dive · Trademarkable IP</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-1">Transaction Orchestrator</h2>
+          <p className="text-gray-500 text-sm max-w-2xl mx-auto">Full lifecycle engine for complex multi-party transactions — blueprint-driven, AI risk-scored, Hedera-sealed.</p>
+        </div>
+
+        {/* Top capability strip */}
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-2 mb-5">
+          {ORCHESTRATOR_CAPABILITIES.map((c, i) => {
+            const Icon = c.icon;
+            return (
+              <div key={c.label} className="bg-white/[0.02] border border-white/[0.06] rounded-lg p-2.5 text-center opacity-0 animate-[fadeSlideUp_0.4s_ease-out_both]" style={{ animationDelay: `${i * 60}ms` }} data-testid={`orchestrator-cap-${i}`}>
+                <Icon className="w-4 h-4 mx-auto mb-1.5" style={{ color: c.color }} />
+                <p className="text-white text-[10px] font-semibold leading-tight">{c.label}</p>
+                <p className="text-gray-600 text-[8.5px] mt-0.5 leading-tight">{c.desc}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Blueprint selector */}
+        <div className="flex items-center justify-center gap-2 mb-5">
+          {ORCHESTRATOR_BLUEPRINTS.map((bp, i) => (
+            <button key={bp.id}
+              onClick={() => setActiveIdx(i)}
+              data-testid={`orchestrator-blueprint-${bp.id}`}
+              className={`px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all border ${activeIdx === i ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+              style={{
+                background: activeIdx === i ? `${bp.color}20` : 'rgba(255,255,255,0.02)',
+                borderColor: activeIdx === i ? `${bp.color}66` : 'rgba(255,255,255,0.06)',
+              }}>
+              {bp.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Deep dive grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+          {/* LEFT: Task Graph */}
+          <div className="lg:col-span-5 bg-white/[0.02] border border-white/[0.06] rounded-xl p-3" key={`graph-${activeIdx}`}>
+            <div className="flex items-center justify-between mb-2.5">
+              <p className="text-gray-500 text-[10px] uppercase tracking-wider flex items-center gap-1.5">
+                <GitBranch className="w-3 h-3" style={{ color: active.color }} /> Dependency Graph
+              </p>
+              <span className="text-[9px] text-gray-500">{active.steps.length} steps · ~{active.estDays}d</span>
+            </div>
+            <TaskGraph steps={active.steps} color={active.color} />
+          </div>
+
+          {/* MIDDLE: Risk Engine + Roles */}
+          <div className="lg:col-span-4 space-y-3">
+            {/* AI Risk */}
+            <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-3 text-center" key={`risk-${activeIdx}`}>
+              <p className="text-gray-500 text-[10px] uppercase tracking-wider mb-2 flex items-center justify-center gap-1.5">
+                <Brain className="w-3 h-3 text-red-400" /> AI Risk Engine
+              </p>
+              <RiskMeter score={active.risk} color={active.color} />
+              <div className="mt-2 space-y-1">
+                {active.risks.slice(0, 3).map((r, i) => (
+                  <div key={i} className="text-left bg-white/[0.02] border border-white/[0.04] rounded px-2 py-1 opacity-0 animate-[fadeSlideUp_0.3s_ease-out_both]" style={{ animationDelay: `${200 + i * 80}ms` }}>
+                    <div className="flex items-center justify-between">
+                      <span className="text-white text-[10px] font-medium truncate pr-1">{r.factor}</span>
+                      <span className={`text-[8px] font-bold uppercase px-1 rounded flex-shrink-0 ${r.prob === 'high' ? 'text-red-400 bg-red-500/10' : r.prob === 'medium' ? 'text-amber-400 bg-amber-500/10' : 'text-emerald-400 bg-emerald-500/10'}`}>{r.prob}</span>
+                    </div>
+                    <p className="text-gray-600 text-[8.5px] mt-0.5 leading-tight">{r.mitigation}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Participant Roles */}
+            <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-3">
+              <p className="text-gray-500 text-[10px] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <Users className="w-3 h-3" style={{ color: active.color }} /> Participant Roles
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {active.roles.map((r, i) => (
+                  <span key={r} className="text-[10px] px-2 py-0.5 rounded-full border text-white opacity-0 animate-[fadeIn_0.3s_ease-out_both]"
+                    style={{ animationDelay: `${i * 40}ms`, background: `${active.color}12`, borderColor: `${active.color}33` }}>
+                    {r.replace(/_/g, ' ')}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT: Next-Best-Action + On-Chain Audit */}
+          <div className="lg:col-span-3 space-y-3">
+            <div className="bg-white/[0.02] border border-sky-500/20 rounded-xl p-3" key={`nba-${activeIdx}`}>
+              <p className="text-sky-400 text-[10px] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                <Zap className="w-3 h-3" /> Next-Best Action
+              </p>
+              <p className="text-white text-[11px] leading-snug">{active.nba}</p>
+              <button className="mt-2 w-full text-[9px] font-bold text-sky-400 bg-sky-500/10 border border-sky-500/20 rounded px-2 py-1 hover:bg-sky-500/20 transition-colors">
+                EXECUTE →
+              </button>
+            </div>
+
+            <div className="bg-white/[0.02] border border-amber-500/20 rounded-xl p-3">
+              <p className="text-amber-400 text-[10px] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                <Blocks className="w-3 h-3" /> Hedera HCS Audit
+              </p>
+              <div className="space-y-1 font-mono text-[9px] text-gray-400">
+                <div className="flex justify-between"><span className="text-gray-600">Topic</span><span className="text-amber-400">0.0.10373605</span></div>
+                <div className="flex justify-between"><span className="text-gray-600">Network</span><span className="text-white">mainnet</span></div>
+                <div className="flex justify-between"><span className="text-gray-600">Events</span><span className="text-white">{active.steps.length + 3}</span></div>
+                <div className="flex justify-between"><span className="text-gray-600">Sealed</span><span className="text-emerald-400">✓ immutable</span></div>
+              </div>
+              <div className="mt-2 text-center">
+                <div className="inline-flex items-center gap-1 text-[8px] text-amber-400 uppercase tracking-wider font-bold">
+                  <CheckCircle className="w-2.5 h-2.5" /> On-chain provenance
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-3 text-center">
+              <p className="text-[9px] text-gray-600 uppercase tracking-wider">TAM Unlock</p>
+              <p className="text-lg font-bold text-white mt-0.5">$58B</p>
+              <p className="text-[8.5px] text-gray-500 leading-tight">Multi-party transaction mgmt market</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom insight */}
+        <div className="mt-4 text-center">
+          <p className="text-gray-500 text-[11px]">
+            Transforms NotaryChain from a notary tool into a <span className="text-sky-400 font-semibold">full transaction management platform</span> — pulling in escrow, signing, messaging, AI risk, and on-chain audit under one engine.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
 /* ═══════════════════ SLIDE: COMPETITIVE COMPARISON ═══════════════════ */
 
 const COMPETITORS = [
@@ -1150,7 +1428,15 @@ function ProgressBar({ current, total }) {
 
 /* ═══════════════════ NAV DOTS ═══════════════════ */
 
-const SLIDE_LABELS = ['Intro', 'IP Portfolio', 'Trust Gaps', 'ANAN Network', 'Escrow Intelligence', 'AI Orchestrator', 'Biometric', 'Blockchain + Bond', 'RBAC + Fraud Intel', 'AI Pipeline', 'Live Demo', 'Features', 'Architecture', 'Tech Stack', 'Infra', 'Metrics', 'Competitive', 'Market', 'Contact'];
+const SLIDE_LABELS = [
+  'Intro', 'IP Portfolio', 'Trust Gaps',
+  'ANAN Network', 'Dynamic Escrow', 'AI Orchestrator', 'Biometric Passport',
+  'Blockchain + Bond', 'RBAC + SSO', 'HTS Escrow', 'Auto-Learning Threat',
+  'Subscription Paywall', 'Transaction Orchestrator',
+  'AI Pipeline', 'Live Demo', 'Orchestrator Deep Dive',
+  'Features', 'Architecture', 'Tech Stack', 'Infra', 'Metrics',
+  'Competitive', 'Market', 'Contact'
+];
 
 function NavDots({ current, total, onGo }) {
   return (
@@ -1170,8 +1456,26 @@ function NavDots({ current, total, onGo }) {
 /* ═══════════════════ MAIN DECK ═══════════════════ */
 
 function DeckPresentation() {
-  // hero + ip + trust_gaps + 6 features + ai_pipeline + demo + feature_breakdown + architecture + tech + infra + metrics + competitive + market + contact = 19
-  const totalSlides = 19;
+  // Dynamic slide count: 3 intros + N feature slides + 10 content slides = totalSlides
+  // Intros: Hero, IP, TrustGaps (3)
+  // Features: FEATURES.length (dynamic)
+  // Content: AIPipeline, Demo, OrchestratorDeepDive, FeatureBreakdown, Architecture, Tech, Infra, Metrics, Competitive, Market, Contact (11)
+  const FEATURE_COUNT = FEATURES.length;
+  const INTRO_COUNT = 3;
+  const CONTENT_AFTER = 11;
+  const totalSlides = INTRO_COUNT + FEATURE_COUNT + CONTENT_AFTER;
+  const FEATURE_START = INTRO_COUNT;                   // 3
+  const AI_PIPELINE_IDX = FEATURE_START + FEATURE_COUNT;        // 3 + 10 = 13
+  const DEMO_IDX = AI_PIPELINE_IDX + 1;                          // 14
+  const ORCHESTRATOR_DEEP_DIVE_IDX = DEMO_IDX + 1;               // 15
+  const FEATURE_BREAKDOWN_IDX = ORCHESTRATOR_DEEP_DIVE_IDX + 1;  // 16
+  const ARCHITECTURE_IDX = FEATURE_BREAKDOWN_IDX + 1;            // 17
+  const TECH_IDX = ARCHITECTURE_IDX + 1;                         // 18
+  const INFRA_IDX = TECH_IDX + 1;                                // 19
+  const METRICS_IDX = INFRA_IDX + 1;                             // 20
+  const COMPETITIVE_IDX = METRICS_IDX + 1;                       // 21
+  const MARKET_IDX = COMPETITIVE_IDX + 1;                        // 22
+  const CONTACT_IDX = MARKET_IDX + 1;                            // 23
   const [current, setCurrent] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
   const [exporting, setExporting] = useState(false);
@@ -1250,17 +1554,18 @@ function DeckPresentation() {
     <HeroSlide visible={current === 0} />,
     <IPSlide visible={current === 1} />,
     <TrustGapsSlide visible={current === 2} />,
-    ...FEATURES.map((f, i) => <FeatureSlide key={f.title} feature={f} visible={current === i + 3} index={i} />),
-    <AIPipelineSlide visible={current === 9} />,
-    <DemoWalkthroughSlide visible={current === 10} />,
-    <FeatureBreakdownSlide visible={current === 11} />,
-    <ArchitectureSlide visible={current === 12} />,
-    <TechSlide visible={current === 13} />,
-    <InfraSlide visible={current === 14} />,
-    <MetricsSlide visible={current === 15} />,
-    <CompetitiveSlide visible={current === 16} />,
-    <MarketSlide visible={current === 17} />,
-    <ContactSlide visible={current === 18} />,
+    ...FEATURES.map((f, i) => <FeatureSlide key={f.title} feature={f} visible={current === i + FEATURE_START} index={i} />),
+    <AIPipelineSlide visible={current === AI_PIPELINE_IDX} />,
+    <DemoWalkthroughSlide visible={current === DEMO_IDX} />,
+    <TransactionOrchestratorDeepDiveSlide visible={current === ORCHESTRATOR_DEEP_DIVE_IDX} />,
+    <FeatureBreakdownSlide visible={current === FEATURE_BREAKDOWN_IDX} />,
+    <ArchitectureSlide visible={current === ARCHITECTURE_IDX} />,
+    <TechSlide visible={current === TECH_IDX} />,
+    <InfraSlide visible={current === INFRA_IDX} />,
+    <MetricsSlide visible={current === METRICS_IDX} />,
+    <CompetitiveSlide visible={current === COMPETITIVE_IDX} />,
+    <MarketSlide visible={current === MARKET_IDX} />,
+    <ContactSlide visible={current === CONTACT_IDX} />,
   ];
 
   return (

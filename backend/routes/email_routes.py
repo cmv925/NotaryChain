@@ -139,13 +139,90 @@ async def get_email_service_status(
     Get email service configuration status.
     """
     import os
-    
-    api_key = os.environ.get("RESEND_API_KEY", "")
-    sender_email = os.environ.get("SENDER_EMAIL", "onboarding@resend.dev")
-    
+    from services.email_service import EMAIL_MODE, SENDER_EMAIL
+
+    default_key = os.environ.get("RESEND_API_KEY", "")
+    custom_key = os.environ.get("RESEND_API_KEY_CUSTOM", "")
+    custom_sender = os.environ.get("CUSTOM_SENDER_EMAIL", "")
+    custom_domain = os.environ.get("CUSTOM_EMAIL_DOMAIN", "")
+
     return {
-        "configured": bool(api_key),
-        "api_key_set": api_key[:10] + "..." if api_key else None,
-        "sender_email": sender_email,
-        "note": "In test mode, emails only go to verified addresses. Configure a domain at resend.com/domains for production use."
+        "configured": bool(default_key or custom_key),
+        "mode": EMAIL_MODE,
+        "active_sender": SENDER_EMAIL,
+        "default_key_set": bool(default_key),
+        "custom_key_set": bool(custom_key),
+        "custom_sender": custom_sender or None,
+        "custom_domain": custom_domain or None,
+        "note": (
+            "Custom domain ACTIVE — using email.notarychain.app"
+            if EMAIL_MODE == "custom_domain"
+            else "Sandbox mode — add RESEND_API_KEY_CUSTOM to activate email.notarychain.app"
+        ),
     }
+
+
+@router.get("/domain-status")
+async def get_custom_domain_status(
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Query Resend's domains API for verification status of the custom NotaryChain domain.
+    Admin only. Requires RESEND_API_KEY (or custom key) to be set.
+    """
+    import os
+    import httpx
+
+    # Admin gate
+    user_doc = await db.users.find_one({"email": current_user.email})
+    if not user_doc or user_doc.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    custom_domain = os.environ.get("CUSTOM_EMAIL_DOMAIN", "email.notarychain.app")
+    # Prefer custom key if set, otherwise use the default key to query domains
+    api_key = os.environ.get("RESEND_API_KEY_CUSTOM") or os.environ.get("RESEND_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=400, detail="No Resend API key configured")
+
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get(
+                "https://api.resend.com/domains",
+                headers={"Authorization": f"Bearer {api_key}"},
+            )
+        if resp.status_code != 200:
+            return {
+                "domain": custom_domain,
+                "verified": False,
+                "status": "unknown",
+                "error": f"Resend API returned {resp.status_code}",
+                "raw": resp.text[:500],
+            }
+        data = resp.json()
+        domains = data.get("data", []) if isinstance(data, dict) else []
+        match = next((d for d in domains if d.get("name") == custom_domain), None)
+        if not match:
+            return {
+                "domain": custom_domain,
+                "verified": False,
+                "status": "not_found",
+                "setup_url": "https://resend.com/domains",
+                "instructions": (
+                    f"Go to resend.com/domains and add '{custom_domain}'. "
+                    "Then configure the DNS records shown in the Resend dashboard (MX, SPF/TXT, DKIM, DMARC) "
+                    "on your DNS provider for notarychain.app. Verification usually completes within minutes."
+                ),
+                "all_domains": [d.get("name") for d in domains],
+            }
+        status_val = match.get("status", "unknown")
+        return {
+            "domain": custom_domain,
+            "verified": status_val == "verified",
+            "status": status_val,
+            "region": match.get("region"),
+            "created_at": match.get("created_at"),
+            "records": match.get("records", []),
+        }
+    except Exception as e:
+        logger.error(f"Failed to query Resend domain status: {e}")
+        raise HTTPException(status_code=502, detail=f"Failed to query Resend: {str(e)}")

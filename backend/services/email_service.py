@@ -16,9 +16,26 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-# Initialize Resend
-resend.api_key = os.environ.get("RESEND_API_KEY")
-SENDER_EMAIL = os.environ.get("SENDER_EMAIL", "onboarding@resend.dev")
+# ─── Custom Domain Auto-Switch ─────────────────────────────────────────────
+# If RESEND_API_KEY_CUSTOM is set, we activate the NotaryChain custom domain
+# (email.notarychain.app) automatically. Otherwise we fall back to the
+# shared `onboarding@resend.dev` sandbox sender.
+_CUSTOM_KEY = os.environ.get("RESEND_API_KEY_CUSTOM", "").strip()
+_CUSTOM_SENDER = os.environ.get("CUSTOM_SENDER_EMAIL", "").strip()
+_DEFAULT_KEY = os.environ.get("RESEND_API_KEY", "").strip()
+_DEFAULT_SENDER = os.environ.get("SENDER_EMAIL", "onboarding@resend.dev").strip()
+
+if _CUSTOM_KEY and _CUSTOM_SENDER:
+    resend.api_key = _CUSTOM_KEY
+    SENDER_EMAIL = _CUSTOM_SENDER
+    EMAIL_MODE = "custom_domain"
+    logger.info(f"Resend email service using CUSTOM domain: {SENDER_EMAIL}")
+else:
+    resend.api_key = _DEFAULT_KEY
+    SENDER_EMAIL = _DEFAULT_SENDER
+    EMAIL_MODE = "sandbox"
+    logger.info(f"Resend email service using sandbox sender: {SENDER_EMAIL}")
+
 APP_NAME = "NotaryChain"
 
 

@@ -1,0 +1,83 @@
+{
+  "summary": "Supply Chain Escrow Template, Resend Custom Domain, and Transaction Orchestrator Deep Dive — Backend 12/13 passing (92%), Frontend 100% functional. Only failure: /api/email/status returns mode='sandbox' instead of expected 'custom_domain' because RESEND_API_KEY_CUSTOM is empty (even though SENDER_EMAIL + domain verification point to custom domain).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "GET /api/email/status",
+        "issue": "Returns mode='sandbox' instead of expected 'custom_domain'. Code in email_service.py gates EMAIL_MODE='custom_domain' behind RESEND_API_KEY_CUSTOM being set (empty in .env). Emails DO send successfully from noreply@email.notarychain.app via the default Resend key, and domain is verified per /api/email/domain-status. Either (a) set EMAIL_MODE='custom_domain' when SENDER_EMAIL matches CUSTOM_EMAIL_DOMAIN AND domain is verified under default key, or (b) update expectation. response: {mode:'sandbox', active_sender:'noreply@email.notarychain.app', custom_key_set:false, note:'Sandbox mode — add RESEND_API_KEY_CUSTOM to activate email.notarychain.app'}"
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_supply_chain_custom_domain.py",
+    "/app/test_reports/pytest/pytest_results_supply_chain.xml"
+  ],
+  "action_items": [
+    "Review email_service.py custom-domain gating: since domain email.notarychain.app is verified under default Resend key and SENDER_EMAIL is noreply@email.notarychain.app, consider setting EMAIL_MODE='custom_domain' without requiring a separate RESEND_API_KEY_CUSTOM. Or update the /api/email/status contract/expectation in the PRD."
+  ],
+  "critical_code_review_comments": [
+    "email_service.py lines 28-37: EMAIL_MODE is bound only to presence of RESEND_API_KEY_CUSTOM. This creates a confusing state where active_sender='noreply@email.notarychain.app' but mode='sandbox'. Consider deriving mode from active_sender domain or from domain verification status.",
+    "InvestorDeck.jsx is now 1611 lines — recommend splitting feature-slide components (ORCHESTRATOR_BLUEPRINTS, TransactionOrchestratorDeepDiveSlide, RiskMeter, TaskGraph) into /components/investor-deck/ to stay under 700 lines per file.",
+    "escrow_routes.py GET /api/escrow/templates returns 'milestones' count only — the internal 'conditions' array is not exposed. This is fine for the list view but undocumented. If UI ever needs to preview milestones, add a detail endpoint or include conditions conditionally."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_supply_chain_custom_domain.py"
+  ],
+  "success_rate": {
+    "backend": "92% (12/13 tests passed)",
+    "frontend": "100% (Investor Deck: password gate, 24 slides, orchestrator deep dive, 3 blueprint switches, PDF button all working)"
+  },
+  "test_credentials": {
+    "admin": "admin@notarychain.com / Admin123!",
+    "demo_user": "demo@test.com / Demo123!",
+    "investor_deck_password": "NotaryChain2026!"
+  },
+  "seed_data_creation": "Created one TEST_SC_Escrow supply-chain escrow via POST /api/escrow/create for extract-conditions test. No cleanup needed — data is test-prefixed.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend endpoints /api/escrow/templates (3 templates incl. supply_chain with 6 milestones), /api/escrow/create with escrow_type=supply_chain, /api/escrow/{id}/extract-conditions fallback → 6 supply-chain conditions with exact titles all verified. /api/email/domain-status returns verified=true for email.notarychain.app, admin-only gate works. /api/email/test with recipient_email field sends successfully returning email_id. Feature-gate enforcement on /api/escrow/create blocks free-tier demo user (403). Regression: auth/login, escrow/list, subscriptions/current (NOT /subscriptions/status), hts/* all working. Frontend InvestorDeck: password gate verifies via POST /api/investor-deck/verify-password, totalSlides=24, slide 16 (index 15) is Transaction Orchestrator Deep Dive with data-testid='orchestrator-deep-dive-slide' — content updates correctly when clicking data-testid='orchestrator-blueprint-bp_business_contract' and 'orchestrator-blueprint-bp_estate_settlement' (default is bp_real_estate_closing). PDF btn data-testid='download-pdf-btn' present. Only anomaly: mode='sandbox' instead of 'custom_domain' because RESEND_API_KEY_CUSTOM is empty in backend/.env.",
+  "features_verified": {
+    "supply_chain_escrow_template": {
+      "GET /api/escrow/templates returns 3 templates": "PASS",
+      "supply_chain template has 6 milestones": "PASS",
+      "supply_chain default_parties = Buyer/Importer + Supplier/Exporter": "PASS",
+      "POST /api/escrow/create with escrow_type='supply_chain'": "PASS",
+      "POST /api/escrow/{id}/extract-conditions returns 6 correct supply-chain conditions": "PASS (verified all 6 titles: Purchase Order Confirmation, Production & Quality Inspection, Shipment Dispatched, Customs Clearance, Delivery & Receipt of Goods, Final Inspection & Acceptance)",
+      "feature_gate escrow_intelligence blocks free user": "PASS (demo user 403)"
+    },
+    "resend_custom_domain": {
+      "GET /api/email/status active_sender=noreply@email.notarychain.app": "PASS",
+      "GET /api/email/status mode='custom_domain'": "FAIL — returns 'sandbox' because RESEND_API_KEY_CUSTOM empty",
+      "GET /api/email/domain-status verified=true for email.notarychain.app": "PASS",
+      "GET /api/email/domain-status admin-only (403 for demo)": "PASS",
+      "POST /api/email/test welcome returns success=true + email_id": "PASS"
+    },
+    "investor_deck_frontend": {
+      "password gate loads + NotaryChain2026! verifies": "PASS",
+      "totalSlides = 24 (previously 19)": "PASS (confirmed via bottom-left counter '16 / 24')",
+      "slide 16 (index 15) renders orchestrator-deep-dive-slide": "PASS",
+      "data-testid='orchestrator-deep-dive-slide' visible": "PASS",
+      "blueprint switching (bp_business_contract, bp_estate_settlement)": "PASS — content (risk meter, dep graph, next-best-action, HCS audit) updates per blueprint",
+      "keyboard arrow nav through all 24 slides": "PASS — reached slide 24/24",
+      "data-testid='download-pdf-btn' present": "PASS"
+    },
+    "regression": {
+      "POST /api/auth/login": "PASS",
+      "GET /api/escrow/list": "PASS",
+      "GET /api/subscriptions/current": "PASS",
+      "GET /api/hts/*": "PASS (hts/status = 200)"
+    }
+  },
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": [],
+    "note": "extract-conditions uses _generate_mock_conditions as fallback when no document uploaded — this is intentional default behaviour, not a mock of an external service."
+  },
+  "rca_of_the_issue": "email/status mode='sandbox' RCA: /app/backend/services/email_service.py lines 28-37 set EMAIL_MODE='custom_domain' only if BOTH os.environ['RESEND_API_KEY_CUSTOM'] AND os.environ['CUSTOM_SENDER_EMAIL'] are non-empty. In /app/backend/.env, RESEND_API_KEY_CUSTOM is an empty placeholder, so the else branch runs and EMAIL_MODE='sandbox'. However, SENDER_EMAIL was overridden to noreply@email.notarychain.app so active_sender correctly points to the custom domain, and domain verification via default key is already verified. Emails send successfully. Fix options: (1) Relax gate to: if _DEFAULT_SENDER endswith('@'+CUSTOM_EMAIL_DOMAIN) and domain verified under default key → set EMAIL_MODE='custom_domain'. (2) Simply set EMAIL_MODE='custom_domain' when active_sender != 'onboarding@resend.dev'. (3) Or update test/PRD expectation to accept mode='sandbox' when custom_key_set=false."
+}
