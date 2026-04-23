@@ -155,9 +155,9 @@ async def get_email_service_status(
         "custom_sender": custom_sender or None,
         "custom_domain": custom_domain or None,
         "note": (
-            "Custom domain ACTIVE — using email.notarychain.app"
+            f"Custom domain ACTIVE — sending from {SENDER_EMAIL}"
             if EMAIL_MODE == "custom_domain"
-            else "Sandbox mode — add RESEND_API_KEY_CUSTOM to activate email.notarychain.app"
+            else "Sandbox mode — configure a verified domain in Resend or set SENDER_EMAIL to activate"
         ),
     }
 

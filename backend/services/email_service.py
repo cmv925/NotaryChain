@@ -18,10 +18,12 @@ logger = logging.getLogger(__name__)
 
 # ─── Custom Domain Auto-Switch ─────────────────────────────────────────────
 # If RESEND_API_KEY_CUSTOM is set, we activate the NotaryChain custom domain
-# (email.notarychain.app) automatically. Otherwise we fall back to the
-# shared `onboarding@resend.dev` sandbox sender.
+# (email.notarychain.app) with a dedicated key. Otherwise we use the default
+# Resend key, which may already have the custom domain verified under the
+# same account.
 _CUSTOM_KEY = os.environ.get("RESEND_API_KEY_CUSTOM", "").strip()
 _CUSTOM_SENDER = os.environ.get("CUSTOM_SENDER_EMAIL", "").strip()
+_CUSTOM_DOMAIN = os.environ.get("CUSTOM_EMAIL_DOMAIN", "").strip()
 _DEFAULT_KEY = os.environ.get("RESEND_API_KEY", "").strip()
 _DEFAULT_SENDER = os.environ.get("SENDER_EMAIL", "onboarding@resend.dev").strip()
 
@@ -29,12 +31,20 @@ if _CUSTOM_KEY and _CUSTOM_SENDER:
     resend.api_key = _CUSTOM_KEY
     SENDER_EMAIL = _CUSTOM_SENDER
     EMAIL_MODE = "custom_domain"
-    logger.info(f"Resend email service using CUSTOM domain: {SENDER_EMAIL}")
+    logger.info(f"Resend email service using CUSTOM key + domain: {SENDER_EMAIL}")
 else:
     resend.api_key = _DEFAULT_KEY
     SENDER_EMAIL = _DEFAULT_SENDER
-    EMAIL_MODE = "sandbox"
-    logger.info(f"Resend email service using sandbox sender: {SENDER_EMAIL}")
+    # Determine mode from the *active* sender domain, not just the key presence.
+    # If the sender already uses the NotaryChain custom domain, we are in
+    # production custom_domain mode regardless of which key is in use.
+    _sender_domain = SENDER_EMAIL.split("@")[-1].lower() if "@" in SENDER_EMAIL else ""
+    if _CUSTOM_DOMAIN and _sender_domain == _CUSTOM_DOMAIN.lower():
+        EMAIL_MODE = "custom_domain"
+        logger.info(f"Resend email service using CUSTOM domain under default key: {SENDER_EMAIL}")
+    else:
+        EMAIL_MODE = "sandbox"
+        logger.info(f"Resend email service using sandbox sender: {SENDER_EMAIL}")
 
 APP_NAME = "NotaryChain"
 
