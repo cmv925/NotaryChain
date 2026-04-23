@@ -464,6 +464,19 @@ async def check_subscription_status(
                 link="/subscription"
             )
 
+            # CRM sync — subscription upgrade → GHL
+            try:
+                from services.ghl_service import sync_subscription_upgraded
+                import asyncio as _asyncio
+                _asyncio.create_task(sync_subscription_upgraded(
+                    email=current_user.email,
+                    new_tier=payment["plan_id"],
+                    old_tier="starter",
+                    monetary_value=float(plan.get("price", 0)),
+                ))
+            except Exception:
+                pass
+
             return {
                 "status": "complete",
                 "payment_status": "paid",

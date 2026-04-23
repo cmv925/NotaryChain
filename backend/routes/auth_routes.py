@@ -119,6 +119,16 @@ async def signup(request: Request, user_data: UserCreate, background_tasks: Back
         link="/dashboard"
     )
     logger.info(f"Welcome email queued for {user.email}")
+
+    # Sync new signup to GoHighLevel CRM (fire-and-forget, failures never block signup)
+    from services.ghl_service import sync_user_signup
+    background_tasks.add_task(
+        sync_user_signup,
+        email=user.email,
+        full_name=user.full_name or "",
+        role=chosen_role,
+        subscription_tier="starter",
+    )
     
     # Create access token
     access_token = create_access_token(data={"sub": user.email})

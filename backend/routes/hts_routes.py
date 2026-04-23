@@ -169,6 +169,18 @@ async def tokenize_escrow(body: TokenizeRequest, request: Request):
         "message": f"{body.token_symbol} token minted with {body.initial_supply:,} supply on {network}",
     }, email)
 
+    # CRM sync — HTS mint
+    try:
+        from services.ghl_service import sync_hts_token_minted
+        import asyncio as _asyncio
+        _asyncio.create_task(sync_hts_token_minted(
+            email=email, token_id=token_id,
+            amount=float(body.initial_supply),
+            purpose=f"Escrow {body.escrow_id} · {body.token_symbol}",
+        ))
+    except Exception:
+        pass
+
     return {
         "token_id": token_id,
         "escrow_id": body.escrow_id,

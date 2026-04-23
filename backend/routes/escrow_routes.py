@@ -1043,6 +1043,22 @@ async def settle_escrow(escrow_id: str, request: Request):
         "hcs_submitted": settlement_tx.get("hcs_submitted", False),
     })
 
+    # CRM sync — push escrow settlement to GoHighLevel (fire-and-forget)
+    try:
+        from services.ghl_service import sync_escrow_settled
+        import asyncio as _asyncio
+        buyer_email = escrow.get("parties", {}).get("buyer", {}).get("email")
+        seller_email = escrow.get("parties", {}).get("seller", {}).get("email")
+        amount = escrow["financial"]["escrow_amount"]
+        for party_email in {buyer_email, seller_email, user["email"]}:
+            if party_email:
+                _asyncio.create_task(sync_escrow_settled(
+                    email=party_email, escrow_id=escrow_id,
+                    amount=float(amount), settlement_hash=settlement_hash,
+                ))
+    except Exception:
+        pass
+
     return {
         "escrow_id": escrow_id,
         "status": "settled",

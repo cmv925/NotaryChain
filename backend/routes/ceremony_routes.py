@@ -570,6 +570,22 @@ async def execute_ceremony(ceremony_id: str, request: Request = None):
     except Exception as e:
         logger.warning(f"Threat analysis skipped: {e}")
 
+    # CRM sync — ceremony completion → GHL
+    if final_status == "sealed":
+        try:
+            from services.ghl_service import sync_ceremony_completed
+            import asyncio as _asyncio
+            initiator = ceremony.get("initiated_by") or ""
+            if initiator and "@" in initiator:
+                _asyncio.create_task(sync_ceremony_completed(
+                    email=initiator,
+                    request_id=ceremony.get("request_id", ceremony_id),
+                    document_type=ceremony.get("document_type", ""),
+                    seal_hash=(blockchain_seal or {}).get("hash", "") if blockchain_seal else "",
+                ))
+        except Exception:
+            pass
+
     result = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
     return result
 

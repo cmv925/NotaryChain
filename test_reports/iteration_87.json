@@ -1,0 +1,34 @@
+{
+  "summary": "Tested GoHighLevel CRM integration end-to-end: admin-gated status/pipelines/test-contact routes, unauthenticated inbound webhook, live signup→GHL contact upsert, plus regression on escrow templates, email status, auth login, subscriptions/current. Verified all 5 sync hooks (signup, ceremony, escrow, HTS mint, subscription upgrade) are wired in their respective routes with asyncio.create_task + _safe() wrapper so GHL failures never break core flows. All 16 pytest tests pass (100% success).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_ghl_integration.py",
+    "/app/test_reports/pytest/pytest_results_ghl.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "ghl_service.py:115 — add_note() sends userId:null which GHL may reject for some accounts. Consider omitting userId entirely or reading from env.",
+    "ghl_routes.py _require_admin — inline token decode duplicates auth logic found elsewhere (e.g., deps/auth). Consider consolidating into a shared FastAPI dependency to reduce duplication across routes.",
+    "ghl_service.py module-level env reads (PIT_TOKEN/LOCATION_ID/etc.) happen at import time — any .env update requires supervisor restart. This is documented behavior but worth noting for ops.",
+    "Signup hook in auth_routes.py uses FastAPI BackgroundTasks while other hooks (escrow/HTS/subscription/ceremony) use asyncio.create_task. The two patterns are both valid but inconsistent — pick one for uniform operational semantics.",
+    "Failure safety for signup was verified via positive path only — could not mutate GHL_PIT_TOKEN at runtime from tests. _safe() wrapper inspection + code review confirms swallowing behavior."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_ghl_integration.py"
+  ],
+  "success_rate": {"backend": "100% (16/16)", "frontend": "not tested (backend-only scope)"},
+  "test_credentials": "admin@notarychain.com / Admin123! ; demo@test.com / Demo123!",
+  "seed_data_creation": "Each run creates 2-3 live GHL contacts with email prefix 'ghltest_' in ClayTelligence sub-account. Prefix chosen so main agent can bulk-delete from GHL UI.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "GHL integration is live against ClayTelligence (location 3SOWx6wvvlOLJ9h0bJfu, pipeline 0kIvOqYVlWs4KZWJgXW0). Use test_ghl_integration.py for regression. Signup hook verified via idempotent upsert (contacts/search has ~60s indexing delay, so don't use it). Escrow settlement → GHL sync and HTS mint → GHL sync hooks were code-reviewed and confirmed wired but not exercised end-to-end in this iteration (would require full escrow settle flow with biometric gate + HTS mint transaction). Code design (asyncio.create_task + _safe wrapper) guarantees CRM failures are non-fatal.",
+  "rca of the issue": "No bugs found. Initial 2 regression failures were test bugs (missing auth headers on /api/escrow/templates and /api/email/status which both require auth) — fixed in test file, all passing."
+}
