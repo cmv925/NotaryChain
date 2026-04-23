@@ -1551,21 +1551,21 @@ function DeckPresentation() {
   };
 
   const slideMap = [
-    <HeroSlide visible={current === 0} />,
-    <IPSlide visible={current === 1} />,
-    <TrustGapsSlide visible={current === 2} />,
+    <HeroSlide key="hero" visible={current === 0} />,
+    <IPSlide key="ip" visible={current === 1} />,
+    <TrustGapsSlide key="trust" visible={current === 2} />,
     ...FEATURES.map((f, i) => <FeatureSlide key={f.title} feature={f} visible={current === i + FEATURE_START} index={i} />),
-    <AIPipelineSlide visible={current === AI_PIPELINE_IDX} />,
-    <DemoWalkthroughSlide visible={current === DEMO_IDX} />,
-    <TransactionOrchestratorDeepDiveSlide visible={current === ORCHESTRATOR_DEEP_DIVE_IDX} />,
-    <FeatureBreakdownSlide visible={current === FEATURE_BREAKDOWN_IDX} />,
-    <ArchitectureSlide visible={current === ARCHITECTURE_IDX} />,
-    <TechSlide visible={current === TECH_IDX} />,
-    <InfraSlide visible={current === INFRA_IDX} />,
-    <MetricsSlide visible={current === METRICS_IDX} />,
-    <CompetitiveSlide visible={current === COMPETITIVE_IDX} />,
-    <MarketSlide visible={current === MARKET_IDX} />,
-    <ContactSlide visible={current === CONTACT_IDX} />,
+    <AIPipelineSlide key="aipipeline" visible={current === AI_PIPELINE_IDX} />,
+    <DemoWalkthroughSlide key="demo" visible={current === DEMO_IDX} />,
+    <TransactionOrchestratorDeepDiveSlide key="orch-deepdive" visible={current === ORCHESTRATOR_DEEP_DIVE_IDX} />,
+    <FeatureBreakdownSlide key="breakdown" visible={current === FEATURE_BREAKDOWN_IDX} />,
+    <ArchitectureSlide key="arch" visible={current === ARCHITECTURE_IDX} />,
+    <TechSlide key="tech" visible={current === TECH_IDX} />,
+    <InfraSlide key="infra" visible={current === INFRA_IDX} />,
+    <MetricsSlide key="metrics" visible={current === METRICS_IDX} />,
+    <CompetitiveSlide key="competitive" visible={current === COMPETITIVE_IDX} />,
+    <MarketSlide key="market" visible={current === MARKET_IDX} />,
+    <ContactSlide key="contact" visible={current === CONTACT_IDX} />,
   ];
 
   return (
