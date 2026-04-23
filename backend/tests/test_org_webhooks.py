@@ -12,7 +12,7 @@ import os
 
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 if not BASE_URL:
-    BASE_URL = "https://notary-hts-pwa.preview.emergentagent.com"
+    BASE_URL = "https://chain-verify-demo.preview.emergentagent.com"
 
 # Test credentials  
 ADMIN_USER = {"email": "admin@notarychain.com", "password": "Admin123!"}
