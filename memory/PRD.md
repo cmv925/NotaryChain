@@ -27,6 +27,22 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 | Supply Chain Escrow Template | Iteration 86 | Apr 23, 2026 |
 | Resend Custom Domain (email.notarychain.app) | Iteration 86 | Apr 23, 2026 |
 | Investor Deck Transaction Orchestrator Deep Dive | Iteration 86 | Apr 23, 2026 |
+| GoHighLevel CRM Integration (Location PIT) | Iteration 87 | Apr 23, 2026 |
+
+### GoHighLevel CRM — COMPLETE (Apr 23, 2026)
+- **Connection type**: Location-level Private Integration Token (PIT), always-on single-tenant
+- **Target sub-account**: ClayTelligence (Location ID `3SOWx6wvvlOLJ9h0bJfu`) → NotaryChain pipeline (`0kIvOqYVlWs4KZWJgXW0`, 4 stages)
+- **New service**: `/app/backend/services/ghl_service.py` — singleton async GHLService with retry/backoff, plus 5 fire-and-forget `sync_*` helpers wrapped in `_safe()` so CRM failures never break core flows
+- **New routes**: `/api/ghl/status`, `/api/ghl/pipelines`, `/api/ghl/test/contact`, `/api/ghl/webhook/inbound` (all admin except webhook)
+- **5 sync hooks wired**:
+  1. User signup (`auth_routes.signup`) → upsert contact + tags + opportunity in Form Completed stage + note
+  2. Ceremony sealed (`ceremony_routes`) → note with request_id + seal hash
+  3. Escrow settled (`escrow_routes.settle_escrow`) → note to buyer/seller/creator with amount + hash
+  4. HTS token minted (`hts_routes.mint`) → note with token_id + purpose
+  5. Subscription upgraded (`subscription_routes.checkout`) → opportunity in Contract Signed stage + note
+- **Admin UI**: `/admin/integrations` (new page) showing GHL status, pipeline list, email status + domain verification, test sync form, active sync hooks matrix
+- **Inbound webhook placeholder**: `/api/ghl/webhook/inbound` persists events to `ghl_inbound_events` collection for future bidirectional sync
+- **Test results**: 16/16 pytest backend tests passing. Real contacts verified in GHL with proper tags, pipeline placement, and event notes.
 
 ### Supply Chain Escrow Template — COMPLETE (Apr 23, 2026)
 - Added `SUPPLY_CHAIN_CONDITIONS` (6 milestones: PO Confirmation → Production + QC → Shipment Dispatched → Customs Clearance → Delivery + POD → Final Inspection) in `/app/backend/routes/escrow_routes.py`
@@ -56,7 +72,7 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 - None pending from user request batch
 
 ## Future/Backlog
-- GoHighLevel CRM integration (P2) — deferred by user
+- Bidirectional GHL sync (GHL → NotaryChain via `/api/ghl/webhook/inbound`) — receiver already wired, needs business rules (P2)
 - Add more languages (DE, PT, JA, ZH) (P2)
 - Embeddable Trust Badge for 3rd party websites (P3)
 - Ceremony Analytics Dashboard (Admin facing) (P3)

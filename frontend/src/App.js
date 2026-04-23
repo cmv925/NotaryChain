@@ -30,6 +30,7 @@ const PaymentSuccess = lazy(() => import('./pages/PaymentSuccess'));
 const PaymentCancel = lazy(() => import('./pages/PaymentCancel'));
 const NotaryVideoSession = lazy(() => import('./pages/NotaryVideoSession'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AdminIntegrations = lazy(() => import('./pages/AdminIntegrations'));
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
 const TransactionRoom = lazy(() => import('./pages/TransactionRoom'));
 const NotarizationCertificate = lazy(() => import('./pages/NotarizationCertificate'));
@@ -237,6 +238,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/integrations"
+              element={
+                <ProtectedRoute>
+                  <AdminIntegrations />
                 </ProtectedRoute>
               }
             />
