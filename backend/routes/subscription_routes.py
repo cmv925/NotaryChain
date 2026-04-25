@@ -168,6 +168,10 @@ FEATURE_PLAN_MAP = {
     "scheduled_reports": "enterprise",
     "api_access": "enterprise",
     "fraud_intelligence": "enterprise",
+    # Living Identity Notarization (NEW)
+    "living_identity_refresh": "pro",
+    "living_identity_challenge": "enterprise",
+    "living_identity_partner_api": "enterprise",
 }
 
 PLAN_HIERARCHY = {"free": 0, "pro": 1, "enterprise": 2}
