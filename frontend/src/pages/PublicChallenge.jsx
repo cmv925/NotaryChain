@@ -169,6 +169,7 @@ export default function PublicChallenge() {
               <Loader2 className="w-12 h-12 mx-auto animate-spin text-sky-400 mb-3" />
               <p className="text-sm text-slate-300">Comparing against on-chain Genesis Anchor…</p>
               <p className="text-[10px] text-slate-500 mt-1">GPT-5.2 Vision analysis · Hedera HCS sealing</p>
+              <p className="text-[10px] text-slate-600 mt-3">This may take 30-60 seconds for the AI comparison and on-chain seal to complete.</p>
             </div>
           )}
 

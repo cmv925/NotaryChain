@@ -29,6 +29,28 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 | Investor Deck Transaction Orchestrator Deep Dive | Iteration 86 | Apr 23, 2026 |
 | GoHighLevel CRM Integration (Location PIT) | Iteration 87 | Apr 23, 2026 |
 | Living Identity Notarization (Phase 1 MVP) | Iteration 88 | Apr 25, 2026 |
+| Living Identity Phase 2 (Re-Attestation + WebSocket alerts) | Iteration 89 | Apr 25, 2026 |
+
+### Living Identity Phase 2 — COMPLETE (Apr 25, 2026)
+- **Public Challenge endpoints** (no auth required — token IS auth):
+  - `POST /api/living-identity/public-challenge/{token}` — submit biometric, get verification result with masked subject email + Hedera seal
+  - `GET /api/living-identity/public-challenge/{token}/info` — preview token validity, subject info, expiry, uses remaining
+  - Atomic uses_count increment, token expiry enforcement, exhaustion handling
+- **WebSocket real-time alerts** in `_do_refresh`:
+  - `living_identity_drift_detected` — fired when biometric drift OR behavioral signals detected. Severity, signals, current trust score.
+  - `living_identity_score_changed` — fired on every score change with previous + new + tier + trigger
+- **Frontend `/identity/challenge/:token` page** (public, no auth):
+  - Intro state showing masked subject info, uses remaining, expiry
+  - Webcam capture flow with retake/submit
+  - Result card with passed/failed, match confidence %, trust score, Hedera explorer link
+  - Invalid token state for expired/revoked tokens
+- **Frontend dashboard QR modal** at `/identity`:
+  - "Issue Challenge QR" button on Genesis Anchor card
+  - Form for recipient label + duration days + max uses
+  - Generates real QR via `qrcode.react` with copyable shareable URL
+- **Live drift toast notifications** in dashboard via WebSocket subscription
+- **Test results**: 19/19 backend tests passing, 100% frontend, 0 critical bugs (testing agent iteration 89)
+- **Live verification**: Public challenge POST sealed on Hedera mainnet (seq #53), mask helper works (`a***n@notarychain.com`), QR opens working public challenge page
 
 ### Living Identity Notarization Phase 1 — COMPLETE (Apr 25, 2026)
 **Trademarkable IP:** Genesis Anchor · Identity Drift Score · Re-Attestation Protocol · Identity Death Certificate · Living Identity Notarization (5 net-new trademarks)
@@ -84,10 +106,9 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 - None pending from user request batch
 
 ## Future/Backlog
-- Living Identity Phase 2 (Re-Attestation polish: public challenge QR page, notary "challenge before sign" UI hook, WebSocket events) (P1)
-- Living Identity Phase 3 (Recovery flow polish, behavioral baseline drift over time, Admin drift analytics dashboard, GHL CRM hooks for drift events) (P2)
+- Living Identity Phase 3 (Notary "challenge before sign" UI hook in ceremony flow, Recovery flow polish, Admin drift analytics dashboard, GHL CRM hooks for drift events) (P1)
 - Living Identity Phase 4 (ANAN Witness reads trust score, Auto-Learning patterns consume drift events) (P2)
-- Bidirectional GHL sync (GHL → NotaryChain via `/api/ghl/webhook/inbound`) (P2)
+- Bidirectional GHL sync (P2)
 - Add more languages (DE, PT, JA, ZH) (P2)
 - Embeddable Trust Badge for 3rd party websites (P3)
 - Ceremony Analytics Dashboard (Admin facing) (P3)
