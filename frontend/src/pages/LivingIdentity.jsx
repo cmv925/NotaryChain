@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Camera, Activity, AlertTriangle, CheckCircle, Loader2, RefreshCw, Lock, TrendingUp, Clock, Zap, Eye } from 'lucide-react';
+import { Shield, Camera, Activity, AlertTriangle, CheckCircle, Loader2, RefreshCw, Lock, TrendingUp, Clock, Zap, Eye, QrCode, Copy, X } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { toast } from 'sonner';
+import { useWS } from '../contexts/WebSocketContext';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -13,6 +15,7 @@ export default function LivingIdentityDashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showCapture, setShowCapture] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
   const [captureMode, setCaptureMode] = useState('genesis'); // 'genesis' | 'refresh' | 'challenge'
   const token = localStorage.getItem('token');
 
@@ -32,6 +35,26 @@ export default function LivingIdentityDashboard() {
   }, [token, navigate]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Real-time drift alerts via WebSocket
+  const ws = useWS();
+  useEffect(() => {
+    if (!ws?.subscribe) return;
+    const unsubDrift = ws.subscribe('living_identity_drift_detected', (msg) => {
+      toast.warning(`Identity drift detected (${msg.severity}): ${(msg.signals || []).join(', ') || 'behavioral'}`, {
+        duration: 8000,
+      });
+      load();
+    });
+    const unsubScore = ws.subscribe('living_identity_score_changed', (msg) => {
+      const delta = msg.trust_score - msg.previous_score;
+      if (Math.abs(delta) >= 5) {
+        toast.info(`Trust score ${delta > 0 ? 'up' : 'down'} ${Math.abs(delta)} → ${msg.trust_score} (${msg.trust_tier})`);
+      }
+      load();
+    });
+    return () => { unsubDrift && unsubDrift(); unsubScore && unsubScore(); };
+  }, [ws, load]);
 
   const handleCaptureComplete = async (image_b64, behavioral) => {
     const endpoint = captureMode === 'genesis' ? '/api/living-identity/anchor' : '/api/living-identity/refresh';
@@ -98,7 +121,7 @@ export default function LivingIdentityDashboard() {
           <>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
               <TrustScoreCard identity={data.identity} onRefresh={() => { setCaptureMode('refresh'); setShowCapture(true); }} />
-              <AnchorCard identity={data.identity} />
+              <AnchorCard identity={data.identity} onIssueChallenge={() => setShowQRModal(true)} />
               <DriftCard events={data.drift_events || []} />
             </div>
 
@@ -114,6 +137,13 @@ export default function LivingIdentityDashboard() {
             mode={captureMode}
             onClose={() => setShowCapture(false)}
             onComplete={handleCaptureComplete}
+          />
+        )}
+
+        {showQRModal && (
+          <ChallengeQRModal
+            token={token}
+            onClose={() => setShowQRModal(false)}
           />
         )}
       </div>
@@ -158,7 +188,7 @@ function TrustScoreCard({ identity, onRefresh }) {
   );
 }
 
-function AnchorCard({ identity }) {
+function AnchorCard({ identity, onIssueChallenge }) {
   return (
     <Card className="bg-slate-900/60 border-slate-800" data-testid="anchor-card">
       <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Lock className="w-4 h-4 text-amber-400" /> Genesis Anchor</CardTitle></CardHeader>
@@ -166,10 +196,13 @@ function AnchorCard({ identity }) {
         <KV label="Anchored" value={fmtDate(identity.anchor_created_at)} />
         <KV label="HCS Topic" value={identity.hcs_topic_id || '—'} mono />
         <KV label="Successful challenges" value={`${identity.successful_challenges} / ${identity.challenges_count || 0}`} />
-        <div className="pt-2 mt-2 border-t border-slate-800">
-          <Badge className="bg-amber-500/15 text-amber-400 border-amber-500/30 text-[10px]">
+        <div className="pt-2 mt-2 border-t border-slate-800 flex flex-col gap-2">
+          <Badge className="bg-amber-500/15 text-amber-400 border-amber-500/30 text-[10px] self-start">
             <CheckCircle className="w-3 h-3 mr-1" /> Sealed on Hedera Mainnet
           </Badge>
+          <Button onClick={onIssueChallenge} variant="outline" size="sm" className="w-full text-xs h-8 border-slate-700 hover:bg-slate-800" data-testid="issue-challenge-qr-btn">
+            <QrCode className="w-3.5 h-3.5 mr-1.5" /> Issue Challenge QR
+          </Button>
         </div>
       </CardContent>
     </Card>
@@ -386,6 +419,98 @@ function CaptureModal({ mode, onClose, onComplete }) {
             </>
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════ Challenge QR Modal ══════════ */
+
+function ChallengeQRModal({ token, onClose }) {
+  const [tokenData, setTokenData] = useState(null);
+  const [creating, setCreating] = useState(false);
+  const [partnerName, setPartnerName] = useState('Public QR');
+  const [duration, setDuration] = useState(7);
+  const [maxUses, setMaxUses] = useState(3);
+
+  const issue = async () => {
+    setCreating(true);
+    try {
+      const res = await fetch(`${API}/api/living-identity/authorize-partner`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ partner_id: partnerName, duration_days: duration, max_uses: maxUses }),
+      });
+      if (!res.ok) {
+        toast.error('Failed to create challenge token');
+        setCreating(false);
+        return;
+      }
+      const d = await res.json();
+      setTokenData(d);
+    } catch (e) {
+      toast.error(e.message);
+    }
+    setCreating(false);
+  };
+
+  const challengeUrl = tokenData ? `${window.location.origin}/identity/challenge/${tokenData.token}` : '';
+
+  const copyUrl = () => {
+    navigator.clipboard.writeText(challengeUrl);
+    toast.success('Challenge URL copied');
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur flex items-center justify-center p-4" onClick={onClose} data-testid="challenge-qr-modal">
+      <div className="bg-slate-900 border border-slate-700 rounded-lg max-w-md w-full p-5" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-1">
+          <h3 className="text-lg font-bold flex items-center gap-2"><QrCode className="w-5 h-5 text-sky-400" /> Issue Challenge QR</h3>
+          <button onClick={onClose} className="text-slate-400 hover:text-white" data-testid="close-qr-modal"><X className="w-5 h-5" /></button>
+        </div>
+        <p className="text-xs text-slate-400 mb-4">Generate a one-time challenge link. Anyone scanning the QR can verify your identity by capturing your face — useful for in-person attestation by notaries, banks, or partners.</p>
+
+        {!tokenData ? (
+          <div className="space-y-3">
+            <div>
+              <label className="text-[11px] uppercase tracking-wider text-slate-500">Recipient Label</label>
+              <input value={partnerName} onChange={e => setPartnerName(e.target.value)}
+                className="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm mt-1" data-testid="qr-partner-name-input" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[11px] uppercase tracking-wider text-slate-500">Valid (days)</label>
+                <input type="number" min={1} max={90} value={duration} onChange={e => setDuration(parseInt(e.target.value, 10) || 7)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm mt-1" data-testid="qr-duration-input" />
+              </div>
+              <div>
+                <label className="text-[11px] uppercase tracking-wider text-slate-500">Max uses</label>
+                <input type="number" min={1} max={50} value={maxUses} onChange={e => setMaxUses(parseInt(e.target.value, 10) || 3)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm mt-1" data-testid="qr-max-uses-input" />
+              </div>
+            </div>
+            <Button onClick={issue} disabled={creating} className="w-full bg-sky-600 hover:bg-sky-500 mt-2" data-testid="issue-qr-token-btn">
+              {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <QrCode className="w-4 h-4 mr-2" />}
+              Generate QR Code
+            </Button>
+          </div>
+        ) : (
+          <div className="text-center" data-testid="qr-display">
+            <div className="bg-white p-4 rounded mx-auto mb-3 inline-block">
+              <QRCodeSVG value={challengeUrl} size={200} level="M" />
+            </div>
+            <p className="text-[11px] text-slate-400 mb-3">Scan with any phone camera or share the link below.</p>
+            <div className="bg-slate-800/60 border border-slate-700 rounded p-2 flex items-center gap-2">
+              <span className="flex-1 text-[10px] font-mono text-slate-300 truncate text-left">{challengeUrl}</span>
+              <Button onClick={copyUrl} size="sm" variant="outline" className="h-7 px-2" data-testid="copy-qr-url-btn">
+                <Copy className="w-3 h-3" />
+              </Button>
+            </div>
+            <p className="text-[10px] text-slate-500 mt-3">
+              Expires in {duration} day{duration !== 1 ? 's' : ''} · {maxUses} use{maxUses !== 1 ? 's' : ''} max
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

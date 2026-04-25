@@ -353,6 +353,19 @@ async def _do_refresh(user, identity, image_bytes, behavioral, *, trigger, conte
         }
         await db.identity_drift_events.insert_one(drift_evt)
         drift_evt.pop("_id", None)
+        # Real-time WebSocket alert
+        try:
+            from services.ws_manager import ws_manager
+            await ws_manager.push_to_user(user["id"], {
+                "type": "living_identity_drift_detected",
+                "severity": severity,
+                "signals": drift_evt["signals"],
+                "trust_score": score,
+                "trust_tier": new_tier,
+                "detected_at": now,
+            })
+        except Exception:
+            pass
         # Email user (non-blocking)
         try:
             from services.email_service import email_service
@@ -369,6 +382,22 @@ async def _do_refresh(user, identity, image_bytes, behavioral, *, trigger, conte
             ))
         except Exception:
             pass
+
+    # Always emit a score-changed event (lighter weight than drift alert)
+    try:
+        previous_score = identity.get("current_trust_score", 100)
+        if previous_score != score:
+            from services.ws_manager import ws_manager
+            await ws_manager.push_to_user(user["id"], {
+                "type": "living_identity_score_changed",
+                "previous_score": previous_score,
+                "trust_score": score,
+                "trust_tier": new_tier,
+                "trigger": trigger,
+                "at": now,
+            })
+    except Exception:
+        pass
 
     # Update identity
     update = {
@@ -571,6 +600,116 @@ async def authorize_partner(request: Request):
     await db.identity_partner_authorizations.insert_one(record)
     record.pop("_id", None)
     return record
+
+
+@router.post("/public-challenge/{token}")
+async def public_challenge(token: str, request: Request):
+    """
+    Public challenge endpoint — used by the QR code flow. Anyone with a valid
+    authorization token can submit a fresh biometric and get a verification result.
+    No authentication required (the token IS the auth). Bills nothing — designed
+    for self-serve identity proof (e.g., "scan this QR to verify the person at the door").
+    """
+    body = await request.json()
+    image_b64 = body.get("biometric_image", "")
+    if not image_b64:
+        raise HTTPException(status_code=400, detail="biometric_image is required")
+    image_bytes = _decode_image(image_b64)
+
+    auth = await db.identity_partner_authorizations.find_one(
+        {"token": token, "status": "active"}, {"_id": 0}
+    )
+    if not auth:
+        raise HTTPException(status_code=403, detail="Invalid or expired authorization token")
+    if auth.get("expires_at"):
+        try:
+            if datetime.fromisoformat(auth["expires_at"]) < datetime.now(timezone.utc):
+                raise HTTPException(status_code=403, detail="Authorization token expired")
+        except Exception:
+            pass
+    if auth.get("uses_count", 0) >= auth.get("max_uses", 10):
+        raise HTTPException(status_code=403, detail="Authorization token exhausted")
+
+    target = await db.users.find_one({"id": auth["user_id"]}, {"_id": 0})
+    identity = await db.living_identities.find_one({"user_id": auth["user_id"]}, {"_id": 0})
+    if not target or not identity:
+        raise HTTPException(status_code=404, detail="Target user or identity missing")
+
+    context = {
+        "reason": body.get("reason", "public-qr-challenge"),
+        "challenger_name": body.get("challenger_name", "anonymous"),
+        "via": "public_qr",
+    }
+    result = await _do_refresh(target, identity, image_bytes, body.get("behavioral", {}),
+                               trigger="public_challenge", context=context)
+
+    # Track challenge
+    challenge = {
+        "challenge_id": uuid.uuid4().hex,
+        "user_id": auth["user_id"],
+        "challenger": {"type": "public", "id": "qr_anonymous", "context": context["reason"]},
+        "issued_at": result["snapshot"]["captured_at"],
+        "responded_at": result["snapshot"]["captured_at"],
+        "result": "passed" if result["trust_tier"] in ("verified", "watch") else "failed",
+        "match_confidence": result["ai"]["match_confidence"],
+        "snapshot_id": result["snapshot"]["snapshot_id"],
+        "hedera_seal": result.get("hedera_seal"),
+        "via": "public_qr",
+    }
+    await db.identity_challenges.insert_one(challenge)
+    challenge.pop("_id", None)
+
+    # Increment use counter
+    await db.identity_partner_authorizations.update_one(
+        {"token": token}, {"$inc": {"uses_count": 1}}
+    )
+    await db.living_identities.update_one(
+        {"user_id": auth["user_id"]},
+        {"$inc": {"challenges_count": 1, "successful_challenges": 1 if challenge["result"] == "passed" else 0}}
+    )
+
+    return {
+        "success": True,
+        "result": challenge["result"],
+        "match_confidence": result["ai"]["match_confidence"],
+        "trust_score": result["trust_score"],
+        "trust_tier": result["trust_tier"],
+        "subject_email_masked": _mask_email(target["email"]),
+        "hedera_seal": result.get("hedera_seal"),
+    }
+
+
+@router.get("/public-challenge/{token}/info")
+async def public_challenge_info(token: str):
+    """Show metadata for a public challenge token — used when QR is scanned to verify it's still valid."""
+    auth = await db.identity_partner_authorizations.find_one(
+        {"token": token, "status": "active"}, {"_id": 0}
+    )
+    if not auth:
+        raise HTTPException(status_code=404, detail="Token not found or revoked")
+    target = await db.users.find_one({"id": auth["user_id"]}, {"_id": 0})
+    valid = True
+    if auth.get("expires_at"):
+        try:
+            valid = datetime.fromisoformat(auth["expires_at"]) > datetime.now(timezone.utc)
+        except Exception:
+            pass
+    return {
+        "valid": valid and auth.get("uses_count", 0) < auth.get("max_uses", 10),
+        "subject_email_masked": _mask_email(target.get("email", "")) if target else "—",
+        "subject_name": (target.get("full_name") or "").split(" ")[0] if target else None,
+        "expires_at": auth.get("expires_at"),
+        "uses_remaining": max(0, auth.get("max_uses", 10) - auth.get("uses_count", 0)),
+    }
+
+
+def _mask_email(email: str) -> str:
+    if not email or "@" not in email:
+        return "—"
+    name, domain = email.split("@", 1)
+    if len(name) <= 2:
+        return f"{name[0]}***@{domain}"
+    return f"{name[0]}{'*' * (len(name) - 2)}{name[-1]}@{domain}"
 
 
 # ════════════════════════════════════════════════════════
