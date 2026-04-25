@@ -112,6 +112,14 @@ const FEATURES = [
     stats: ['3 system blueprints', '6+ participant roles', 'AI risk scoring', 'Hedera on-chain audit'],
     color: '#0ea5e9',
   },
+  {
+    icon: Activity,
+    title: 'Living Identity Notarization',
+    trademark: true,
+    description: 'Identity is no longer a snapshot — it\'s a living biometric ledger that ages with the user, detects compromise the moment it happens, and can be re-challenged by any party at any time. Genesis Anchor sealed on Hedera mainnet. Identity Drift Score (0-100, four tiers) updates on every interaction via GPT-5.2 Vision drift analysis. Re-Attestation Protocol exposes a per-challenge billable API ($0.50/challenge) for partner platforms — turning NotaryChain into an identity oracle for title companies, lenders, and other notarization platforms.',
+    stats: ['5 net-new trademarks', 'GPT-5.2 drift detection', 'Per-user HCS sealing', '$0.50/challenge oracle API'],
+    color: '#22c55e',
+  },
 ];
 
 const AI_PIPELINE = [
@@ -1432,7 +1440,7 @@ const SLIDE_LABELS = [
   'Intro', 'IP Portfolio', 'Trust Gaps',
   'ANAN Network', 'Dynamic Escrow', 'AI Orchestrator', 'Biometric Passport',
   'Blockchain + Bond', 'RBAC + SSO', 'HTS Escrow', 'Auto-Learning Threat',
-  'Subscription Paywall', 'Transaction Orchestrator',
+  'Subscription Paywall', 'Transaction Orchestrator', 'Living Identity',
   'AI Pipeline', 'Live Demo', 'Orchestrator Deep Dive',
   'Features', 'Architecture', 'Tech Stack', 'Infra', 'Metrics',
   'Competitive', 'Market', 'Contact'
