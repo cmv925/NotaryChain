@@ -1,5 +1,23 @@
 # NotaryChain Changelog
 
+## Apr 26, 2026 — Trust Network Integration Layer
+
+### Cross-feature: SALV ↔ TrustLayer ↔ Living Identity ↔ Email/Resend
+- New `services/salv_service.py`:
+  - **Background scheduler** (hourly) — surfaces dead-man's-switch warnings/triggers and asset overdue notifications via Resend; idempotent per asset/vault.
+  - **Auto-attestation issuer** — when an asset value ≥ $100K, issues a TrustLayer attestation (`high_value_asset_under_custody`, $100K+/$250K+/$500K+/$1M+/$10M+ brackets) under a self-created system partner ("NotaryChain Asset Vault"). Re-issues on re-verify, revokes when value drops or asset deleted/transferred.
+  - **Handoff token issuance** — opaque single-use tokens stored hashed in `salv_handoff_tokens` (30-day TTL).
+- `salv_routes.py` extended:
+  - `POST /assets/{id}/trigger-handoff` now issues per-beneficiary tokens + sends Resend invitations.
+  - Public no-auth endpoints `GET /handoff/{token}` and `POST /handoff/{token}/accept` — single-use token claim flow that flips beneficiary→accepted; once all beneficiaries accept, asset auto-flips to `transferred` and SALV attestation revokes.
+- New frontend pages:
+  - `/handoff/:token` (public) — beneficiary magic-link claim page with asset preview, share %, accept CTA.
+  - `/trust-hub` (auth) — unified dashboard with score ring, three pillar cards (Living Identity / TrustLayer / Asset Vault), copyable share link, recent attestation activity.
+- Dashboard navigation updated — added Trust Hub (accent), Living Identity, Asset Vault entries to Security & Identity section.
+- Robustness: switched `r.clone().json()` pattern across HandoffAccept, TrustGraph, NotaryProfile to fix StrictMode/SW double-read showing "body stream already read" error text.
+- Testing: iteration_95 — 11/11 integration pytest + 23/23 SALV regression + frontend e2e all pass.
+
+
 ## Apr 26, 2026 — SALV Phase 1 MVP
 
 ### Smart Asset Life-Cycle Vault
