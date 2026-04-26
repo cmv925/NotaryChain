@@ -1,5 +1,16 @@
 # NotaryChain Changelog
 
+## Apr 26, 2026 — NotaryChain Verify Phase 2
+
+### Public Notary Directory & Profile Pages
+- **`/notaries`** — public, SEO-indexable notary directory with name search, US state filter, and pagination (24/page).
+- **`/notary/:notaryId`** — public notary profile with sealing stats, license, bond status, fraud flags, and CTAs to verify documents and book sessions.
+- Backend: `GET /api/verify/notaries` (q, state, limit, offset) and `GET /api/verify/notary/{id}` already exposed; both no-auth.
+- Cross-link from `/verify` Notary tab → directory ("Browse the public notary directory").
+- Minor UX fix: `/identity` Score History tier labels (90/70/40) refactored into a left flex column so they no longer overlap chart gridlines.
+- Testing: iteration_92, 15/15 backend pytest + frontend e2e all pass.
+
+
 ## Mar 27, 2026
 
 ### React Lazy Loading & Performance Optimization
