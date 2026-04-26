@@ -201,6 +201,9 @@ export default function PublicVerify() {
                   <Search className="w-4 h-4 mr-2" /> Look Up
                 </Button>
               </div>
+              <p className="text-[11px] text-slate-500 mt-3">
+                Don’t have an ID? <a href="/notaries" className="text-emerald-400 hover:underline" data-testid="browse-directory-link">Browse the public notary directory →</a>
+              </p>
             </CardContent>
           </Card>
         )}

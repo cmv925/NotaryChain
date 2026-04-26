@@ -34,6 +34,8 @@ const AdminIntegrations = lazy(() => import('./pages/AdminIntegrations'));
 const LivingIdentity = lazy(() => import('./pages/LivingIdentity'));
 const PublicChallenge = lazy(() => import('./pages/PublicChallenge'));
 const PublicVerify = lazy(() => import('./pages/PublicVerify'));
+const NotaryDirectory = lazy(() => import('./pages/NotaryDirectory'));
+const NotaryProfile = lazy(() => import('./pages/NotaryProfile'));
 const TrustBadges = lazy(() => import('./pages/TrustBadges'));
 const TrustBadgeLanding = lazy(() => import('./pages/TrustBadgeLanding'));
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
@@ -116,6 +118,8 @@ function App() {
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/demo" element={<QuickSealDemo />} />
             <Route path="/verify" element={<PublicVerify />} />
+            <Route path="/notaries" element={<NotaryDirectory />} />
+            <Route path="/notary/:notaryId" element={<NotaryProfile />} />
             <Route path="/trust-badge" element={<TrustBadgeLanding />} />
             <Route path="/verify-document" element={<VerifyDocument />} />
             <Route path="/verify-certificate" element={<VerifyCertificate />} />

@@ -245,22 +245,37 @@ function ScoreHistoryCard({ history }) {
       <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Activity className="w-4 h-4 text-emerald-400" /> Score History</CardTitle></CardHeader>
       <CardContent>
         {data.length === 0 ? <p className="text-xs text-slate-500 text-center py-6">Capture more refreshes to see your trust trend.</p> : (
-          <div className="relative h-32 mt-2 pl-12">
-            <svg viewBox="0 0 300 100" className="w-full h-full" preserveAspectRatio="none">
-              <line x1="0" y1="20" x2="300" y2="20" stroke="rgba(16,185,129,0.15)" strokeDasharray="2,2" />
-              <line x1="0" y1="50" x2="300" y2="50" stroke="rgba(245,158,11,0.15)" strokeDasharray="2,2" />
-              <line x1="0" y1="80" x2="300" y2="80" stroke="rgba(239,68,68,0.15)" strokeDasharray="2,2" />
-              <polyline
-                fill="none" stroke="#0ea5e9" strokeWidth="2"
-                points={data.map((p, i) => `${(i / Math.max(data.length - 1, 1)) * 300},${100 - ((p.score - min) / (max - min)) * 100}`).join(' ')}
-              />
-              {data.map((p, i) => (
-                <circle key={i} cx={(i / Math.max(data.length - 1, 1)) * 300} cy={100 - ((p.score - min) / (max - min)) * 100} r="2.5" fill="#0ea5e9" />
+          <div className="relative h-32 mt-2 flex">
+            <div className="w-14 relative h-full flex-shrink-0">
+              {[
+                { y: 20, score: 90, color: 'text-emerald-400', sub: 'verified', subColor: 'text-emerald-500/70' },
+                { y: 50, score: 70, color: 'text-amber-400', sub: 'watch', subColor: 'text-amber-500/70' },
+                { y: 80, score: 40, color: 'text-red-400', sub: 'challenged', subColor: 'text-red-500/70' },
+              ].map(t => (
+                <div
+                  key={t.score}
+                  className="absolute right-2 flex items-center gap-1 leading-none"
+                  style={{ top: `${t.y}%`, transform: 'translateY(-50%)' }}
+                >
+                  <span className={`text-[10px] font-bold ${t.color}`}>{t.score}</span>
+                  <span className={`text-[9px] ${t.subColor}`}>{t.sub}</span>
+                </div>
               ))}
-            </svg>
-            <div className="absolute top-[14%] left-0 text-[9px] text-emerald-400 leading-none">90<br/><span className="text-emerald-500/70">verified</span></div>
-            <div className="absolute top-[44%] left-0 text-[9px] text-amber-400 leading-none">70<br/><span className="text-amber-500/70">watch</span></div>
-            <div className="absolute top-[74%] left-0 text-[9px] text-red-400 leading-none">40<br/><span className="text-red-500/70">challenged</span></div>
+            </div>
+            <div className="flex-1 relative">
+              <svg viewBox="0 0 300 100" className="w-full h-full" preserveAspectRatio="none">
+                <line x1="0" y1="20" x2="300" y2="20" stroke="rgba(16,185,129,0.15)" strokeDasharray="2,2" />
+                <line x1="0" y1="50" x2="300" y2="50" stroke="rgba(245,158,11,0.15)" strokeDasharray="2,2" />
+                <line x1="0" y1="80" x2="300" y2="80" stroke="rgba(239,68,68,0.15)" strokeDasharray="2,2" />
+                <polyline
+                  fill="none" stroke="#0ea5e9" strokeWidth="2"
+                  points={data.map((p, i) => `${(i / Math.max(data.length - 1, 1)) * 300},${100 - ((p.score - min) / (max - min)) * 100}`).join(' ')}
+                />
+                {data.map((p, i) => (
+                  <circle key={i} cx={(i / Math.max(data.length - 1, 1)) * 300} cy={100 - ((p.score - min) / (max - min)) * 100} r="2.5" fill="#0ea5e9" />
+                ))}
+              </svg>
+            </div>
           </div>
         )}
       </CardContent>

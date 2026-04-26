@@ -1,0 +1,60 @@
+{
+  "summary": "Iteration 92 — Public Notary Directory & Notary Profile Pages (Phase 2). All backend (15/15 pytest) and frontend e2e flows pass. Score History label refactor verified at code level (ScoreHistoryCard now uses two-column flex: labels in w-14 left column, SVG chart in flex-1 right column — labels can no longer overlap gridlines).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_public_notary_directory.py",
+    "/app/test_reports/pytest/iter92_notary_dir.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "verify_routes.py list_public_notaries: per-row N+1 issuing 2 queries (notary_bonds + blockchain_seals.count) per notary. With 8 seeded notaries this is fine, but at >100 notaries this will be slow — consider batching with $lookup or in-memory join. Not a current bug.",
+    "list_public_notaries query filters role in ['notary','admin'] AND active!=False. Admin user is exposed in the public directory unless active=False — confirm this is intended (admin may not want public listing). Currently 8 results shown including admin profile.",
+    "verify_notary_public_profile fallback: if user is not notary/admin, the second find_one matches ANY user. This means /api/verify/notary/{id} can leak a regular user's id/full_name/role even though they're not a notary. Recommend tightening to role in ['notary','admin'] only.",
+    "NotaryDirectory pagination: PAGE_SIZE=24 hardcoded, but backend default limit=50. Consistent with 24 cards per grid — fine. Pagination only renders when total>24, verified on /notaries (8 notaries currently, no pagination shown).",
+    "NotaryProfile: window.location.href referenced during initial render — safe in browser SSR-free React, but worth noting for future SSR.",
+    "LivingIdentity.jsx ScoreHistoryCard refactor verified: tier labels (90 verified / 70 watch / 40 challenged) live in dedicated left column (w-14) with their own positioning relative to its container, while chart svg sits in flex-1. Labels can no longer overlap gridlines. Visual verification on demo@test.com not possible because user has no genesis anchor yet — Score History card only renders when score_history exists. Code-level fix is sound."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_public_notary_directory.py (new)"
+  ],
+  "success_rate": {"backend": "100% (15/15)", "frontend": "100% of tested flows"},
+  "test_credentials": "demo@test.com / Demo123! used for /identity check; both /notaries and /notary/:id are public — no auth required.",
+  "seed_data_creation": "None — used existing 8 notaries seeded in db.users.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Phase 2 public notary directory complete. Backend tests at /app/backend/tests/test_public_notary_directory.py (run: pytest backend/tests/test_public_notary_directory.py -v). Verified data-testids: notary-directory-page, directory-search-input, directory-search-btn, directory-state-filter, directory-total, directory-loading, directory-results, directory-empty, directory-pagination, pagination-prev, pagination-next, notary-card-{id}, notary-profile-page, notary-profile-not-found, notary-profile-loading, back-to-directory, notary-name, notary-status-ring, notary-stats-card, stat-seals, stat-ceremonies, stat-flags, notary-license-card, notary-bond-card, notary-no-bond-card, notary-trust-card, notary-book-card, notary-share-card, copy-notary-id, share-profile-link, verify-document-cta, book-notary-cta. /verify Notary tab cross-link 'browse-directory-link' → /notaries verified.",
+  "verified_flows": [
+    "GET /api/verify/notaries → 200, returns total/limit/offset/notaries (8 notaries seeded)",
+    "GET /api/verify/notaries (no Authorization header) → 200 (no-auth confirmed)",
+    "GET /api/verify/notaries?limit=9999 → limit clamped to 200",
+    "GET /api/verify/notaries?limit=0 → limit clamped to 1",
+    "GET /api/verify/notaries?offset=-10 → offset clamped to 0",
+    "GET /api/verify/notaries?state=ca → returns only license_state=='CA' (server uppercases)",
+    "GET /api/verify/notaries?state=ZZ → total=0",
+    "GET /api/verify/notaries?q=ZZZ_XYZ_NEVER → total=0",
+    "GET /api/verify/notaries?q=<lowercased fragment of seeded name> → total>=1 (case-insensitive)",
+    "GET /api/verify/notaries?limit=1&offset=0 vs offset=1 → returns different notaries (pagination works)",
+    "GET /api/verify/notary/{valid_id} → 200 with verified=true, notary_id, name, role, license_*, bond, stats{total_seals,total_ceremonies,active_fraud_flags}",
+    "GET /api/verify/notary/does-not-exist-xyz-123 → 404",
+    "GET /api/verify/notary/{id} (no auth) → 200",
+    "Frontend /notaries → notary-directory-page testid renders, 8 cards under directory-results testid, total='8 notaries found'",
+    "Frontend state filter CA + search btn → 0 notaries (no CA-licensed seed), then directory-empty visible after search 'ZZZNOTARYNOTFOUND'",
+    "Click first notary card → routes to /notary/:id, notary-profile-page renders, notary-name='GHL Hook Tester', stat-seals visible",
+    "Click back-to-directory → returns to /notaries with directory-page",
+    "Frontend /notary/invalid-bogus-id-xyz → notary-profile-not-found testid renders",
+    "Frontend /verify Notary tab → browse-directory-link with href='/notaries' present and clickable",
+    "Console errors during /notaries + /notary/:id full e2e: 0 (only 2 unrelated 404 resource fetches from /verify page favicons)",
+    "Regression: GET /api/verify/widget.js → 200 application/javascript",
+    "Regression: GET /api/verify/document/invalid → 400",
+    "Login as demo@test.com → /identity page renders (Genesis Anchor screen shown, no Score History card because no anchor yet); ScoreHistoryCard refactor verified at code level"
+  ],
+  "rca of the issue": "No bugs reproduced. Two soft observations: (1) /api/verify/notary/{id} fallback accepts ANY user (not just notary/admin) — recommend restricting to role in ['notary','admin'] to avoid leaking regular user info via direct id lookup. (2) Admin user appears in public /api/verify/notaries directory (8 results includes admin profile 'GHL Hook Tester') — confirm if intentional. Both are tightening recommendations, not blockers."
+}
