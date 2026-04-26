@@ -235,7 +235,7 @@ export default function PublicVerify() {
               <Award className="w-5 h-5 text-amber-400 mb-2" />
               <h4 className="font-bold mb-1">Get a Trust Badge</h4>
               <p className="text-slate-500 text-xs leading-relaxed mb-2">Show visitors your business uses NotaryChain. Embed a verified badge on your site.</p>
-              <a href="/badges" className="text-amber-400 text-xs hover:underline" data-testid="trust-badge-cta">Get your badge →</a>
+              <a href="/trust-badge" className="text-amber-400 text-xs hover:underline" data-testid="trust-badge-cta">Get your badge →</a>
             </div>
             <div>
               <ExternalLink className="w-5 h-5 text-emerald-400 mb-2" />

@@ -1,0 +1,59 @@
+{
+  "summary": "Iteration 91: Trust Badge marketing landing page (/trust-badge) and Stripe checkout integration. 10/10 backend pytest passed (subscription checkout for pro/enterprise/free/invalid + auth + verify regression). Frontend public load, unauth redirect, all customizer interactions (style, business name, verified toggle, snippet), SVG live preview, and /verify cross-link verified end-to-end. 0 console errors.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_trust_badge_landing.py",
+    "/app/test_reports/pytest/iter91_trust_badge.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "TrustBadgeLanding.jsx is well structured (~340 lines) and split BadgePreview as inline component — acceptable size.",
+    "checkout() uses localStorage.getItem('token'); consistent with the rest of the app. Auth guard correctly redirects to /login?next=/trust-badge when no token.",
+    "STYLE_PALETTES is defined as a module constant (not re-built on render) — good perf.",
+    "BadgePreview SVG renders fully client-side, no API call — confirmed by network log.",
+    "Snippet block correctly omits data-style param when style==='default' — verified.",
+    "Hero copy says '$29/mo' but Pro price card and backend plan price both show $49/mo. The headline copy ($29) is INCONSISTENT with actual Stripe checkout amount ($49) — this is a marketing copy bug, not a checkout bug. Recommend fixing the hero/CTA copy to '$49/mo' or aligning the plan price to $29 for the Trust-Badge-only tier.",
+    "subscription_routes.py:342 — 'You are already on this plan' check uses exact plan match. If user is enterprise and tries to checkout pro (downgrade), the check passes. Confirmed admin (enterprise) can create a pro checkout session — semantically odd but matches existing behavior.",
+    "MongoDB _id correctly excluded throughout subscription_routes.py via projection or by not returning the doc."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_trust_badge_landing.py (new)"
+  ],
+  "success_rate": {"backend": "100% (10/10)", "frontend": "100% of tested flows"},
+  "test_credentials": "admin@notarychain.com / Admin123! (enterprise) and demo@test.com / Demo123! (free) — both produced valid Stripe checkout sessions for plan_id=pro.",
+  "seed_data_creation": "Pending Stripe checkout sessions created (no payment completed) — recorded in db.subscription_payments with status='pending'. No cleanup needed; abandoned sessions are normal Stripe behavior.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend test at /app/backend/tests/test_trust_badge_landing.py covers full /api/subscriptions/checkout matrix + /verify regression. Run: pytest /app/backend/tests/test_trust_badge_landing.py -v. /trust-badge route is public (lazy-loaded). All key data-testids present: trust-badge-landing-page, hero-pro-checkout-btn, pricing-pro-btn, pricing-enterprise-btn, final-cta-btn, preview-business-input, preview-style-{default|dark|light|minimal}, preview-toggle-verified, badge-svg-preview, preview-snippet, trust-badge-cta (on /verify). Hero copy still says $29/mo while actual Stripe charge is $49/mo (Pro plan price) — flag as inconsistency.",
+  "verified_flows": [
+    "GET /trust-badge (public, no auth) — 200, trust-badge-landing-page testid visible, full layout renders (hero, proof, customizer, how-it-works, use cases, pricing, FAQ, final CTA)",
+    "Click hero-pro-checkout-btn WITHOUT auth → window.location → /login?next=/trust-badge",
+    "POST /api/subscriptions/checkout {plan_id: 'pro', origin_url} as demo user (free tier) → 200, checkout_url starts with https://checkout.stripe.com, valid session_id, plan.id='pro', plan.price=49.0",
+    "POST /api/subscriptions/checkout {plan_id: 'enterprise'} as admin (already enterprise) → 400 'You are already on this plan'",
+    "POST /api/subscriptions/checkout {plan_id: 'pro'} as admin → 200 with stripe URL (admin can downgrade-checkout)",
+    "POST /api/subscriptions/checkout {plan_id: 'free'} → 400 'Free plan does not require payment'",
+    "POST /api/subscriptions/checkout {plan_id: 'bogus'} → 400 'Invalid plan selected'",
+    "POST /api/subscriptions/checkout without auth → 401/403",
+    "preview-business-input typing → live SVG text node updates with new business name",
+    "preview-style-{default|dark|light|minimal} buttons all click-able and switch palette colors",
+    "preview-snippet contains data-style=\"{style}\" param when non-default style; omits param for default style",
+    "preview-toggle-verified flips between '✓ Verified state' and '⚠ Pending state'",
+    "badge-svg-preview <svg> renders without backend call (pure client-side, no network requests)",
+    "Final CTA, pricing-pro-btn, pricing-enterprise-btn data-testids all present and rendered",
+    "/verify footer cross-link 'Get your badge →' has data-testid='trust-badge-cta' and href='/trust-badge'",
+    "Console errors during /trust-badge full interaction: 0",
+    "Console errors on /verify: 0",
+    "Regression: GET /api/verify/document/{invalid_hash} → 400; valid 64-char unknown hash → 200 verified=false",
+    "Regression: GET /api/verify/widget.js → 200, application/javascript",
+    "Regression: GET /api/subscriptions/plans → 200 with all 3 plans (free/pro/enterprise)"
+  ],
+  "rca of the issue": "No bugs found. Only soft observation: the hero CTA says '$29/mo' while the actual Pro plan price (and the Stripe checkout amount and the pricing card) is $49/mo. This is a copywriting inconsistency the marketer/product owner should reconcile — not a functional bug since the backend/Stripe side correctly charges $49."
+}
