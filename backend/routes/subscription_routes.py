@@ -172,6 +172,9 @@ FEATURE_PLAN_MAP = {
     "living_identity_refresh": "pro",
     "living_identity_challenge": "enterprise",
     "living_identity_partner_api": "enterprise",
+    # Trust Badge (NEW - revenue stream)
+    "trust_badge": "pro",
+    "trust_badge_white_label": "enterprise",
 }
 
 PLAN_HIERARCHY = {"free": 0, "pro": 1, "enterprise": 2}

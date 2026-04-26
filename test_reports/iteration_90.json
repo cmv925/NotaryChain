@@ -1,0 +1,68 @@
+{
+  "summary": "NotaryChain Verify (public document integrity + Trust Badge revenue stream) tested end-to-end. 20/20 backend pytest passed. Frontend /verify public page, badge banner, all 3 tabs, hash verification, /badges protected page, Create/Embed/Verify-Domain modals all functional.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/verify/document", "issue": "Returns 'document_hash' field instead of 'sha256' as stated in review spec. Frontend uses 'document_hash' so functionality fine, but spec naming mismatch."},
+      {"endpoint": "GET /api/verify/notary/{id}", "issue": "Uses await db.list_collection_names() inside endpoint on every call to detect 'fraud_flags' — extra round-trip per request. Could cache or wrap in try/except."},
+      {"endpoint": "POST /api/verify/badges/{id}/verify-domain", "issue": "DNS TXT lookup uses synchronous dns.resolver.resolve() inside an async endpoint — blocks event loop. Recommend using dns.asyncresolver or running in thread pool."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Dashboard (post-login)", "issues": ["React console warning: 'Each child in a list should have a unique key prop' from Dashboard render method (pre-existing, not from /verify or /badges)"]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_verify_trust_badges.py",
+    "/app/test_reports/pytest/iter90_verify.xml"
+  ],
+  "action_items": [
+    "(Optional/spec) Add 'sha256' alias key in POST /api/verify/document response to match documented contract — frontend already reads document_hash so no urgent fix.",
+    "(Perf) Replace sync dns.resolver.resolve in verify-domain endpoint with async resolver or run_in_executor to avoid blocking the event loop.",
+    "(Cleanup) Cache db.list_collection_names() result instead of calling per request in verify_notary_public_profile.",
+    "(Pre-existing, not in scope) Fix Dashboard list missing key prop React warning."
+  ],
+  "critical_code_review_comments": [
+    "verify_routes.py is well structured and within size limits (~400 lines). _seal_response helper is good DRY.",
+    "MongoDB _id correctly excluded from all responses via projection {'_id': 0}.",
+    "Public endpoints correctly skip auth; protected endpoints use _get_user with bearer token.",
+    "/badges/{id}/verify-domain correctly returns 200 with structured instructions on failure (NOT raising 4xx) — matches spec.",
+    "Badge JSON endpoint correctly excludes verification_token, user_id, user_email — verified by test.",
+    "widget.js correctly substitutes PUBLIC_BACKEND_URL — verified content includes the public backend URL and /api/verify/badge/ path.",
+    "SVG impressions counter increments on every public render — verified.",
+    "Free-tier user blocked with structured 403 + upgrade_required (contains 'pro' and pricing) — verified.",
+    "Owner-only authorization enforced on delete and verify-domain — verified with demo user.",
+    "Synchronous DNS resolver call inside async endpoint is a perf concern under load."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_verify_trust_badges.py (new)"
+  ],
+  "success_rate": {"backend": "100% (20/20)", "frontend": "100% of tested flows"},
+  "test_credentials": "admin@notarychain.com / Admin123! (used for protected flows). demo@test.com / Demo123! used for free-tier 403 verification.",
+  "seed_data_creation": "Created and cleaned up TEST_acme-test.com and TEST_deleteme.com badges for admin during test run. Existing badge 2d38708fb6fa44a0 (Acme Test Inc.) preserved and used for /verify?badge banner test.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend test file at /app/backend/tests/test_verify_trust_badges.py covers all 11 verify endpoints + regressions. Run with: export $(grep -v '^#' /app/frontend/.env | xargs) && pytest /app/backend/tests/test_verify_trust_badges.py -v. /verify is public and /verify?badge=<id> shows banner. /badges requires login (admin or paid user). DNS TXT verification for acme-test.com WILL return verified=false with instructions — this is expected and tested.",
+  "verified_flows": [
+    "GET /api/verify/document/{hash} — invalid hash 400, valid 64-char unknown returns verified=false",
+    "POST /api/verify/document — multipart upload returns verified=false with document_hash",
+    "GET /api/verify/certificate/{id} — 404 for missing",
+    "GET /api/verify/notary/{id} — 404 for missing",
+    "POST /api/verify/badges — free user 403 upgrade_required, admin 200 success",
+    "GET /api/verify/badges — returns owner's badges only, 401 without auth",
+    "DELETE /api/verify/badges/{id} — owner can delete, other user 403",
+    "POST /api/verify/badges/{id}/verify-domain — returns 200 verified=false + instructions (dns_txt + well_known) when DNS not set; non-owner 403",
+    "GET /api/verify/badge/{id}.svg — image/svg+xml, increments stats.impressions",
+    "GET /api/verify/badge/{id}.json — excludes verification_token/user_id/user_email",
+    "GET /api/verify/widget.js — application/javascript, contains PUBLIC_BACKEND_URL",
+    "/verify page — public, all 3 tabs functional, hash verify shows Not Found result",
+    "/verify?badge=2d38708fb6fa44a0 — green badge banner with business name/domain/status visible",
+    "/badges page — protected, shows existing badge card with Verify/Embed/Delete buttons",
+    "Create Badge modal — domain-input/business-name-input/style-select/submit-create-badge testids present",
+    "Verify Domain modal — auto-runs verify, displays DNS TXT (host/type/value) and well-known (URL/content) instructions",
+    "Regressions: /api/escrow/templates returns 3, /api/email/status mode='custom_domain', /api/blockchain/verify/{hash} works"
+  ]
+}

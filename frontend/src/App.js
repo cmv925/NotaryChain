@@ -33,6 +33,8 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const AdminIntegrations = lazy(() => import('./pages/AdminIntegrations'));
 const LivingIdentity = lazy(() => import('./pages/LivingIdentity'));
 const PublicChallenge = lazy(() => import('./pages/PublicChallenge'));
+const PublicVerify = lazy(() => import('./pages/PublicVerify'));
+const TrustBadges = lazy(() => import('./pages/TrustBadges'));
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
 const TransactionRoom = lazy(() => import('./pages/TransactionRoom'));
 const NotarizationCertificate = lazy(() => import('./pages/NotarizationCertificate'));
@@ -112,7 +114,8 @@ function App() {
             <Route path="/auth/okta/callback" element={<OktaCallback />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/demo" element={<QuickSealDemo />} />
-            <Route path="/verify" element={<VerifyDocument />} />
+            <Route path="/verify" element={<PublicVerify />} />
+            <Route path="/verify-document" element={<VerifyDocument />} />
             <Route path="/verify-certificate" element={<VerifyCertificate />} />
             <Route path="/verify-certificate/:certHash" element={<VerifyCertificate />} />
             <Route path="/investor-deck" element={<InvestorDeck />} />
@@ -260,6 +263,14 @@ function App() {
               }
             />
             <Route path="/identity/challenge/:token" element={<PublicChallenge />} />
+            <Route
+              path="/badges"
+              element={
+                <ProtectedRoute>
+                  <TrustBadges />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/transactions"
               element={
