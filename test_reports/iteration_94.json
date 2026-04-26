@@ -1,0 +1,78 @@
+{
+  "summary": "SALV (Smart Asset Life-Cycle Vault) Phase 1 MVP — full backend + frontend e2e testing complete. Backend pytest 23/23 PASSED covering vault auto-creation, settings PATCH, DMS check-in, asset CRUD, verify resets timer, due-soon, beneficiary share validation (≤100%), handoff (400 no benef / 200 success), admin scan (403 non-admin / 200 admin), unauthenticated 401, asset cascade delete. Frontend /asset-vault flows verified end-to-end: ProtectedRoute redirects to /login when unauth (vault-login-required only renders when component mounted via auth race — main path is ProtectedRoute redirect), stat cards render correct counts, dms-card + check-in-btn updates timer, add-asset-modal → submit-add-asset creates asset, asset-row click reveals asset-detail-* with reverify-btn / trigger-handoff-btn / delete-asset-btn / add-beneficiary-btn, add-beneficiary-form → submit-beneficiary-btn appends beneficiary-{id}, settings-modal saves vault name + DMS interval. No critical or blocking issues found.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "AddAssetModal",
+        "issues": [
+          "React hydration warnings printed to console: 'In HTML, <span> cannot be a child of <select>' and '<span> cannot be a child of <option>'. Caused by Emergent's data-ve-dynamic instrumentation wrapping <select>/<option> children with <span style=display:contents>. Not from app code — purely cosmetic, no functional impact."
+        ]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_salv.py",
+    "/app/test_reports/pytest/iter94_salv.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "salv_routes.py: ProtectedRoute on the frontend already redirects unauthenticated users to /login, so the [data-testid=vault-login-required] code path inside AssetVault.jsx will rarely render in production. Component still exposes the testid for the brief unauthenticated render window — OK.",
+    "GET /assets/{id}: admin role bypasses 403 (allowed). PATCH/DELETE/verify/add-beneficiary ENDPOINTS DO NOT honor admin bypass — only owner. Inconsistency: read+handoff allow admin, write does not. Consider documenting/aligning.",
+    "Beneficiary share validation only checks per-asset total ≤ 100%, but does not prevent share_percent=0 (allowed by Field(ge=0)). A 0% beneficiary is meaningless — consider gt=0.",
+    "trigger-handoff: marks beneficiaries pending→notified, but if some are already 'notified' from a prior handoff, the count returned (len(beneficiaries)) overstates fresh notifications. Not blocking.",
+    "admin/scan: only emits asset_overdue events but does not change asset status to 'overdue' in DB. So the client must re-query and compute overdue from next_verification_at — fine, but document expectation.",
+    "Settings PATCH does not validate name length (could be empty string after strip). Not security-critical.",
+    "AssetVault.jsx: `const dmsColor = dms.status === 'ok' ? 'emerald' : ...` is interpolated into Tailwind class names (`bg-${dmsColor}-500/5`). Tailwind JIT may purge these dynamic classes if not safelisted — verified visually on demo (emerald shown OK). If status flips to warning/triggered the colors may not appear. Recommend safelisting amber-500/red-500 variants.",
+    "AssetVault.jsx Modal click-outside dismisses modal even when user is mid-form (fields will be lost). Minor UX.",
+    "No test for blockchain_seal auto-link (requires existing seal hash) — left out of pytest because no seeded seal."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_salv.py (new, 23 tests, 100% pass)"
+  ],
+  "success_rate": {
+    "backend": "100% (23/23)",
+    "frontend": "100% (all required testids and flows verified)"
+  },
+  "test_credentials": "admin@notarychain.com / Admin123! and demo@test.com / Demo123! (from /app/memory/test_credentials.md). Both worked. Login API returns {access_token, token_type}.",
+  "seed_data_creation": "Pytest creates and self-cleans TEST_-prefixed assets and beneficiaries. UI run left 1 beneficiary 'TEST UI Heir <uiheir@test.com>' attached to a leftover asset from the main agent's manual curl ('123 Main St Deed $750,000'). Vault is renamed to 'TEST UI Vault' with DMS=150 days for demo@test.com. Safe to leave or clean via a fresh PATCH /api/salv/vault.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "SALV Phase 1 verified. Backend tests: pytest backend/tests/test_salv.py -v. Endpoints under /api/salv/*. Vault auto-creates on first GET /vault for the JWT user. Pydantic Field range 30–3650 for both DMS days and verification_interval_days returns 422 (NOT 400) — make sure tests assert 422 for range violations and 400 only for explicit HTTPException paths (asset_type enum, missing title, bad hash length, exceeding 100% share, no beneficiaries on handoff). Admin role bypass exists for GET /assets/{id} and trigger-handoff but not for PATCH/DELETE/verify/beneficiary creation. Frontend testids verified: asset-vault-page, vault-login-required, vault-name, stat-assets, stat-beneficiaries, stat-due-soon, stat-value, dms-card, check-in-btn, add-asset-btn, add-asset-modal, asset-type-select, asset-title-input, asset-description-input, asset-value-input, asset-jurisdiction-input, asset-hash-input, asset-interval-input, submit-add-asset, asset-row-{id}, asset-detail-{id}, close-asset-detail, reverify-btn, trigger-handoff-btn, delete-asset-btn, add-beneficiary-btn, add-beneficiary-form, beneficiary-name-input, beneficiary-email-input, beneficiary-relationship-input, beneficiary-share-input, submit-beneficiary-btn, beneficiary-{id}, remove-beneficiary-{id}, open-settings-btn, settings-modal, settings-name-input, settings-days-input, settings-save-btn, modal-close, assets-list, assets-empty, vault-loading, vault-error.",
+  "verified_flows": [
+    "GET /api/salv/vault (no auth) → 401",
+    "GET /api/salv/vault (user) → auto-creates default vault, returns vault+dms+stats+assets[]+beneficiaries[]",
+    "PATCH /api/salv/vault {name, dead_mans_switch_days:200} → 200 updates both",
+    "PATCH /api/salv/vault {dead_mans_switch_days:10} → 422 (Pydantic range)",
+    "POST /api/salv/vault/check-in → 200 dms.status=ok, last_check_in updated",
+    "POST /api/salv/assets {asset_type:'bogus'} → 400",
+    "POST /api/salv/assets {document_hash:'abc'} → 400 (must be 64-char hex)",
+    "POST /api/salv/assets valid deed → 200, status=active, next_verification_at = last_verified_at + interval days",
+    "GET /api/salv/assets/{id} (owner) → 200 {asset, beneficiaries, events}",
+    "GET /api/salv/assets/{id} (admin) → 200 (admin bypass)",
+    "GET /api/salv/assets/missing → 404",
+    "PATCH /api/salv/assets/{id} {verification_interval_days:90} → 200, next_verification_at recomputed from last_verified_at +90d",
+    "POST /api/salv/assets/{id}/verify → 200 resets timestamps",
+    "GET /api/salv/due-soon?days=400 → 200 list",
+    "POST /api/salv/assets/{id}/beneficiaries {share:50} → 200 status=pending",
+    "POST .../beneficiaries {share:60 when 50 already} → 400 exceed",
+    "DELETE /api/salv/beneficiaries/{id} → 200",
+    "POST /api/salv/assets/{id}/trigger-handoff (no benef) → 400",
+    "POST /api/salv/assets/{id}/trigger-handoff (with benef) → 200 status=handoff_in_progress, handoff_id, beneficiaries_notified",
+    "POST /api/salv/admin/scan (user) → 403",
+    "POST /api/salv/admin/scan (admin) → 200 with scanned_at + counts",
+    "DELETE /api/salv/assets/{id} (owner) → 200, cascades beneficiaries; subsequent GET → 404",
+    "Frontend /asset-vault unauthenticated → ProtectedRoute redirects to /login (no vault-login-required render)",
+    "Frontend /asset-vault authenticated → asset-vault-page renders with all 4 stat cards, dms-card OK with check-in-btn",
+    "Frontend add-asset-btn → add-asset-modal opens; fill title+value+jurisdiction; submit-add-asset → modal closes, asset added, list refreshed",
+    "Frontend asset-row click → asset-detail-{id} panel with reverify-btn/trigger-handoff-btn/delete-asset-btn/add-beneficiary-btn all present and functional",
+    "Frontend add-beneficiary-btn → add-beneficiary-form; submit-beneficiary-btn → appends beneficiary-{id} row",
+    "Frontend open-settings-btn → settings-modal; save updates vault-name display"
+  ],
+  "rca of the issue": "No bugs requiring fix. Two console hydration warnings observed (<span> child of <select>/<option>) originate from Emergent runtime instrumentation wrapping JSX with data-ve-dynamic spans, not from AssetVault.jsx. They are noisy in dev console but do not break the dropdown — submit-add-asset succeeds with correct asset_type. Reproduction: open /asset-vault → click 'Add asset' → React DOM hydration warning logged. Mitigation (optional): replace native <select>/<option> with the shadcn Select component to bypass the instrumentation collision."
+}

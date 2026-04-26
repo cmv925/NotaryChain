@@ -39,6 +39,7 @@ const NotaryProfile = lazy(() => import('./pages/NotaryProfile'));
 const TrustLayerLanding = lazy(() => import('./pages/TrustLayerLanding'));
 const TrustGraph = lazy(() => import('./pages/TrustGraph'));
 const AdminTrustLayer = lazy(() => import('./pages/AdminTrustLayer'));
+const AssetVault = lazy(() => import('./pages/AssetVault'));
 const TrustBadges = lazy(() => import('./pages/TrustBadges'));
 const TrustBadgeLanding = lazy(() => import('./pages/TrustBadgeLanding'));
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
@@ -130,6 +131,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminTrustLayer />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/asset-vault"
+              element={
+                <ProtectedRoute>
+                  <AssetVault />
                 </ProtectedRoute>
               }
             />
