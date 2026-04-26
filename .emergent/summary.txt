@@ -1,4 +1,6 @@
-<analysis>**original_problem_statement**: 
+<analysis>Here is the handover summary based on the provided LLM message history:
+
+**original_problem_statement**: 
 Build a sophisticated, futuristic notarization platform named NotaryChain with AI-powered document analysis, blockchain sealing, and enterprise features. 
 PRODUCT REQUIREMENTS:
 1. Complete Okta/Auth0 integration & Enterprise features (COMPLETED)
@@ -6,143 +8,153 @@ PRODUCT REQUIREMENTS:
 3. Multi-Agent Notarization Ceremony Pipeline with Consensus Oracle (COMPLETED)
 4. Real biometric analysis via GPT-5.2 Vision, Hedera mainnet sealing, and PDF Certificate gen (COMPLETED)
 5. Universal Breadcrumbs navigation across all frontend pages (COMPLETED)
-6. Public Certificate Verification, Admin Ceremony Analytics Widget, Webcam Face Capture (COMPLETED)
-7. Dynamic Escrow Intelligence (Smart contract-based escrow holding funds released via AI-verified conditions) (COMPLETED)
-8. Autonomous Notary Agent Network (ANAN) with blind 2-of-3 consensus, virtual SAN Bond, Dynamic Fraud Intelligence, Agent Reputation/Weight tuning, and Verification Badges. (COMPLETED)
-9. Modernized Bento-grid Dashboard with Role-based filtering. (COMPLETED)
-10. On-chain Hedera smart contract for real SAN bond management and role-specific onboarding flows. (COMPLETED)
-11. Escrow Trust Gaps Resolution (Execution, Verification, Security) & Real-time WebSockets. (COMPLETED)
-12. Comprehensive Investor Deck Updates (Trust Gaps, Interactive Demo, Competitive Matrix). (COMPLETED)
-13. Suite of 5 New AI Features: Risk Scoring, Smart Notary Matching, Fraud Detection Dashboard, AI Summarization, and Voice-Authenticated Ceremonies. (IN PROGRESS)
+6. Dynamic Escrow Intelligence & Autonomous Notary Agent Network (ANAN) (COMPLETED)
+7. On-chain Hedera smart contract & WebSocket notifications (COMPLETED)
+8. Mobile-First PWA, HTS on-chain tokenized escrow, & 3-Tier Paywall (COMPLETED)
+9. Resend Custom Domain, Supply Chain Escrow Template, Investor Deck Updates (COMPLETED)
+10. GoHighLevel CRM Integration via Location PIT Token (COMPLETED)
+11. Living Identity Notarization Phase 1 & 2 (Continuous biometric tracking, HCS sealing, Re-attestation QR protocol) (COMPLETED)
+12. NotaryChain Verify Phase 1 (Public Document Verification, Embeddable Trust Badges, Marketing Landing Page) (COMPLETED)
+13. NotaryChain Verify Phase 2 (Public Notary Directory, Profiles, Inline Document Verification) (IN PROGRESS)
 
-**User's preferred language**: INSTRUCT next agent to respond in English.
+**User's preferred language**: English (INSTRUCT next agent to respond in English only)
 
 **what currently exists?** 
-A highly advanced, production-ready full-stack platform (React, FastAPI, MongoDB) featuring AWS S3, Hedera Mainnet, Stripe, Auth0, Okta, and GPT-5.2 Vision. The platform includes the Autonomous Notary Agent Network (ANAN), a fully integrated Escrow Intelligence system resolving 3 Trust Gaps (Execution, Verification via Oracles, Security via Biometrics) with live WebSocket events, On-Chain Hedera SAN Bonds, a modernized bento-grid dashboard, and a highly polished interactive 19-slide Investor Deck.
+A highly advanced, deployment-ready platform (React, FastAPI, MongoDB). In this session, it was dramatically expanded to include: **GoHighLevel CRM synchronization** for new signups and escrows; **Living Identity Notarization** which turns static identities into continuous biometric ledgers with GPT-5.2 Vision drift detection, S3 blob encryption, and Hedera HCS sealing; **Re-Attestation Protocol** allowing public QR challenges; and **NotaryChain Verify**, a public zero-auth document verifier coupled with an embeddable, Stripe-monetized **Trust Badge** widget for third-party sites.
 
-**Last working item**:
-- **Last item agent was working**: Implementing a massive suite of 5 new AI features requested by the user: 1) AI Document Risk Scoring, 2) Smart Notary Matching, 3) Fraud Detection Dashboard, 4) AI-Powered Pre-Ceremony Document Summarization, and 5) Voice-Authenticated Ceremonies. The agent just created  but context exhausted before any code was written inside it.
-- **Status**: IN PROGRESS
-- **Agent Testing Done**: N
-- **Which testing method agent to use?**: both (Use  after implementing the 5 features and integrating backend/frontend).
-- **User Testing Done**: N
+**Last working item**: 
+    - Last item agent was working: Building **NotaryChain Verify Phase 2**. The agent proposed and started building a Public Notary Directory (), Individual Notary Profile pages (), and an Inline Document Verification Badge. The agent just updated  to add the backend public notary listing endpoint before the cutoff.
+    - Status: IN PROGRESS
+    - Agent Testing Done: N
+    - Which testing method agent to use? both
+    - User Testing Done: N
 
 **All Pending/In progress Issue list**: 
-None. Previous features are thoroughly tested and passing.
+  - Issue 1: Minor visual glitch: Score History tier labels overlap gridlines slightly on the  page. 
+     - Attempted fixes: Agent attempted a string edit, but it may require a CSS/chart layout tweak.
+     - Next debug checklist: Check Recharts/chart configuration in 
+     - Why fix this issue and what will be achieved with the fix? UI polish for enterprise-grade look.
+     - Status: TESTING PENDING
+     - Is recurring issue? N
+     - Should Test frontend/backend/both after fix? frontend
+     - Blocked on other issue: None
 
 **In progress Task List**:
-  Task 1: Suite of 5 New AI Features (P0)
-     - **Where to resume**: Resume by filling out the newly created  with GPT-5.2 logic for Risk Scoring, Summarization, Voice Auth, and Smart Matching. Then create corresponding routes, update , and build the frontend dashboard/UI components for these features.
-     - **What will be achieved with this?**: Elevates the platform's AI capabilities, adding preventative legal analysis, intelligent marketplace routing, voice biometrics, and ML fraud anomaly detection.
-     - **Status**: IN PROGRESS
-     - **Should Test frontend/backend/both after fix?**: both
-     - **Blocked on something**: None
+  Task 1: NotaryChain Verify Phase 2 (Public Notary Directory & Profiles) (P0)
+     - Where to resume: The backend endpoint for the public notary directory was just added to . You need to build the frontend pages ( and ), implement the inline document verification badge logic, and register these routes in .
+     - What will be achieved with this? Completes the public verification suite, driving SEO traffic to the platform and enhancing public trust for individual notaries.
+     - Status: IN PROGRESS
+     - Should Test frontend/backend/both after fix? both
+     - Blocked on something: None
 
 **Upcoming and Future Tasks**
-  Upcoming Tasks:
-  - Resend Domain Verification (User task required to enable full email delivery) (P1)
-  
-  Future Tasks:
-  - Connect real Hedera Token Service (HTS) for on-chain tokenized escrow (P2)
-  - Add Freelancer Milestone and Supply Chain escrow templates (P2)
-  - Add more languages (DE, PT, JA, ZH) & extract translation files (P2)
-  - Auto-learning threat detection from GPT-5.2 responses (auto-suggest new fraud patterns) (P3)
+    Upcoming Tasks:
+    - TrustLayer — Universal Trust Verification Network (Cross-chain interop, Verifier SDKs, Federated trust) (P1)
+    - Smart Asset Life-Cycle Vault (SALV) (Digital safe-deposit box for assets) (P1)
+    - Add more languages (DE, PT, JA, ZH) & extract translation files (P2)
+    
+    Future Tasks:
+    - Ceremony Analytics Dashboard (Admin facing) (P3)
+    - Document Template Marketplace (P3)
+    - Client Portal (P3)
+    - Webhook Event Catalog & Playground (P3)
+    - Multi-Currency Escrow (USD, EUR, GBP, HBAR) (P3)
+    - Batch Certificate Generation (P3)
 
 **Completed work in this session**
-- Built On-Chain Hedera Smart Contract tracking for real SAN bond management (DONE)
-- Implemented role-specific guided onboarding tours (Admin, Notary, Regular) (DONE)
-- Built Dynamic Escrow Intelligence resolving 3 Trust Gaps (Execution, Verification Oracles, Biometric Security) (DONE)
-- Added real-time escrow status notifications via WebSocket to frontend and backend (DONE)
-- Overhauled Investor Deck (Added Trust Gaps slide, Interactive 6-step Escrow Demo walkthrough, and Competitor Feature Matrix) (DONE)
+- Resend Custom Domain () Config & Supply Chain Template (DONE)
+- GoHighLevel CRM Integration (, webhooks for auth/escrows/HTS) (DONE)
+- Admin Integrations Dashboard () (DONE)
+- Living Identity Phase 1 (Genesis anchor, biometric drift scoring, S3+KMS blobs,  dashboard) (DONE)
+- Living Identity Phase 2 (Re-Attestation Protocol, Public QR challenge at ) (DONE)
+- NotaryChain Verify Phase 1 (Public Document Verification , Embeddable Trust Badges, ) (DONE)
+- Trust Badge Marketing Funnel ( landing page with interactive preview & Stripe checkout) (DONE)
 
 **Earlier issues found/mentioned but not fixed**
-None.
+None (Testing agent passed 100% across iterations 86-91).
 
 **Known issue recurrence from previous fork**
-- Issue recurrence in previous fork: None
-- Recurrence count: 0
-- Status: RESOLVED
+  - Issue recurrence in previous fork: None
+  - Recurrence count: 0
+  - Status: RESOLVED
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-- **Frontend**: React, React Router, TailwindCSS, Shadcn UI.
-- **Backend**: FastAPI, MongoDB (Motor), WebSocket (Real-time events).
-- **Integrations**:  (GPT-5.2 for vision, text extraction, and upcoming risk analysis), Hedera HCS SDK, WebSockets.
+React, FastAPI, MongoDB, WebSockets (real-time drift alerts), Stripe (Subscriptions/Trust Badges), Hedera HCS (Per-user Identity Topics), S3 (SSE-S3 encrypted biometric blobs), GPT-5.2 Vision (Drift analysis), GoHighLevel (Location PIT).
 
 **key DB schema**
-- : {escrow_id, timeline: [], conditions: [{status, oracle_result}]} (Updated this session)
-- : {balance, on_chain: {topic_id, network}}
+  - : {user_id, genesis_anchor, current_trust_score, drift_events_count}
+  - : {snapshot_id, biometric_blob_ref, match_to_baseline, ai_analysis}
+  - : {challenge_id, user_id, result, match_confidence}
+  - : {badge_id, target_url, status, owner_id}
 
 **changes in tech stack**
-None in this session.
+- Added GoHighLevel CRM synchronization utilizing a Location-level Private Integration Token (PIT).
+- Exposed multiple public-facing (no auth) routes (, ) for third-party platform trust verification.
+- Re-purposed AWS S3 via  to securely store encrypted biometric blobs.
 
-**All files of reference**
--  (New file created, context ran out here)
--  (Updated significantly, interactive components)
--  (Updated for WebSockets)
-- 
-- 
-
-**Areas that need refactoring**:
-None.
-
-**key api endpoints**
--  (Checks external Oracles)
--  (Identity verification for funds release)
--  (Checks on-chain Hedera ledger for bond events)
-
-**Critical Info for New Agent**
-- **Goal:** You must implement the 5 AI features requested: AI Document Risk Scoring, Smart Notary Matching, Fraud Detection Dashboard, AI-Powered Document Summarization, and Voice-Authenticated Ceremonies.
-- Start directly by writing logic into , then build the supporting API routes, wire them in , and build the frontend interface. 
-- Use the  LLM key for GPT-5.2 text/vision logic for Risk Scoring and Summarization.
-- **Credentials to test flow** (from ):
-  - Admin: admin@notarychain.com / Admin123!
-  - Notary: notarytest@test.com / Test123!
-  - User: demo@test.com / Demo123!
-  - Investor Deck Access Code: 
-
-**documents and test reports created in this job**
--  (On-Chain Bond & Onboarding - 100% Pass)
--  (Escrow Trust Gaps - 100% Pass)
--  (WebSocket Escrow Notifications - 100% Pass)
--  (Investor Deck Stats & Trust Gaps - 100% Pass)
--  (Investor Deck Demo Walkthrough - 100% Pass)
--  (Investor Deck Competitor Matrix - 100% Pass)
+**All files of reference** 
+-  (Last edited file, resume here)
+-  (Reference for public directory UI styling)
+-  (Created)
+-  (Created)
+-  (Created)
 -  (Continuously updated)
 
+**Areas that need refactoring**: 
+None. Testing agent reported 100% success rates. Deployer agent ran a health check and gave a PASS - Ready to deploy status.
+
+**key api endpoints**
+- 
+-  (me, anchor, refresh, challenge, public-challenge)
+-  (document, badge generator, notary endpoints)
+
+**Critical Info for New Agent** 
+- The user has green-lit NotaryChain Verify Phase 2 (Public Notary Directory). You must pick up right where the previous agent stopped: creating the React pages for the directory ( and ) and tying them to the newly injected backend endpoint.
+- **GoHighLevel CRM** is strictly utilizing a Location PIT Token (not OAuth), wrapped safely so CRM failures do not block core platform flows.
+- Ensure all public-facing pages utilize proper responsive layouts and maintain the highly-polished, enterprise-grade aesthetic established in  and .
+- Rely entirely on  for regression and validation; it has been rigorously passing 100% of all backend flows in the past 6 iterations.
+
+**documents and test reports created in this job** 
+  - /app/test_reports/iteration_86.json
+  - /app/test_reports/iteration_87.json
+  - /app/test_reports/iteration_88.json
+  - /app/test_reports/iteration_89.json
+  - /app/test_reports/iteration_90.json
+  - /app/test_reports/iteration_91.json
+  - /app/memory/PRD.md
+
 **Last 10 User Messages and any pending HUMAN messages** 
-1. **User**: build the following AI features into the app: AI Document Risk Scoring... Smart Notary Matching... Fraud Detection Dashboard... AI-Powered Document Summarization Pre-Ceremony... Voice-Authenticated Ceremonies... (IN PROGRESS)
-2. **User**: yes to the competitive comparison slide and what is the access code for the investor deck (COMPLETED)
-3. **User**: add an animated demo walkthrough slide to the investor deck that shows the full escrow lifecycle... (COMPLETED)
-4. **User**: with the new features update the investors deck and features list (COMPLETED)
-5. **User**: add real-time escrow status notifications via WebSocket, so both buyer and seller get instant alerts... (COMPLETED)
-6. **User**: build the Dynamic Escrow Intelligence that transforms a legal document from a static piece of paper into a living, programmable financial instrument. Solve 3 trust gaps... (COMPLETED)
-7. **User**: proceed with this plan (COMPLETED)
-8. **User**: Please use ask_human tool and confirm your plan now. (COMPLETED)
+ - User: tell me more about the following features and rank them based on immediate usage and an instant revenue source: TrustLayer, Verify, SALV (COMPLETED)
+ - User: yes start the NotaryChain Verify build (COMPLETED)
+ - User: proceed to the next logical step in the build process and build the potential improvement you just mentioned [Trust Badge Marketing Page] (COMPLETED)
+ - User: proceed to the next logical step in the build process [Verify Phase 2] (IN PROGRESS - Agent started backend edits before cutoff)
 
 **Project Health Check:**
-Healthy.
+Healthy. No mocked elements. Code is successfully passing Deployer checks.
 
 **3rd Party Integrations** 
-- OpenAI GPT-5.2 Vision & Text — uses Emergent LLM Key (via )
-- Hedera Hashgraph (Mainnet) — uses User API Key
-- Stripe (Live Mode) — uses User API Key
-- AWS S3 — uses User API Key
-- Auth0 / Okta — uses User API Key
+ - OpenAI GPT-5.2 Vision & Text — uses Emergent LLM Key
+ - Hedera Hashgraph (Mainnet) HCS/HTS — requires User API Key
+ - Stripe (Subscriptions & Trust Badges) — requires User API Key
+ - Auth0 / Okta — requires User API Key
+ - AWS S3 — requires User API Key
+ - Resend — requires User API Key (Custom domain  active)
+ - GoHighLevel CRM — requires User API Key (Location PIT active)
 
 **Testing status**
-- Testing agent used after significant changes: YES (Iterations 73-78 all pass with 100%)
-- Troubleshoot agent used after agent stuck in loop: NO
-- Test files created: automated test reports generated.
-- Known regressions: None.
+  - Testing agent used after significant changes: YES (Extensively used, Iterations 86-91 passed perfectly)
+  - Troubleshoot agent used after agent stuck in loop: NO
+  - Test files created: [iteration_86.json to iteration_91.json]
+  - Known regressions: None
 
 **Credentials to test flow:**
-- Admin: admin@notarychain.com / Admin123!
-- Notary: notarytest@test.com / Test123!
-- User: demo@test.com / Demo123!
-- Investor Deck Password: 
+  - Admin: admin@notarychain.com / Admin123!
+  - Regular User: demo@test.com / Demo123!
+  - Notary: notarytest@test.com / Test123!
+  - Investor Deck Access Code: 
 
 **What agent forgot to execute**
-- The agent gathered context and successfully created the blank file  but ran out of tokens before writing the actual code for the 5 requested AI features. Next agent must jump straight into coding these features.</analysis>
+Nothing was forgotten; the agent was in the process of generating the Notary Directory features () and was cut off right after modifying the backend routes. You must immediately build the frontend UI for  and  to finish this feature.</analysis>

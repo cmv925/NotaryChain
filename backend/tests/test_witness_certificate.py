@@ -11,7 +11,7 @@ import os
 import re
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://chain-verify-demo.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://notary-profiles.preview.emergentagent.com').rstrip('/')
 
 # Test credentials
 TEST_EMAIL = "admin@notarychain.com"

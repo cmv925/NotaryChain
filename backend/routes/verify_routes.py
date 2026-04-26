@@ -180,6 +180,142 @@ async def verify_notary_public_profile(notary_id: str):
     }
 
 
+@router.get("/notaries")
+async def list_public_notaries(
+    q: Optional[str] = None,
+    state: Optional[str] = None,
+    limit: int = 50,
+    offset: int = 0,
+):
+    """
+    Public directory of NotaryChain notaries. SEO-indexable.
+    Filter by name (q) or license_state. Returns compact list.
+    """
+    limit = min(max(1, limit), 200)
+    offset = max(0, offset)
+
+    query = {"role": {"$in": ["notary", "admin"]}, "active": {"$ne": False}}
+    if state:
+        query["license_state"] = state.upper()
+    if q:
+        query["$or"] = [
+            {"full_name": {"$regex": q, "$options": "i"}},
+            {"license_number": {"$regex": q, "$options": "i"}},
+        ]
+
+    total = await db.users.count_documents(query)
+    notaries = []
+    cursor = db.users.find(
+        query,
+        {"_id": 0, "id": 1, "full_name": 1, "license_number": 1, "license_state": 1, "license_expiration": 1, "role": 1, "created_at": 1}
+    ).sort("full_name", 1).skip(offset).limit(limit)
+
+    async for n in cursor:
+        bond = await db.notary_bonds.find_one({"notary_id": n["id"]}, {"_id": 0, "amount_usd": 1, "status": 1})
+        seal_count = await db.blockchain_seals.count_documents({"sealed_by_id": n["id"]})
+        notaries.append({
+            "notary_id": n["id"],
+            "name": n.get("full_name", "—"),
+            "license_number": n.get("license_number"),
+            "license_state": n.get("license_state"),
+            "license_expiration": n.get("license_expiration"),
+            "bond_amount_usd": bond.get("amount_usd") if bond else None,
+            "bond_active": (bond.get("status") == "active") if bond else False,
+            "total_seals": seal_count,
+            "joined_at": n.get("created_at"),
+        })
+
+    return {"total": total, "limit": limit, "offset": offset, "notaries": notaries}
+
+
+@router.get("/document-badge/{document_hash}.svg")
+async def render_document_badge(document_hash: str, style: str = "default"):
+    """
+    Inline document verification badge — a per-document SVG that embeds anywhere.
+    Shows 'Verified · sealed YYYY-MM-DD on Hedera' if the doc is in the registry.
+    """
+    if len(document_hash) != 64:
+        raise HTTPException(status_code=400, detail="Invalid SHA256 hash")
+    seal = await db.blockchain_seals.find_one({"document_hash": document_hash}, {"_id": 0})
+
+    palettes = {
+        "default": {"bg": "#0f172a", "accent": "#0ea5e9", "text": "#f8fafc", "muted": "#94a3b8"},
+        "dark": {"bg": "#020617", "accent": "#22c55e", "text": "#f1f5f9", "muted": "#64748b"},
+        "light": {"bg": "#f8fafc", "accent": "#0284c7", "text": "#0f172a", "muted": "#475569"},
+        "minimal": {"bg": "#ffffff", "accent": "#1e293b", "text": "#0f172a", "muted": "#64748b"},
+    }
+    p = palettes.get(style, palettes["default"])
+
+    if seal:
+        sealed_at = seal.get("sealed_at", "")
+        try:
+            from datetime import datetime as _dt
+            sealed_str = _dt.fromisoformat(sealed_at.replace("Z", "+00:00")).strftime("%b %d, %Y") if sealed_at else "—"
+        except Exception:
+            sealed_str = sealed_at[:10] if sealed_at else "—"
+        status = "VERIFIED ON HEDERA"
+        status_color = p["accent"]
+        sub = f"Sealed {sealed_str}"
+    else:
+        status = "NOT REGISTERED"
+        status_color = "#f59e0b"
+        sub = "Document not found in NotaryChain"
+
+    short_hash = document_hash[:8] + "…" + document_hash[-4:]
+
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="240" height="64" viewBox="0 0 240 64" role="img" aria-label="Document verification">
+  <rect width="240" height="64" rx="8" fill="{p['bg']}" stroke="{p['accent']}" stroke-opacity="0.3"/>
+  <g transform="translate(12, 12)">
+    <rect x="2" y="2" width="28" height="36" rx="3" fill="none" stroke="{p['accent']}" stroke-width="2"/>
+    <line x1="8" y1="14" x2="24" y2="14" stroke="{p['accent']}" stroke-width="1.5"/>
+    <line x1="8" y1="20" x2="24" y2="20" stroke="{p['accent']}" stroke-width="1.5"/>
+    <line x1="8" y1="26" x2="20" y2="26" stroke="{p['accent']}" stroke-width="1.5"/>
+    <circle cx="26" cy="32" r="6" fill="{p['bg']}" stroke="{p['accent']}" stroke-width="1.5"/>
+    <path d="M22 32 L25 35 L30 30" fill="none" stroke="{p['accent']}" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <text x="56" y="20" font-family="-apple-system,Segoe UI,sans-serif" font-size="9" font-weight="700" letter-spacing="1" fill="{status_color}">{status}</text>
+  <text x="56" y="38" font-family="-apple-system,Segoe UI,sans-serif" font-size="11" font-weight="600" fill="{p['text']}">NotaryChain</text>
+  <text x="56" y="52" font-family="-apple-system,Segoe UI,sans-serif" font-size="8" fill="{p['muted']}">{sub} · {short_hash}</text>
+</svg>'''
+    return Response(content=svg, media_type="image/svg+xml", headers={
+        "Cache-Control": "public, max-age=600",
+        "Access-Control-Allow-Origin": "*",
+    })
+
+
+@router.get("/document-widget.js", response_class=PlainTextResponse)
+async def document_widget_js(request: Request):
+    """
+    Per-document verification widget. Usage:
+      <script src=".../api/verify/document-widget.js" data-hash="SHA256_HEX" data-style="default"></script>
+    Renders an SVG badge linking to /verify/document/HASH.
+    """
+    import os as _os
+    public_base = (
+        _os.environ.get("PUBLIC_BACKEND_URL")
+        or _os.environ.get("REACT_APP_BACKEND_URL")
+        or str(request.base_url).rstrip("/")
+    ).rstrip("/")
+    js = '''(function(){
+  var s=document.currentScript;if(!s)return;
+  var hash=s.getAttribute("data-hash");if(!hash||hash.length!==64)return;
+  var style=s.getAttribute("data-style")||"default";
+  var link=document.createElement("a");
+  link.href="''' + public_base + '''/verify?hash="+hash;
+  link.target="_blank";link.rel="noopener noreferrer";
+  link.style.display="inline-block";link.style.textDecoration="none";link.style.lineHeight="0";
+  var img=document.createElement("img");
+  img.src="''' + public_base + '''/api/verify/document-badge/"+hash+".svg?style="+style;
+  img.alt="Document verification";
+  img.style.border="0";img.style.maxWidth="240px";img.style.width="100%";img.style.height="auto";
+  link.appendChild(img);s.parentNode.insertBefore(link,s);
+})();'''
+    return Response(content=js, media_type="application/javascript", headers={
+        "Cache-Control": "public, max-age=300",
+        "Access-Control-Allow-Origin": "*",
+    })
+
+
 # ════════════════════════════════════════════════════════
 #  TRUST BADGE — embeddable widget (revenue stream)
 # ════════════════════════════════════════════════════════
