@@ -1,0 +1,68 @@
+{
+  "summary": "TrustLayer Phase 1 MVP — comprehensive backend (19/19 pytest pass) and frontend e2e testing complete. All required endpoints (admin partner CRUD, partner attestations, public trust graph, badge SVG, sdk.js) work as specified. UI flows for /trustlayer landing, /admin/trustlayer (create/rotate/toggle), and /trust-graph/:userId all functional. One MINOR frontend bug found: /trust-graph/:invalid shows 'body stream already read' as error subtitle instead of friendly message (testid still renders correctly).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "TrustGraph.jsx (not-found state)",
+        "issue": "When subject_user_id is invalid (404), the not-found Card displays 'Failed to execute json on Response: body stream already read' as the subtitle instead of the backend detail message. Caused by `r.ok ? r.json() : r.json().then(j => { throw new Error(j.detail || 'Not found'); })` — under React 18 StrictMode the effect runs twice and the response body is read twice. Fix: read body once, e.g. `.then(async r => { if (r.ok) return r.json(); let detail='Not found'; try { const j = await r.json(); detail = j.detail||detail; } catch{}; throw new Error(detail); })`. The [data-testid=trust-graph-not-found] still renders correctly so this is cosmetic.",
+        "selector": "[data-testid=trust-graph-not-found]",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_trustlayer.py",
+    "/app/test_reports/pytest/iter93_trustlayer.xml"
+  ],
+  "action_items": [
+    "Optional: Fix TrustGraph.jsx body-stream double-read so the friendly 'No trust graph for this user_id' message shows on 404 instead of the JS error string. Cosmetic only — testid + UI behavior otherwise correct."
+  ],
+  "critical_code_review_comments": [
+    "trustlayer_routes.py POST /attestations does NOT enforce uniqueness on (partner_id, subject_user_id, claim_type). A partner can issue duplicate attestations for the same claim, inflating attestations_total and trust_score. Consider an upsert-or-reject policy.",
+    "_build_trust_graph score formula: min(100, active_count*8 + len(partner_ids)*12). With 1 active attestation + 1 partner = 20. Then it is overridden by max(score, living_identity.current_trust_score) — this means a high LI score masks low partner attestation count. Confirm intended.",
+    "GET /api/trustlayer/attestations/{attestation_id} is public (no auth) — returns full attestation incl. evidence_url. If evidence_url contains private links, this may leak data. Consider partner-or-admin auth for direct fetch.",
+    "Partner status check (_require_partner) returns 403 for status != 'active'. But the disabled partner can still hit /verify with their key (same _require_partner) — verified blocked correctly. OK.",
+    "/trustlayer/sdk.js builds public_base from PUBLIC_BACKEND_URL || REACT_APP_BACKEND_URL || request.base_url. Backend reads frontend's REACT_APP_BACKEND_URL from env which is fine since the container sets it. Recommend documenting fallback order.",
+    "TrustGraph.jsx error chain reads r.json() twice on non-ok responses (race with React.StrictMode double-effect) — fix as in ui_bugs."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_trustlayer.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100% (19/19)",
+    "frontend": "95% (1 cosmetic bug)"
+  },
+  "test_credentials": "admin@notarychain.com / Admin123! and demo@test.com / Demo123! (from /app/memory/test_credentials.md). Both worked.",
+  "seed_data_creation": "Created 5+ TEST_-prefixed partners during pytest run (TEST_Partner_*, TEST_Other_*, TEST_Rotate_*, TEST_Dis_*) and 1 TEST_UIPartner_* via UI test. 2 attestations created on demo user (one revoked during test_revoke_own_then_inactive, one created via test_rotate_invalidates_old). These remain in db.trust_partners / db.trust_attestations and may be cleaned manually if desired (unique slug constraint prevents collisions on rerun since each slug gets a -hex suffix).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "TrustLayer Phase 1 fully verified. Backend tests at /app/backend/tests/test_trustlayer.py (run: `pytest backend/tests/test_trustlayer.py -v`). Login response uses {access_token, token_type} not {token,user}; user id is fetched separately via /api/auth/me. Verified data-testids: trustlayer-landing, partners-grid (or onboard-partner-btn empty state), copy-sdk-snippet, copy-verify-snippet, cta-become-partner, manage-partners-link, trustlayer-admin-page, trustlayer-admin-denied, new-partner-btn, create-partner-form, partner-name-input, partner-domain-input, submit-create-partner, new-key-banner, copy-new-key, rotate-{id}, toggle-{id}, partner-row-{id}, trust-graph-page, trust-graph-not-found, trust-graph-loading, trust-score-number, subject-name, attestations-list, no-attestations, attestation-{id}. ProtectedRoute redirects unauthenticated users to /login — denied page only shown for authenticated non-admin users. Demo user score=40 after living_identity influence (LI tier overrides partner attestation score floor).",
+  "verified_flows": [
+    "POST /api/trustlayer/partners (admin) → 200, returns api_key once, no api_key_hash in response",
+    "GET /api/trustlayer/partners (admin) → 200 list, no api_key_hash; (non-admin) → 403; (unauth) → 401",
+    "POST /api/trustlayer/partners/{id}/rotate-key → 200 new key; old key returns 401 on attestations; new key works",
+    "POST /api/trustlayer/partners/{id}/status {disabled} → blocks attestations (403) AND removes from /partners/public",
+    "POST /api/trustlayer/attestations w/o key → 401; wrong key → 401; non-existent subject → 404; valid → 200",
+    "GET /api/trustlayer/trust-graph/{user_id} (public) → 200 with trust_score 0-100, attestations[].active flag",
+    "POST /api/trustlayer/verify (partner key) → 200 same payload; verifications_served stat increments by 1",
+    "DELETE /api/trustlayer/attestations/{id} (other partner) → 403; (owning partner) → 200, active:false in graph",
+    "GET /api/trustlayer/partners/public → 200 active-only, no hash/preview leaked",
+    "GET /api/trustlayer/badge/{user_id}.svg → 200 image/svg+xml; unknown user → UNVERIFIED svg",
+    "GET /api/trustlayer/sdk.js → 200 application/javascript with REACT_APP_BACKEND_URL embedded",
+    "GET /api/trustlayer/trust-graph/<invalid> → 404",
+    "Frontend /trustlayer → trustlayer-landing visible; copy buttons + CTA + manage link work; partners-grid renders when partners exist (else empty state)",
+    "Frontend /trust-graph/:demoUserId → trust-graph-page renders, score=40, name='Demo User', attestations-list visible",
+    "Frontend /trust-graph/<invalid> → trust-graph-not-found testid renders (subtitle has cosmetic JS error string — see ui_bugs)",
+    "Frontend /admin/trustlayer (admin) → trustlayer-admin-page renders, new-partner-btn opens create-partner-form, submit creates partner and shows new-key-banner with tl_-prefixed key",
+    "Frontend /admin/trustlayer (non-admin demo) → trustlayer-admin-denied 'Admin only' card visible",
+    "Frontend /admin/trustlayer (logged out) → ProtectedRoute redirects to /login (no denied page shown)",
+    "Toggle and rotate buttons present and clickable on partner rows"
+  ],
+  "rca of the issue": "Single cosmetic bug in TrustGraph.jsx: error path reads response body twice. Reproduce by visiting /trust-graph/<bogus-id> — Card subtitle shows 'Failed to execute json on Response: body stream already read'. Mitigation: refactor fetch chain to read r.json() exactly once on the error branch (see action_items)."
+}
