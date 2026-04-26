@@ -1,5 +1,19 @@
 # NotaryChain Changelog
 
+## Apr 26, 2026 — SALV Phase 1 MVP
+
+### Smart Asset Life-Cycle Vault
+- New `routes/salv_routes.py` with full CRUD + lifecycle endpoints:
+  - Vault: auto-created per user, settings (name + dead-man's-switch interval), check-in.
+  - Assets: 9 asset types (deed/title/IP/will/custody/financial/license/contract/other), value, jurisdiction, document_hash auto-link to NotaryChain seal, scheduled re-verification.
+  - Beneficiaries: name/email/relationship/share_percent (total ≤ 100%), trigger conditions.
+  - Handoff: manual `POST /assets/{id}/trigger-handoff` notifies beneficiaries and flips status; emits structured events.
+  - Admin sweep: `POST /admin/scan` flags overdue assets + DMS warnings/triggers.
+- Indexes: `salv_vaults`, `salv_assets` (incl. `next_verification_at` for due-soon scans), `salv_beneficiaries`, `salv_events`.
+- New page `/asset-vault` (auth required) — single dashboard with stat cards, dead-man's-switch panel, asset list with overdue/due-soon highlighting, asset detail panel (re-verify, handoff, delete), inline beneficiary management, vault settings modal.
+- Testing: iteration_94 — 23/23 backend pytest + frontend e2e all pass.
+
+
 ## Apr 26, 2026 — TrustLayer Phase 1 MVP
 
 ### Universal Trust Verification Network
