@@ -119,6 +119,9 @@ from services.email_service import email_service
 from services import notification_service as notif_svc_module
 expiry_service.set_dependencies(db, notif_svc_module, email_service)
 reminder_service.set_dependencies(db, notif_svc_module)
+from services import salv_service as salv_service_module
+import services.email_service as email_service_module
+salv_service_module.set_dependencies(db, email_service_module)
 from services.hedera_service import hedera_service, hedera_bond_service
 hedera_bond_service.set_db(db)
 hbar_alert_service.set_dependencies(db, hedera_service, notif_svc_module, email_service)
@@ -351,6 +354,8 @@ async def create_indexes():
         await db.salv_beneficiaries.create_index("vault_id")
         await db.salv_events.create_index([("vault_id", 1), ("created_at", -1)])
         await db.salv_events.create_index([("asset_id", 1), ("created_at", -1)])
+        await db.salv_handoff_tokens.create_index("token_hash", unique=True)
+        await db.salv_handoff_tokens.create_index("beneficiary_id")
 
         # Seed default templates
         await template_routes.seed_templates()
@@ -412,6 +417,7 @@ async def create_indexes():
         # Start document expiry background checker
         asyncio.create_task(expiry_service.run_expiry_checker())
         asyncio.create_task(reminder_service.run_reminder_checks())
+        asyncio.create_task(salv_service_module.run_salv_scheduler())
         asyncio.create_task(scheduled_reports_routes.start_report_scheduler())
         asyncio.create_task(hbar_alert_service.run_balance_checker())
         asyncio.create_task(service_health_monitor.run_service_monitor())

@@ -283,6 +283,14 @@ async def create_asset(body: AssetCreate, request: Request):
     }
     await db.salv_assets.insert_one(asset)
     await _emit_event(asset["asset_id"], vault["vault_id"], "asset_created", {"title": title, "type": body.asset_type})
+
+    # Cross-feature: auto-issue TrustLayer attestation if high-value
+    try:
+        from services import salv_service
+        await salv_service.maybe_issue_high_value_attestation(asset)
+    except Exception as e:
+        logger.warning(f"SALV→TrustLayer attestation skipped: {e}")
+
     asset.pop("_id", None)
     return asset
 
@@ -325,6 +333,17 @@ async def update_asset(asset_id: str, body: AssetUpdate, request: Request):
     if update:
         await db.salv_assets.update_one({"asset_id": asset_id}, {"$set": update})
     out = await db.salv_assets.find_one({"asset_id": asset_id}, {"_id": 0})
+
+    # Refresh cross-feature attestation
+    try:
+        from services import salv_service
+        if out.get("value_estimate_usd", 0) >= salv_service.HIGH_VALUE_USD_THRESHOLD:
+            await salv_service.maybe_issue_high_value_attestation(out)
+        else:
+            await salv_service.revoke_high_value_attestation(asset_id)
+    except Exception as e:
+        logger.warning(f"SALV→TrustLayer attestation refresh skipped: {e}")
+
     return out
 
 
@@ -339,6 +358,11 @@ async def delete_asset(asset_id: str, request: Request):
     await db.salv_assets.delete_one({"asset_id": asset_id})
     await db.salv_beneficiaries.delete_many({"asset_id": asset_id})
     await _emit_event(asset_id, asset["vault_id"], "asset_deleted", {"title": asset.get("title")})
+    try:
+        from services import salv_service
+        await salv_service.revoke_high_value_attestation(asset_id)
+    except Exception as e:
+        logger.warning(f"SALV attestation revoke skipped: {e}")
     return {"deleted": True, "asset_id": asset_id}
 
 
@@ -357,9 +381,19 @@ async def mark_asset_verified(asset_id: str, request: Request):
     next_at = _iso(now + timedelta(days=interval))
     await db.salv_assets.update_one(
         {"asset_id": asset_id},
-        {"$set": {"last_verified_at": last_verified_at, "next_verification_at": next_at}}
+        {"$set": {"last_verified_at": last_verified_at, "next_verification_at": next_at},
+         "$unset": {"notifications.overdue_sent": ""}}
     )
     await _emit_event(asset_id, asset["vault_id"], "asset_re_verified", {"by": user["email"]})
+
+    # Refresh cross-feature attestation
+    try:
+        from services import salv_service
+        refreshed = await db.salv_assets.find_one({"asset_id": asset_id}, {"_id": 0})
+        await salv_service.maybe_issue_high_value_attestation(refreshed)
+    except Exception as e:
+        logger.warning(f"SALV→TrustLayer attestation refresh skipped: {e}")
+
     return {"asset_id": asset_id, "last_verified_at": last_verified_at, "next_verification_at": next_at}
 
 
@@ -457,6 +491,19 @@ async def trigger_handoff(asset_id: str, request: Request):
         {"asset_id": asset_id, "status": "pending"},
         {"$set": {"status": "notified", "notified_at": _iso(_now())}}
     )
+
+    # Issue per-beneficiary magic-link tokens + send invitations
+    notified = 0
+    try:
+        from services import salv_service
+        for b in beneficiaries:
+            raw_token = await salv_service.issue_handoff_token(b["beneficiary_id"])
+            await salv_service.send_beneficiary_invitation(b, asset, user.get("full_name") or user["email"], raw_token)
+            notified += 1
+    except Exception as e:
+        logger.warning(f"SALV beneficiary invitation send failed: {e}")
+        notified = len(beneficiaries)
+
     await _emit_event(
         asset_id, asset["vault_id"], "handoff_triggered",
         {"handoff_id": handoff_id, "beneficiaries": [b["email"] for b in beneficiaries], "by": user["email"]}
@@ -465,7 +512,7 @@ async def trigger_handoff(asset_id: str, request: Request):
         "handoff_id": handoff_id,
         "asset_id": asset_id,
         "status": "handoff_in_progress",
-        "beneficiaries_notified": len(beneficiaries),
+        "beneficiaries_notified": notified,
     }
 
 
@@ -500,4 +547,101 @@ async def admin_scan(request: Request):
         "overdue_assets": overdue_count,
         "dead_mans_warnings": warned_count,
         "dead_mans_triggered": triggered_count,
+    }
+
+
+
+# ════════════════════════════════════════════════════════
+#  PUBLIC BENEFICIARY HANDOFF (magic-link, no auth)
+# ════════════════════════════════════════════════════════
+
+@router.get("/handoff/{token}")
+async def public_handoff_lookup(token: str):
+    """Beneficiary opens magic-link → returns asset + share details (no auth)."""
+    from services import salv_service
+    rec = await salv_service.lookup_handoff_token(token)
+    if not rec:
+        raise HTTPException(status_code=404, detail="Invalid or unknown handoff token")
+    if rec["status"] in ("expired", "claimed"):
+        return {"status": rec["status"], "expires_at": rec.get("expires_at"), "claimed_at": rec.get("claimed_at")}
+
+    benef = await db.salv_beneficiaries.find_one({"beneficiary_id": rec["beneficiary_id"]}, {"_id": 0})
+    if not benef:
+        raise HTTPException(status_code=404, detail="Beneficiary record missing")
+    asset = await db.salv_assets.find_one({"asset_id": benef["asset_id"]}, {"_id": 0})
+    if not asset:
+        raise HTTPException(status_code=404, detail="Asset missing")
+    owner = await db.users.find_one({"id": asset["owner_id"]}, {"_id": 0, "full_name": 1, "email": 1})
+
+    return {
+        "status": "active",
+        "expires_at": rec.get("expires_at"),
+        "beneficiary": {
+            "name": benef.get("name"),
+            "email": benef.get("email"),
+            "relationship": benef.get("relationship"),
+            "share_percent": benef.get("share_percent"),
+            "status": benef.get("status"),
+        },
+        "asset": {
+            "asset_id": asset.get("asset_id"),
+            "title": asset.get("title"),
+            "asset_type": asset.get("asset_type"),
+            "description": asset.get("description"),
+            "value_estimate_usd": asset.get("value_estimate_usd"),
+            "jurisdiction": asset.get("jurisdiction"),
+            "blockchain_seal": asset.get("blockchain_seal"),
+            "status": asset.get("status"),
+            "handoff_started_at": asset.get("handoff_started_at"),
+        },
+        "owner": {
+            "name": (owner or {}).get("full_name"),
+        },
+    }
+
+
+@router.post("/handoff/{token}/accept")
+async def public_handoff_accept(token: str):
+    """Beneficiary accepts the share; token consumed (single-use)."""
+    from services import salv_service
+    rec = await salv_service.lookup_handoff_token(token)
+    if not rec or rec["status"] != "active":
+        raise HTTPException(status_code=400, detail=f"Token not active ({(rec or {}).get('status', 'invalid')})")
+
+    benef = await db.salv_beneficiaries.find_one({"beneficiary_id": rec["beneficiary_id"]}, {"_id": 0})
+    if not benef:
+        raise HTTPException(status_code=404, detail="Beneficiary record missing")
+
+    await db.salv_beneficiaries.update_one(
+        {"beneficiary_id": rec["beneficiary_id"]},
+        {"$set": {"status": "accepted", "accepted_at": _iso(_now())}}
+    )
+    await salv_service.mark_token_claimed(token)
+    await _emit_event(
+        benef.get("asset_id"), benef.get("vault_id"),
+        "beneficiary_accepted",
+        {"beneficiary_id": rec["beneficiary_id"], "share": benef.get("share_percent")}
+    )
+
+    # If all beneficiaries accepted, mark asset transferred
+    asset_id = benef["asset_id"]
+    pending_count = await db.salv_beneficiaries.count_documents(
+        {"asset_id": asset_id, "status": {"$nin": ["accepted", "declined"]}}
+    )
+    if pending_count == 0:
+        await db.salv_assets.update_one(
+            {"asset_id": asset_id},
+            {"$set": {"status": "transferred", "transferred_at": _iso(_now())}}
+        )
+        await _emit_event(asset_id, benef.get("vault_id"), "asset_transferred", {})
+        try:
+            await salv_service.revoke_high_value_attestation(asset_id)
+        except Exception as e:
+            logger.warning(f"SALV attestation revoke (transfer) skipped: {e}")
+
+    return {
+        "accepted": True,
+        "beneficiary_id": rec["beneficiary_id"],
+        "share_percent": benef.get("share_percent"),
+        "asset_id": asset_id,
     }

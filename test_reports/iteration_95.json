@@ -1,0 +1,41 @@
+{
+  "summary": "Trust Network Integration Layer (SALV+TrustLayer+Living Identity) — backend pytest 11/11 PASS for new integration scenarios; SALV regression 23/23 PASS; frontend e2e verified for /handoff/:token (invalid → friendly handoff-error, no 'body stream'), /trust-hub (auth-gated hub-trust-score=60 + 3 pillar cards + copy-share-link + recent activity list of HIGH_VALUE_ASSET_UNDER_CUSTODY entries), /trust-graph/:invalid (trust-graph-not-found), /notary/:invalid (notary-profile-not-found), and /asset-vault regression (page+stats+DMS+assets+add-asset all intact). Verified: high-value $1.5M asset auto-issues SALV→TrustLayer attestation with claim_type=high_value_asset_under_custody and claim_value=$1M+; PATCH below $100K threshold sets revoked=true; DELETE asset revokes attestation; verify bumps expires_at; trigger-handoff returns beneficiaries_notified>=1 and status=handoff_in_progress; system partner 'NotaryChain Asset Vault' visible in /api/trustlayer/partners/public; bogus tokens return clean 404/400 (not 'body stream already read'). No bugs found.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Dashboard (post-login)", "issues": ["Pre-existing React warning: 'Each child in a list should have a unique key prop' (Dashboard component) — not from this sprint, not blocking."]},
+      {"screen": "All authenticated pages", "issues": ["WebSocket connection to /api/ws/global fails on first attempt before retry — pre-existing, not a regression."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_trust_network_integration.py",
+    "/app/backend/tests/test_salv.py",
+    "/app/test_reports/pytest/iter95_trust_network.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "salv_service.maybe_issue_high_value_attestation refreshes expires_at idempotently — good. But it uses asset['next_verification_at']+30d for expiry, so if a high-value asset's next_verification_at is 365d out, the attestation lasts ~395d. Consider capping to a shorter governance-friendly TTL (e.g., min(next_verification_at+30d, signed_at+1y)).",
+    "salv_routes /assets/{id}/trigger-handoff issues N tokens and sends N emails synchronously inside the request handler (not a background task). For a vault with many beneficiaries on a slow Resend response this can stretch >20s and even cascade into 'No response returned' from the request middleware (observed once in logs during fixture setup). Recommend dispatching email send via background task while keeping token issuance synchronous.",
+    "salv_routes public_handoff_lookup leaks owner.full_name only — good — but does not strip beneficiary email from the public response (returns benef.email). The beneficiary opening their own magic-link already knows their email, so OK, but be mindful if the link URL ever leaks.",
+    "salv_service.lookup_handoff_token returns the raw record incl. beneficiary_id/expires_at when status='claimed' or 'expired' — the route then early-returns only {status, expires_at, claimed_at}, so OK; consider also returning a generic message for the FE.",
+    "Public partner list response shape is not consistent across the codebase — existing /partners/public returned a list but my test had to defensively unwrap dict. Recommend documenting one shape.",
+    "Recent activity feed on /trust-hub shows 6+ duplicate 'HIGH_VALUE_ASSET_UNDER_CUSTODY $500K+' entries from prior iterations' test runs. Consider de-duplicating or showing only non-revoked attestations to keep the activity feed signal-rich.",
+    "trust-hub-page has no error/loading skeleton testid that I could find — relies on trust-hub-page wrapper. Acceptable.",
+    "TrustHub copy-share-link button shows the public profile URL but doesn't visibly confirm clipboard copy in headless tests — present but UX enhancement opportunity (toast, button ✓ flip)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_trust_network_integration.py (new, 11 tests, 100% pass)"
+  ],
+  "success_rate": {
+    "backend": "100% (11/11 new integration + 23/23 SALV regression = 34/34)",
+    "frontend": "100% (5/5 critical pages verified)"
+  },
+  "test_credentials": "demo@test.com / Demo123! and admin@notarychain.com / Admin123! — both valid (from /app/memory/test_credentials.md).",
+  "seed_data_creation": "test_trust_network_integration.py creates and self-cleans TEST_TNI-prefixed assets (HighValue Deed $1.5M, DropBelow, DeleteRevoke, HandoffAsset $800K + 100% beneficiary). One asset 'TEST_TNI HandoffAsset' may remain in handoff_in_progress status after the run since trigger-handoff is the last test for that fixture; the module-scoped fixture finalizer DELETEs it. Demo user vault has 4 assets and 2 beneficiaries leftover from prior iterations + this run. Trust attestations include several SALV-issued high_value_asset_under_custody records (some revoked, some active).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All Trust Network Integration features (SALV→TrustLayer auto-attestation, beneficiary handoff magic-link, /trust-hub unified dashboard, /handoff/:token public, friendly 404 on /trust-graph and /notary) are working end-to-end. Backend tests live in /app/backend/tests/test_trust_network_integration.py (11 tests) and /app/backend/tests/test_salv.py (23 tests). Pytest results in /app/test_reports/pytest/iter95_trust_network.xml. Test fixture timeouts must be ≥60s because trigger-handoff sends emails synchronously and Resend can be slow on the demo domain. The 'body stream already read' frontend bug (FE r.clone().json() fix) is verified — all three error pages (handoff-error, trust-graph-not-found, notary-profile-not-found) render clean friendly errors. /trust-hub testids verified: trust-hub-page, hub-trust-score, hub-living-identity, hub-trustlayer, hub-vault, copy-share-link.",
+  "rca of the issue": "No bugs found. Single non-blocking observation: in middleware logs there was one pre-existing 'No response returned' RuntimeError during a slow trigger-handoff call when timeout was set to 20s on the test side (the email sender stretched response past the local request timeout), but the server eventually returned 200 and DB state was correct. Increasing test timeout to 60s eliminated all flakiness. Recommend (non-blocking): move email send into a fire-and-forget asyncio.create_task or BackgroundTasks dependency so the handoff API returns immediately after token issuance."
+}

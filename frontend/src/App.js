@@ -40,6 +40,8 @@ const TrustLayerLanding = lazy(() => import('./pages/TrustLayerLanding'));
 const TrustGraph = lazy(() => import('./pages/TrustGraph'));
 const AdminTrustLayer = lazy(() => import('./pages/AdminTrustLayer'));
 const AssetVault = lazy(() => import('./pages/AssetVault'));
+const HandoffAccept = lazy(() => import('./pages/HandoffAccept'));
+const TrustHub = lazy(() => import('./pages/TrustHub'));
 const TrustBadges = lazy(() => import('./pages/TrustBadges'));
 const TrustBadgeLanding = lazy(() => import('./pages/TrustBadgeLanding'));
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
@@ -139,6 +141,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AssetVault />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/handoff/:token" element={<HandoffAccept />} />
+            <Route
+              path="/trust-hub"
+              element={
+                <ProtectedRoute>
+                  <TrustHub />
                 </ProtectedRoute>
               }
             />

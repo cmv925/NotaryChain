@@ -18,12 +18,11 @@ export default function NotaryProfile() {
     setLoading(true); setError(null); setNotary(null);
     fetch(`${API}/api/verify/notary/${notaryId}`)
       .then(async r => {
-        const text = await r.text();
         let body = null;
-        try { body = text ? JSON.parse(text) : null; } catch { /* not JSON */ }
+        try { body = await r.clone().json(); } catch { /* ignore */ }
         if (!r.ok) {
-          const msg = (body && body.detail) || `Notary not available (HTTP ${r.status})`;
-          throw new Error(msg);
+          const detail = (body && body.detail) || (r.status === 404 ? 'Notary not found' : `HTTP ${r.status}`);
+          throw new Error(detail);
         }
         return body;
       })
