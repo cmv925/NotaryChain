@@ -1,5 +1,22 @@
 # NotaryChain Changelog
 
+## Apr 26, 2026 — TrustLayer Phase 1 MVP
+
+### Universal Trust Verification Network
+- New backend `routes/trustlayer_routes.py` exposing 11 endpoints:
+  - Admin: create/list partners, rotate API key, toggle status.
+  - Partner (X-TrustLayer-Key auth): create attestations, revoke own attestations, real-time `verify`.
+  - Public: trust graph for any user_id, single attestation lookup, public partner registry, embeddable SVG badge `/badge/{user_id}.svg` and drop-in widget `sdk.js`.
+- Trust score blends partner attestations + Living Identity score (max).
+- New collections + indexes: `trust_partners` (slug+partner_id+key_hash), `trust_attestations` (subject_user_id desc).
+- Frontend pages:
+  - `/trustlayer` — public marketing landing with partner registry, SDK snippets, copy buttons.
+  - `/trust-graph/:userId` — public federated trust graph with score ring, attestation cards, revoked/expired states.
+  - `/admin/trustlayer` — admin partner CRUD with one-time API key reveal banner, rotate, enable/disable.
+- Robustness fix applied to TrustGraph + NotaryProfile error parsing (avoid double `.json()` read on error responses).
+- Testing: iteration_93 — 19/19 backend pytest + frontend e2e all pass.
+
+
 ## Apr 26, 2026 — NotaryChain Verify Phase 2
 
 ### Public Notary Directory & Profile Pages

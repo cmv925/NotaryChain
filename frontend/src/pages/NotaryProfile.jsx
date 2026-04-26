@@ -17,7 +17,16 @@ export default function NotaryProfile() {
     let cancelled = false;
     setLoading(true); setError(null); setNotary(null);
     fetch(`${API}/api/verify/notary/${notaryId}`)
-      .then(r => r.ok ? r.json() : r.json().then(j => { throw new Error(j.detail || 'Not found'); }))
+      .then(async r => {
+        const text = await r.text();
+        let body = null;
+        try { body = text ? JSON.parse(text) : null; } catch { /* not JSON */ }
+        if (!r.ok) {
+          const msg = (body && body.detail) || `Notary not available (HTTP ${r.status})`;
+          throw new Error(msg);
+        }
+        return body;
+      })
       .then(d => { if (!cancelled) setNotary(d); })
       .catch(e => { if (!cancelled) setError(e.message); })
       .finally(() => { if (!cancelled) setLoading(false); });
