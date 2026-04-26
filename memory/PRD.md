@@ -30,6 +30,29 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 | GoHighLevel CRM Integration (Location PIT) | Iteration 87 | Apr 23, 2026 |
 | Living Identity Notarization (Phase 1 MVP) | Iteration 88 | Apr 25, 2026 |
 | Living Identity Phase 2 (Re-Attestation + WebSocket alerts) | Iteration 89 | Apr 25, 2026 |
+| NotaryChain Verify (Public Verifier + Trust Badges) | Iteration 90 | Apr 26, 2026 |
+
+### NotaryChain Verify — COMPLETE (Apr 26, 2026)
+**Highest-leverage revenue stream — comparable to McAfee SECURE / Verisign trust seals ($1.5B / $400M annually each)**
+
+- **Public verifier at `/verify`** (no auth required):
+  - Document upload + drag-and-drop OR SHA256 hash paste → verifies against `blockchain_seals` collection
+  - Certificate ID lookup → returns active/expired/revoked status with full lifecycle
+  - Notary public profile → name, license, bond, SAN bond ID, sealing/ceremony stats, fraud flags
+  - Three-tab UI with sleek result cards + Hedera explorer links + marketing footer
+  - Badge banner shown when arrived via `?badge=xxx` query (e.g., user clicked a Trust Badge)
+- **Trust Badge revenue stream** (Pro tier $49/mo, Enterprise white-label $199/mo):
+  - User creates badge with domain + business name + style (default/dark/light/minimal)
+  - Embeddable `<script>` widget OR plain `<img>` HTML — drop on any website
+  - Domain ownership verification via DNS TXT record OR `/.well-known/notarychain.txt` (async DNS resolver, non-blocking)
+  - Live SVG renderer with palette-aware design + impression tracking
+  - Public widget JS uses `PUBLIC_BACKEND_URL` env var (deployment-portable)
+  - Stats: impression counter increments per SVG render
+- **Backend**: `/api/verify/*` namespace with 11 endpoints (3 public no-auth, 5 owner-auth, 2 admin-public-readonly, 1 widget JS)
+- **Subscription gates**: `trust_badge` (pro) + `trust_badge_white_label` (enterprise)
+- **Frontend pages**: `/verify` (public), `/badges` (protected), legacy `/verify-document` kept as `/verify-document` for back-compat
+- **Test results**: 20/20 backend pytest passing, 100% frontend, 0 critical bugs (testing agent iteration 90)
+- **Live verification**: Badge created end-to-end, SVG renders as `image/svg+xml`, widget.js works in production, structured upgrade_required 403 for free users
 
 ### Living Identity Phase 2 — COMPLETE (Apr 25, 2026)
 - **Public Challenge endpoints** (no auth required — token IS auth):
@@ -106,8 +129,11 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 - None pending from user request batch
 
 ## Future/Backlog
-- Living Identity Phase 3 (Notary "challenge before sign" UI hook in ceremony flow, Recovery flow polish, Admin drift analytics dashboard, GHL CRM hooks for drift events) (P1)
+- NotaryChain Verify Phase 2 (mobile wallet PWA polish, offline doc storage, batch verification, public notary directory) (P1)
+- TrustLayer (Universal Trust Verification Network) — federated partner API, multi-chain interop (P2)
+- Living Identity Phase 3 (Notary "challenge before sign" UI hook, Recovery flow polish, Admin drift analytics, GHL CRM hooks for drift) (P1)
 - Living Identity Phase 4 (ANAN Witness reads trust score, Auto-Learning patterns consume drift events) (P2)
+- Smart Asset Life-Cycle Vault (SALV) (P3 — needs anchor pilot first)
 - Bidirectional GHL sync (P2)
 - Add more languages (DE, PT, JA, ZH) (P2)
 - Embeddable Trust Badge for 3rd party websites (P3)

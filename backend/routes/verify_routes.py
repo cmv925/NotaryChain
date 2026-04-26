@@ -82,6 +82,7 @@ def _seal_response(document_hash: str, seal: dict, filename: Optional[str] = Non
     return {
         "verified": True,
         "document_hash": document_hash,
+        "sha256": document_hash,
         "filename": filename,
         "size_bytes": size,
         "document_name": seal.get("document_name"),
@@ -151,7 +152,10 @@ async def verify_notary_public_profile(notary_id: str):
     bond = await db.notary_bonds.find_one({"notary_id": notary_id}, {"_id": 0})
     sealing_count = await db.blockchain_seals.count_documents({"sealed_by_id": notary_id})
     ceremonies_count = await db.ceremonies.count_documents({"notary_id": notary_id})
-    fraud_flags = await db.fraud_flags.count_documents({"flagged_user_id": notary_id, "resolved": False}) if "fraud_flags" in await db.list_collection_names() else 0
+    try:
+        fraud_flags = await db.fraud_flags.count_documents({"flagged_user_id": notary_id, "resolved": False})
+    except Exception:
+        fraud_flags = 0
 
     return {
         "verified": True,
@@ -250,19 +254,23 @@ async def verify_badge_domain(badge_id: str, request: Request):
     verified = False
     method = None
 
-    # Try DNS TXT record first
+    # Try DNS TXT record first (run sync resolver in thread pool to avoid blocking)
     try:
+        import asyncio as _asyncio
         import dns.resolver  # may not be installed, fall through
-        try:
-            answers = dns.resolver.resolve(f"_notarychain.{domain}", "TXT")
-            for rdata in answers:
-                txt = "".join([s.decode() if isinstance(s, bytes) else s for s in rdata.strings])
-                if expected in txt:
-                    verified = True
-                    method = "dns_txt"
-                    break
-        except Exception:
-            pass
+        def _dns_lookup():
+            try:
+                answers = dns.resolver.resolve(f"_notarychain.{domain}", "TXT")
+                for rdata in answers:
+                    txt = "".join([s.decode() if isinstance(s, bytes) else s for s in rdata.strings])
+                    if expected in txt:
+                        return True
+            except Exception:
+                return False
+            return False
+        if await _asyncio.get_event_loop().run_in_executor(None, _dns_lookup):
+            verified = True
+            method = "dns_txt"
     except ImportError:
         pass
 
