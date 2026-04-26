@@ -31,6 +31,25 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 | Living Identity Notarization (Phase 1 MVP) | Iteration 88 | Apr 25, 2026 |
 | Living Identity Phase 2 (Re-Attestation + WebSocket alerts) | Iteration 89 | Apr 25, 2026 |
 | NotaryChain Verify (Public Verifier + Trust Badges) | Iteration 90 | Apr 26, 2026 |
+| Trust Badge Marketing Landing + Stripe Checkout Funnel | Iteration 91 | Apr 26, 2026 |
+
+### Trust Badge Marketing Landing Page — COMPLETE (Apr 26, 2026)
+**Conversion funnel for the Trust Badge revenue stream**
+
+- **Public landing page at `/trust-badge`** (no auth) — full marketing site with:
+  - Hero with gradient-text headline + dual CTAs ("Get Trust Badge $29/mo" + "See how it works")
+  - Social proof strip: +18% conversion lift (Trustpilot/Norton studies), $1.5B McAfee SECURE annual rev, 74% consumers check trust signals, 60s setup
+  - **Interactive badge customizer** — live client-side SVG preview, type business name, switch 4 styles (default/dark/light/minimal), toggle Verified ↔ Pending state, code snippet auto-updates with chosen style
+  - 4-step "How it works" cards (Subscribe → Add domain → Paste snippet → Verify)
+  - 6 use case cards (Notary firms, Title/escrow, B2B SaaS, Marketplaces, Legal/compliance, Real estate brokerages)
+  - Pricing comparison: Pro ($49/mo, "POPULAR") vs Enterprise ($199/mo white-label)
+  - 6-question FAQ (setup time, cancellation, compatibility, mobile, vs SiteSeal, Core Web Vitals impact)
+  - Final CTA + cross-link to free `/verify` page
+- **Stripe checkout integration** — all Subscribe buttons call existing `POST /api/subscriptions/checkout` with `plan_id` + `origin_url`, redirect to live Stripe Checkout (`cs_live_*`)
+- **Auth-aware** — unauth users redirected to `/login?next=/trust-badge`, auth users go straight to Stripe
+- **Cross-funnel** — `/verify` footer "Get your badge" CTA now points to `/trust-badge` (was `/badges`)
+- **Test results**: 10/10 backend tests passing, 100% frontend, 0 issues, 0 console errors (testing agent iteration 91)
+- **Live verification**: Real Stripe `cs_live_*` session created for $49/mo Professional plan from a fresh user signup → checkout flow validated end-to-end
 
 ### NotaryChain Verify — COMPLETE (Apr 26, 2026)
 **Highest-leverage revenue stream — comparable to McAfee SECURE / Verisign trust seals ($1.5B / $400M annually each)**
