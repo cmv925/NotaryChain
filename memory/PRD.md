@@ -39,6 +39,7 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 | Florida RON Compliance Phase 1 / M1 (State profile + FL notary credentials + onboarding wizard + /florida landing) | Iteration 96 | May 12, 2026 |
 | Florida RON Compliance Phase 1 / M2 (KBA adapter pattern + Mock provider + LexisNexis stub + quiz modal + rate limiting + fraud signals) | Iteration 97 | May 12, 2026 |
 | Florida RON Compliance Phase 1 / M3 (FL ceremony pipeline: jurisdiction qualifier + GPS, online-will 2-witness flow + magic-link accept, A/V quality enforcement ≥720p/16kHz/30s, 10-yr S3 Object Lock retention with DB ledger fallback, single readiness gate before sealing) | Iteration 98 | May 12, 2026 |
+| Florida RON Compliance Phase 1 / M4 (FL Stat. 117.245 journal logging with auto-log on FL ceremony seal + CSV export with date filters, admin compliance dashboard with KPI grid + ceremony gate matrix, subpoena response workflow: intake → scope → CSV bundle → respond + immutable audit_log) | Iteration 99 | May 12, 2026 |
 
 ### Trust Badge Marketing Landing Page — COMPLETE (Apr 26, 2026)
 **Conversion funnel for the Trust Badge revenue stream**
