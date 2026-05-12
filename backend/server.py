@@ -14,7 +14,7 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # Import route modules
-from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes, notary_professional_routes, gdpr_routes, infra_routes, ws_routes, api_key_routes, public_api_routes, ron_compliance_routes, webhook_routes, template_routes, organization_routes, draft_routes, vault_routes, expiry_routes, draft_collab_routes, bulk_routes, marketplace_routes, embed_routes, booking_routes, copilot_routes, ai_generator_routes, summarizer_routes, witness_routes, remediation_routes, biometric_passport_routes, conductor_routes, evidence_package_routes, timeline_routes, reminder_routes, approval_routes, doc_compare_routes, branding_routes, rbac_routes, sso_routes, auth0_routes, okta_routes, org_activity_routes, org_webhook_routes, scheduled_reports_routes, investor_deck_routes, ops_dashboard_routes, alert_settings_routes, security_compliance_routes, soc2_export_routes, incident_routes, ceremony_routes, escrow_routes, anan_routes, fraud_intelligence_routes, ai_intelligence_routes, platform_features_routes, hts_routes, threat_learning_routes, ghl_routes, living_identity_routes, verify_routes, trustlayer_routes, salv_routes, fl_compliance_routes, kba_routes
+from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes, notary_professional_routes, gdpr_routes, infra_routes, ws_routes, api_key_routes, public_api_routes, ron_compliance_routes, webhook_routes, template_routes, organization_routes, draft_routes, vault_routes, expiry_routes, draft_collab_routes, bulk_routes, marketplace_routes, embed_routes, booking_routes, copilot_routes, ai_generator_routes, summarizer_routes, witness_routes, remediation_routes, biometric_passport_routes, conductor_routes, evidence_package_routes, timeline_routes, reminder_routes, approval_routes, doc_compare_routes, branding_routes, rbac_routes, sso_routes, auth0_routes, okta_routes, org_activity_routes, org_webhook_routes, scheduled_reports_routes, investor_deck_routes, ops_dashboard_routes, alert_settings_routes, security_compliance_routes, soc2_export_routes, incident_routes, ceremony_routes, escrow_routes, anan_routes, fraud_intelligence_routes, ai_intelligence_routes, platform_features_routes, hts_routes, threat_learning_routes, ghl_routes, living_identity_routes, verify_routes, trustlayer_routes, salv_routes, fl_compliance_routes, kba_routes, fl_ceremony_routes
 from middleware.security import setup_security, health_check, limiter
 from services.notification_service import set_db as set_notification_db, set_ws_manager
 from services.ws_manager import ws_manager
@@ -102,6 +102,7 @@ trustlayer_routes.set_db(db)
 salv_routes.set_db(db)
 fl_compliance_routes.set_db(db)
 kba_routes.set_db(db)
+fl_ceremony_routes.set_db(db)
 
 # Feature gate middleware needs db
 from middleware.feature_gate import set_db as set_gate_db
@@ -237,6 +238,7 @@ app.include_router(trustlayer_routes.router)
 app.include_router(salv_routes.router)
 app.include_router(fl_compliance_routes.router)
 app.include_router(kba_routes.router)
+app.include_router(fl_ceremony_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -374,6 +376,15 @@ async def create_indexes():
         await db.kba_attempts.create_index("attempt_id", unique=True)
         await db.fraud_signals.create_index([("type", 1), ("detected_at", -1)])
         await db.fraud_signals.create_index([("user_id", 1), ("detected_at", -1)])
+
+        # Florida ceremony pipeline (M3)
+        await db.fl_jurisdiction_qualifications.create_index([("ceremony_id", 1), ("user_id", 1)], unique=True)
+        await db.fl_will_witnesses.create_index("witness_id", unique=True)
+        await db.fl_will_witnesses.create_index("ceremony_id")
+        await db.fl_will_witnesses.create_index("token_hash", unique=True)
+        await db.fl_av_quality_reports.create_index("ceremony_id", unique=True)
+        await db.fl_retention_tags.create_index("tag_id", unique=True)
+        await db.fl_retention_tags.create_index([("ceremony_id", 1), ("tagged_at", 1)])
 
         # Seed default templates
         await template_routes.seed_templates()

@@ -12,7 +12,7 @@
         "issue": "Okta returns 400 Bad Request - redirect_uri not registered in Okta dashboard",
         "affected_selectors": ["data-testid=\"okta-login-button\""],
         "priority": "HIGH",
-        "notes": "Backend correctly generates URL with redirect_uri=https://notary-profiles.preview.emergentagent.com/auth/okta/callback but this URL is NOT registered in Okta's application settings"
+        "notes": "Backend correctly generates URL with redirect_uri=https://notary-fl-m3.preview.emergentagent.com/auth/okta/callback but this URL is NOT registered in Okta's application settings"
       }
     ],
     "design_issues": []
@@ -22,7 +22,7 @@
     "/app/test_reports/pytest/pytest_results_sso_validation.xml"
   ],
   "action_items": [
-    "CRITICAL: User must add 'https://notary-profiles.preview.emergentagent.com/auth/okta/callback' to Okta Dashboard > Applications > NotaryChain > Sign-in redirect URIs"
+    "CRITICAL: User must add 'https://notary-fl-m3.preview.emergentagent.com/auth/okta/callback' to Okta Dashboard > Applications > NotaryChain > Sign-in redirect URIs"
   ],
   "critical_code_review_comments": [
     "Good: Backend correctly generates Okta auth URL with proper redirect_uri",
@@ -50,7 +50,7 @@
   "seed_data_creation": "",
   "retest_needed": true,
   "should_main_agent_self_test": false,
-  "context_for_next_testing_agent": "1) All SSO backend endpoints working correctly. 2) Okta redirect_uri is correctly generated as 'https://notary-profiles.preview.emergentagent.com/auth/okta/callback'. 3) Auth0 redirect_uri is 'https://notary-profiles.preview.emergentagent.com/auth/callback'. 4) BLOCKING ISSUE: Okta dashboard has NOT been updated with the new redirect URI - Okta returns 400 Bad Request. 5) User must manually update Okta dashboard settings.",
+  "context_for_next_testing_agent": "1) All SSO backend endpoints working correctly. 2) Okta redirect_uri is correctly generated as 'https://notary-fl-m3.preview.emergentagent.com/auth/okta/callback'. 3) Auth0 redirect_uri is 'https://notary-fl-m3.preview.emergentagent.com/auth/callback'. 4) BLOCKING ISSUE: Okta dashboard has NOT been updated with the new redirect URI - Okta returns 400 Bad Request. 5) User must manually update Okta dashboard settings.",
   "features_tested": {
     "okta_status": {
       "endpoint": "GET /api/sso/okta/status",
@@ -70,12 +70,12 @@
     "okta_login": {
       "endpoint": "GET /api/sso/okta/login",
       "status": "WORKING",
-      "result": "Returns correct auth_url with redirect_uri=https://notary-profiles.preview.emergentagent.com/auth/okta/callback"
+      "result": "Returns correct auth_url with redirect_uri=https://notary-fl-m3.preview.emergentagent.com/auth/okta/callback"
     },
     "auth0_login": {
       "endpoint": "GET /api/sso/auth0/login",
       "status": "WORKING",
-      "result": "Returns correct auth_url with redirect_uri=https://notary-profiles.preview.emergentagent.com/auth/callback"
+      "result": "Returns correct auth_url with redirect_uri=https://notary-fl-m3.preview.emergentagent.com/auth/callback"
     },
     "login_page_sso_buttons": {
       "route": "/login",
@@ -100,8 +100,8 @@
   },
   "okta_redirect_uri_issue": {
     "error": "400 Bad Request - The 'redirect_uri' parameter must be a Login redirect URI in the client app settings",
-    "backend_generated_url": "https://trial-1257751.okta.com/oauth2/default/v1/authorize?client_id=0oa110btli7AyC2ZB698&response_type=code&scope=openid%20profile%20email&redirect_uri=https://notary-profiles.preview.emergentagent.com/auth/okta/callback&state=...",
-    "required_action": "Add 'https://notary-profiles.preview.emergentagent.com/auth/okta/callback' to Okta Dashboard > Applications > NotaryChain > Sign-in redirect URIs",
+    "backend_generated_url": "https://trial-1257751.okta.com/oauth2/default/v1/authorize?client_id=0oa110btli7AyC2ZB698&response_type=code&scope=openid%20profile%20email&redirect_uri=https://notary-fl-m3.preview.emergentagent.com/auth/okta/callback&state=...",
+    "required_action": "Add 'https://notary-fl-m3.preview.emergentagent.com/auth/okta/callback' to Okta Dashboard > Applications > NotaryChain > Sign-in redirect URIs",
     "root_cause": "App was forked to new environment (okta-flow-test) but Okta dashboard still has old redirect URIs"
   }
 }

@@ -3,7 +3,7 @@ import os
 import requests
 import pytest
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://notary-profiles.preview.emergentagent.com").rstrip("/")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://notary-fl-m3.preview.emergentagent.com").rstrip("/")
 ADMIN = {"email": "admin@notarychain.com", "password": "Admin123!"}
 DEMO = {"email": "demo@test.com", "password": "Demo123!"}
 

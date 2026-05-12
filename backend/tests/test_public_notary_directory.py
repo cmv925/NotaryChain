@@ -3,7 +3,7 @@ import os
 import pytest
 import requests
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://notary-profiles.preview.emergentagent.com").rstrip("/")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://notary-fl-m3.preview.emergentagent.com").rstrip("/")
 
 
 @pytest.fixture(scope="module")

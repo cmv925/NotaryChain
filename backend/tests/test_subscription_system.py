@@ -207,7 +207,7 @@ class TestSubscriptionCheckout:
             headers=self.headers,
             json={
                 "plan_id": "pro",
-                "origin_url": "https://notary-profiles.preview.emergentagent.com"
+                "origin_url": "https://notary-fl-m3.preview.emergentagent.com"
             }
         )
         
@@ -230,7 +230,7 @@ class TestSubscriptionCheckout:
             headers=self.headers,
             json={
                 "plan_id": "free",
-                "origin_url": "https://notary-profiles.preview.emergentagent.com"
+                "origin_url": "https://notary-fl-m3.preview.emergentagent.com"
             }
         )
         
@@ -248,7 +248,7 @@ class TestSubscriptionCheckout:
             headers=self.headers,
             json={
                 "plan_id": "invalid_plan",
-                "origin_url": "https://notary-profiles.preview.emergentagent.com"
+                "origin_url": "https://notary-fl-m3.preview.emergentagent.com"
             }
         )
         
@@ -260,7 +260,7 @@ class TestSubscriptionCheckout:
             f"{BASE_URL}/api/subscriptions/checkout",
             json={
                 "plan_id": "pro",
-                "origin_url": "https://notary-profiles.preview.emergentagent.com"
+                "origin_url": "https://notary-fl-m3.preview.emergentagent.com"
             }
         )
         

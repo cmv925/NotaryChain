@@ -160,5 +160,52 @@ class StorageService:
         }
 
 
+async def apply_fl_retention_lock(object_ref: str, retain_until) -> bool:
+    """
+    Apply S3 Object Lock (compliance mode) to an FL ceremony asset, retaining until
+    `retain_until` (datetime). Returns True if the lock was applied or already in place,
+    False if S3 isn't configured or the call failed.
+
+    The object_ref may be a full s3:// URI or a plain key. Bucket-level Object Lock must
+    be enabled at bucket creation (one-time setup); this only sets the per-object retention.
+    """
+    if not storage_service._use_s3:
+        logger.info("apply_fl_retention_lock: S3 not configured (dev/local mode)")
+        return False
+    try:
+        # Parse key
+        key = object_ref
+        if object_ref.startswith("s3://"):
+            without = object_ref[5:]
+            parts = without.split("/", 1)
+            if len(parts) == 2:
+                key = parts[1]
+        # Apply object retention
+        storage_service._s3_client.put_object_retention(
+            Bucket=storage_service._bucket,
+            Key=key,
+            Retention={
+                "Mode": "COMPLIANCE",
+                "RetainUntilDate": retain_until,
+            },
+        )
+        # Tag for lifecycle/audit
+        try:
+            storage_service._s3_client.put_object_tagging(
+                Bucket=storage_service._bucket,
+                Key=key,
+                Tagging={"TagSet": [
+                    {"Key": "retention_policy", "Value": "FL_10YR"},
+                    {"Key": "jurisdiction", "Value": "FL"},
+                ]},
+            )
+        except Exception as tag_err:
+            logger.warning(f"apply_fl_retention_lock: tagging failed (lock still applied): {tag_err}")
+        return True
+    except Exception as e:
+        logger.warning(f"apply_fl_retention_lock failed for {object_ref}: {e}")
+        return False
+
+
 # Singleton
 storage_service = StorageService()
