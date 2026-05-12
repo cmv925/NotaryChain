@@ -91,6 +91,18 @@ export default function FloridaCeremonyReadiness() {
     );
   };
 
+  // Auto-derive concerns_fl_property / concerns_fl_law from nexus basis when user hasn't ticked anything
+  const updateBasis = (newBasis) => {
+    setJuris(j => {
+      const next = { ...j, fl_nexus_basis: newBasis };
+      if (!j.concerns_fl_property && !j.concerns_fl_law) {
+        if (newBasis === 'real_estate_in_fl') next.concerns_fl_property = true;
+        else if (newBasis === 'fl_law_governed') next.concerns_fl_law = true;
+      }
+      return next;
+    });
+  };
+
   const submitJuris = async () => {
     setSavingJuris(true);
     try {
@@ -217,10 +229,11 @@ export default function FloridaCeremonyReadiness() {
               onChange={v => setJuris(j => ({ ...j, concerns_fl_law: v }))} testId="check-fl-law" />
           </div>
           <FormField label="Nexus basis">
-            <select value={juris.fl_nexus_basis} onChange={(e) => setJuris(j => ({ ...j, fl_nexus_basis: e.target.value }))}
+            <select value={juris.fl_nexus_basis} onChange={(e) => updateBasis(e.target.value)}
               className="bg-slate-900/60 border border-slate-800 rounded-md px-3 h-10 text-sm text-white w-full" data-testid="nexus-basis-select">
               {NEXUS_OPTIONS.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
             </select>
+            <p className="text-[10px] text-slate-500 mt-1">Tick at least one box above (property / law) unless filing a FL-resident online will.</p>
           </FormField>
           {juris.fl_nexus_basis === 'other' && (
             <FormField label="Details">
@@ -373,10 +386,16 @@ function Checkbox({ label, checked, onChange, testId }) {
 }
 
 function Gate({ name, passed, testId }) {
+  const labels = {
+    jurisdiction_qualifier: 'Jurisdiction',
+    kba: 'KBA',
+    witnesses: 'Witnesses',
+    av_quality: 'A/V quality',
+  };
   return (
     <div className="flex items-center gap-2 text-xs" data-testid={testId}>
       {passed ? <CheckCircle className="w-4 h-4 text-emerald-400" /> : <Lock className="w-4 h-4 text-slate-500" />}
-      <span className={`capitalize ${passed ? 'text-emerald-300' : 'text-slate-400'}`}>{name.replace(/_/g, ' ')}</span>
+      <span className={passed ? 'text-emerald-300' : 'text-slate-400'}>{labels[name] || name.replace(/_/g, ' ')}</span>
     </div>
   );
 }
