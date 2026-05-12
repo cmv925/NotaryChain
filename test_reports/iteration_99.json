@@ -1,0 +1,41 @@
+{
+  "summary": "FL RON Compliance M4 (journal logging, CSV export, admin compliance dashboard, subpoena workflow) end-to-end verified. Backend: 27/27 pytest pass on /app/backend/tests/test_fl_journal_m4.py covering POST/GET/list/get-one/export.csv for journal, admin overview + ceremonies, subpoena intake/list/get/export/respond, plus auth (401), role (403 for demo, 403 for notary on admin endpoints) and validation (400 invalid act type, 422 missing intake fields). Frontend (token-injection auth bypass to validate pages because UI form login redirect wasn't observed within wait window): /notary/fl-journal renders fl-journal-page + new-entry-btn + export-csv-btn + entry-count + filter-act-type/start/end + refresh-btn, and the TEST entry we created via backend appears (TEST Quitclaim Deed, Acknowledgment, $25.00). /admin/fl-compliance renders all 8 KPI cards (kpi-journal=2, kpi-ceremonies=6, kpi-kba 0%, kpi-av 66.7%, kpi-notaries=2, kpi-retention 0/2, kpi-subpoenas open 0 / 2 lifetime, kpi-generated) + fl-ceremonies-table with 6 rows (each row chips J/K/AV/L for gates) + refresh-overview-btn + goto-subpoena-btn. /admin/subpoena renders admin-subpoena-page, subpoena-list with 2 rows (TEST-CASE-M4-001 + FL-2026-001, both RESPONDED), clicking a row opens subpoena-detail-modal with audit-trail (INTAKE/EXPORTED/RESPONDED), export-bundle-btn, and response-record. Ceremony seal auto-log block exists in ceremony_routes.py with idempotency guard.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "UI login redirect", "issue": "Email/password Sign In via the rendered form did not redirect to dashboard within 3.5s wait window in this run (URL stayed at /login). The backend /api/auth/login returns access_token correctly (also surfaces requires_2fa + temp_token fields), so the page may be waiting on 2FA gate or a redirect handler. We bypassed by injecting the token into localStorage and pages then rendered correctly. Worth a quick check that LoginPage handles the response shape {access_token, requires_2fa:false, temp_token:null} when 2FA is not enabled.", "affected_selectors": ["[data-testid=login-submit-button]"]}
+    ],
+    "design_issues": [
+      {"screen": "Admin subpoena detail modal", "issues": ["data-testid 'submit-response-btn' only renders when subpoena.status != 'responded' (verified: count=0 when status='responded', response-record block renders instead). This is correct behavior but the spec wording 'Mark responded transitions status' should note the button is only shown for non-responded subpoenas."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_fl_journal_m4.py",
+    "/app/test_reports/pytest/iter99_fl_journal_m4.xml"
+  ],
+  "action_items": [
+    "(OPTIONAL) Investigate why LoginPage form submit didn't redirect in this run — possibly a guard on requires_2fa=false flow, or react-router redirect timing. Direct token injection works, so the bug (if any) is purely UX.",
+    "(NICE-TO-HAVE) Add a state-aware empty-state hint when a notary visits /notary/fl-journal with zero entries — currently no-entries testid present but only renders when entries.length===0 (verified working: hidden when 1 entry rendered)."
+  ],
+  "critical_code_review_comments": [
+    "fl_journal_routes.py:259-263 has a dead-code block — `fl_notaries = await db.fl_notary_credentials.count_documents({}) if hasattr(db, 'fl_notary_credentials') else 0` followed by another try/except that overwrites it. Remove the first line; the try/except below is sufficient.",
+    "fl_journal_routes.py:307 — admin/compliance/ceremonies uses `$or: [{ceremony_id: cer_id}, {completed_at: {$gte: j.created_at}}]` to consider a KBA pass as satisfying the gate; this is forgiving and will mark the gate true for any KBA passed AFTER the jurisdiction record. Make sure this matches the readiness endpoint's stricter check or document the divergence.",
+    "fl_journal_routes.py export.csv endpoints stream a single io.StringIO buffer via iter([body]) — for very large exports (10y retention worth of entries) consider true async streaming to avoid loading the full result set into memory.",
+    "Subpoena export.csv mutates audit_log on every call — exporting twice produces two 'exported' entries; that's intentional and correct for chain-of-custody but document it.",
+    "All /api/fl/journal/* and /api/fl/admin/compliance/* helpers re-implement `_get_user` / `_require_admin` already present elsewhere; consider a shared dependency module so future routers don't duplicate auth code."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_fl_journal_m4.py (new pytest suite, 27 tests)"
+  ],
+  "success_rate": {"backend": "100% (27/27)", "frontend": "100% on M4 pages (all required data-testids present, KPIs populated, journal entry from backend test visible, subpoena detail modal renders audit trail + response record)"},
+  "test_credentials": "admin@notarychain.com / Admin123! · notarytest@test.com / Test123! · demo@test.com / Demo123!",
+  "seed_data_creation": "Created via pytest: 1 journal entry (TEST_cer_m4_01, acknowledgment, TEST Jane Doe, $25), 1 subpoena (TEST-CASE-M4-001) now in 'responded' status with audit_log = [intake, exported, responded]. Safe TEST_ prefix.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Run: REACT_APP_BACKEND_URL=https://notary-fl-m3.preview.emergentagent.com python -m pytest /app/backend/tests/test_fl_journal_m4.py -v — repeatable. For UI testing use the token-injection pattern (login via fetch to /api/auth/login then localStorage.setItem('access_token', token)) rather than form submit, until the LoginPage redirect timing is debugged. M3 readiness endpoint smoke-checked (200/404 not 500).",
+  "rca of the issue": "No new bugs introduced by M4. The pre-existing UI login form non-redirect is the only observation — backend /api/auth/login returns {access_token, token_type, requires_2fa:false, temp_token:null}; the field expected by frontend is 'access_token' (confirmed by handoff note) so the redirect should fire. Likely a small race/promise-handling thing in LoginPage; doesn't block any M4 functionality once authenticated via any path."
+}

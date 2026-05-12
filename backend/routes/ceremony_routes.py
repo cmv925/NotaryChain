@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi.responses import StreamingResponse
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Optional
 from pydantic import BaseModel
 import uuid
@@ -585,6 +585,46 @@ async def execute_ceremony(ceremony_id: str, request: Request = None):
                 ))
         except Exception:
             pass
+
+    # FL journal auto-log — fires only if this ceremony has a FL jurisdiction qualifier
+    if final_status == "sealed":
+        try:
+            juris = await db.fl_jurisdiction_qualifications.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
+            if juris:
+                existing = await db.fl_journal_entries.find_one({"ceremony_id": ceremony_id}, {"_id": 0, "entry_id": 1})
+                if not existing:
+                    doc_type = (ceremony.get("document_type") or "other").lower()
+                    act_map = {"will": "online_will", "online_will": "online_will",
+                               "deed": "acknowledgment", "poa": "acknowledgment",
+                               "affidavit": "jurat"}
+                    journal = {
+                        "entry_id": __import__("uuid").uuid4().hex[:16],
+                        "notary_user_id": ceremony.get("notary_user_id") or ceremony.get("initiated_by", ""),
+                        "notary_email": ceremony.get("notary_email") or ceremony.get("initiated_by", ""),
+                        "notary_name": ceremony.get("notary_name") or ceremony.get("initiated_by", ""),
+                        "ceremony_id": ceremony_id,
+                        "notarial_act_type": act_map.get(doc_type, "acknowledgment"),
+                        "document_description": ceremony.get("document_name", "Florida notarial act"),
+                        "signer_name": ceremony.get("signer_name", ""),
+                        "signer_address": ceremony.get("signer_address"),
+                        "signer_id_type": ceremony.get("signer_id_type") or "DL",
+                        "signer_id_number_last4": (ceremony.get("signer_id_number") or "")[-4:] or None,
+                        "signer_id_issuer": ceremony.get("signer_id_issuer") or "FL",
+                        "signer_id_expires": ceremony.get("signer_id_expires"),
+                        "fee_charged_usd": float(ceremony.get("fee_usd") or 0),
+                        "av_recording_ref": ceremony.get("recording_url"),
+                        "hedera_seal_hash": (blockchain_seal or {}).get("message_hash") or (blockchain_seal or {}).get("hash"),
+                        "hedera_topic_id": (blockchain_seal or {}).get("topic_id"),
+                        "hedera_sequence": (blockchain_seal or {}).get("sequence_number"),
+                        "principal_geo": juris.get("principal_location"),
+                        "notes": f"Auto-logged on seal · fl_nexus={juris.get('fl_nexus_basis')}",
+                        "recorded_at": datetime.now(timezone.utc).isoformat(),
+                        "retention_until": (datetime.now(timezone.utc) + timedelta(days=365 * 10)).isoformat(),
+                        "retention_policy": "FL_10YR",
+                    }
+                    await db.fl_journal_entries.insert_one(journal)
+        except Exception as e:
+            logger.warning(f"FL journal auto-log skipped: {e}")
 
     result = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
     return result
