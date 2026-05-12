@@ -159,7 +159,8 @@ export default function FieldScanner() {
   // Results view
   if (result) {
     const a = result.ai_analysis;
-    const risk = RISK_STYLES[a?.overall_risk || 'medium'];
+    const aiSkipped = a === null || a === undefined;
+    const risk = aiSkipped ? { c: 'text-slate-300', bg: 'bg-slate-800/40 border-slate-700', icon: FileImage, label: 'AI check skipped' } : RISK_STYLES[a?.overall_risk || 'medium'];
     const RiskIcon = risk.icon;
     return (
       <Shell>
@@ -173,11 +174,17 @@ export default function FieldScanner() {
             <CardContent className="p-5 flex items-center gap-4 flex-wrap">
               <RiskIcon className={`w-10 h-10 ${risk.c}`} />
               <div className="flex-1 min-w-0">
-                <p className={`text-xs uppercase tracking-wider font-bold ${risk.c}`}>{risk.label} · {a?.recommendation || 'manual_review'}</p>
+                <p className={`text-xs uppercase tracking-wider font-bold ${risk.c}`}>
+                  {aiSkipped ? 'AI check skipped' : `${risk.label} · ${a?.recommendation || 'manual_review'}`}
+                </p>
                 <h2 className="text-xl font-bold mt-0.5">{result.document_label}</h2>
-                <p className="text-xs text-slate-400 mt-1">{result.page_count} pages · confidence {((a?.overall_confidence || 0) * 100).toFixed(0)}%</p>
-                {a?.document_summary && <p className="text-xs text-slate-400 mt-2">{a.document_summary}</p>}
-                {!a?.ai_powered && <p className="text-[10px] text-amber-400 mt-2">AI degraded fallback — manual review recommended</p>}
+                <p className="text-xs text-slate-400 mt-1">
+                  {result.page_count} pages
+                  {!aiSkipped && a && ` · confidence ${((a.overall_confidence || 0) * 100).toFixed(0)}%`}
+                </p>
+                {!aiSkipped && a?.document_summary && <p className="text-xs text-slate-400 mt-2">{a.document_summary}</p>}
+                {!aiSkipped && a && !a.ai_powered && <p className="text-[10px] text-amber-400 mt-2">AI degraded fallback — manual review recommended</p>}
+                {aiSkipped && <p className="text-[10px] text-slate-500 mt-2">You opted out of AI forgery analysis for this scan.</p>}
               </div>
             </CardContent>
           </Card>
