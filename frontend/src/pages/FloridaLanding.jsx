@@ -9,20 +9,26 @@ const API = process.env.REACT_APP_BACKEND_URL;
 export default function FloridaLanding() {
   const [profile, setProfile] = useState(null);
   const [notaries, setNotaries] = useState({ total: 0, notaries: [] });
+  const [stats, setStats] = useState(null);
+  const [ronspCurrent, setRonspCurrent] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       fetch(`${API}/api/fl/state-profile`).then(r => r.ok ? r.json() : null).catch(() => null),
       fetch(`${API}/api/fl/notaries/public?limit=6`).then(r => r.ok ? r.json() : { total: 0, notaries: [] }).catch(() => ({ total: 0, notaries: [] })),
-    ]).then(([p, n]) => {
+      fetch(`${API}/api/fl/launch/public-stats`).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${API}/api/fl/ronsp/filings/current`).then(r => r.ok ? r.json() : null).catch(() => null),
+    ]).then(([p, n, s, c]) => {
       setProfile(p);
       setNotaries(n);
+      setStats(s);
+      setRonspCurrent(c);
       setLoading(false);
     });
   }, []);
 
-  const ronspLive = profile?.live_in_state;
+  const ronspLive = profile?.live_in_state || ronspCurrent?.active;
 
   return (
     <div className="min-h-screen bg-slate-950 text-white" data-testid="florida-landing">
@@ -59,12 +65,33 @@ export default function FloridaLanding() {
                 I'm a FL notary — onboard
               </Button>
             </Link>
+            <Link to="/florida/notaries" data-testid="cta-notary-recruit">
+              <Button variant="outline" className="bg-emerald-500/10 border-emerald-500/30 text-emerald-200 hover:bg-emerald-500/20 text-sm px-6 h-11">
+                Notaries: get paid more →
+              </Button>
+            </Link>
           </div>
 
+          {/* RONSP banner */}
+          {ronspCurrent?.active && ronspCurrent.filing && (
+            <div className="mt-8 inline-flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-4 py-2.5" data-testid="ronsp-status-banner">
+              <CheckCircle className="w-4 h-4 text-emerald-400" />
+              <div className="text-xs">
+                <span className="text-emerald-300 font-bold uppercase tracking-wider">Registered RONSP</span>
+                <span className="text-slate-300 ml-2">FL DoS #{ronspCurrent.filing.filing_id || ronspCurrent.filing.filing_label}</span>
+                {ronspCurrent.filing.expires_at && <span className="text-slate-500 ml-2">· renews {ronspCurrent.filing.expires_at.slice(0, 10)}</span>}
+                {ronspCurrent.days_until_renewal !== null && ronspCurrent.days_until_renewal !== undefined && ronspCurrent.days_until_renewal < 60 && (
+                  <span className="text-amber-300 ml-2 font-bold">({ronspCurrent.days_until_renewal}d)</span>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Live stats */}
-          <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
-            <Stat label="Verified FL notaries" value={loading ? '…' : notaries.total} sub="commissioned & bonded" />
-            <Stat label="Statutory framework" value="117.201" sub="FL RON statute" />
+          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm" data-testid="florida-live-stats">
+            <Stat label="Verified FL notaries" value={loading ? '…' : (stats?.fl_notaries ?? notaries.total)} sub="commissioned & bonded" />
+            <Stat label="FL ceremonies" value={loading ? '…' : (stats?.ceremonies ?? 0)} sub={stats ? `+${stats.journal_30d} journal in 30d` : 'live counter'} />
+            <Stat label="A/V quality pass" value={loading ? '…' : (stats ? `${stats.av_pass_rate}%` : '—')} sub="720p · 16kHz · 30s min" accent="emerald" />
             <Stat
               label="Platform status"
               value={ronspLive ? 'Live' : 'Pending RONSP'}

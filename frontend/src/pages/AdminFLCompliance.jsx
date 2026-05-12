@@ -50,6 +50,8 @@ export default function AdminFLCompliance() {
             <Button onClick={load} variant="outline" className="bg-slate-900/60 border-slate-700 text-white hover:bg-slate-800" data-testid="refresh-overview-btn">
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Refresh'}
             </Button>
+            <Link to="/admin/fl-recruitment"><Button variant="outline" className="bg-slate-900/60 border-slate-700 text-white hover:bg-slate-800" data-testid="goto-recruitment-btn"><Users className="w-4 h-4 mr-1" />Recruitment</Button></Link>
+            <Link to="/admin/fl-ronsp"><Button variant="outline" className="bg-slate-900/60 border-slate-700 text-white hover:bg-slate-800" data-testid="goto-ronsp-btn"><Shield className="w-4 h-4 mr-1" />RONSP</Button></Link>
             <Link to="/admin/subpoena"><Button className="bg-orange-600 hover:bg-orange-500" data-testid="goto-subpoena-btn"><Gavel className="w-4 h-4 mr-1" />Subpoenas {overview?.subpoenas?.open ? <span className="ml-1 bg-white/20 px-1 rounded">{overview.subpoenas.open}</span> : null}</Button></Link>
           </div>
         </div>

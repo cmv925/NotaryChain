@@ -50,6 +50,9 @@ const FloridaCeremonyReadiness = lazy(() => import('./pages/FloridaCeremonyReadi
 const NotaryFLJournal = lazy(() => import('./pages/NotaryFLJournal'));
 const AdminFLCompliance = lazy(() => import('./pages/AdminFLCompliance'));
 const AdminSubpoena = lazy(() => import('./pages/AdminSubpoena'));
+const FLNotaryRecruitment = lazy(() => import('./pages/FLNotaryRecruitment'));
+const AdminFLRecruitment = lazy(() => import('./pages/AdminFLRecruitment'));
+const AdminFLRonsp = lazy(() => import('./pages/AdminFLRonsp'));
 const TrustBadges = lazy(() => import('./pages/TrustBadges'));
 const TrustBadgeLanding = lazy(() => import('./pages/TrustBadgeLanding'));
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
@@ -200,6 +203,23 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminSubpoena />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/florida/notaries" element={<FLNotaryRecruitment />} />
+            <Route
+              path="/admin/fl-recruitment"
+              element={
+                <ProtectedRoute>
+                  <AdminFLRecruitment />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/fl-ronsp"
+              element={
+                <ProtectedRoute>
+                  <AdminFLRonsp />
                 </ProtectedRoute>
               }
             />

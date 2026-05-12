@@ -1,0 +1,45 @@
+{
+  "summary": "M5 Florida public launch polish + RONSP filing tracker + notary recruitment portal — backend 16/16 pytest green, frontend all critical flows green: /florida CTA + 4-stat live grid + RONSP banner render, /florida/notaries form submit returns 'received' success card with lead_id, admin pages (/admin/fl-recruitment, /admin/fl-ronsp) render with full test-id coverage and modals open with audit logs, /admin/fl-compliance has new Recruitment/RONSP nav buttons. M3/M4 regression unaffected.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "FLNotaryRecruitment.jsx (monthly volume select)",
+        "issue": "React hydration warnings in console: '<span> cannot be a child of <option>' and '<span> cannot be a child of <select>'. Invalid HTML inside the lead-volume <select>; works functionally but should wrap labels in plain text, not <span>.",
+        "selector": "[data-testid='lead-volume']",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_fl_launch_m5.py",
+    "/app/test_reports/pytest/iter100_fl_launch_m5.xml"
+  ],
+  "action_items": [
+    "Replace <span>…</span> children inside the monthly-volume <select> options in /app/frontend/src/pages/FLNotaryRecruitment.jsx with plain text to remove the React hydration warning (cosmetic; functionality unaffected)."
+  ],
+  "critical_code_review_comments": [
+    "fl_launch_routes.py — all endpoints correctly: (a) exclude _id via projection, (b) use async motor properly, (c) admin-gate via _require_admin, (d) append audit_log on create/patch, (e) mirror approved RONSP filings into state_compliance_profiles. Email notification properly wrapped in try/except so it cannot block lead creation.",
+    "Idempotency window for recruitment lead is implemented via {email lowercased, created_at >= now-30d} check before insert — works as specified.",
+    "VOLUME_BUCKETS and LEAD_STATUSES / RONSP_STATUSES are validated server-side returning 400 on invalid values. Confirmed via tests.",
+    "FloridaLanding.jsx fetches public-stats + ronsp/filings/current in parallel and only renders the RONSP banner when active && filing present — correct behavior verified."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_fl_launch_m5.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100% (16/16)",
+    "frontend": "100% on critical M5 flows (1 cosmetic hydration warning)"
+  },
+  "test_credentials": "Admin admin@notarychain.com / Admin123! (login API returns access_token).",
+  "seed_data_creation": "Test run created additional RONSP filings (TEST_filing_*) and recruitment leads (test_m5_*, patch_m5_*, ui_test_*, ui_m5_*, ui_m5b_*). These are TEST_-prefixed where applicable and safe to leave in the dev DB.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "M5 endpoints live at /api/fl/launch/public-stats (public), /api/fl/ronsp/filings + /current (current is public), /api/fl/recruitment/lead (public) and /api/fl/recruitment/leads|/stats|/{id} (admin). Login token field is 'access_token'. Use pytest file /app/backend/tests/test_fl_launch_m5.py for regression. Frontend public routes: /florida, /florida/notaries; protected admin routes: /admin/fl-recruitment, /admin/fl-ronsp, /admin/fl-compliance (with new goto buttons).",
+  "rca of the issue": "No production-blocking issues. The only finding is a minor React hydration warning on /florida/notaries from <span> elements used inside the monthly-volume <select>'s <option> tags — invalid HTML per spec, but it does not break submission and the success card with lead_id is rendered correctly. RCA: developer wrapped option labels in <span> for styling — fix is to use plain text or move styling to the parent <select>."
+}
