@@ -1,5 +1,21 @@
 # NotaryChain Changelog
 
+## May 12, 2026 — Florida RON Compliance Phase 1 / M1 (Foundation)
+
+### State Compliance Profile + FL Notary Credentials + Public FL Landing
+- New `routes/fl_compliance_routes.py` with 11 endpoints:
+  - Public: state-profile, notaries/public, eligibility/{user_id}
+  - Notary: POST /notary/onboard (5-field validated wizard), GET /notary/credentials
+  - Admin: pending/verified lists, decision approve/reject, set RONSP filing metadata
+- Canonical FL state profile constants (FL Stat. 117.201-117.305, KBA req, 10yr retention, $25K bond min, online wills enabled with 2 witnesses, etc.) — pattern reusable for other states.
+- Indexes: `fl_notary_credentials` (user_id + fl_commission_number unique), `state_compliance_profiles` (state_code unique).
+- New frontend pages:
+  - **`/florida`** — public marketing landing with hero, live stats (verified notaries count, RONSP status), use cases (RE/Estate/Business), compliance grid, notary directory, 5-question FAQ, dual CTAs.
+  - **`/notary/onboard/florida`** — protected 5-step wizard (Commission → Bond → Training → Seal → Review) with idempotent updates, validation gates, and status screens (`pending_review`, `verified`, `rejected`).
+- Testing: iteration_96 — 16/16 backend pytest + full frontend e2e all pass.
+- Next: M2 (KBA via LexisNexis), M3 (FL ceremony pipeline + jurisdiction qualifier + online will witnesses), M4 (FL journal export + admin compliance dashboard), M5 (public launch).
+
+
 ## Apr 26, 2026 — Trust Network Integration Layer
 
 ### Cross-feature: SALV ↔ TrustLayer ↔ Living Identity ↔ Email/Resend
