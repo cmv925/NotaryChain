@@ -1,5 +1,19 @@
 # NotaryChain Changelog
 
+## May 12, 2026 — Florida RON Compliance Phase 1 / M2 (KBA Integration)
+
+### Knowledge-Based Authentication (KBA)
+- New `routes/kba_routes.py` with 6 endpoints (status, start, submit, session detail, admin fraud signals).
+- **Adapter pattern**: abstract `KBAProvider` interface; `MockKBAProvider` (active now, synthetic 5-question quiz with deterministic seed per user); `LexisNexisKBAProvider` stub (auto-activates when `LEXISNEXIS_API_KEY` env var is set — no code change required).
+- **FL Stat. 117.295 compliance** baked in: 5 questions, 4-of-5 to pass, 120-second time limit, max 2 attempts per principal per 24 hours (429 on exceed), `kba_attempts` ledger for audit.
+- **Fraud signals**: server-side device fingerprint (UA + accept-language hash) + IP capture; rapid retry from different device emits `kba_device_mismatch` signal.
+- **Security**: correct answers stored server-side only (`_questions_internal`), stripped from all API responses + sanitized session view; session ownership enforced (403 on cross-user access).
+- New frontend `components/KBAQuizModal.jsx` — full quiz modal: intro screen (compliance info + attempt counter), question carousel with progress bar, live countdown timer with low-time warning, result screen with pass/fail; emits MOCK badge when MockKBAProvider active.
+- New frontend `/kba-test` page — admin/dev harness to preview the modal and view provider status (auth-gated).
+- Testing: iteration_97 — 17/17 backend pytest + full frontend e2e all pass.
+- ⚠️ **MOCKED**: LexisNexis InstantID Q&A — MockKBAProvider in use until real API key + contract provisioned.
+
+
 ## May 12, 2026 — Florida RON Compliance Phase 1 / M1 (Foundation)
 
 ### State Compliance Profile + FL Notary Credentials + Public FL Landing
