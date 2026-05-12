@@ -44,6 +44,7 @@ const HandoffAccept = lazy(() => import('./pages/HandoffAccept'));
 const TrustHub = lazy(() => import('./pages/TrustHub'));
 const FloridaLanding = lazy(() => import('./pages/FloridaLanding'));
 const FloridaNotaryOnboard = lazy(() => import('./pages/FloridaNotaryOnboard'));
+const KBATest = lazy(() => import('./pages/KBATest'));
 const TrustBadges = lazy(() => import('./pages/TrustBadges'));
 const TrustBadgeLanding = lazy(() => import('./pages/TrustBadgeLanding'));
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
@@ -153,6 +154,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <FloridaNotaryOnboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/kba-test"
+              element={
+                <ProtectedRoute>
+                  <KBATest />
                 </ProtectedRoute>
               }
             />
