@@ -541,8 +541,55 @@ async def execute_ceremony(ceremony_id: str, request: Request = None):
 
     final_status = "sealed" if consensus["result"] == "APPROVED" else "consensus_failed"
 
-    blockchain_seal = None
+    # ── Florida hard pre-seal gate ──
+    # If this ceremony has a FL jurisdiction qualifier, every FL gate must pass
+    # before we can submit to Hedera. Failing here blocks the seal entirely
+    # and surfaces fl_blocked_reasons on the ceremony.
+    fl_block_reasons = []
     if consensus["result"] == "APPROVED":
+        try:
+            fl_juris = await db.fl_jurisdiction_qualifications.find_one(
+                {"ceremony_id": ceremony_id}, {"_id": 0}
+            )
+            if fl_juris:
+                doc_type = (updated.get("document_type") or "").lower()
+                user_id = fl_juris.get("user_id")
+
+                # KBA: ceremony-linked or recent pass within last hour
+                from datetime import timedelta as _td
+                kba_pass = await db.kba_attempts.find_one(
+                    {"user_id": user_id, "passed": True,
+                     "$or": [
+                         {"ceremony_id": ceremony_id},
+                         {"completed_at": {"$gte": (datetime.now(timezone.utc) - _td(hours=1)).isoformat()}},
+                     ]},
+                    {"_id": 0, "attempt_id": 1},
+                )
+                if not kba_pass:
+                    fl_block_reasons.append("kba_not_passed")
+
+                # A/V quality
+                av = await db.fl_av_quality_reports.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
+                if not (av and av.get("passed")):
+                    fl_block_reasons.append("av_quality_not_passed" if av else "av_quality_not_reported")
+
+                # Online will → 2 witnesses required
+                if doc_type in ("will", "online_will"):
+                    accepted_count = await db.fl_will_witnesses.count_documents(
+                        {"ceremony_id": ceremony_id,
+                         "status": {"$in": ("accepted", "kba_passed", "present", "completed")}}
+                    )
+                    if accepted_count < 2:
+                        fl_block_reasons.append(f"witnesses_short:{accepted_count}_of_2")
+        except Exception as _e:
+            logger.warning(f"FL pre-seal gate check error (allowing seal to proceed): {_e}")
+            fl_block_reasons = []  # never block on an internal exception
+
+    if fl_block_reasons:
+        final_status = "fl_blocked"
+
+    blockchain_seal = None
+    if consensus["result"] == "APPROVED" and not fl_block_reasons:
         blockchain_seal = await _seal_on_hedera(ceremony_id, updated, consensus)
 
     await db.ceremonies.update_one(
@@ -551,6 +598,7 @@ async def execute_ceremony(ceremony_id: str, request: Request = None):
             "status": final_status,
             "consensus": consensus,
             "blockchain_seal": blockchain_seal,
+            "fl_blocked_reasons": fl_block_reasons or None,
         }}
     )
 

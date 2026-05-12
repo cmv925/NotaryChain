@@ -53,6 +53,7 @@ const AdminSubpoena = lazy(() => import('./pages/AdminSubpoena'));
 const FLNotaryRecruitment = lazy(() => import('./pages/FLNotaryRecruitment'));
 const AdminFLRecruitment = lazy(() => import('./pages/AdminFLRecruitment'));
 const AdminFLRonsp = lazy(() => import('./pages/AdminFLRonsp'));
+const FieldScanner = lazy(() => import('./pages/FieldScanner'));
 const TrustBadges = lazy(() => import('./pages/TrustBadges'));
 const TrustBadgeLanding = lazy(() => import('./pages/TrustBadgeLanding'));
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
@@ -220,6 +221,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminFLRonsp />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/scanner"
+              element={
+                <ProtectedRoute>
+                  <FieldScanner />
                 </ProtectedRoute>
               }
             />
