@@ -42,6 +42,8 @@ const AdminTrustLayer = lazy(() => import('./pages/AdminTrustLayer'));
 const AssetVault = lazy(() => import('./pages/AssetVault'));
 const HandoffAccept = lazy(() => import('./pages/HandoffAccept'));
 const TrustHub = lazy(() => import('./pages/TrustHub'));
+const FloridaLanding = lazy(() => import('./pages/FloridaLanding'));
+const FloridaNotaryOnboard = lazy(() => import('./pages/FloridaNotaryOnboard'));
 const TrustBadges = lazy(() => import('./pages/TrustBadges'));
 const TrustBadgeLanding = lazy(() => import('./pages/TrustBadgeLanding'));
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
@@ -145,6 +147,15 @@ function App() {
               }
             />
             <Route path="/handoff/:token" element={<HandoffAccept />} />
+            <Route path="/florida" element={<FloridaLanding />} />
+            <Route
+              path="/notary/onboard/florida"
+              element={
+                <ProtectedRoute>
+                  <FloridaNotaryOnboard />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/trust-hub"
               element={
