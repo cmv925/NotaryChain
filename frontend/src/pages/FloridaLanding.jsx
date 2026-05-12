@@ -49,9 +49,14 @@ export default function FloridaLanding() {
                 Start a Florida notarization <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
+            <Link to="/florida/ceremony-readiness" data-testid="cta-ceremony-readiness">
+              <Button variant="outline" className="bg-slate-900/60 border-slate-700 text-white hover:bg-slate-800 text-sm px-6 h-11">
+                Pre-ceremony checks
+              </Button>
+            </Link>
             <Link to="/notary/onboard/florida" data-testid="cta-notary-onboard">
               <Button variant="outline" className="bg-slate-900/60 border-slate-700 text-white hover:bg-slate-800 text-sm px-6 h-11">
-                I’m a FL notary — onboard
+                I'm a FL notary — onboard
               </Button>
             </Link>
           </div>

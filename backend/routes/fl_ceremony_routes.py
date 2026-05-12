@@ -212,7 +212,7 @@ async def invite_will_witness(body: WitnessInvitation, request: Request):
     except Exception as e:
         logger.warning(f"Witness email send failed: {e}")
 
-    out = {k: v for k, v in witness.items() if k != "token_hash"}
+    out = {k: v for k, v in witness.items() if k not in ("token_hash", "_id")}
     # Return the raw token ONLY to the inviter so they can share it directly too
     out["share_link_path"] = f"/florida/witness/{raw_token}"
     return out
