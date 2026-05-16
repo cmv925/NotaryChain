@@ -65,8 +65,8 @@ export default function TrustBadgeLanding() {
             One line of JavaScript. A blockchain-verified trust badge appears on your site, links to a public verification page sealed on Hedera mainnet, and lifts your conversion rate the same week you install it.
           </p>
           <div className="flex flex-wrap items-center gap-3 mb-8">
-            <Button onClick={() => checkout('pro')} disabled={checkoutLoading === 'pro'} size="lg" className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold h-12 px-6" data-testid="hero-pro-checkout-btn">
-              {checkoutLoading === 'pro' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Award className="w-4 h-4 mr-2" />}
+            <Button onClick={() => checkout('trust_badge')} disabled={checkoutLoading === 'trust_badge'} size="lg" className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold h-12 px-6" data-testid="hero-pro-checkout-btn">
+              {checkoutLoading === 'trust_badge' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Award className="w-4 h-4 mr-2" />}
               Get Trust Badge — $29/mo
             </Button>
             <a href="#how-it-works" className="text-slate-300 hover:text-white text-sm flex items-center gap-1">See how it works <ArrowRight className="w-4 h-4" /></a>
@@ -162,7 +162,7 @@ export default function TrustBadgeLanding() {
           <p className="text-center text-slate-400 mb-10">No code review. No DNS specialist. Drop one line on your site.</p>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[
-              { n: '1', icon: Award, t: 'Subscribe', d: 'Pick Pro ($29/mo) and check out via Stripe.' },
+              { n: '1', icon: Award, t: 'Subscribe', d: 'Pick Trust Badge ($29/mo) and check out via Stripe.' },
               { n: '2', icon: Globe, t: 'Add your domain', d: 'Tell NotaryChain which website the badge belongs on.' },
               { n: '3', icon: Code, t: 'Paste the snippet', d: 'One <script> tag, or one <img> tag. Done.' },
               { n: '4', icon: Lock, t: 'Verify domain', d: 'Add a DNS TXT record to flip from "Pending" to "Verified".' },
@@ -209,36 +209,64 @@ export default function TrustBadgeLanding() {
 
       {/* PRICING */}
       <section className="border-b border-slate-800 bg-slate-900/40" id="pricing">
-        <div className="max-w-5xl mx-auto px-6 py-16">
+        <div className="max-w-6xl mx-auto px-6 py-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-center mb-3">Simple pricing</h2>
-          <p className="text-center text-slate-400 mb-10">Cancel anytime. Includes everything in the Pro / Enterprise plan.</p>
+          <p className="text-center text-slate-400 mb-10">Cancel anytime. Trust Badge from $29 · Professional from $49 · Enterprise from $199.</p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
-            {/* PRO */}
-            <Card className="bg-slate-900/60 border-amber-500/30 relative" data-testid="pricing-card-pro">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+            {/* TRUST BADGE — featured */}
+            <Card className="bg-slate-900/60 border-amber-500/30 relative" data-testid="pricing-card-trust-badge">
               <div className="absolute -top-3 left-6 bg-amber-500 text-slate-950 text-[10px] font-bold px-3 py-1 rounded">POPULAR</div>
+              <CardContent className="p-6">
+                <h3 className="text-lg font-bold">Trust Badge</h3>
+                <div className="mt-2 mb-1">
+                  <span className="text-4xl font-bold">$29</span>
+                  <span className="text-slate-500 text-sm"> /mo</span>
+                </div>
+                <p className="text-xs text-slate-500 mb-5">Standalone embeddable trust seal for your website</p>
+                <ul className="space-y-2 text-sm mb-5">
+                  {[
+                    '1 verified Trust Badge',
+                    'JavaScript widget + HTML snippet',
+                    'Domain ownership verification (DNS or .well-known)',
+                    'Live impression analytics',
+                    '4 badge styles (default / dark / light / minimal)',
+                    'Public verifier landing for visitors',
+                    'Hedera-sealed verification trail',
+                    'Email support',
+                  ].map(f => <li key={f} className="flex items-start gap-2"><Check className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" /><span className="text-slate-300">{f}</span></li>)}
+                </ul>
+                <Button onClick={() => checkout('trust_badge')} disabled={checkoutLoading === 'trust_badge'} className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold h-11" data-testid="pricing-trust-badge-btn">
+                  {checkoutLoading === 'trust_badge' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Award className="w-4 h-4 mr-2" />}
+                  Get Trust Badge — $29/mo
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* PRO */}
+            <Card className="bg-slate-900/60 border-slate-800" data-testid="pricing-card-pro">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold">Professional</h3>
                 <div className="mt-2 mb-1">
                   <span className="text-4xl font-bold">$49</span>
                   <span className="text-slate-500 text-sm"> /mo</span>
                 </div>
-                <p className="text-xs text-slate-500 mb-5">Trust Badge included + everything in Pro plan</p>
+                <p className="text-xs text-slate-500 mb-5">Trust Badge + the full NotaryChain platform</p>
                 <ul className="space-y-2 text-sm mb-5">
                   {[
                     'Unlimited Trust Badges',
-                    'JavaScript widget + HTML snippet',
-                    'Domain ownership verification',
-                    'Impression analytics',
-                    '4 badge styles (default/dark/light/minimal)',
-                    'Public verifier landing for visitors',
-                    'Hedera-sealed verification trail',
-                    'Plus: Unlimited notarizations, AI tools, Biometric Passport, RON video',
-                  ].map(f => <li key={f} className="flex items-start gap-2"><Check className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" /><span className="text-slate-300">{f}</span></li>)}
+                    'Unlimited notarizations',
+                    'AI Document Summarizer & Generator',
+                    'AI Doc Compare & Remediation',
+                    'Biometric Passport',
+                    'Video notarization (RON)',
+                    'Blockchain sealing on Hedera',
+                    'Priority support',
+                  ].map(f => <li key={f} className="flex items-start gap-2"><Check className="w-4 h-4 text-sky-400 flex-shrink-0 mt-0.5" /><span className="text-slate-300">{f}</span></li>)}
                 </ul>
-                <Button onClick={() => checkout('pro')} disabled={checkoutLoading === 'pro'} className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold h-11" data-testid="pricing-pro-btn">
-                  {checkoutLoading === 'pro' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Award className="w-4 h-4 mr-2" />}
-                  Subscribe to Professional
+                <Button onClick={() => checkout('pro')} disabled={checkoutLoading === 'pro'} variant="outline" className="w-full border-slate-700 hover:bg-slate-800 h-11" data-testid="pricing-pro-btn">
+                  {checkoutLoading === 'pro' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                  Upgrade to Professional
                 </Button>
               </CardContent>
             </Card>
@@ -251,16 +279,16 @@ export default function TrustBadgeLanding() {
                   <span className="text-4xl font-bold">$199</span>
                   <span className="text-slate-500 text-sm"> /mo</span>
                 </div>
-                <p className="text-xs text-slate-500 mb-5">White-label, no-NotaryChain-branding badges + everything Enterprise</p>
+                <p className="text-xs text-slate-500 mb-5">White-label, no-NotaryChain branding + everything Enterprise</p>
                 <ul className="space-y-2 text-sm mb-5">
                   {[
                     'Everything in Professional',
-                    'White-label trust badges (your brand, not ours)',
-                    'Custom domain for verifier (verify.yourbrand.com)',
+                    'White-label trust badges (your brand)',
+                    'Custom verifier domain (verify.yourbrand.com)',
                     'Unlimited Living Identity challenges',
-                    'Per-challenge Partner API ($0.50/call)',
+                    'Partner API ($0.50/call)',
                     'Dedicated account manager',
-                    'Priority SLA + 24/7 phone support',
+                    'Priority SLA + 24/7 phone',
                     'SOC2 / ISO compliance reports',
                   ].map(f => <li key={f} className="flex items-start gap-2"><Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" /><span className="text-slate-300">{f}</span></li>)}
                 </ul>
@@ -306,8 +334,8 @@ export default function TrustBadgeLanding() {
           <Award className="w-12 h-12 mx-auto text-amber-400 mb-4" />
           <h2 className="text-3xl sm:text-4xl font-bold mb-3">Ready to lift your conversion rate?</h2>
           <p className="text-slate-400 mb-8 max-w-xl mx-auto">Drop a NotaryChain Trust Badge on your site this afternoon. Cancel any time.</p>
-          <Button onClick={() => checkout('pro')} disabled={checkoutLoading === 'pro'} size="lg" className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold h-12 px-8" data-testid="final-cta-btn">
-            {checkoutLoading === 'pro' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ArrowRight className="w-4 h-4 mr-2" />}
+          <Button onClick={() => checkout('trust_badge')} disabled={checkoutLoading === 'trust_badge'} size="lg" className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold h-12 px-8" data-testid="final-cta-btn">
+            {checkoutLoading === 'trust_badge' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ArrowRight className="w-4 h-4 mr-2" />}
             Get Your Trust Badge — $29/mo
           </Button>
           <p className="text-xs text-slate-500 mt-4">

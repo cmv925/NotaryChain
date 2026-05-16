@@ -63,6 +63,32 @@ PLANS = {
         },
         "gated_features": [],
     },
+    "trust_badge": {
+        "id": "trust_badge",
+        "name": "Trust Badge",
+        "price": 29.00,
+        "interval": "month",
+        "description": "Standalone embeddable trust seal for your website",
+        "discount_pct": 0,
+        "features": [
+            "1 verified trust badge",
+            "DNS or .well-known domain proofing",
+            "Embeddable SVG widget + JS loader",
+            "Live impression analytics",
+            "Public verifier link",
+            "Email support",
+        ],
+        "limits": {
+            "notarizations_per_month": 3,
+            "ai_analyses_per_month": 2,
+            "transactions_per_month": 1,
+            "document_storage_mb": 100,
+            "video_sessions": False,
+            "blockchain_sealing": False,
+            "priority_support": False,
+        },
+        "gated_features": ["trust_badge"],
+    },
     "pro": {
         "id": "pro",
         "name": "Professional",
@@ -172,12 +198,12 @@ FEATURE_PLAN_MAP = {
     "living_identity_refresh": "pro",
     "living_identity_challenge": "enterprise",
     "living_identity_partner_api": "enterprise",
-    # Trust Badge (NEW - revenue stream)
-    "trust_badge": "pro",
+    # Trust Badge (NEW - revenue stream) — accessible from $29 Trust Badge plan or higher
+    "trust_badge": "trust_badge",
     "trust_badge_white_label": "enterprise",
 }
 
-PLAN_HIERARCHY = {"free": 0, "pro": 1, "enterprise": 2}
+PLAN_HIERARCHY = {"free": 0, "trust_badge": 1, "pro": 2, "enterprise": 3}
 
 
 class SubscribeRequest(BaseModel):
