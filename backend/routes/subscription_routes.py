@@ -92,7 +92,7 @@ PLANS = {
     "pro": {
         "id": "pro",
         "name": "Professional",
-        "price": 49.00,
+        "price": 99.00,
         "interval": "month",
         "description": "For notaries and power users",
         "discount_pct": 15,

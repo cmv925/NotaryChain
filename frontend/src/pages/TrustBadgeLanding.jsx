@@ -211,7 +211,7 @@ export default function TrustBadgeLanding() {
       <section className="border-b border-slate-800 bg-slate-900/40" id="pricing">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-center mb-3">Simple pricing</h2>
-          <p className="text-center text-slate-400 mb-10">Cancel anytime. Trust Badge from $29 · Professional from $49 · Enterprise from $199.</p>
+          <p className="text-center text-slate-400 mb-10">Cancel anytime. Trust Badge from $29 · Professional from $99 · Enterprise from $199.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {/* TRUST BADGE — featured */}
@@ -248,7 +248,7 @@ export default function TrustBadgeLanding() {
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold">Professional</h3>
                 <div className="mt-2 mb-1">
-                  <span className="text-4xl font-bold">$49</span>
+                  <span className="text-4xl font-bold">$99</span>
                   <span className="text-slate-500 text-sm"> /mo</span>
                 </div>
                 <p className="text-xs text-slate-500 mb-5">Trust Badge + the full NotaryChain platform</p>

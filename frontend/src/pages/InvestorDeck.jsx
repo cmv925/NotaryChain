@@ -100,7 +100,7 @@ const FEATURES = [
     icon: CreditCard,
     title: 'Subscription Paywall & Monetization',
     trademark: false,
-    description: 'Three-tier subscription model (Starter $0, Professional $49/mo, Enterprise $199/mo) with Stripe checkout. 21 features gated across tiers with server-side enforcement, admin bypass, and structured upgrade prompts. Built for SaaS revenue from day one.',
+    description: 'Four-tier subscription model (Starter $0, Trust Badge $29/mo, Professional $99/mo, Enterprise $199/mo) with Stripe checkout. 21 features gated across tiers with server-side enforcement, admin bypass, and structured upgrade prompts. Built for SaaS revenue from day one.',
     stats: ['3 tiers', '21 gated features', 'Stripe checkout', 'Server + client gates'],
     color: '#8b5cf6',
   },

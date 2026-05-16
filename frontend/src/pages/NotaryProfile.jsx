@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Shield, MapPin, Award, ChevronLeft, ExternalLink, AlertTriangle, CheckCircle, XCircle, Loader2, Calendar, Hash, Copy } from 'lucide-react';
+import { Shield, MapPin, Award, ChevronLeft, ExternalLink, AlertTriangle, CheckCircle, XCircle, Loader2, Calendar, Hash, Copy, Sparkles } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
@@ -235,6 +235,30 @@ export default function NotaryProfile() {
               >
                 <Copy className="w-3 h-3 mt-0.5 flex-shrink-0" /> {window.location.href}
               </button>
+            </CardContent>
+          </Card>
+
+          {/* Trust Badge cross-sell — visible to every notary profile visitor */}
+          <Card className="bg-gradient-to-br from-amber-500/10 via-slate-900/60 to-slate-900/60 border-amber-500/30 relative overflow-hidden" data-testid="trust-badge-crosssell">
+            <div className="absolute -top-8 -right-8 w-24 h-24 bg-amber-400/10 rounded-full blur-2xl" />
+            <CardContent className="p-5 relative">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <h3 className="text-xs uppercase tracking-[0.2em] text-amber-300 font-bold">Display this trust seal on your site</h3>
+              </div>
+              <p className="text-xs text-slate-400 mb-3 leading-relaxed">
+                Want the NotaryChain verification badge on your business website? Visitors click it to land on this profile — proving you're a real, commissioned, and chain-of-trust-anchored notary.
+              </p>
+              <div className="text-[10px] text-slate-500 mb-3 inline-flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span><span className="text-amber-300 font-bold">$29/mo</span> · cancel anytime</span>
+                <span>· 60-second install</span>
+                <span>· DNS or .well-known</span>
+              </div>
+              <Link to="/trust-badge" data-testid="trust-badge-cta">
+                <Button className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold w-full h-10" data-testid="get-trust-badge-btn">
+                  <Award className="w-4 h-4 mr-2" /> Get my trust seal →
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>
