@@ -23,6 +23,9 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-6">
           <NavLink to="/florida">Florida</NavLink>
           <NavLink to="/notaries">Notaries</NavLink>
+          <Link to="/scanner/demo" className="text-sm font-medium text-slate-700 hover:text-coral-600 transition-colors inline-flex items-center gap-1" data-testid="navbar-demo">
+            AI demo <span className="inline-block px-1.5 py-0.5 text-[9px] font-bold tracking-wider bg-coral-500 text-white rounded">NEW</span>
+          </Link>
           <NavLink to="/verify">Verify</NavLink>
           <NavLink to="/trust-badge">Trust badge</NavLink>
           <NavLink to="/pricing">{t('nav.pricing')}</NavLink>
@@ -56,6 +59,7 @@ const Navbar = () => {
           {[
             ['/florida', 'Florida'],
             ['/notaries', 'Notaries'],
+            ['/scanner/demo', 'AI demo · NEW'],
             ['/verify', 'Verify'],
             ['/trust-badge', 'Trust badge'],
             ['/pricing', t('nav.pricing')],

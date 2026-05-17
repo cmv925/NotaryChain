@@ -29,6 +29,9 @@ export default function NotaryLanding() {
           <nav className="hidden md:flex items-center gap-7 text-sm">
             <Link to="/florida" className="text-slate-700 hover:text-navy-900" data-testid="nav-florida">Florida</Link>
             <Link to="/notaries" className="text-slate-700 hover:text-navy-900" data-testid="nav-notaries">Notary directory</Link>
+            <Link to="/scanner/demo" className="text-slate-700 hover:text-navy-900 inline-flex items-center gap-1" data-testid="nav-scanner-demo">
+              Try the AI demo <span className="inline-block px-1.5 py-0.5 text-[9px] font-bold tracking-wider bg-coral-500 text-white rounded">NEW</span>
+            </Link>
             <Link to="/trust-badge" className="text-slate-700 hover:text-navy-900" data-testid="nav-trust-badge">Trust badge</Link>
             <Link to="/verify" className="text-slate-700 hover:text-navy-900" data-testid="nav-verify">Verify a document</Link>
           </nav>
@@ -60,7 +63,7 @@ export default function NotaryLanding() {
               identity-verified, audio-video recorded, and permanently sealed on the Hedera public ledger — admissible
               evidence the moment it's complete.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 mb-10">
+            <div className="flex flex-col sm:flex-row gap-3 mb-6">
               <Link to="/request-notarization" data-testid="hero-cta-notarize">
                 <button className="bg-coral-500 hover:bg-coral-600 text-white font-medium px-6 h-12 rounded-md shadow-sm transition-colors inline-flex items-center gap-2 w-full sm:w-auto justify-center">
                   Start a notarization <ArrowRight className="w-4 h-4" />
@@ -72,6 +75,11 @@ export default function NotaryLanding() {
                 </button>
               </Link>
             </div>
+            <Link to="/scanner/demo" data-testid="hero-cta-demo" className="inline-flex items-center gap-2 text-sm text-coral-700 hover:text-coral-800 font-medium mb-10 group">
+              <Sparkles className="w-4 h-4" />
+              <span>Try the live AI forgery demo — no signup, 5 free scans</span>
+              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+            </Link>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-2 text-sm text-slate-600">
               <Bullet text="KBA identity proofing" />
               <Bullet text="HD audio-video record" />
