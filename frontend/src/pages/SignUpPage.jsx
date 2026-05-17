@@ -97,7 +97,7 @@ const SignUpPage = () => {
                     onClick={() => setFormData({ ...formData, role: 'user' })}
                     className={`flex items-center gap-3 p-4 rounded-lg border-2 transition-all duration-200 text-left ${
                       formData.role === 'user'
-                        ? 'border-blue-500 bg-blue-500/10 text-navy-900'
+                        ? 'border-coral-500 bg-coral-50 text-coral-700'
                         : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'
                     }`}
                     data-testid="role-user-btn"
@@ -200,11 +200,11 @@ const SignUpPage = () => {
                 <input type="checkbox" required className="mt-1" />
                 <span className="text-slate-600 text-sm">
                   I agree to the{' '}
-                  <a href="#" className="text-blue-500 hover:text-coral-600">
+                  <a href="#" className="text-coral-600 hover:text-coral-700">
                     Terms of Service
                   </a>{' '}
                   and{' '}
-                  <a href="#" className="text-blue-500 hover:text-coral-600">
+                  <a href="#" className="text-coral-600 hover:text-coral-700">
                     Privacy Policy
                   </a>
                 </span>
@@ -213,7 +213,7 @@ const SignUpPage = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-navy-900 py-6 text-lg"
+                className="w-full bg-coral-500 hover:bg-coral-600 text-white py-6 text-lg"
               >
                 {loading ? `${t('common.loading')}` : t('auth.create_account')}
               </Button>
@@ -224,7 +224,7 @@ const SignUpPage = () => {
                 {t('auth.has_account')}{' '}
                 <button
                   onClick={() => navigate('/login')}
-                  className="text-blue-500 hover:text-coral-600 font-semibold"
+                  className="text-coral-600 hover:text-coral-700 font-semibold"
                 >
                   {t('auth.sign_in')}
                 </button>

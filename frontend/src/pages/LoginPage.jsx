@@ -196,7 +196,7 @@ const LoginPage = () => {
                       <input type="checkbox" className="rounded" />
                       <span className="text-slate-600 text-sm">Remember me</span>
                     </label>
-                    <a href="#" className="text-blue-500 hover:text-coral-600 text-sm">
+                    <a href="#" className="text-coral-600 hover:text-coral-700 text-sm">
                       {t('auth.forgot')}
                     </a>
                   </div>
@@ -204,7 +204,7 @@ const LoginPage = () => {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-navy-900 py-6 text-lg"
+                    className="w-full bg-coral-500 hover:bg-coral-600 text-white py-6 text-lg"
                     data-testid="login-submit-button"
                   >
                     {loading ? `${t('common.loading')}` : t('auth.sign_in')}
@@ -214,7 +214,7 @@ const LoginPage = () => {
                 <div className="mt-6 text-center">
                   <p className="text-slate-600">
                     {t('auth.no_account')}{' '}
-                    <button onClick={() => navigate('/signup')} className="text-blue-500 hover:text-coral-600 font-semibold" data-testid="go-to-signup">
+                    <button onClick={() => navigate('/signup')} className="text-coral-600 hover:text-coral-700 font-semibold" data-testid="go-to-signup">
                       {t('auth.sign_up')}
                     </button>
                   </p>
@@ -233,7 +233,7 @@ const LoginPage = () => {
                   <button
                     onClick={handleOktaLogin}
                     disabled={oktaLoading}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-blue-500/30 bg-blue-500/5 text-coral-600 hover:bg-blue-500/10 hover:border-blue-500/50 transition-all text-sm font-medium disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-slate-200 bg-cream-50 text-navy-900 hover:bg-cream-200 hover:border-slate-300 transition-all text-sm font-medium disabled:opacity-50"
                     data-testid="okta-login-button"
                   >
                     <Shield className="w-4 h-4" />
@@ -252,7 +252,7 @@ const LoginPage = () => {
             ) : (
               <>
                 <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-coral-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <ShieldCheck className="w-8 h-8 text-coral-600" />
                   </div>
                   <h1 className="text-2xl font-bold text-navy-900 mb-2">Two-Factor Authentication</h1>
@@ -283,7 +283,7 @@ const LoginPage = () => {
                   <Button
                     type="submit"
                     disabled={loading || totpCode.join('').length < 6}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-navy-900 py-6 text-lg"
+                    className="w-full bg-coral-500 hover:bg-coral-600 text-white py-6 text-lg"
                     data-testid="2fa-submit-button"
                   >
                     {loading ? 'Verifying...' : 'Verify & Sign In'}
