@@ -1,126 +1,117 @@
 {
-  "theme": "dark",
-  "archetype": "Archetype 4: Swiss Precision / Archetype 5: Jewel Hybrid (Dark Mode)",
-  "philosophy": "Transform the 'candy store' chaos into a sophisticated Enterprise Blockchain Command Center. Focus on high contrast, strict grid alignment, categorization of actions, and strictly monochromatic functional surfaces with a single electric accent color.",
+  "theme": "light",
+  "archetype": "corporate_trust_notary",
+  "typography": {
+    "heading_font": "Playfair Display",
+    "heading_fallback": "Georgia, serif",
+    "body_font": "IBM Plex Sans",
+    "body_fallback": "sans-serif",
+    "hierarchy": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl font-serif tracking-tight text-navy-900",
+      "h2": "text-3xl sm:text-4xl font-serif tracking-tight text-navy-900",
+      "h3": "text-2xl sm:text-3xl font-serif text-navy-800",
+      "h4": "text-xl font-serif text-navy-800",
+      "body": "text-base text-slate-600 leading-relaxed font-sans",
+      "label": "text-xs font-sans uppercase tracking-wider font-semibold text-slate-500"
+    }
+  },
   "colors": {
     "background": {
-      "base": "#0f1825",
-      "surface": "#162032",
-      "surface_hover": "#1d2a40",
-      "glass": "rgba(15, 24, 37, 0.7)"
+      "page": "#FDFCF8", 
+      "card": "#FFFFFF",
+      "subtle": "#F3F4F6",
+      "dark_section": "#0A192F"
+    },
+    "primary": {
+      "DEFAULT": "#0A192F",
+      "hover": "#112A46",
+      "text": "#FFFFFF",
+      "tailwind_name": "navy"
+    },
+    "accent": {
+      "coral": "#E15A46",
+      "coral_hover": "#C94E3C",
+      "gold": "#D4AF37",
+      "gold_hover": "#B8962A"
     },
     "text": {
-      "primary": "#ffffff",
-      "secondary": "#94a3b8",
-      "muted": "#64748b",
-      "accent": "#0ea5e9"
+      "primary": "#0A192F",
+      "secondary": "#475569",
+      "muted": "#64748B"
     },
     "border": {
-      "default": "#1e293b",
-      "focus": "#0ea5e9"
-    }
-  },
-  "typography": {
-    "fonts": {
-      "headings": "Manrope",
-      "body": "IBM Plex Sans",
-      "mono": "JetBrains Mono"
+      "DEFAULT": "#E2E8F0",
+      "focus": "#0A192F"
     },
-    "hierarchy": {
-      "h1": "text-3xl font-light tracking-tight text-white",
-      "h2": "text-xl font-medium tracking-tight text-white",
-      "h3": "text-xs font-semibold tracking-[0.2em] uppercase text-slate-400",
-      "body": "text-sm text-slate-300 text-left",
-      "metric_value": "text-4xl font-light tracking-tighter text-white"
+    "status": {
+      "success": "#166534",
+      "success_bg": "#DCFCE7",
+      "warning": "#9A3412",
+      "warning_bg": "#FFEDD5",
+      "danger": "#991B1B",
+      "danger_bg": "#FEE2E2"
     }
   },
-  "layout_strategy": {
-    "spacing": "Generous Spacing: p-6 or p-8 for inner card paddings.",
-    "grid": "Control Room Grid (Dashboard Mode): tight gaps (gap-4 or gap-6). Use 1px borders between cells rather than floating soft-shadow cards.",
-    "alignment": "Left-align dense text and actions. Center align only empty states or specific modal content."
+  "layout": {
+    "spacing_strategy": "Generous padding. Use p-8 to p-16 for sections to give breathing room. Avoid cramped data unless in specific admin tables.",
+    "cards": "bg-white rounded-md border border-slate-200 shadow-sm. No neon glows or dark glassmorphism.",
+    "buttons": {
+      "primary": "bg-[#0A192F] text-white rounded-md px-6 py-3 font-sans font-medium transition-colors hover:bg-[#112A46] shadow-sm",
+      "secondary": "bg-white text-[#0A192F] border border-[#0A192F] rounded-md px-6 py-3 font-sans font-medium transition-colors hover:bg-slate-50",
+      "accent": "bg-[#E15A46] text-white rounded-md px-6 py-3 font-sans font-medium transition-colors hover:bg-[#C94E3C] shadow-sm"
+    }
   },
   "components": {
-    "header": {
-      "description": "Sleek utility bar. Clean up the 8+ nav links.",
-      "structure": "Glassmorphism header (backdrop-blur-xl). Left: Logo. Right: A single Shadcn DropdownMenu triggered by the User Avatar containing (Plan, Security, Privacy, API, Org, Drafts, Log Out).",
-      "classes": "sticky top-0 z-50 backdrop-blur-xl bg-[#0f1825]/80 border-b border-slate-800 px-6 py-4 flex justify-between items-center"
-    },
-    "stats_section": {
-      "description": "3 metrics presented in a seamless grid without heavy card backgrounds.",
-      "layout": "grid grid-cols-1 md:grid-cols-3 border-b border-slate-800",
-      "item_styles": "p-8 border-r border-slate-800 last:border-r-0 hover:bg-slate-800/10 transition-colors flex flex-col gap-2"
-    },
-    "quick_actions_bento": {
-      "description": "Categorized Bento Grid to replace the 18+ colored button chaos.",
-      "layout": "grid grid-cols-1 md:grid-cols-4 gap-6 mt-8",
-      "sections": [
-        {
-          "name": "Core Actions",
-          "span": "col-span-1 md:col-span-2",
-          "items": ["Quick Seal", "Request Notarization", "Bulk Notarization"],
-          "styles": "bg-[#162032] border border-slate-800 p-6 relative overflow-hidden group rounded-lg",
-          "special_treatment": "Use the abstract_texture image as a low-opacity background here. Give the 'Quick Seal' button a solid primary accent color."
-        },
-        {
-          "name": "AI Intelligence",
-          "span": "col-span-1",
-          "items": ["AI Doc Generator", "AI Summarizer", "Doc Compare", "Doc Remediation"],
-          "styles": "border border-slate-800 p-6 rounded-lg bg-[#0f1825]"
-        },
-        {
-          "name": "Security & Identity",
-          "span": "col-span-1",
-          "items": ["Video Witness", "Biometric Passport", "Escrow Intelligence", "Fraud Intelligence"],
-          "styles": "border border-slate-800 p-6 rounded-lg bg-[#0f1825]"
-        },
-        {
-          "name": "Network & Tools",
-          "span": "col-span-1 md:col-span-4",
-          "layout": "grid grid-cols-2 md:grid-cols-5 gap-4",
-          "items": ["Templates", "My Bookings", "Find Notaries", "Approvals", "Reminders", "ANAN Network", "Branding", "Ceremony Mode", "Become a Notary"],
-          "styles": "pt-6 border-t border-slate-800 mt-2"
-        }
-      ],
-      "button_style": "flex items-center gap-3 w-full p-3 text-sm text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-md transition-all text-left border border-transparent hover:border-slate-700"
-    },
-    "requests_list": {
-      "description": "Data table for 'My Notarization Requests'.",
-      "styles": "mt-8 border border-slate-800 rounded-md overflow-hidden bg-[#0f1825]",
-      "table_header": "bg-slate-900 border-b border-slate-800 text-slate-400 font-mono text-xs uppercase tracking-wider h-10"
-    }
+    "hero_section": "Cream background or subtle abstract paper texture. H1 in Playfair Display (Navy). Left-aligned text for readability. Solid Coral primary CTA and outlined Navy secondary CTA. Professional legal imagery on the right.",
+    "kpi_stat_card": "Flat white card, 1px border-slate-200, shadow-sm, p-6. Small-caps label in slate-500, large serif number in Navy. Optional subtle success-green trend indicator.",
+    "pricing_card": "White background, distinct from page background. Navy header or border-top for the 'Pro' tier. Clear list of features with checkmarks. Solid buttons.",
+    "navigation_bar": "Sticky white or cream background (no dark glass). Navy text links. Coral button for 'Start Notarization'. Bottom border of slate-200.",
+    "trust_badge_svg": "Circular official seal design. Deep navy outer ring with 'VERIFIED NOTARY - FLORIDA RON COMPLIANT' wrapping around. Inner circle cream/gold with a classic fountain pen, notary stamp, or scales of justice icon. 1px gold serrated or double-line border.",
+    "admin_pages": "Keep utilitarian but map to new palette. White background, simple borders. Keep IBM Plex Sans for data density. No dark mode by default."
   },
+  "anti_patterns_to_remove": [
+    "bg-slate-950 and dark mode everywhere",
+    "Neon accents (emerald-400, amber-400, orange-500 glows)",
+    "Gradient text effects (bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-500 bg-clip-text)",
+    "Mono-font UPPERCASE TRACKING-WIDEST for generic labels",
+    "Glassmorphism (backdrop-blur with low opacity over dark backgrounds)",
+    "Cyberpunk / Web3 aesthetic"
+  ],
+  "testing_and_attributes": "Preserve all `data-testid` attributes and route paths exactly. Only rewrite the UI/CSS.",
   "media": {
-    "user_avatar": {
-      "url": "https://images.unsplash.com/photo-1758534063829-a72058381e21?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdCUyMHBvcnRyYWl0JTIwZGFyayUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzc0ODE1ODYyfDA&ixlib=rb-4.1.0&q=85",
-      "description": "Professional user headshot to place in the top right header dropdown trigger",
-      "category": "Avatar"
+    "hero_bg_legal": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/6c995b9a-391a-4bfd-a778-d9673d1a76c6/images/9bb5207b736006dc76b127246045f4374888bc8ecd466755c9ce0dbd493e1a74.png",
+      "description": "Close-up wide-angle photograph of a premium fountain pen resting on official legal documents, warm natural morning sunlight, soft cream and deep navy color palette.",
+      "usage": "Use as a supporting image in the hero section or 'Start Notarization' callouts."
     },
-    "abstract_texture": {
-      "url": "https://images.pexels.com/photos/3612932/pexels-photo-3612932.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-      "description": "Futuristic dark hexagonal pattern",
-      "category": "Background Texture",
-      "usage_instructions": "Use as an absolutely positioned background image inside the 'Core Actions' bento card with opacity-10 and blend-mode-overlay."
+    "abstract_paper_bg": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/6c995b9a-391a-4bfd-a778-d9673d1a76c6/images/df5f12866a106ddc01c5751098b387ab4573df6541ddffcfbb92c184197b95ce.png",
+      "description": "Abstract warm cream and textured paper background with very subtle deep navy geometric framing.",
+      "usage": "Use as background for sections needing texture, like testimonials, feature blocks, or trust-badge marketing."
+    },
+    "professional_signing_1": {
+      "url": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjBzaWduaW5nJTIwbGVnYWwlMjBkb2N1bWVudHxlbnwwfHx8fDE3NzkwNDc0NTl8MA&ixlib=rb-4.1.0&q=85",
+      "description": "Man writing on paper.",
+      "usage": "Use in Notary Directory or Profile placeholders, or 'Become a Notary' sections."
+    },
+    "professional_signing_2": {
+      "url": "https://images.unsplash.com/photo-1562564055-71e051d33c19?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjBzaWduaW5nJTIwbGVnYWwlMjBkb2N1bWVudHxlbnwwfHx8fDE3NzkwNDc0NTl8MA&ixlib=rb-4.1.0&q=85",
+      "description": "Woman signing on white printer paper.",
+      "usage": "Use in 'Field Document Scanner' contextual sections or public verifier."
     }
   },
-  "interactions_and_motion": {
-    "hover_states": "All buttons MUST explicitly set hover text color (e.g. hover:text-white). Use slight translate-x-1 on hover for list items.",
-    "transitions": "Use 'transition-all duration-200 ease-in-out' on interactive elements."
-  },
-  "icons": {
-    "library": "@phosphor-icons/react",
-    "style": "duotone",
-    "instructions": "Assign a distinct but monochromatic Phosphor icon to each of the 18+ actions to aid scanning without relying on chaotic colors."
-  },
-  "testing": {
-    "requirements": "All buttons, nav items, and table rows must have a data-testid attribute in kebab-case."
-  },
-  "instructions_to_main_agent": [
-    "1. Read and apply all color variables using the provided #0f1825 base.",
-    "2. Move the 8+ header navigation links into a Shadcn Dropdown Menu attached to the user avatar.",
-    "3. Refactor the 18+ button grid into the categorized Bento layout defined in 'quick_actions_bento'.",
-    "4. Strip out the 'candy store' multi-color buttons. Use the subtle, dark monochromatic button_style provided.",
-    "5. Implement 'Manrope' for headings and 'IBM Plex Sans' for body text. Ensure strict adherence to text size maximums.",
-    "6. Use Shadcn Table for the Notarization Requests list.",
-    "7. Integrate the provided Unsplash/Pexels URLs exactly where specified."
-  ]
+  "files_to_edit_in_priority": [
+    "/app/frontend/src/pages/PublicLanding.jsx",
+    "/app/frontend/src/pages/FloridaLanding.jsx",
+    "/app/frontend/src/pages/FLNotaryRecruitment.jsx",
+    "/app/frontend/src/pages/TrustBadgeLanding.jsx",
+    "/app/frontend/src/pages/NotaryDirectory.jsx",
+    "/app/frontend/src/pages/NotaryProfile.jsx",
+    "/app/frontend/src/pages/PublicVerifier.jsx",
+    "/app/frontend/src/pages/Login.jsx",
+    "/app/frontend/src/pages/Signup.jsx",
+    "/app/frontend/src/pages/Scanner.jsx",
+    "/app/frontend/src/pages/Dashboard.jsx"
+  ],
+  "instructions_to_main_agent": "Refactor the UI components to align with the 'Corporate Trust Notary' aesthetic, replacing the cyberpunk look. Use Playfair Display for headings and IBM Plex Sans for body. Add generous padding and replace all dark/glassmorphic cards with flat, white, softly bordered boxes (shadow-sm). Use Deep Navy as the primary brand color, Cream as the background, and Warm Coral as the accent. Redesign the Trust Badge SVG to look like a physical stamp or seal using the new color palette. Preserve ALL data-testid attributes and existing logic/routes. Do NOT remove functional code."
 }
