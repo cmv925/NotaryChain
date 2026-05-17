@@ -34,7 +34,8 @@ export default function FloridaLanding() {
     <div className="min-h-screen bg-cream-100 text-navy-900" data-testid="florida-landing">
       {/* Hero */}
       <div className="border-b border-slate-200 bg-cream-100">
-        <div className="max-w-6xl mx-auto px-6 py-16 sm:py-24">
+        <div className="max-w-7xl mx-auto px-6 py-16 sm:py-24 grid lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-7">
           <div className="flex items-center gap-2 mb-4">
             <Sun className="w-5 h-5 text-coral-600" />
             <span className="text-coral-600 text-[11px] uppercase tracking-[0.25em] font-bold">Florida · Online Notary Service</span>
@@ -51,7 +52,7 @@ export default function FloridaLanding() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <Link to="/request-notarization" data-testid="cta-notarize">
-              <Button className="bg-coral-500 hover:bg-coral-500 text-navy-900 text-sm px-6 h-11">
+              <Button className="bg-coral-500 hover:bg-coral-600 text-white text-sm px-6 h-11">
                 Start a Florida notarization <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -66,7 +67,7 @@ export default function FloridaLanding() {
               </Button>
             </Link>
             <Link to="/florida/notaries" data-testid="cta-notary-recruit">
-              <Button variant="outline" className="bg-coral-500/10 border-coral-200 text-emerald-200 hover:bg-coral-500/20 text-sm px-6 h-11">
+              <Button variant="outline" className="bg-coral-50 border-coral-200 text-coral-700 hover:bg-coral-100 text-sm px-6 h-11">
                 Notaries: get paid more →
               </Button>
             </Link>
@@ -98,6 +99,42 @@ export default function FloridaLanding() {
               sub={ronspLive ? 'registered with FL DoS' : 'awaiting state confirmation'}
               accent={ronspLive ? 'emerald' : 'amber'}
             />
+          </div>
+          </div>
+
+          {/* Right-side certificate visual */}
+          <div className="lg:col-span-5 hidden lg:flex justify-center relative">
+            <div className="absolute -inset-8 bg-gradient-to-br from-cream-300/40 to-transparent blur-2xl rounded-full" />
+            <div className="relative bg-white border border-slate-200 rounded-md shadow-md p-8 max-w-sm w-full" data-testid="fl-hero-certificate">
+              <div className="text-center mb-5">
+                <svg viewBox="0 0 100 100" className="w-24 h-24 mx-auto mb-3" aria-hidden="true">
+                  <circle cx="50" cy="50" r="46" fill="#FAF6EC" stroke="#0A192F" strokeWidth="2" />
+                  <circle cx="50" cy="50" r="38" fill="none" stroke="#D4AF37" strokeWidth="0.8" />
+                  <circle cx="50" cy="50" r="22" fill="#0A192F" fillOpacity="0.05" stroke="#0A192F" strokeWidth="0.7" />
+                  <g stroke="#D4AF37" strokeWidth="1.4" strokeLinecap="round">
+                    {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((d) => (
+                      <line key={d} x1="50" y1="8" x2="50" y2="14" transform={`rotate(${d} 50 50)`} />
+                    ))}
+                  </g>
+                  <text x="50" y="48" textAnchor="middle" fontFamily="Playfair Display, serif" fontSize="13" fontWeight="700" fill="#0A192F">FL</text>
+                  <text x="50" y="60" textAnchor="middle" fontFamily="IBM Plex Sans, sans-serif" fontSize="6" fontWeight="700" fill="#D4AF37" letterSpacing="0.6">NOTARY</text>
+                </svg>
+                <p className="font-serif text-lg text-navy-900 font-bold">Certificate of Notarization</p>
+                <p className="text-xs text-slate-500 mt-1">State of Florida · RON Compliant</p>
+              </div>
+              <div className="space-y-2 text-sm border-y border-slate-200 py-4 mb-4">
+                <CertRow label="Act" value="Acknowledgment" />
+                <CertRow label="Doc" value="Warranty Deed · 12 pp" />
+                <CertRow label="Signer" value="Jane Doe · DL verified" />
+                <CertRow label="KBA" value="Passed · 5/5 · 2 min" />
+                <CertRow label="A/V" value="1080p · 48kHz · 14:23" />
+                <CertRow label="Hedera" value="Topic 0.0.4823 · Seq #1247" mono />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-slate-500 tracking-wide">FL Stat. 117.245 journal entry recorded · 10-yr retention</span>
+                <CheckCircle className="w-4 h-4 text-green-700 flex-shrink-0" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -280,3 +317,12 @@ function Faq({ q, children }) {
 }
 
 function fmtDate(s) { if (!s) return '—'; try { return new Date(s).toLocaleDateString(); } catch { return s; } }
+
+function CertRow({ label, value, mono }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold w-12 flex-shrink-0">{label}</span>
+      <span className={`text-navy-900 ${mono ? 'font-mono text-[11px]' : 'text-xs font-medium'} truncate`}>{value}</span>
+    </div>
+  );
+}

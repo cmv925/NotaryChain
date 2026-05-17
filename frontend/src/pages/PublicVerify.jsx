@@ -86,44 +86,44 @@ export default function PublicVerify() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white" data-testid="public-verify-page">
+    <div className="min-h-screen bg-cream-100 text-navy-900" data-testid="public-verify-page">
       {/* Hero */}
-      <div className="border-b border-slate-800 bg-gradient-to-b from-sky-950/30 to-transparent">
+      <div className="border-b border-slate-200 bg-cream-100">
         <div className="max-w-5xl mx-auto px-6 py-10">
           <div className="flex items-center gap-2 mb-3">
-            <Shield className="w-6 h-6 text-sky-400" />
-            <span className="text-sky-400 text-[11px] uppercase tracking-[0.25em] font-bold">NotaryChain Verify</span>
+            <Shield className="w-6 h-6 text-coral-600" />
+            <span className="text-coral-600 text-[11px] uppercase tracking-[0.25em] font-bold">NotaryChain Verify</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-2">Verify any document, certificate, or notary.</h1>
-          <p className="text-slate-400 text-base max-w-2xl">Public, free, and instant. Every verification is sealed on the Hedera blockchain — tamper-proof and auditable forever.</p>
+          <h1 className="font-serif text-4xl sm:text-5xl font-bold tracking-tight text-navy-900 mb-2">Verify any document, certificate, or notary.</h1>
+          <p className="text-slate-600 text-base max-w-2xl">Public, free, and instant. Every verification is sealed on the Hedera blockchain — tamper-proof and auditable forever.</p>
         </div>
       </div>
 
       {/* Badge info banner if /verify?badge=xxx */}
       {badgeInfo && (
-        <div className="bg-emerald-500/10 border-y border-emerald-500/20 px-6 py-3" data-testid="badge-banner">
+        <div className="bg-coral-500/10 border-y border-coral-200 px-6 py-3" data-testid="badge-banner">
           <div className="max-w-5xl mx-auto flex items-center gap-3 text-sm">
-            <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+            <CheckCircle className="w-5 h-5 text-coral-600 flex-shrink-0" />
             <div>
-              <span className="text-emerald-400 font-bold">{badgeInfo.business_name}</span>
-              <span className="text-slate-300"> · trusted by NotaryChain · </span>
+              <span className="text-coral-600 font-bold">{badgeInfo.business_name}</span>
+              <span className="text-navy-800"> · trusted by NotaryChain · </span>
               <span className="text-slate-500 font-mono text-xs">{badgeInfo.domain}</span>
             </div>
-            <span className="ml-auto text-[11px] text-slate-500">Status: {badgeInfo.verified ? <span className="text-emerald-400 font-semibold">verified</span> : <span className="text-amber-400 font-semibold">pending</span>}</span>
+            <span className="ml-auto text-[11px] text-slate-500">Status: {badgeInfo.verified ? <span className="text-coral-600 font-semibold">verified</span> : <span className="text-coral-600 font-semibold">pending</span>}</span>
           </div>
         </div>
       )}
 
       {/* Tab switcher */}
       <div className="max-w-5xl mx-auto px-6 py-8">
-        <div className="flex border-b border-slate-800 mb-6 overflow-x-auto">
+        <div className="flex border-b border-slate-200 mb-6 overflow-x-auto">
           {[
             { k: 'document', label: 'Document', icon: FileText },
             { k: 'certificate', label: 'Certificate', icon: Award },
             { k: 'notary', label: 'Notary', icon: Shield },
           ].map(t => (
             <button key={t.k} onClick={() => { setTab(t.k); setResult(null); }}
-              className={`px-4 py-3 text-sm flex items-center gap-2 border-b-2 transition-colors whitespace-nowrap ${tab === t.k ? 'border-sky-400 text-sky-400 font-semibold' : 'border-transparent text-slate-400 hover:text-white'}`}
+              className={`px-4 py-3 text-sm flex items-center gap-2 border-b-2 transition-colors whitespace-nowrap ${tab === t.k ? 'border-sky-400 text-coral-600 font-semibold' : 'border-transparent text-slate-600 hover:text-navy-900'}`}
               data-testid={`tab-${t.k}`}>
               <t.icon className="w-4 h-4" /> {t.label}
             </button>
@@ -137,31 +137,31 @@ export default function PublicVerify() {
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}
               onDrop={onDrop}
-              className={`bg-slate-900/40 border-2 border-dashed transition-colors cursor-pointer ${dragOver ? 'border-sky-400 bg-sky-950/20' : 'border-slate-700'}`}>
+              className={`bg-white border-2 border-dashed transition-colors cursor-pointer ${dragOver ? 'border-coral-500 bg-coral-50' : 'border-slate-300'}`}>
               <CardContent className="p-8 text-center">
-                <Upload className={`w-12 h-12 mx-auto mb-3 ${dragOver ? 'text-sky-400' : 'text-slate-500'}`} />
-                <h3 className="font-bold mb-2">Drop a PDF here</h3>
+                <Upload className={`w-12 h-12 mx-auto mb-3 ${dragOver ? 'text-coral-600' : 'text-slate-500'}`} />
+                <h3 className="font-bold mb-2 text-navy-900">Drop a PDF here</h3>
                 <p className="text-xs text-slate-500 mb-4">or</p>
                 <label className="inline-block">
                   <input type="file" accept=".pdf,application/pdf" className="hidden"
                     onChange={(e) => { const f = e.target.files?.[0]; if (f) verifyByFile(f); }} data-testid="document-file-input" />
-                  <span className="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded text-sm font-semibold cursor-pointer inline-block">Choose File</span>
+                  <span className="bg-coral-500 hover:bg-coral-600 text-white px-4 py-2 rounded text-sm font-semibold cursor-pointer inline-block">Choose File</span>
                 </label>
                 <p className="text-[10px] text-slate-600 mt-3">Max 50 MB · We hash locally; document never leaves verification</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-900/40 border border-slate-800">
+            <Card className="bg-white border border-slate-200">
               <CardContent className="p-8">
-                <div className="flex items-center gap-2 mb-3"><Hash className="w-5 h-5 text-slate-400" /><h3 className="font-bold">…or paste a hash</h3></div>
+                <div className="flex items-center gap-2 mb-3"><Hash className="w-5 h-5 text-slate-600" /><h3 className="font-bold text-navy-900">…or paste a hash</h3></div>
                 <p className="text-xs text-slate-500 mb-3">Have the SHA256 hash already? Paste it below.</p>
                 <Input
                   placeholder="64-character SHA256 hex..."
                   value={hashInput} onChange={(e) => setHashInput(e.target.value)}
-                  className="bg-slate-800/60 border-slate-700 mb-3 font-mono text-xs"
+                  className="bg-cream-200 border-slate-300 mb-3 font-mono text-xs"
                   data-testid="document-hash-input" />
                 <Button onClick={() => verifyByHash(hashInput.trim())} disabled={hashInput.length !== 64 || loading}
-                  className="w-full bg-sky-600 hover:bg-sky-500" data-testid="verify-hash-btn">
+                  className="w-full bg-coral-500 hover:bg-coral-600 text-white" data-testid="verify-hash-btn">
                   <Search className="w-4 h-4 mr-2" /> Verify Hash
                 </Button>
               </CardContent>
@@ -171,15 +171,15 @@ export default function PublicVerify() {
 
         {/* CERTIFICATE TAB */}
         {tab === 'certificate' && (
-          <Card className="bg-slate-900/40 border border-slate-800" data-testid="certificate-tab">
+          <Card className="bg-white border border-slate-200" data-testid="certificate-tab">
             <CardContent className="p-8">
-              <h3 className="font-bold mb-3 flex items-center gap-2"><Award className="w-5 h-5 text-amber-400" /> Certificate ID Lookup</h3>
+              <h3 className="font-bold mb-3 flex items-center gap-2"><Award className="w-5 h-5 text-coral-600" /> Certificate ID Lookup</h3>
               <p className="text-xs text-slate-500 mb-4">Enter the certificate ID from the bottom of any NotaryChain certificate.</p>
               <div className="flex gap-2">
                 <Input placeholder="Certificate ID..." value={certInput} onChange={(e) => setCertInput(e.target.value)}
-                  className="bg-slate-800/60 border-slate-700 font-mono text-xs" data-testid="cert-input"
+                  className="bg-cream-200 border-slate-300 font-mono text-xs" data-testid="cert-input"
                   onKeyDown={(e) => e.key === 'Enter' && verifyCert()} />
-                <Button onClick={verifyCert} disabled={!certInput || loading} className="bg-amber-600 hover:bg-amber-500" data-testid="verify-cert-btn">
+                <Button onClick={verifyCert} disabled={!certInput || loading} className="bg-amber-600 hover:bg-coral-500" data-testid="verify-cert-btn">
                   <Search className="w-4 h-4 mr-2" /> Look Up
                 </Button>
               </div>
@@ -189,20 +189,20 @@ export default function PublicVerify() {
 
         {/* NOTARY TAB */}
         {tab === 'notary' && (
-          <Card className="bg-slate-900/40 border border-slate-800" data-testid="notary-tab">
+          <Card className="bg-white border border-slate-200" data-testid="notary-tab">
             <CardContent className="p-8">
-              <h3 className="font-bold mb-3 flex items-center gap-2"><Shield className="w-5 h-5 text-emerald-400" /> Notary Public Profile</h3>
+              <h3 className="font-bold mb-3 flex items-center gap-2"><Shield className="w-5 h-5 text-coral-600" /> Notary Public Profile</h3>
               <p className="text-xs text-slate-500 mb-4">Look up a notary by their NotaryChain ID to see their bond, license, and sealing history.</p>
               <div className="flex gap-2">
                 <Input placeholder="Notary ID..." value={notaryInput} onChange={(e) => setNotaryInput(e.target.value)}
-                  className="bg-slate-800/60 border-slate-700 font-mono text-xs" data-testid="notary-input"
+                  className="bg-cream-200 border-slate-300 font-mono text-xs" data-testid="notary-input"
                   onKeyDown={(e) => e.key === 'Enter' && verifyNotary()} />
-                <Button onClick={verifyNotary} disabled={!notaryInput || loading} className="bg-emerald-600 hover:bg-emerald-500" data-testid="verify-notary-btn">
+                <Button onClick={verifyNotary} disabled={!notaryInput || loading} className="bg-coral-500 hover:bg-coral-500" data-testid="verify-notary-btn">
                   <Search className="w-4 h-4 mr-2" /> Look Up
                 </Button>
               </div>
               <p className="text-[11px] text-slate-500 mt-3">
-                Don’t have an ID? <a href="/notaries" className="text-emerald-400 hover:underline" data-testid="browse-directory-link">Browse the public notary directory →</a>
+                Don’t have an ID? <a href="/notaries" className="text-coral-600 hover:underline" data-testid="browse-directory-link">Browse the public notary directory →</a>
               </p>
             </CardContent>
           </Card>
@@ -211,7 +211,7 @@ export default function PublicVerify() {
         {/* RESULT */}
         {loading && (
           <div className="mt-8 text-center" data-testid="loading-state">
-            <Loader2 className="w-8 h-8 animate-spin text-sky-400 mx-auto mb-2" />
+            <Loader2 className="w-8 h-8 animate-spin text-coral-600 mx-auto mb-2" />
             <p className="text-xs text-slate-500">Checking on-chain registry…</p>
           </div>
         )}
@@ -226,25 +226,25 @@ export default function PublicVerify() {
       </div>
 
       {/* Footer with Trust Badge marketing */}
-      <div className="border-t border-slate-800 mt-16">
+      <div className="border-t border-slate-200 mt-16">
         <div className="max-w-5xl mx-auto px-6 py-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
             <div>
-              <Shield className="w-5 h-5 text-sky-400 mb-2" />
+              <Shield className="w-5 h-5 text-coral-600 mb-2" />
               <h4 className="font-bold mb-1">Why NotaryChain Verify?</h4>
               <p className="text-slate-500 text-xs leading-relaxed">Every notarization sealed on the Hedera blockchain. Free, public, and impossible to forge.</p>
             </div>
             <div>
-              <Award className="w-5 h-5 text-amber-400 mb-2" />
+              <Award className="w-5 h-5 text-coral-600 mb-2" />
               <h4 className="font-bold mb-1">Get a Trust Badge</h4>
               <p className="text-slate-500 text-xs leading-relaxed mb-2">Show visitors your business uses NotaryChain. Embed a verified badge on your site.</p>
-              <a href="/trust-badge" className="text-amber-400 text-xs hover:underline" data-testid="trust-badge-cta">Get your badge →</a>
+              <a href="/trust-badge" className="text-coral-600 text-xs hover:underline" data-testid="trust-badge-cta">Get your badge →</a>
             </div>
             <div>
-              <ExternalLink className="w-5 h-5 text-emerald-400 mb-2" />
+              <ExternalLink className="w-5 h-5 text-coral-600 mb-2" />
               <h4 className="font-bold mb-1">Need notarization?</h4>
               <p className="text-slate-500 text-xs leading-relaxed mb-2">AI-powered, blockchain-sealed, court-admissible.</p>
-              <a href="/" className="text-emerald-400 text-xs hover:underline">Start with NotaryChain →</a>
+              <a href="/" className="text-coral-600 text-xs hover:underline">Start with NotaryChain →</a>
             </div>
           </div>
         </div>
@@ -258,24 +258,24 @@ export default function PublicVerify() {
 function DocumentResult({ data }) {
   if (!data.verified) {
     return (
-      <Card className="bg-amber-500/5 border-amber-500/30" data-testid="document-not-found">
+      <Card className="bg-coral-500/5 border-gold-500/30" data-testid="document-not-found">
         <CardContent className="p-6 text-center">
-          <XCircle className="w-12 h-12 mx-auto text-amber-400 mb-2" />
-          <h3 className="text-xl font-bold text-amber-400 mb-1">Not Found</h3>
-          <p className="text-sm text-slate-400 mb-2">{data.message || 'This document is not registered with NotaryChain.'}</p>
+          <XCircle className="w-12 h-12 mx-auto text-coral-600 mb-2" />
+          <h3 className="text-xl font-bold text-coral-600 mb-1">Not Found</h3>
+          <p className="text-sm text-slate-600 mb-2">{data.message || 'This document is not registered with NotaryChain.'}</p>
           {data.document_hash && <p className="text-[10px] text-slate-600 font-mono break-all">SHA256: {data.document_hash}</p>}
         </CardContent>
       </Card>
     );
   }
   return (
-    <Card className="bg-emerald-500/5 border-emerald-500/30" data-testid="document-verified">
+    <Card className="bg-coral-500/5 border-coral-200" data-testid="document-verified">
       <CardContent className="p-6">
         <div className="flex items-center gap-3 mb-4">
-          <CheckCircle className="w-10 h-10 text-emerald-400" />
+          <CheckCircle className="w-10 h-10 text-coral-600" />
           <div>
-            <h3 className="text-xl font-bold text-emerald-400">Document Verified</h3>
-            <p className="text-xs text-slate-400">Sealed on {data.network || 'Hedera'} mainnet</p>
+            <h3 className="text-xl font-bold text-coral-600">Document Verified</h3>
+            <p className="text-xs text-slate-600">Sealed on {data.network || 'Hedera'} mainnet</p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
@@ -287,12 +287,12 @@ function DocumentResult({ data }) {
           {data.topic_id && <Field label="Topic ID" value={data.topic_id} mono />}
         </div>
         {data.document_hash && (
-          <div className="mt-3 pt-3 border-t border-slate-800 text-[10px] font-mono text-slate-500 break-all">
+          <div className="mt-3 pt-3 border-t border-slate-200 text-[10px] font-mono text-slate-500 break-all">
             SHA256: {data.document_hash}
           </div>
         )}
         {data.explorer_url && (
-          <a href={data.explorer_url} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-1.5 text-sm text-amber-400 hover:text-amber-300" data-testid="explorer-link">
+          <a href={data.explorer_url} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-1.5 text-sm text-coral-600 hover:text-coral-700" data-testid="explorer-link">
             View on Hedera <ExternalLink className="w-3 h-3" />
           </a>
         )}
@@ -304,11 +304,11 @@ function DocumentResult({ data }) {
 function CertificateResult({ data }) {
   if (!data.verified) {
     return (
-      <Card className="bg-amber-500/5 border-amber-500/30">
+      <Card className="bg-coral-500/5 border-gold-500/30">
         <CardContent className="p-6 text-center">
-          <XCircle className="w-12 h-12 mx-auto text-amber-400 mb-2" />
-          <h3 className="text-xl font-bold text-amber-400">Certificate Not Found</h3>
-          <p className="text-sm text-slate-400 mt-1">{data.message}</p>
+          <XCircle className="w-12 h-12 mx-auto text-coral-600 mb-2" />
+          <h3 className="text-xl font-bold text-coral-600">Certificate Not Found</h3>
+          <p className="text-sm text-slate-600 mt-1">{data.message}</p>
         </CardContent>
       </Card>
     );
@@ -326,7 +326,7 @@ function CertificateResult({ data }) {
           <StatusIcon className="w-10 h-10" style={{ color: statusConfig.color }} />
           <div>
             <h3 className="text-xl font-bold" style={{ color: statusConfig.color }}>{statusConfig.label}</h3>
-            <p className="text-xs text-slate-400">Certificate {data.certificate_id}</p>
+            <p className="text-xs text-slate-600">Certificate {data.certificate_id}</p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
@@ -345,23 +345,23 @@ function CertificateResult({ data }) {
 function NotaryResult({ data }) {
   if (!data.verified) {
     return (
-      <Card className="bg-amber-500/5 border-amber-500/30">
+      <Card className="bg-coral-500/5 border-gold-500/30">
         <CardContent className="p-6 text-center">
-          <XCircle className="w-12 h-12 mx-auto text-amber-400 mb-2" />
-          <h3 className="text-xl font-bold text-amber-400">Notary Not Found</h3>
+          <XCircle className="w-12 h-12 mx-auto text-coral-600 mb-2" />
+          <h3 className="text-xl font-bold text-coral-600">Notary Not Found</h3>
         </CardContent>
       </Card>
     );
   }
   const statusColor = data.active ? '#10b981' : '#ef4444';
   return (
-    <Card className="bg-emerald-500/5 border-emerald-500/30">
+    <Card className="bg-coral-500/5 border-coral-200">
       <CardContent className="p-6">
         <div className="flex items-center gap-3 mb-4">
           <Shield className="w-10 h-10" style={{ color: statusColor }} />
           <div>
             <h3 className="text-xl font-bold" style={{ color: statusColor }}>{data.name}</h3>
-            <p className="text-xs text-slate-400">{data.role} · {data.active ? 'Active' : 'Inactive'}</p>
+            <p className="text-xs text-slate-600">{data.role} · {data.active ? 'Active' : 'Inactive'}</p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
@@ -375,7 +375,7 @@ function NotaryResult({ data }) {
             </>
           )}
         </div>
-        <div className="mt-4 pt-4 border-t border-slate-800 grid grid-cols-3 gap-3 text-center">
+        <div className="mt-4 pt-4 border-t border-slate-200 grid grid-cols-3 gap-3 text-center">
           <Stat label="Total Seals" value={data.stats?.total_seals || 0} />
           <Stat label="Ceremonies" value={data.stats?.total_ceremonies || 0} />
           <Stat label="Fraud Flags" value={data.stats?.active_fraud_flags || 0} red={data.stats?.active_fraud_flags > 0} />
@@ -397,7 +397,7 @@ function Field({ label, value, mono }) {
 function Stat({ label, value, red }) {
   return (
     <div>
-      <p className={`text-2xl font-bold ${red ? 'text-red-400' : 'text-white'}`}>{value}</p>
+      <p className={`text-2xl font-bold ${red ? 'text-red-400' : 'text-navy-900'}`}>{value}</p>
       <p className="text-[10px] uppercase tracking-wider text-slate-500">{label}</p>
     </div>
   );

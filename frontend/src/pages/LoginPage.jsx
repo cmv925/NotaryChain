@@ -145,22 +145,22 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       
       <div className="pt-24 sm:pt-32 pb-16 sm:pb-24 flex items-center justify-center px-4">
-        <Card className="w-full max-w-md bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800" data-testid="login-card">
+        <Card className="w-full max-w-md bg-white border border-slate-200 shadow-md" data-testid="login-card">
           <CardContent className="p-6 sm:p-8">
             {!show2FA ? (
               <>
                 <div className="text-center mb-8">
-                  <h1 className="text-3xl font-bold text-white mb-2">{t('auth.welcome_back')}</h1>
-                  <p className="text-gray-400">{t('auth.sign_in')} to NotaryChain</p>
+                  <h1 className="text-3xl font-bold text-navy-900 mb-2">{t('auth.welcome_back')}</h1>
+                  <p className="text-slate-600">{t('auth.sign_in')} to NotaryChain</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6" data-testid="login-form">
                   <div>
-                    <Label htmlFor="email" className="text-white mb-2 block">{t('auth.email')}</Label>
+                    <Label htmlFor="email" className="text-navy-900 mb-2 block">{t('auth.email')}</Label>
                     <Input
                       id="email"
                       name="email"
@@ -168,7 +168,7 @@ const LoginPage = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-white focus:border-blue-500"
+                      className="bg-white border-slate-300 text-navy-900 focus:border-coral-500"
                       placeholder="you@example.com"
                       disabled={loading}
                       data-testid="login-email-input"
@@ -176,7 +176,7 @@ const LoginPage = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="password" className="text-white mb-2 block">{t('auth.password')}</Label>
+                    <Label htmlFor="password" className="text-navy-900 mb-2 block">{t('auth.password')}</Label>
                     <Input
                       id="password"
                       name="password"
@@ -184,7 +184,7 @@ const LoginPage = () => {
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-white focus:border-blue-500"
+                      className="bg-white border-slate-300 text-navy-900 focus:border-coral-500"
                       placeholder="••••••••"
                       disabled={loading}
                       data-testid="login-password-input"
@@ -194,9 +194,9 @@ const LoginPage = () => {
                   <div className="flex items-center justify-between">
                     <label className="flex items-center gap-2">
                       <input type="checkbox" className="rounded" />
-                      <span className="text-gray-400 text-sm">Remember me</span>
+                      <span className="text-slate-600 text-sm">Remember me</span>
                     </label>
-                    <a href="#" className="text-blue-500 hover:text-blue-400 text-sm">
+                    <a href="#" className="text-blue-500 hover:text-coral-600 text-sm">
                       {t('auth.forgot')}
                     </a>
                   </div>
@@ -204,7 +204,7 @@ const LoginPage = () => {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-navy-900 py-6 text-lg"
                     data-testid="login-submit-button"
                   >
                     {loading ? `${t('common.loading')}` : t('auth.sign_in')}
@@ -212,19 +212,19 @@ const LoginPage = () => {
                 </form>
 
                 <div className="mt-6 text-center">
-                  <p className="text-gray-400">
+                  <p className="text-slate-600">
                     {t('auth.no_account')}{' '}
-                    <button onClick={() => navigate('/signup')} className="text-blue-500 hover:text-blue-400 font-semibold" data-testid="go-to-signup">
+                    <button onClick={() => navigate('/signup')} className="text-blue-500 hover:text-coral-600 font-semibold" data-testid="go-to-signup">
                       {t('auth.sign_up')}
                     </button>
                   </p>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-gray-800 space-y-3">
+                <div className="mt-4 pt-4 border-t border-slate-200 space-y-3">
                   <button
                     onClick={handleAuth0Login}
                     disabled={auth0Loading}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-cyan-500/30 bg-cyan-500/5 text-cyan-400 hover:bg-cyan-500/10 hover:border-cyan-500/50 transition-all text-sm font-medium disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-cyan-500/30 bg-cyan-500/5 text-coral-600 hover:bg-cyan-500/10 hover:border-cyan-500/50 transition-all text-sm font-medium disabled:opacity-50"
                     data-testid="auth0-login-button"
                   >
                     <Globe className="w-4 h-4" />
@@ -233,7 +233,7 @@ const LoginPage = () => {
                   <button
                     onClick={handleOktaLogin}
                     disabled={oktaLoading}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-blue-500/30 bg-blue-500/5 text-blue-400 hover:bg-blue-500/10 hover:border-blue-500/50 transition-all text-sm font-medium disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-blue-500/30 bg-blue-500/5 text-coral-600 hover:bg-blue-500/10 hover:border-blue-500/50 transition-all text-sm font-medium disabled:opacity-50"
                     data-testid="okta-login-button"
                   >
                     <Shield className="w-4 h-4" />
@@ -253,10 +253,10 @@ const LoginPage = () => {
               <>
                 <div className="text-center mb-8">
                   <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <ShieldCheck className="w-8 h-8 text-blue-400" />
+                    <ShieldCheck className="w-8 h-8 text-coral-600" />
                   </div>
-                  <h1 className="text-2xl font-bold text-white mb-2">Two-Factor Authentication</h1>
-                  <p className="text-gray-400 text-sm">Enter the 6-digit code from your authenticator app</p>
+                  <h1 className="text-2xl font-bold text-navy-900 mb-2">Two-Factor Authentication</h1>
+                  <p className="text-slate-600 text-sm">Enter the 6-digit code from your authenticator app</p>
                 </div>
 
                 <form onSubmit={handle2FASubmit} className="space-y-6" data-testid="2fa-form">
@@ -271,19 +271,19 @@ const LoginPage = () => {
                         value={digit}
                         onChange={(e) => handleCodeChange(index, e.target.value)}
                         onKeyDown={(e) => handleCodeKeyDown(index, e)}
-                        className="w-12 h-14 text-center text-xl font-bold bg-[#0a0f1a] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                        className="w-12 h-14 text-center text-xl font-bold bg-white border border-slate-300 rounded-lg text-navy-900 focus:border-coral-500 focus:ring-1 focus:ring-coral-500 outline-none transition-all"
                         disabled={loading}
                         data-testid={`2fa-code-input-${index}`}
                       />
                     ))}
                   </div>
 
-                  <p className="text-center text-gray-500 text-xs">You can also enter a backup code</p>
+                  <p className="text-center text-slate-500 text-xs">You can also enter a backup code</p>
 
                   <Button
                     type="submit"
                     disabled={loading || totpCode.join('').length < 6}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-navy-900 py-6 text-lg"
                     data-testid="2fa-submit-button"
                   >
                     {loading ? 'Verifying...' : 'Verify & Sign In'}
@@ -293,7 +293,7 @@ const LoginPage = () => {
                     type="button"
                     variant="ghost"
                     onClick={() => { setShow2FA(false); setTotpCode(['', '', '', '', '', '']); setTempToken(''); }}
-                    className="w-full text-gray-400 hover:text-white"
+                    className="w-full text-slate-600 hover:text-navy-900"
                     data-testid="2fa-back-button"
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
