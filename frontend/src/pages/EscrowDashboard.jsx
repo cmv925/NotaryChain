@@ -23,9 +23,9 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const STATUS_CONFIG = {
   draft:          { label: 'Draft',          color: 'text-gray-400 bg-gray-500/15 border-gray-500/25' },
   active:         { label: 'Active',         color: 'text-blue-400 bg-blue-500/15 border-blue-500/25' },
-  conditions_met: { label: 'Conditions Met', color: 'text-emerald-400 bg-emerald-500/15 border-emerald-500/25' },
+  conditions_met: { label: 'Conditions Met', color: 'text-coral-600 bg-coral-500/15 border-emerald-500/25' },
   settling:       { label: 'Settling',       color: 'text-yellow-400 bg-yellow-500/15 border-yellow-500/25' },
-  settled:        { label: 'Settled',        color: 'text-emerald-400 bg-emerald-500/15 border-emerald-500/25' },
+  settled:        { label: 'Settled',        color: 'text-coral-600 bg-coral-500/15 border-emerald-500/25' },
   disputed:       { label: 'Disputed',       color: 'text-red-400 bg-red-500/15 border-red-500/25' },
 };
 
@@ -254,17 +254,17 @@ export default function EscrowDashboard() {
   // ═══════════════════════════════════════════════════════
   if (view === 'list' || (!escrowId && !showCreate)) {
     return (
-      <div className="min-h-screen bg-[#080c14] text-white">
+      <div className="min-h-screen bg-[#080c14] text-navy-900">
         <div className="bg-[#0d1420] border-b border-[#1e293b] sticky top-0 z-20">
           <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center"><Scale className="w-5 h-5 text-white" /></div>
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center"><Scale className="w-5 h-5 text-navy-900" /></div>
               <div>
-                <h1 className="text-white font-bold text-lg">Dynamic Escrow Intelligence</h1>
+                <h1 className="text-navy-900 font-bold text-lg">Dynamic Escrow Intelligence</h1>
                 <p className="text-gray-500 text-xs">AI Orchestrator + Oracle Verification + Biometric Settlement</p>
               </div>
             </div>
-            <Button onClick={() => setShowCreate(true)} className="bg-amber-600 hover:bg-amber-700 text-white" data-testid="create-escrow-btn"><Plus className="w-4 h-4 mr-2" /> New Escrow</Button>
+            <Button onClick={() => setShowCreate(true)} className="bg-amber-600 hover:bg-amber-700 text-navy-900" data-testid="create-escrow-btn"><Plus className="w-4 h-4 mr-2" /> New Escrow</Button>
           </div>
         </div>
 
@@ -279,36 +279,36 @@ export default function EscrowDashboard() {
           </div>
 
           {showCreate && (
-            <Card className="bg-[#111827] border-amber-500/30 mb-6" data-testid="create-escrow-form">
+            <Card className="bg-[#111827] border-gold-500/30 mb-6" data-testid="create-escrow-form">
               <CardContent className="p-6">
-                <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2"><Sparkles className="w-5 h-5 text-amber-400" /> New Escrow Agreement</h2>
+                <h2 className="text-navy-900 font-bold text-lg mb-4 flex items-center gap-2"><Sparkles className="w-5 h-5 text-coral-600" /> New Escrow Agreement</h2>
                 {/* Template Selector */}
                 <div className="mb-5">
                   <label className="text-gray-400 text-xs block mb-2">Escrow Template</label>
                   <div className="grid grid-cols-2 gap-3" data-testid="template-selector">
                     <button type="button" onClick={() => setCreateForm(f => ({ ...f, escrow_type: 'real_estate' }))}
-                      className={`flex items-center gap-3 p-3.5 rounded-lg border-2 transition-all text-left ${createForm.escrow_type === 'real_estate' ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-[#1e293b] bg-[#0d1420] text-gray-400 hover:border-gray-600'}`}
+                      className={`flex items-center gap-3 p-3.5 rounded-lg border-2 transition-all text-left ${createForm.escrow_type === 'real_estate' ? 'border-amber-500 bg-coral-500/10 text-navy-900' : 'border-[#1e293b] bg-[#0d1420] text-gray-400 hover:border-gray-600'}`}
                       data-testid="template-real-estate">
-                      <Home className={`w-5 h-5 flex-shrink-0 ${createForm.escrow_type === 'real_estate' ? 'text-amber-400' : 'text-gray-500'}`} />
+                      <Home className={`w-5 h-5 flex-shrink-0 ${createForm.escrow_type === 'real_estate' ? 'text-coral-600' : 'text-gray-500'}`} />
                       <div><p className="font-medium text-sm">Real Estate</p><p className="text-[11px] text-gray-500">6 milestones, inspection to closing</p></div>
                     </button>
                     <button type="button" onClick={() => setCreateForm(f => ({ ...f, escrow_type: 'freelancer' }))}
-                      className={`flex items-center gap-3 p-3.5 rounded-lg border-2 transition-all text-left ${createForm.escrow_type === 'freelancer' ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-[#1e293b] bg-[#0d1420] text-gray-400 hover:border-gray-600'}`}
+                      className={`flex items-center gap-3 p-3.5 rounded-lg border-2 transition-all text-left ${createForm.escrow_type === 'freelancer' ? 'border-amber-500 bg-coral-500/10 text-navy-900' : 'border-[#1e293b] bg-[#0d1420] text-gray-400 hover:border-gray-600'}`}
                       data-testid="template-freelancer">
-                      <Briefcase className={`w-5 h-5 flex-shrink-0 ${createForm.escrow_type === 'freelancer' ? 'text-amber-400' : 'text-gray-500'}`} />
+                      <Briefcase className={`w-5 h-5 flex-shrink-0 ${createForm.escrow_type === 'freelancer' ? 'text-coral-600' : 'text-gray-500'}`} />
                       <div><p className="font-medium text-sm">Freelancer</p><p className="text-[11px] text-gray-500">5 milestones, kickoff to delivery</p></div>
                     </button>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div><label className="text-gray-400 text-xs block mb-1">Agreement Title *</label><Input value={createForm.title} onChange={e => setCreateForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g. 123 Main St Purchase" className="bg-[#0d1420] border-[#1e293b] text-white" data-testid="escrow-title-input" /></div>
-                  <div><label className="text-gray-400 text-xs block mb-1">Escrow Amount (USD) *</label><Input type="number" value={createForm.escrow_amount} onChange={e => setCreateForm(f => ({ ...f, escrow_amount: e.target.value }))} placeholder="350000" className="bg-[#0d1420] border-[#1e293b] text-white" data-testid="escrow-amount-input" /></div>
-                  <div><label className="text-gray-400 text-xs block mb-1">Buyer Name</label><Input value={createForm.buyer_name} onChange={e => setCreateForm(f => ({ ...f, buyer_name: e.target.value }))} placeholder="John Doe" className="bg-[#0d1420] border-[#1e293b] text-white" /></div>
-                  <div><label className="text-gray-400 text-xs block mb-1">Seller Name</label><Input value={createForm.seller_name} onChange={e => setCreateForm(f => ({ ...f, seller_name: e.target.value }))} placeholder="Jane Smith" className="bg-[#0d1420] border-[#1e293b] text-white" /></div>
-                  <div><label className="text-gray-400 text-xs block mb-1">Seller Email</label><Input value={createForm.seller_email} onChange={e => setCreateForm(f => ({ ...f, seller_email: e.target.value }))} placeholder="seller@email.com" className="bg-[#0d1420] border-[#1e293b] text-white" /></div>
-                  <div><label className="text-gray-400 text-xs block mb-1">Document Name</label><Input value={createForm.document_name} onChange={e => setCreateForm(f => ({ ...f, document_name: e.target.value }))} placeholder="Purchase Agreement" className="bg-[#0d1420] border-[#1e293b] text-white" /></div>
+                  <div><label className="text-gray-400 text-xs block mb-1">Agreement Title *</label><Input value={createForm.title} onChange={e => setCreateForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g. 123 Main St Purchase" className="bg-[#0d1420] border-[#1e293b] text-navy-900" data-testid="escrow-title-input" /></div>
+                  <div><label className="text-gray-400 text-xs block mb-1">Escrow Amount (USD) *</label><Input type="number" value={createForm.escrow_amount} onChange={e => setCreateForm(f => ({ ...f, escrow_amount: e.target.value }))} placeholder="350000" className="bg-[#0d1420] border-[#1e293b] text-navy-900" data-testid="escrow-amount-input" /></div>
+                  <div><label className="text-gray-400 text-xs block mb-1">Buyer Name</label><Input value={createForm.buyer_name} onChange={e => setCreateForm(f => ({ ...f, buyer_name: e.target.value }))} placeholder="John Doe" className="bg-[#0d1420] border-[#1e293b] text-navy-900" /></div>
+                  <div><label className="text-gray-400 text-xs block mb-1">Seller Name</label><Input value={createForm.seller_name} onChange={e => setCreateForm(f => ({ ...f, seller_name: e.target.value }))} placeholder="Jane Smith" className="bg-[#0d1420] border-[#1e293b] text-navy-900" /></div>
+                  <div><label className="text-gray-400 text-xs block mb-1">Seller Email</label><Input value={createForm.seller_email} onChange={e => setCreateForm(f => ({ ...f, seller_email: e.target.value }))} placeholder="seller@email.com" className="bg-[#0d1420] border-[#1e293b] text-navy-900" /></div>
+                  <div><label className="text-gray-400 text-xs block mb-1">Document Name</label><Input value={createForm.document_name} onChange={e => setCreateForm(f => ({ ...f, document_name: e.target.value }))} placeholder="Purchase Agreement" className="bg-[#0d1420] border-[#1e293b] text-navy-900" /></div>
                 </div>
-                <div className="mb-4"><label className="text-gray-400 text-xs block mb-1">Description</label><Input value={createForm.description} onChange={e => setCreateForm(f => ({ ...f, description: e.target.value }))} placeholder="Brief description" className="bg-[#0d1420] border-[#1e293b] text-white" /></div>
+                <div className="mb-4"><label className="text-gray-400 text-xs block mb-1">Description</label><Input value={createForm.description} onChange={e => setCreateForm(f => ({ ...f, description: e.target.value }))} placeholder="Brief description" className="bg-[#0d1420] border-[#1e293b] text-navy-900" /></div>
                 <div className="flex gap-2">
                   <Button onClick={handleCreate} disabled={actionLoading === 'create'} className="bg-amber-600 hover:bg-amber-700" data-testid="submit-escrow-btn">{actionLoading === 'create' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />} Create Agreement</Button>
                   <Button variant="outline" onClick={() => setShowCreate(false)} className="border-[#1e293b] text-gray-400">Cancel</Button>
@@ -318,24 +318,24 @@ export default function EscrowDashboard() {
           )}
 
           {loading ? (
-            <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 text-amber-400 animate-spin" /></div>
+            <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 text-coral-600 animate-spin" /></div>
           ) : escrows.length === 0 ? (
-            <Card className="bg-[#111827] border-[#1e293b]"><CardContent className="p-12 text-center"><Scale className="w-14 h-14 text-gray-700 mx-auto mb-4" /><h3 className="text-white font-bold text-lg mb-2">No Escrow Agreements Yet</h3><p className="text-gray-500 text-sm mb-4">Create your first AI-powered escrow agreement to get started.</p><Button onClick={() => setShowCreate(true)} className="bg-amber-600 hover:bg-amber-700"><Plus className="w-4 h-4 mr-2" /> Create First Escrow</Button></CardContent></Card>
+            <Card className="bg-[#111827] border-[#1e293b]"><CardContent className="p-12 text-center"><Scale className="w-14 h-14 text-gray-700 mx-auto mb-4" /><h3 className="text-navy-900 font-bold text-lg mb-2">No Escrow Agreements Yet</h3><p className="text-gray-500 text-sm mb-4">Create your first AI-powered escrow agreement to get started.</p><Button onClick={() => setShowCreate(true)} className="bg-amber-600 hover:bg-amber-700"><Plus className="w-4 h-4 mr-2" /> Create First Escrow</Button></CardContent></Card>
           ) : (
             <div className="space-y-3" data-testid="escrow-list">
               {escrows.map((e) => (
-                <Card key={e.escrow_id} className="bg-[#111827] border-[#1e293b] hover:border-amber-500/30 transition-colors cursor-pointer" onClick={() => openEscrow(e.escrow_id)} data-testid={`escrow-card-${e.escrow_id}`}>
+                <Card key={e.escrow_id} className="bg-[#111827] border-[#1e293b] hover:border-gold-500/30 transition-colors cursor-pointer" onClick={() => openEscrow(e.escrow_id)} data-testid={`escrow-card-${e.escrow_id}`}>
                   <CardContent className="p-5 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center flex-shrink-0"><Scale className="w-5 h-5 text-amber-400" /></div>
+                      <div className="w-10 h-10 rounded-lg bg-coral-500/10 flex items-center justify-center flex-shrink-0"><Scale className="w-5 h-5 text-coral-600" /></div>
                       <div>
-                        <h3 className="text-white font-semibold text-sm">{e.title}</h3>
+                        <h3 className="text-navy-900 font-semibold text-sm">{e.title}</h3>
                         <p className="text-gray-500 text-xs mt-0.5">{e.parties?.buyer?.name || 'Buyer'} &#8594; {e.parties?.seller?.name || 'Seller'}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="text-right">
-                        <p className="text-white font-bold text-sm">${e.financial?.escrow_amount?.toLocaleString()}</p>
+                        <p className="text-navy-900 font-bold text-sm">${e.financial?.escrow_amount?.toLocaleString()}</p>
                         <p className="text-gray-500 text-xs">{e.conditions_met_count || 0}/{e.conditions_total || 0} triggers</p>
                       </div>
                       <StatusBadge status={e.status} />
@@ -354,7 +354,7 @@ export default function EscrowDashboard() {
   // ═══════════════════════════════════════════════════════
   //  RENDER — DETAIL VIEW
   // ═══════════════════════════════════════════════════════
-  if (!currentEscrow) return <div className="min-h-screen bg-[#080c14] flex items-center justify-center"><Loader2 className="w-8 h-8 text-amber-400 animate-spin" /></div>;
+  if (!currentEscrow) return <div className="min-h-screen bg-[#080c14] flex items-center justify-center"><Loader2 className="w-8 h-8 text-coral-600 animate-spin" /></div>;
 
   const e = currentEscrow;
   const progress = e.conditions_total > 0 ? (e.conditions_met_count / e.conditions_total) * 100 : 0;
@@ -363,20 +363,20 @@ export default function EscrowDashboard() {
   const sellerBio = e.parties?.seller?.biometric_verified;
 
   return (
-    <div className="min-h-screen bg-[#080c14] text-white">
+    <div className="min-h-screen bg-[#080c14] text-navy-900">
       {/* Header */}
       <div className="bg-[#0d1420] border-b border-[#1e293b] sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center"><Scale className="w-5 h-5 text-white" /></div>
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center"><Scale className="w-5 h-5 text-navy-900" /></div>
             <div>
-              <h1 className="text-white font-bold text-lg">{e.title}</h1>
+              <h1 className="text-navy-900 font-bold text-lg">{e.title}</h1>
               <p className="text-gray-500 text-xs">{e.escrow_type === 'freelancer' ? 'Freelancer Escrow' : e.escrow_type === 'real_estate' ? 'Real Estate Escrow' : 'Escrow Agreement'} &#8212; {e.escrow_id.slice(0, 8)}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <StatusBadge status={e.status} />
-            <div className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border ${wsConnected ? 'text-emerald-400 border-emerald-500/20 bg-emerald-500/10' : 'text-gray-500 border-gray-700 bg-gray-800'}`} data-testid="ws-status-indicator">
+            <div className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border ${wsConnected ? 'text-coral-600 border-coral-200 bg-coral-500/10' : 'text-gray-500 border-gray-700 bg-gray-800'}`} data-testid="ws-status-indicator">
               {wsConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
               {wsConnected ? 'LIVE' : 'OFFLINE'}
             </div>
@@ -389,10 +389,10 @@ export default function EscrowDashboard() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-          <SummaryCard label="Smart Vault" value={`$${e.financial.escrow_amount.toLocaleString()}`} icon={DollarSign} colorClass="text-amber-400 bg-amber-500/10" />
-          <SummaryCard label="Vault Status" value={e.financial.deposit_status === 'held' ? 'FUNDS LOCKED' : e.financial.deposit_status === 'released' ? 'RELEASED' : 'PENDING'} icon={e.financial.deposit_status === 'held' ? Lock : Unlock} colorClass={e.financial.deposit_status === 'held' ? 'text-emerald-400 bg-emerald-500/10' : 'text-gray-400 bg-gray-500/10'} />
+          <SummaryCard label="Smart Vault" value={`$${e.financial.escrow_amount.toLocaleString()}`} icon={DollarSign} colorClass="text-coral-600 bg-coral-500/10" />
+          <SummaryCard label="Vault Status" value={e.financial.deposit_status === 'held' ? 'FUNDS LOCKED' : e.financial.deposit_status === 'released' ? 'RELEASED' : 'PENDING'} icon={e.financial.deposit_status === 'held' ? Lock : Unlock} colorClass={e.financial.deposit_status === 'held' ? 'text-coral-600 bg-coral-500/10' : 'text-gray-400 bg-gray-500/10'} />
           <SummaryCard label="Performance Triggers" value={`${e.conditions_met_count}/${e.conditions_total}`} icon={Zap} colorClass="text-blue-400 bg-blue-500/10" />
-          <SummaryCard label="Biometric Gate" value={biometricPassed ? 'PASSED' : buyerBio || sellerBio ? 'PARTIAL' : 'PENDING'} icon={Fingerprint} colorClass={biometricPassed ? 'text-emerald-400 bg-emerald-500/10' : 'text-purple-400 bg-purple-500/10'} />
+          <SummaryCard label="Biometric Gate" value={biometricPassed ? 'PASSED' : buyerBio || sellerBio ? 'PARTIAL' : 'PENDING'} icon={Fingerprint} colorClass={biometricPassed ? 'text-coral-600 bg-coral-500/10' : 'text-purple-400 bg-purple-500/10'} />
         </div>
 
         {/* Progress Bar */}
@@ -403,7 +403,7 @@ export default function EscrowDashboard() {
               <span>{e.conditions_met_count}/{e.conditions_total} triggers verified</span>
             </div>
             <div className="w-full h-2.5 bg-[#1e293b] rounded-full overflow-hidden">
-              <div className={`h-full rounded-full transition-all duration-700 ${progress === 100 ? 'bg-gradient-to-r from-emerald-500 to-emerald-400' : 'bg-gradient-to-r from-amber-500 to-orange-500'}`} style={{ width: `${progress}%` }} data-testid="escrow-progress-bar" />
+              <div className={`h-full rounded-full transition-all duration-700 ${progress === 100 ? 'italic text-coral-600' : 'italic text-coral-600'}`} style={{ width: `${progress}%` }} data-testid="escrow-progress-bar" />
             </div>
           </div>
         )}
@@ -416,9 +416,9 @@ export default function EscrowDashboard() {
             <Card className="bg-[#0d1420] border-[#1a2540]">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 rounded bg-amber-500/15 flex items-center justify-center"><Zap className="w-3.5 h-3.5 text-amber-400" /></div>
-                  <h3 className="text-white font-bold text-sm">Trust Gap 1: Execution</h3>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold">AI ORCHESTRATOR</span>
+                  <div className="w-6 h-6 rounded bg-coral-500/15 flex items-center justify-center"><Zap className="w-3.5 h-3.5 text-coral-600" /></div>
+                  <h3 className="text-navy-900 font-bold text-sm">Trust Gap 1: Execution</h3>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-coral-500/10 text-coral-600 border border-amber-500/20 font-bold">AI ORCHESTRATOR</span>
                 </div>
                 <p className="text-gray-500 text-xs mb-3">The AI Orchestrator extracts Performance Triggers from your contract and locks funds in a smart vault that only opens when milestones are verified.</p>
 
@@ -448,7 +448,7 @@ export default function EscrowDashboard() {
                 )}
 
                 {e.status === 'active' && e.financial.deposit_status === 'pending' && (
-                  <Button onClick={handleDeposit} disabled={actionLoading === 'deposit'} className="bg-emerald-600 hover:bg-emerald-700" data-testid="deposit-funds-btn">
+                  <Button onClick={handleDeposit} disabled={actionLoading === 'deposit'} className="bg-coral-500 hover:bg-emerald-700" data-testid="deposit-funds-btn">
                     {actionLoading === 'deposit' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ArrowDownToLine className="w-4 h-4 mr-2" />}
                     Deposit Funds into Smart Vault
                   </Button>
@@ -460,9 +460,9 @@ export default function EscrowDashboard() {
             {e.conditions.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded bg-cyan-500/15 flex items-center justify-center"><Network className="w-3.5 h-3.5 text-cyan-400" /></div>
-                  <h3 className="text-white font-bold text-sm">Trust Gap 2: Verification</h3>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold">ORACLE + AI VISION</span>
+                  <div className="w-6 h-6 rounded bg-cyan-500/15 flex items-center justify-center"><Network className="w-3.5 h-3.5 text-coral-600" /></div>
+                  <h3 className="text-navy-900 font-bold text-sm">Trust Gap 2: Verification</h3>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-coral-600 border border-cyan-500/20 font-bold">ORACLE + AI VISION</span>
                 </div>
                 <p className="text-gray-500 text-xs -mt-1 ml-8">Conditions are verified autonomously by oracles (shipping, inspection, appraisal) or AI-analyzed photo evidence.</p>
 
@@ -474,28 +474,28 @@ export default function EscrowDashboard() {
                     const isOracle = c.verification_method === 'oracle' || c.verification_method === 'ai_photo_verification';
                     const isBiometric = c.verification_method === 'biometric_confirmation';
                     return (
-                      <Card key={c.condition_id} className={`border transition-colors ${isMet ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-[#111827] border-[#1e293b]'}`} data-testid={`condition-${c.condition_id}`}>
+                      <Card key={c.condition_id} className={`border transition-colors ${isMet ? 'bg-coral-500/5 border-coral-200' : 'bg-[#111827] border-[#1e293b]'}`} data-testid={`condition-${c.condition_id}`}>
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex items-start gap-3 flex-1">
-                              <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${isMet ? 'bg-emerald-500/15' : 'bg-[#1e293b]'}`}>
-                                {isMet ? <CheckCircle className="w-5 h-5 text-emerald-400" /> : <CatIcon className="w-5 h-5 text-gray-500" />}
+                              <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${isMet ? 'bg-coral-500/15' : 'bg-[#1e293b]'}`}>
+                                {isMet ? <CheckCircle className="w-5 h-5 text-coral-600" /> : <CatIcon className="w-5 h-5 text-gray-500" />}
                               </div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                  <h4 className={`text-sm font-semibold ${isMet ? 'text-emerald-300' : 'text-white'}`}>{c.title}</h4>
+                                  <h4 className={`text-sm font-semibold ${isMet ? 'text-coral-700' : 'text-navy-900'}`}>{c.title}</h4>
                                   <span className="text-[10px] text-gray-600 bg-[#1e293b] px-1.5 py-0.5 rounded">{c.category}</span>
-                                  {isOracle && <span className="text-[10px] text-cyan-400 bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20 flex items-center gap-0.5"><OracleIcon className="w-2.5 h-2.5" /> Oracle</span>}
+                                  {isOracle && <span className="text-[10px] text-coral-600 bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20 flex items-center gap-0.5"><OracleIcon className="w-2.5 h-2.5" /> Oracle</span>}
                                   {isBiometric && <span className="text-[10px] text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/20 flex items-center gap-0.5"><Fingerprint className="w-2.5 h-2.5" /> Biometric</span>}
-                                  {c.payment_pct > 0 && <span className="text-[10px] text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">{c.payment_pct}% Release</span>}
+                                  {c.payment_pct > 0 && <span className="text-[10px] text-coral-600 bg-coral-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">{c.payment_pct}% Release</span>}
                                 </div>
                                 <p className="text-gray-500 text-xs leading-relaxed">{c.description}</p>
                                 <div className="flex items-center gap-3 mt-2 flex-wrap">
                                   {c.deadline_days && <span className="text-[10px] text-gray-600 flex items-center gap-1"><Clock className="w-3 h-3" /> {c.deadline_days}d deadline</span>}
                                   {c.confidence && <span className="text-[10px] text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded">{Math.round(c.confidence * 100)}% AI</span>}
-                                  {c.oracle_result && <span className={`text-[10px] px-1.5 py-0.5 rounded ${c.oracle_result.condition_met ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10'}`}>{c.oracle_result.condition_met ? 'Oracle: Verified' : 'Oracle: Not Met'}</span>}
+                                  {c.oracle_result && <span className={`text-[10px] px-1.5 py-0.5 rounded ${c.oracle_result.condition_met ? 'text-coral-600 bg-coral-500/10' : 'text-red-400 bg-red-500/10'}`}>{c.oracle_result.condition_met ? 'Oracle: Verified' : 'Oracle: Not Met'}</span>}
                                 </div>
-                                {isMet && <p className="text-emerald-400 text-[10px] mt-1.5">Verified by {c.verified_by} at {new Date(c.verified_at).toLocaleString()}</p>}
+                                {isMet && <p className="text-coral-600 text-[10px] mt-1.5">Verified by {c.verified_by} at {new Date(c.verified_at).toLocaleString()}</p>}
                               </div>
                             </div>
                             {!isMet && e.status !== 'settled' && (
@@ -522,32 +522,32 @@ export default function EscrowDashboard() {
             )}
 
             {e.conditions.length === 0 && e.status !== 'draft' && (
-              <Card className="bg-[#111827] border-[#1e293b]"><CardContent className="p-8 text-center"><Brain className="w-10 h-10 text-gray-700 mx-auto mb-3" /><h3 className="text-white font-semibold mb-1">No Conditions Extracted</h3><p className="text-gray-500 text-xs">Use AI Orchestrator to extract performance triggers from the contract.</p></CardContent></Card>
+              <Card className="bg-[#111827] border-[#1e293b]"><CardContent className="p-8 text-center"><Brain className="w-10 h-10 text-gray-700 mx-auto mb-3" /><h3 className="text-navy-900 font-semibold mb-1">No Conditions Extracted</h3><p className="text-gray-500 text-xs">Use AI Orchestrator to extract performance triggers from the contract.</p></CardContent></Card>
             )}
 
             {/* ═══ TRUST GAP 3: SECURITY — Biometric Settlement ═══ */}
             {e.conditions_total > 0 && e.status !== 'draft' && (
-              <Card className={`border ${biometricPassed ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-[#0d1420] border-[#1a2540]'}`} data-testid="biometric-gate-section">
+              <Card className={`border ${biometricPassed ? 'bg-coral-500/5 border-coral-200' : 'bg-[#0d1420] border-[#1a2540]'}`} data-testid="biometric-gate-section">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-6 h-6 rounded bg-purple-500/15 flex items-center justify-center"><Fingerprint className="w-3.5 h-3.5 text-purple-400" /></div>
-                    <h3 className="text-white font-bold text-sm">Trust Gap 3: Security</h3>
+                    <h3 className="text-navy-900 font-bold text-sm">Trust Gap 3: Security</h3>
                     <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-bold">BIOMETRIC PROOF OF INTENT</span>
                   </div>
                   <p className="text-gray-500 text-xs mb-4">Funds are only released when the recipient's identity is verified via facial geometry and liveness detection at settlement.</p>
 
                   <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className={`p-3 rounded-lg border ${buyerBio ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-[#1e293b] bg-[#111827]'}`} data-testid="buyer-biometric-status">
+                    <div className={`p-3 rounded-lg border ${buyerBio ? 'border-coral-200 bg-coral-500/5' : 'border-[#1e293b] bg-[#111827]'}`} data-testid="buyer-biometric-status">
                       <div className="flex items-center gap-2 mb-1">
-                        {buyerBio ? <CheckCircle className="w-4 h-4 text-emerald-400" /> : <Scan className="w-4 h-4 text-gray-500" />}
-                        <span className="text-xs font-semibold text-white">Buyer</span>
+                        {buyerBio ? <CheckCircle className="w-4 h-4 text-coral-600" /> : <Scan className="w-4 h-4 text-gray-500" />}
+                        <span className="text-xs font-semibold text-navy-900">Buyer</span>
                       </div>
                       <p className="text-[10px] text-gray-500">{buyerBio ? 'Identity Verified' : 'Pending verification'}</p>
                     </div>
-                    <div className={`p-3 rounded-lg border ${sellerBio ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-[#1e293b] bg-[#111827]'}`} data-testid="seller-biometric-status">
+                    <div className={`p-3 rounded-lg border ${sellerBio ? 'border-coral-200 bg-coral-500/5' : 'border-[#1e293b] bg-[#111827]'}`} data-testid="seller-biometric-status">
                       <div className="flex items-center gap-2 mb-1">
-                        {sellerBio ? <CheckCircle className="w-4 h-4 text-emerald-400" /> : <Scan className="w-4 h-4 text-gray-500" />}
-                        <span className="text-xs font-semibold text-white">Seller</span>
+                        {sellerBio ? <CheckCircle className="w-4 h-4 text-coral-600" /> : <Scan className="w-4 h-4 text-gray-500" />}
+                        <span className="text-xs font-semibold text-navy-900">Seller</span>
                       </div>
                       <p className="text-[10px] text-gray-500">{sellerBio ? 'Identity Verified' : 'Pending verification'}</p>
                     </div>
@@ -561,13 +561,13 @@ export default function EscrowDashboard() {
                       </Button>
                     )}
                     {(e.status === 'conditions_met' || (e.status === 'active' && e.conditions_met_count === e.conditions_total && e.conditions_total > 0)) && e.status !== 'settled' && (
-                      <Button onClick={handleSettle} disabled={actionLoading === 'settle'} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700" data-testid="settle-escrow-btn">
+                      <Button onClick={handleSettle} disabled={actionLoading === 'settle'} className="italic text-coral-600 hover:from-amber-600 hover:to-orange-700" data-testid="settle-escrow-btn">
                         {actionLoading === 'settle' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ShieldCheck className="w-4 h-4 mr-2" />}
                         Execute Settlement
                       </Button>
                     )}
                     {e.status === 'settled' && (
-                      <div className="flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-emerald-400" /><span className="text-emerald-400 text-sm font-bold">Settlement Complete — Funds Released</span></div>
+                      <div className="flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-coral-600" /><span className="text-coral-600 text-sm font-bold">Settlement Complete — Funds Released</span></div>
                     )}
                   </div>
                 </CardContent>
@@ -580,7 +580,7 @@ export default function EscrowDashboard() {
             {/* Parties */}
             <Card className="bg-[#111827] border-[#1e293b]" data-testid="escrow-parties">
               <CardContent className="p-4">
-                <h3 className="text-white font-bold text-sm mb-3 flex items-center gap-2"><Users className="w-4 h-4 text-blue-400" /> Parties</h3>
+                <h3 className="text-navy-900 font-bold text-sm mb-3 flex items-center gap-2"><Users className="w-4 h-4 text-blue-400" /> Parties</h3>
                 <div className="space-y-2.5">
                   <PartyRow label="Buyer" name={e.parties.buyer.name || 'TBD'} email={e.parties.buyer.email} bio={buyerBio} />
                   <PartyRow label="Seller" name={e.parties.seller.name || 'TBD'} email={e.parties.seller.email} bio={sellerBio} />
@@ -592,7 +592,7 @@ export default function EscrowDashboard() {
             {/* Smart Vault */}
             <Card className="bg-[#111827] border-[#1e293b]" data-testid="escrow-financial">
               <CardContent className="p-4">
-                <h3 className="text-white font-bold text-sm mb-3 flex items-center gap-2"><DollarSign className="w-4 h-4 text-emerald-400" /> Smart Vault</h3>
+                <h3 className="text-navy-900 font-bold text-sm mb-3 flex items-center gap-2"><DollarSign className="w-4 h-4 text-coral-600" /> Smart Vault</h3>
                 <div className="space-y-2 text-xs">
                   <InfoRow label="Amount" value={`$${e.financial.escrow_amount.toLocaleString()} ${e.financial.currency}`} />
                   <InfoRow label="Vault Status" value={e.financial.deposit_status.toUpperCase()} />
@@ -606,7 +606,7 @@ export default function EscrowDashboard() {
             {(e.oracle_events?.length > 0) && (
               <Card className="bg-[#111827] border-[#1e293b]" data-testid="escrow-oracle-events">
                 <CardContent className="p-4">
-                  <h3 className="text-white font-bold text-sm mb-3 flex items-center gap-2"><Globe className="w-4 h-4 text-cyan-400" /> Oracle Activity</h3>
+                  <h3 className="text-navy-900 font-bold text-sm mb-3 flex items-center gap-2"><Globe className="w-4 h-4 text-coral-600" /> Oracle Activity</h3>
                   <div className="space-y-2">
                     {e.oracle_events.slice(-5).reverse().map((o, i) => (
                       <div key={i} className="flex items-center gap-2">
@@ -624,12 +624,12 @@ export default function EscrowDashboard() {
             {(e.blockchain?.creation_hash || e.blockchain?.settlement_hash) && (
               <Card className="bg-[#111827] border-[#1e293b]" data-testid="escrow-blockchain">
                 <CardContent className="p-4">
-                  <h3 className="text-white font-bold text-sm mb-3 flex items-center gap-2"><Blocks className="w-4 h-4 text-orange-400" /> Blockchain</h3>
+                  <h3 className="text-navy-900 font-bold text-sm mb-3 flex items-center gap-2"><Blocks className="w-4 h-4 text-coral-600" /> Blockchain</h3>
                   <div className="space-y-2 text-xs">
                     {e.blockchain.creation_hash && <InfoRow label="Creation Hash" value={e.blockchain.creation_hash.slice(0, 20) + '...'} mono />}
                     {e.blockchain.settlement_hash && <InfoRow label="Settlement" value={e.blockchain.settlement_hash.slice(0, 20) + '...'} mono />}
                     {e.blockchain.settlement_tx?.explorer_url && (
-                      <a href={e.blockchain.settlement_tx.explorer_url} target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300 text-[10px] flex items-center gap-1 mt-1"><Globe className="w-3 h-3" /> View on HashScan</a>
+                      <a href={e.blockchain.settlement_tx.explorer_url} target="_blank" rel="noopener noreferrer" className="text-coral-600 hover:text-coral-700 text-[10px] flex items-center gap-1 mt-1"><Globe className="w-3 h-3" /> View on HashScan</a>
                     )}
                   </div>
                 </CardContent>
@@ -638,11 +638,11 @@ export default function EscrowDashboard() {
 
             {/* Live WebSocket Events */}
             {liveEvents.length > 0 && (
-              <Card className="bg-[#111827] border-emerald-500/20" data-testid="escrow-live-events">
+              <Card className="bg-[#111827] border-coral-200" data-testid="escrow-live-events">
                 <CardContent className="p-4">
-                  <h3 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                    <Radio className="w-4 h-4 text-emerald-400 animate-pulse" /> Live Events
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">REAL-TIME</span>
+                  <h3 className="text-navy-900 font-bold text-sm mb-3 flex items-center gap-2">
+                    <Radio className="w-4 h-4 text-coral-600 animate-pulse" /> Live Events
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-coral-500/10 text-coral-600 border border-coral-200 font-bold">REAL-TIME</span>
                   </h3>
                   <div className="space-y-2">
                     {liveEvents.slice(0, 8).map((evt) => {
@@ -660,7 +660,7 @@ export default function EscrowDashboard() {
                         : evt.event;
                       return (
                         <div key={evt.id} className="flex items-center gap-2">
-                          <IconComponent className={`w-3 h-3 flex-shrink-0 ${isPositive ? 'text-emerald-400' : 'text-red-400'}`} />
+                          <IconComponent className={`w-3 h-3 flex-shrink-0 ${isPositive ? 'text-coral-600' : 'text-red-400'}`} />
                           <span className="text-gray-300 text-[10px] flex-1 truncate">{label}</span>
                           <span className="text-gray-600 text-[10px]">{evt.time}</span>
                         </div>
@@ -674,7 +674,7 @@ export default function EscrowDashboard() {
             {/* Timeline */}
             <Card className="bg-[#111827] border-[#1e293b]" data-testid="escrow-timeline">
               <CardContent className="p-4">
-                <h3 className="text-white font-bold text-sm mb-3 flex items-center gap-2"><Clock className="w-4 h-4 text-gray-400" /> Timeline</h3>
+                <h3 className="text-navy-900 font-bold text-sm mb-3 flex items-center gap-2"><Clock className="w-4 h-4 text-gray-400" /> Timeline</h3>
                 <div className="space-y-3">
                   {(e.timeline || []).slice().reverse().slice(0, 10).map((t, i) => {
                     const cat = t.category || '';
@@ -688,7 +688,7 @@ export default function EscrowDashboard() {
                     return (
                       <div key={i} className="flex gap-2.5">
                         <div className="flex flex-col items-center"><div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${dotColor}`} />{i < 9 && <div className="w-px flex-1 bg-[#1e293b] mt-1" />}</div>
-                        <div className="pb-3"><p className="text-white text-xs">{t.details}</p><p className="text-gray-600 text-[10px] mt-0.5">{t.actor} &#8212; {new Date(t.timestamp).toLocaleString()}</p></div>
+                        <div className="pb-3"><p className="text-navy-900 text-xs">{t.details}</p><p className="text-gray-600 text-[10px] mt-0.5">{t.actor} &#8212; {new Date(t.timestamp).toLocaleString()}</p></div>
                       </div>
                     );
                   })}
@@ -712,7 +712,7 @@ function TrustGapCard({ icon: Icon, color, number, title, desc }) {
           <div className={`w-7 h-7 rounded-lg bg-${color}-500/10 flex items-center justify-center`}><Icon className={`w-4 h-4 text-${color}-400`} /></div>
           <span className={`text-[10px] font-bold text-${color}-400`}>GAP {number}</span>
         </div>
-        <h4 className="text-white font-semibold text-sm mb-1">{title}</h4>
+        <h4 className="text-navy-900 font-semibold text-sm mb-1">{title}</h4>
         <p className="text-gray-500 text-[11px] leading-relaxed">{desc}</p>
       </CardContent>
     </Card>
@@ -724,7 +724,7 @@ function SummaryCard({ label, value, icon: Icon, colorClass }) {
     <Card className="bg-[#111827] border-[#1e293b]">
       <CardContent className="p-4 flex items-center gap-3">
         <div className={`w-10 h-10 rounded-lg ${colorClass} flex items-center justify-center`}><Icon className="w-5 h-5" /></div>
-        <div><p className="text-gray-500 text-[10px]">{label}</p><p className="text-white font-bold text-sm">{value}</p></div>
+        <div><p className="text-gray-500 text-[10px]">{label}</p><p className="text-navy-900 font-bold text-sm">{value}</p></div>
       </CardContent>
     </Card>
   );
@@ -734,8 +734,8 @@ function PartyRow({ label, name, email, bio }) {
   return (
     <div className="flex items-center gap-2.5">
       <div className="w-7 h-7 rounded-md bg-blue-500/10 flex items-center justify-center"><User className="w-3.5 h-3.5 text-blue-400" /></div>
-      <div className="flex-1"><p className="text-white text-xs font-medium">{name}</p><p className="text-gray-600 text-[10px]">{label} &#8212; {email || 'N/A'}</p></div>
-      {bio && <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />}
+      <div className="flex-1"><p className="text-navy-900 text-xs font-medium">{name}</p><p className="text-gray-600 text-[10px]">{label} &#8212; {email || 'N/A'}</p></div>
+      {bio && <CheckCircle className="w-3.5 h-3.5 text-coral-600" />}
     </div>
   );
 }
@@ -744,7 +744,7 @@ function InfoRow({ label, value, mono }) {
   return (
     <div className="flex items-center justify-between">
       <span className="text-gray-500">{label}</span>
-      <span className={`text-white ${mono ? 'font-mono text-[10px]' : ''}`}>{String(value)}</span>
+      <span className={`text-navy-900 ${mono ? 'font-mono text-[10px]' : ''}`}>{String(value)}</span>
     </div>
   );
 }

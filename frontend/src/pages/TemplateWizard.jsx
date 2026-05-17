@@ -55,7 +55,7 @@ const FieldInput = ({ field, value, onChange, onAiSuggest, aiLoading }) => {
           onChange={(e) => onChange(field.name, e.target.value)}
           placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}...`}
           rows={4}
-          className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white text-sm focus:border-blue-500 focus:outline-none resize-none"
+          className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 focus:outline-none resize-none"
           data-testid={`field-${field.name}`}
         />
       </div>
@@ -72,7 +72,7 @@ const FieldInput = ({ field, value, onChange, onAiSuggest, aiLoading }) => {
           type="date"
           value={value}
           onChange={(e) => onChange(field.name, e.target.value)}
-          className="bg-[#0a0f1a] border-gray-700 text-white text-sm"
+          className="bg-[#0a0f1a] border-gray-700 text-navy-900 text-sm"
           data-testid={`field-${field.name}`}
         />
       </div>
@@ -90,7 +90,7 @@ const FieldInput = ({ field, value, onChange, onAiSuggest, aiLoading }) => {
           value={value}
           onChange={(e) => onChange(field.name, e.target.value)}
           placeholder={field.placeholder || '0'}
-          className="bg-[#0a0f1a] border-gray-700 text-white text-sm"
+          className="bg-[#0a0f1a] border-gray-700 text-navy-900 text-sm"
           data-testid={`field-${field.name}`}
         />
       </div>
@@ -108,7 +108,7 @@ const FieldInput = ({ field, value, onChange, onAiSuggest, aiLoading }) => {
         value={value}
         onChange={(e) => onChange(field.name, e.target.value)}
         placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}...`}
-        className="bg-[#0a0f1a] border-gray-700 text-white text-sm"
+        className="bg-[#0a0f1a] border-gray-700 text-navy-900 text-sm"
         data-testid={`field-${field.name}`}
       />
     </div>
@@ -123,7 +123,7 @@ const LivePreview = ({ template, fieldValues }) => {
   return (
     <Card className="bg-[#1a2332] border-gray-800 sticky top-24">
       <CardContent className="p-5">
-        <h3 className="text-white font-semibold text-sm mb-3 flex items-center gap-2">
+        <h3 className="text-navy-900 font-semibold text-sm mb-3 flex items-center gap-2">
           <FileText className="w-4 h-4 text-blue-400" />
           Document Preview
         </h3>
@@ -466,12 +466,12 @@ const TemplateWizard = () => {
               variant="ghost"
               size="sm"
               onClick={() => navigate('/templates')}
-              className="text-gray-400 hover:text-white mb-3"
+              className="text-gray-400 hover:text-navy-900 mb-3"
               data-testid="back-to-templates"
             >
               <ArrowLeft className="w-4 h-4 mr-1" /> Back to Templates
             </Button>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1" data-testid="wizard-title">
+            <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 mb-1" data-testid="wizard-title">
               {template.name}
             </h1>
             <p className="text-gray-400 text-sm">{template.description}</p>
@@ -484,7 +484,7 @@ const TemplateWizard = () => {
               size="sm"
               onClick={handleSaveDraft}
               disabled={savingDraft || filledCount === 0}
-              className="border-gray-700 text-gray-300 hover:text-white hover:border-blue-500"
+              className="border-gray-700 text-gray-300 hover:text-navy-900 hover:border-blue-500"
               data-testid="save-draft-btn"
             >
               {savingDraft ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Save className="w-3.5 h-3.5 mr-1.5" />}
@@ -496,7 +496,7 @@ const TemplateWizard = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => handleShareDraft(false)}
-                  className="border-gray-700 text-gray-300 hover:text-white hover:border-purple-500"
+                  className="border-gray-700 text-gray-300 hover:text-navy-900 hover:border-purple-500"
                   data-testid="share-draft-btn"
                 >
                   <Share2 className="w-3.5 h-3.5 mr-1.5" /> Share
@@ -505,7 +505,7 @@ const TemplateWizard = () => {
                   variant="outline"
                   size="sm"
                   onClick={handleShowRevisions}
-                  className="border-gray-700 text-gray-300 hover:text-white hover:border-amber-500"
+                  className="border-gray-700 text-gray-300 hover:text-navy-900 hover:border-amber-500"
                   data-testid="revisions-btn"
                 >
                   <History className="w-3.5 h-3.5 mr-1.5" /> History ({draftVersion} rev{draftVersion !== 1 ? 's' : ''})
@@ -533,7 +533,7 @@ const TemplateWizard = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 mb-5">
                     <FileText className="w-5 h-5 text-blue-400" />
-                    <h2 className="text-white font-semibold">Fill in Document Details</h2>
+                    <h2 className="text-navy-900 font-semibold">Fill in Document Details</h2>
                     <span className="ml-auto flex items-center gap-1 text-xs text-purple-400 bg-purple-500/10 rounded-full px-2 py-0.5">
                       <Sparkles className="w-3 h-3" /> AI-Assisted
                     </span>
@@ -558,7 +558,7 @@ const TemplateWizard = () => {
                       <Button
                         onClick={handleGeneratePdf}
                         disabled={generating || !allRequiredFilled}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 text-base"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-navy-900 py-5 text-base"
                         data-testid="generate-pdf-btn"
                       >
                         {generating ? (
@@ -588,7 +588,7 @@ const TemplateWizard = () => {
                           <Button
                             onClick={handleDownload}
                             variant="outline"
-                            className="border-gray-600 text-gray-200 hover:text-white hover:border-blue-500 py-5"
+                            className="border-gray-600 text-gray-200 hover:text-navy-900 hover:border-blue-500 py-5"
                             data-testid="download-pdf-btn"
                           >
                             <Download className="w-5 h-5 mr-2" />
@@ -596,7 +596,7 @@ const TemplateWizard = () => {
                           </Button>
                           <Button
                             onClick={handleProceedToNotarization}
-                            className="bg-green-600 hover:bg-green-700 text-white py-5"
+                            className="bg-green-600 hover:bg-green-700 text-navy-900 py-5"
                             data-testid="proceed-notarization-btn"
                           >
                             <Send className="w-5 h-5 mr-2" />
@@ -619,7 +619,7 @@ const TemplateWizard = () => {
                     )}
 
                     {!allRequiredFilled && !generatedPdfUrl && (
-                      <div className="flex items-center gap-2 text-xs text-amber-400">
+                      <div className="flex items-center gap-2 text-xs text-coral-600">
                         <AlertCircle className="w-3.5 h-3.5" />
                         Fill all required fields to generate the PDF
                       </div>
@@ -643,10 +643,10 @@ const TemplateWizard = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" data-testid="share-modal">
           <div className="bg-[#1a2332] border border-gray-700 rounded-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-white font-bold text-lg flex items-center gap-2">
+              <h2 className="text-navy-900 font-bold text-lg flex items-center gap-2">
                 <Share2 className="w-5 h-5 text-purple-400" /> Share Draft
               </h2>
-              <button onClick={() => setShowShareModal(false)} className="text-gray-400 hover:text-white"><X className="w-5 h-5" /></button>
+              <button onClick={() => setShowShareModal(false)} className="text-gray-400 hover:text-navy-900"><X className="w-5 h-5" /></button>
             </div>
             <div className="bg-[#0a0f1a] rounded-lg p-3 flex items-center gap-2 mb-4">
               <Link className="w-4 h-4 text-blue-400 flex-shrink-0" />
@@ -656,10 +656,10 @@ const TemplateWizard = () => {
               </Button>
             </div>
             <div className="flex gap-2 mb-4">
-              <Button size="sm" onClick={() => handleShareDraft(false)} className={`flex-1 ${!shareToken ? 'bg-blue-600' : 'bg-gray-700'} text-white`} data-testid="share-view-only">
+              <Button size="sm" onClick={() => handleShareDraft(false)} className={`flex-1 ${!shareToken ? 'bg-blue-600' : 'bg-gray-700'} text-navy-900`} data-testid="share-view-only">
                 View Only
               </Button>
-              <Button size="sm" onClick={() => handleShareDraft(true)} className="flex-1 bg-purple-600 hover:bg-purple-700 text-white" data-testid="share-allow-edit">
+              <Button size="sm" onClick={() => handleShareDraft(true)} className="flex-1 bg-purple-600 hover:bg-purple-700 text-navy-900" data-testid="share-allow-edit">
                 Allow Editing
               </Button>
             </div>
@@ -675,10 +675,10 @@ const TemplateWizard = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" data-testid="revisions-modal">
           <div className="bg-[#1a2332] border border-gray-700 rounded-xl max-w-md w-full p-6 max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-white font-bold text-lg flex items-center gap-2">
-                <History className="w-5 h-5 text-amber-400" /> Version History
+              <h2 className="text-navy-900 font-bold text-lg flex items-center gap-2">
+                <History className="w-5 h-5 text-coral-600" /> Version History
               </h2>
-              <button onClick={() => setShowRevisions(false)} className="text-gray-400 hover:text-white"><X className="w-5 h-5" /></button>
+              <button onClick={() => setShowRevisions(false)} className="text-gray-400 hover:text-navy-900"><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-2">
               {[...revisions].reverse().map((rev) => (
@@ -689,7 +689,7 @@ const TemplateWizard = () => {
                 }`}>
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-white font-medium text-sm">Version {rev.version}</span>
+                      <span className="text-navy-900 font-medium text-sm">Version {rev.version}</span>
                       {rev.version === draftVersion && (
                         <span className="ml-2 text-xs bg-blue-500/20 text-blue-400 rounded px-1.5 py-0.5">Current</span>
                       )}

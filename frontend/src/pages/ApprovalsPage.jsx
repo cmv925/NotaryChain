@@ -15,7 +15,7 @@ const API = process.env.REACT_APP_BACKEND_URL;
 const statusStyles = {
   approved: 'bg-green-500/15 text-green-400',
   rejected: 'bg-red-500/15 text-red-400',
-  pending: 'bg-amber-500/15 text-amber-400',
+  pending: 'bg-coral-500/15 text-coral-600',
   waiting: 'bg-gray-500/15 text-gray-400',
 };
 
@@ -87,7 +87,7 @@ export default function ApprovalsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white">
+    <div className="min-h-screen bg-[#030712] text-navy-900">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
@@ -111,8 +111,8 @@ export default function ApprovalsPage() {
         {showCreate && (
           <Card className="bg-[#0d1b2a] border-gray-800 mb-6" data-testid="create-form">
             <CardContent className="pt-5 space-y-3">
-              <Input value={docName} onChange={(e) => setDocName(e.target.value)} placeholder="Document name" className="bg-[#1a2332] border-gray-700 text-white" data-testid="doc-name-input" />
-              <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description (optional)" className="bg-[#1a2332] border-gray-700 text-white" />
+              <Input value={docName} onChange={(e) => setDocName(e.target.value)} placeholder="Document name" className="bg-[#1a2332] border-gray-700 text-navy-900" data-testid="doc-name-input" />
+              <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description (optional)" className="bg-[#1a2332] border-gray-700 text-navy-900" />
               <div className="space-y-2">
                 <p className="text-gray-400 text-xs">Approval Chain (in order):</p>
                 {chain.map((c, i) => (
@@ -121,13 +121,13 @@ export default function ApprovalsPage() {
                       value={c.approver_email}
                       onChange={(e) => { const n = [...chain]; n[i].approver_email = e.target.value; setChain(n); }}
                       placeholder="Approver email"
-                      className="bg-[#1a2332] border-gray-700 text-white flex-1"
+                      className="bg-[#1a2332] border-gray-700 text-navy-900 flex-1"
                       data-testid={`approver-email-${i}`}
                     />
                     <select
                       value={c.role}
                       onChange={(e) => { const n = [...chain]; n[i].role = e.target.value; setChain(n); }}
-                      className="bg-[#1a2332] border border-gray-700 rounded-md px-2 text-sm text-white"
+                      className="bg-[#1a2332] border border-gray-700 rounded-md px-2 text-sm text-navy-900"
                     >
                       {['manager', 'legal', 'executive', 'compliance', 'custom'].map((r) => (
                         <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>
@@ -183,7 +183,7 @@ export default function ApprovalsPage() {
                 <CardContent className="pt-4">
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="text-white font-medium text-sm">{req.document_name}</h3>
+                      <h3 className="text-navy-900 font-medium text-sm">{req.document_name}</h3>
                       <p className="text-gray-500 text-xs">by {req.requester_name} — {new Date(req.created_at).toLocaleDateString()}</p>
                       {req.description && <p className="text-gray-400 text-xs mt-1">{req.description}</p>}
                     </div>
@@ -197,7 +197,7 @@ export default function ApprovalsPage() {
                         <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] whitespace-nowrap ${
                           step.status === 'approved' ? 'bg-green-500/10 text-green-400' :
                           step.status === 'rejected' ? 'bg-red-500/10 text-red-400' :
-                          step.status === 'pending' ? 'bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20' :
+                          step.status === 'pending' ? 'bg-coral-500/10 text-coral-600 ring-1 ring-amber-500/20' :
                           'bg-gray-800/50 text-gray-500'
                         }`}>
                           {step.status === 'approved' ? <CheckCircle className="w-3 h-3" /> :
@@ -218,13 +218,13 @@ export default function ApprovalsPage() {
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         placeholder="Optional comment..."
-                        className="bg-[#1a2332] border-gray-700 text-white text-xs flex-1"
+                        className="bg-[#1a2332] border-gray-700 text-navy-900 text-xs flex-1"
                       />
                       <Button
                         size="sm"
                         onClick={() => takeAction(req.id, 'approve')}
                         disabled={actionLoading === req.id}
-                        className="bg-green-600 hover:bg-green-700 text-white text-xs"
+                        className="bg-green-600 hover:bg-green-700 text-navy-900 text-xs"
                         data-testid={`approve-${req.id}`}
                       >
                         {actionLoading === req.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3 mr-1" />}

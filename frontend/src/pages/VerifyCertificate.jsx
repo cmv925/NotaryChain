@@ -58,10 +58,10 @@ export default function VerifyCertificate() {
 
           {/* Header */}
           <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-600/20 mb-5">
-              <ShieldCheck className="w-8 h-8 text-emerald-400" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-coral-500/20 mb-5">
+              <ShieldCheck className="w-8 h-8 text-coral-600" />
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3" data-testid="verify-cert-title">
+            <h1 className="text-3xl sm:text-4xl font-bold text-navy-900 mb-3" data-testid="verify-cert-title">
               Verify Certificate
             </h1>
             <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
@@ -77,10 +77,10 @@ export default function VerifyCertificate() {
                   value={inputHash}
                   onChange={(e) => setInputHash(e.target.value)}
                   placeholder="e.g. NC-A1B2C3D4E5F6, ceremony ID, or blockchain hash..."
-                  className="bg-[#0f1825] border-gray-700 text-white flex-1 placeholder:text-gray-600"
+                  className="bg-[#0f1825] border-gray-700 text-navy-900 flex-1 placeholder:text-gray-600"
                   data-testid="verify-cert-input"
                 />
-                <Button type="submit" disabled={loading || !inputHash.trim()} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6" data-testid="verify-cert-submit">
+                <Button type="submit" disabled={loading || !inputHash.trim()} className="bg-coral-500 hover:bg-emerald-700 text-navy-900 px-6" data-testid="verify-cert-submit">
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
                   {loading ? '' : 'Verify'}
                 </Button>
@@ -94,14 +94,14 @@ export default function VerifyCertificate() {
               {result.verified ? (
                 <div className="space-y-5">
                   {/* Verified Banner */}
-                  <Card className="bg-emerald-500/10 border-emerald-500/30" data-testid="cert-verified-banner">
+                  <Card className="bg-coral-500/10 border-coral-200" data-testid="cert-verified-banner">
                     <CardContent className="p-6 flex items-center gap-4">
-                      <div className="w-14 h-14 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                        <CheckCircle className="w-7 h-7 text-emerald-400" />
+                      <div className="w-14 h-14 rounded-full bg-coral-500/20 flex items-center justify-center flex-shrink-0">
+                        <CheckCircle className="w-7 h-7 text-coral-600" />
                       </div>
                       <div>
-                        <h2 className="text-xl font-bold text-emerald-400">Certificate Verified</h2>
-                        <p className="text-emerald-300/70 text-sm mt-1">{result.message}</p>
+                        <h2 className="text-xl font-bold text-coral-600">Certificate Verified</h2>
+                        <p className="text-coral-700/70 text-sm mt-1">{result.message}</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -109,7 +109,7 @@ export default function VerifyCertificate() {
                   {/* Document Info */}
                   <Card className="bg-[#1a2332] border-gray-800" data-testid="cert-document-info">
                     <CardContent className="p-6">
-                      <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+                      <h3 className="text-navy-900 font-semibold text-lg mb-4 flex items-center gap-2">
                         <FileText className="w-5 h-5 text-blue-400" /> Document Information
                       </h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -126,21 +126,21 @@ export default function VerifyCertificate() {
                   {/* Agent Verdicts */}
                   <Card className="bg-[#1a2332] border-gray-800" data-testid="cert-agent-verdicts">
                     <CardContent className="p-6">
-                      <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+                      <h3 className="text-navy-900 font-semibold text-lg mb-4 flex items-center gap-2">
                         <Shield className="w-5 h-5 text-purple-400" /> Agent Verification Results
                       </h3>
                       <div className="grid grid-cols-3 gap-3">
                         {result.agents.map((a) => (
                           <div
                             key={a.agent}
-                            className={`p-4 rounded-lg border text-center ${a.verdict === 'PASS' ? 'bg-emerald-500/10 border-emerald-500/30' : a.verdict === 'FAIL' ? 'bg-red-500/10 border-red-500/30' : 'bg-gray-700/20 border-gray-700'}`}
+                            className={`p-4 rounded-lg border text-center ${a.verdict === 'PASS' ? 'bg-coral-500/10 border-coral-200' : a.verdict === 'FAIL' ? 'bg-red-500/10 border-red-500/30' : 'bg-gray-700/20 border-gray-700'}`}
                             data-testid={`cert-agent-${a.agent.toLowerCase()}`}
                           >
                             <div className="flex justify-center mb-2">
-                              {a.verdict === 'PASS' ? <CheckCircle className="w-6 h-6 text-emerald-400" /> : a.verdict === 'FAIL' ? <XCircle className="w-6 h-6 text-red-400" /> : <Clock className="w-6 h-6 text-gray-500" />}
+                              {a.verdict === 'PASS' ? <CheckCircle className="w-6 h-6 text-coral-600" /> : a.verdict === 'FAIL' ? <XCircle className="w-6 h-6 text-red-400" /> : <Clock className="w-6 h-6 text-gray-500" />}
                             </div>
-                            <p className="text-white font-medium text-sm">{a.agent}</p>
-                            <p className={`text-xs font-bold mt-1 ${a.verdict === 'PASS' ? 'text-emerald-400' : a.verdict === 'FAIL' ? 'text-red-400' : 'text-gray-500'}`}>
+                            <p className="text-navy-900 font-medium text-sm">{a.agent}</p>
+                            <p className={`text-xs font-bold mt-1 ${a.verdict === 'PASS' ? 'text-coral-600' : a.verdict === 'FAIL' ? 'text-red-400' : 'text-gray-500'}`}>
                               {a.verdict}
                             </p>
                             {a.confidence != null && (
@@ -155,8 +155,8 @@ export default function VerifyCertificate() {
                   {/* Consensus */}
                   <Card className="bg-[#1a2332] border-gray-800" data-testid="cert-consensus">
                     <CardContent className="p-6">
-                      <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
-                        <ShieldCheck className="w-5 h-5 text-emerald-400" /> Consensus Oracle
+                      <h3 className="text-navy-900 font-semibold text-lg mb-4 flex items-center gap-2">
+                        <ShieldCheck className="w-5 h-5 text-coral-600" /> Consensus Oracle
                       </h3>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <InfoRow label="Result" value={result.consensus.result} badge badgeColor={result.consensus.result === 'APPROVED' ? 'emerald' : 'red'} />
@@ -171,8 +171,8 @@ export default function VerifyCertificate() {
                   {result.blockchain_seal && (
                     <Card className="bg-[#1a2332] border-gray-800" data-testid="cert-blockchain-seal">
                       <CardContent className="p-6">
-                        <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
-                          <Blocks className="w-5 h-5 text-orange-400" /> Blockchain Seal
+                        <h3 className="text-navy-900 font-semibold text-lg mb-4 flex items-center gap-2">
+                          <Blocks className="w-5 h-5 text-coral-600" /> Blockchain Seal
                         </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <InfoRow label="Network" value={result.blockchain_seal.network} />
@@ -191,7 +191,7 @@ export default function VerifyCertificate() {
                             href={result.blockchain_seal.explorer_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-lg bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm hover:bg-orange-500/20 transition-colors"
+                            className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-lg bg-coral-500/10 border border-coral-200 text-coral-600 text-sm hover:bg-coral-500/20 transition-colors"
                             data-testid="cert-explorer-link"
                           >
                             <ExternalLink className="w-4 h-4" /> View on HashScan Explorer
@@ -231,7 +231,7 @@ function InfoRow({ label, value, copyable, onCopy, badge, badgeColor, mono }) {
             {displayVal}
           </span>
         ) : (
-          <span className={`text-white text-sm ${mono ? 'font-mono text-xs break-all' : ''}`}>{displayVal}</span>
+          <span className={`text-navy-900 text-sm ${mono ? 'font-mono text-xs break-all' : ''}`}>{displayVal}</span>
         )}
         {copyable && onCopy && (
           <button onClick={() => onCopy(displayVal)} className="text-gray-600 hover:text-gray-300 transition-colors">

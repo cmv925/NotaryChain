@@ -99,14 +99,14 @@ const OnboardingPage = () => {
           {STEPS.map((s, i) => (
             <div key={s.id} className="flex items-center gap-2">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                i < step ? 'bg-emerald-500 text-white' :
-                i === step ? 'bg-blue-600 text-white ring-4 ring-blue-600/20' :
+                i < step ? 'bg-coral-500 text-navy-900' :
+                i === step ? 'bg-blue-600 text-navy-900 ring-4 ring-blue-600/20' :
                 'bg-gray-800 text-gray-500'
               }`}>
                 {i < step ? <CheckCircle className="w-4 h-4" /> : i + 1}
               </div>
               {i < STEPS.length - 1 && (
-                <div className={`w-12 h-0.5 ${i < step ? 'bg-emerald-500' : 'bg-gray-800'}`} />
+                <div className={`w-12 h-0.5 ${i < step ? 'bg-coral-500' : 'bg-gray-800'}`} />
               )}
             </div>
           ))}
@@ -118,7 +118,7 @@ const OnboardingPage = () => {
             <div className={`w-14 h-14 rounded-xl bg-${currentStep.color}-500/10 flex items-center justify-center mx-auto mb-4`}>
               <currentStep.icon className={`w-7 h-7 text-${currentStep.color}-400`} />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">{currentStep.title}</h2>
+            <h2 className="text-2xl font-bold text-navy-900 mb-2">{currentStep.title}</h2>
             <p className="text-gray-400">{currentStep.subtitle}</p>
           </div>
 
@@ -161,7 +161,7 @@ const OnboardingPage = () => {
                     <opt.icon className={`w-5 h-5 ${selectedRole === opt.value ? 'text-blue-400' : 'text-gray-500'}`} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-white font-medium">{opt.label}</p>
+                    <p className="text-navy-900 font-medium">{opt.label}</p>
                     <p className="text-gray-500 text-sm">{opt.desc}</p>
                   </div>
                   {selectedRole === opt.value && <CheckCircle className="w-5 h-5 text-blue-400" />}
@@ -182,7 +182,7 @@ const OnboardingPage = () => {
                     <f.icon className="w-5 h-5 text-blue-400" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-white font-medium text-sm">{f.title}</p>
+                    <p className="text-navy-900 font-medium text-sm">{f.title}</p>
                     <p className="text-gray-500 text-xs">{f.desc}</p>
                   </div>
                   <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
@@ -197,8 +197,8 @@ const OnboardingPage = () => {
           {/* Step: Complete */}
           {step === 3 && (
             <div className="text-center space-y-6">
-              <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto">
-                <CheckCircle className="w-10 h-10 text-emerald-400" />
+              <div className="w-20 h-20 rounded-full bg-coral-500/10 flex items-center justify-center mx-auto">
+                <CheckCircle className="w-10 h-10 text-coral-600" />
               </div>
               <p className="text-gray-400">Your workspace is ready. Jump into your dashboard or explore a feature.</p>
               <div className="grid grid-cols-2 gap-3">
@@ -209,12 +209,12 @@ const OnboardingPage = () => {
                     className="p-4 rounded-xl border border-gray-800 bg-[#0a0f1a] hover:border-blue-500/50 transition-all text-left"
                   >
                     <f.icon className="w-5 h-5 text-blue-400 mb-2" />
-                    <p className="text-white text-sm font-medium">{f.title}</p>
+                    <p className="text-navy-900 text-sm font-medium">{f.title}</p>
                     <p className="text-gray-500 text-xs mt-1">{f.desc}</p>
                   </button>
                 ))}
               </div>
-              <Button onClick={handleComplete} className="w-full bg-emerald-600 hover:bg-emerald-500 py-5 text-base" data-testid="onboarding-go-dashboard">
+              <Button onClick={handleComplete} className="w-full bg-coral-500 hover:bg-coral-500 py-5 text-base" data-testid="onboarding-go-dashboard">
                 Go to Dashboard <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </div>

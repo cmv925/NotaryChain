@@ -207,7 +207,7 @@ const RequestNotarization = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Request Notarization' }]} />
           <div className="text-center mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2 sm:mb-4">
+            <h1 className="text-2xl sm:text-4xl font-bold text-navy-900 mb-2 sm:mb-4">
               Request Notarization
             </h1>
             <p className="text-gray-400 text-sm sm:text-lg">

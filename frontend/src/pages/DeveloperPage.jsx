@@ -228,7 +228,7 @@ const DeveloperPage = () => {
     },
   ];
 
-  const methodColors = { GET: 'bg-emerald-500', POST: 'bg-blue-500', DELETE: 'bg-red-500' };
+  const methodColors = { GET: 'bg-coral-500', POST: 'bg-blue-500', DELETE: 'bg-red-500' };
 
   return (
     <div className="min-h-screen bg-[#0f1825]">
@@ -236,10 +236,10 @@ const DeveloperPage = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-navy-900">
                 <ArrowLeft className="w-5 h-5 sm:mr-2" /><span className="hidden sm:inline">Dashboard</span>
               </Button>
-              <h1 className="text-white font-semibold flex items-center gap-2 text-sm sm:text-base">
+              <h1 className="text-navy-900 font-semibold flex items-center gap-2 text-sm sm:text-base">
                 <Code className="w-5 h-5 text-[#00d4aa]" /> Developer Portal
               </h1>
             </div>
@@ -260,7 +260,7 @@ const DeveloperPage = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTab === tab.id ? 'bg-[#00d4aa] text-black' : 'text-gray-400 hover:text-white'
+                activeTab === tab.id ? 'bg-[#00d4aa] text-black' : 'text-gray-400 hover:text-navy-900'
               }`}
               data-testid={`tab-${tab.id}`}
             >
@@ -276,7 +276,7 @@ const DeveloperPage = () => {
             {/* Intro */}
             <Card className="bg-[#1a2332] border-gray-800">
               <CardContent className="p-6">
-                <h2 className="text-white text-xl font-semibold mb-2">NotaryChain Public API</h2>
+                <h2 className="text-navy-900 text-xl font-semibold mb-2">NotaryChain Public API</h2>
                 <p className="text-gray-400 text-sm mb-4">
                   Integrate blockchain-powered document notarization into your applications.
                   All API requests require an <code className="bg-[#0d1b2a] px-2 py-0.5 rounded text-[#00d4aa] text-xs">X-API-Key</code> header.
@@ -290,7 +290,7 @@ const DeveloperPage = () => {
                     <div key={item.title} className="bg-[#0d1b2a] rounded-lg p-3 flex items-start gap-3">
                       <item.icon className="w-5 h-5 text-[#00d4aa] flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-white text-sm font-medium">{item.title}</p>
+                        <p className="text-navy-900 text-sm font-medium">{item.title}</p>
                         <p className="text-gray-500 text-xs">{item.desc}</p>
                       </div>
                     </div>
@@ -302,7 +302,7 @@ const DeveloperPage = () => {
             {/* Quick Start */}
             <Card className="bg-[#1a2332] border-gray-800">
               <CardContent className="p-6">
-                <h3 className="text-white font-semibold mb-3">Quick Start</h3>
+                <h3 className="text-navy-900 font-semibold mb-3">Quick Start</h3>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <span className="w-6 h-6 bg-[#00d4aa] rounded-full flex items-center justify-center text-black text-xs font-bold flex-shrink-0">1</span>
@@ -331,7 +331,7 @@ const DeveloperPage = () => {
                       className="w-full p-4 flex items-center gap-3 hover:bg-white/5 transition-colors"
                       data-testid={`endpoint-${ep.method}-${ep.path.replace(/[/{}]/g, '-')}`}
                     >
-                      <Badge className={`${methodColors[ep.method]} text-white text-[10px] font-mono px-2`}>{ep.method}</Badge>
+                      <Badge className={`${methodColors[ep.method]} text-navy-900 text-[10px] font-mono px-2`}>{ep.method}</Badge>
                       <code className="text-gray-200 text-sm font-mono flex-1 text-left">{ep.path}</code>
                       {ep.scope && <Badge className="bg-gray-700 text-gray-300 text-[10px]">{ep.scope}</Badge>}
                       {ep.rateLimit !== 'None' && <span className="text-gray-500 text-xs hidden sm:block">{ep.rateLimit}</span>}
@@ -343,7 +343,7 @@ const DeveloperPage = () => {
                         <div>
                           <div className="flex items-center justify-between mb-1">
                             <span className="text-gray-500 text-xs">Example Request</span>
-                            <button onClick={() => copyToClipboard(ep.example)} className="text-gray-500 hover:text-white"><Copy className="w-3.5 h-3.5" /></button>
+                            <button onClick={() => copyToClipboard(ep.example)} className="text-gray-500 hover:text-navy-900"><Copy className="w-3.5 h-3.5" /></button>
                           </div>
                           <pre className="bg-[#0d1b2a] rounded-lg p-3 text-xs text-gray-300 overflow-x-auto font-mono">{ep.example}</pre>
                         </div>
@@ -365,7 +365,7 @@ const DeveloperPage = () => {
             {/* Create Key */}
             <Card className="bg-[#1a2332] border-gray-800" data-testid="create-key-card">
               <CardContent className="p-6">
-                <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+                <h2 className="text-navy-900 font-semibold mb-4 flex items-center gap-2">
                   <Plus className="w-5 h-5 text-[#00d4aa]" /> Create API Key
                 </h2>
                 <div className="flex gap-3">
@@ -373,7 +373,7 @@ const DeveloperPage = () => {
                     value={newKeyName}
                     onChange={e => setNewKeyName(e.target.value)}
                     placeholder="Key name (e.g., Production, Development)"
-                    className="bg-[#0d1b2a] border-gray-700 text-white flex-1"
+                    className="bg-[#0d1b2a] border-gray-700 text-navy-900 flex-1"
                     data-testid="key-name-input"
                   />
                   <Button onClick={handleCreateKey} disabled={loading} className="bg-[#00d4aa] hover:bg-[#00b894] text-black" data-testid="create-key-btn">
@@ -382,19 +382,19 @@ const DeveloperPage = () => {
                 </div>
 
                 {createdKey && (
-                  <div className="mt-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-4" data-testid="new-key-display">
+                  <div className="mt-4 bg-coral-500/10 border border-coral-200 rounded-lg p-4" data-testid="new-key-display">
                     <div className="flex items-center gap-2 mb-2">
-                      <CheckCircle className="w-4 h-4 text-emerald-400" />
-                      <p className="text-emerald-300 text-sm font-medium">Key created! Store it securely — it won't be shown again.</p>
+                      <CheckCircle className="w-4 h-4 text-coral-600" />
+                      <p className="text-coral-700 text-sm font-medium">Key created! Store it securely — it won't be shown again.</p>
                     </div>
                     <div className="flex items-center gap-2 bg-[#0d1b2a] rounded-lg px-3 py-2">
                       <code className="text-[#00d4aa] text-sm font-mono flex-1 break-all">
                         {showKey ? createdKey.key : '•'.repeat(40)}
                       </code>
-                      <button onClick={() => setShowKey(!showKey)} className="text-gray-400 hover:text-white">
+                      <button onClick={() => setShowKey(!showKey)} className="text-gray-400 hover:text-navy-900">
                         {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
-                      <button onClick={() => copyToClipboard(createdKey.key)} className="text-gray-400 hover:text-white" data-testid="copy-key-btn">
+                      <button onClick={() => copyToClipboard(createdKey.key)} className="text-gray-400 hover:text-navy-900" data-testid="copy-key-btn">
                         <Copy className="w-4 h-4" />
                       </button>
                     </div>
@@ -407,16 +407,16 @@ const DeveloperPage = () => {
             {usage && (
               <Card className="bg-[#1a2332] border-gray-800" data-testid="usage-stats">
                 <CardContent className="p-6">
-                  <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                  <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                     <Activity className="w-5 h-5 text-blue-400" /> API Usage
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-[#0d1b2a] rounded-lg p-4">
-                      <p className="text-2xl text-white font-bold">{usage.total_calls}</p>
+                      <p className="text-2xl text-navy-900 font-bold">{usage.total_calls}</p>
                       <p className="text-gray-500 text-xs">Total API Calls</p>
                     </div>
                     <div className="bg-[#0d1b2a] rounded-lg p-4">
-                      <p className="text-2xl text-white font-bold">{usage.active_keys}</p>
+                      <p className="text-2xl text-navy-900 font-bold">{usage.active_keys}</p>
                       <p className="text-gray-500 text-xs">Active Keys</p>
                     </div>
                   </div>
@@ -427,7 +427,7 @@ const DeveloperPage = () => {
             {/* Keys List */}
             <Card className="bg-[#1a2332] border-gray-800" data-testid="keys-list">
               <CardContent className="p-6">
-                <h3 className="text-white font-semibold mb-4">Your API Keys</h3>
+                <h3 className="text-navy-900 font-semibold mb-4">Your API Keys</h3>
                 {keys.length === 0 ? (
                   <p className="text-gray-500 text-sm text-center py-6">No API keys yet. Create one above.</p>
                 ) : (
@@ -436,7 +436,7 @@ const DeveloperPage = () => {
                       <div key={k.id} className={`bg-[#0d1b2a] rounded-lg p-4 border ${k.revoked ? 'border-red-500/20 opacity-60' : 'border-gray-700'}`} data-testid={`key-row-${k.id}`}>
                         <div className="flex items-center justify-between flex-wrap gap-2">
                           <div>
-                            <div className="text-white font-medium text-sm flex items-center gap-2">
+                            <div className="text-navy-900 font-medium text-sm flex items-center gap-2">
                               <Key className="w-4 h-4 text-[#00d4aa]" /> {k.name}
                               {k.revoked && <Badge className="bg-red-500/20 text-red-400 text-[10px]">Revoked</Badge>}
                             </div>
@@ -480,7 +480,7 @@ const DeveloperPage = () => {
             {/* Create Webhook */}
             <Card className="bg-[#1a2332] border-gray-800" data-testid="create-webhook-card">
               <CardContent className="p-6">
-                <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+                <h2 className="text-navy-900 font-semibold mb-4 flex items-center gap-2">
                   <Plus className="w-5 h-5 text-[#00d4aa]" /> Register Webhook
                 </h2>
                 <div className="space-y-3">
@@ -488,14 +488,14 @@ const DeveloperPage = () => {
                     value={newWebhookUrl}
                     onChange={e => setNewWebhookUrl(e.target.value)}
                     placeholder="https://your-app.com/webhooks/notarychain"
-                    className="bg-[#0d1b2a] border-gray-700 text-white"
+                    className="bg-[#0d1b2a] border-gray-700 text-navy-900"
                     data-testid="webhook-url-input"
                   />
                   <Input
                     value={newWebhookDesc}
                     onChange={e => setNewWebhookDesc(e.target.value)}
                     placeholder="Description (optional)"
-                    className="bg-[#0d1b2a] border-gray-700 text-white"
+                    className="bg-[#0d1b2a] border-gray-700 text-navy-900"
                   />
                   <div>
                     <p className="text-gray-400 text-xs mb-2">Events to subscribe:</p>
@@ -522,13 +522,13 @@ const DeveloperPage = () => {
                 </div>
 
                 {createdWebhook && (
-                  <div className="mt-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-4" data-testid="new-webhook-secret">
-                    <p className="text-emerald-300 text-sm font-medium mb-2 flex items-center gap-2">
+                  <div className="mt-4 bg-coral-500/10 border border-coral-200 rounded-lg p-4" data-testid="new-webhook-secret">
+                    <p className="text-coral-700 text-sm font-medium mb-2 flex items-center gap-2">
                       <CheckCircle className="w-4 h-4" /> Webhook created! Store the signing secret:
                     </p>
                     <div className="flex items-center gap-2 bg-[#0d1b2a] rounded-lg px-3 py-2">
                       <code className="text-[#00d4aa] text-xs font-mono flex-1 break-all">{createdWebhook.secret}</code>
-                      <button onClick={() => copyToClipboard(createdWebhook.secret)} className="text-gray-400 hover:text-white">
+                      <button onClick={() => copyToClipboard(createdWebhook.secret)} className="text-gray-400 hover:text-navy-900">
                         <Copy className="w-4 h-4" />
                       </button>
                     </div>
@@ -541,7 +541,7 @@ const DeveloperPage = () => {
             {/* Webhooks List */}
             <Card className="bg-[#1a2332] border-gray-800" data-testid="webhooks-list">
               <CardContent className="p-6">
-                <h3 className="text-white font-semibold mb-4">Your Webhooks ({webhooks.length})</h3>
+                <h3 className="text-navy-900 font-semibold mb-4">Your Webhooks ({webhooks.length})</h3>
                 {webhooks.length === 0 ? (
                   <p className="text-gray-500 text-sm text-center py-6">No webhooks registered yet.</p>
                 ) : (
@@ -556,13 +556,13 @@ const DeveloperPage = () => {
                             <div className="flex items-center gap-3 min-w-0">
                               <Zap className={`w-4 h-4 flex-shrink-0 ${wh.active ? 'text-[#00d4aa]' : 'text-red-400'}`} />
                               <div className="min-w-0">
-                                <p className="text-white text-sm truncate">{wh.url}</p>
+                                <p className="text-navy-900 text-sm truncate">{wh.url}</p>
                                 <p className="text-gray-500 text-xs">{wh.events?.join(', ')}</p>
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
                               {!wh.active && <Badge className="bg-red-500/20 text-red-400 text-[10px]">Disabled</Badge>}
-                              {wh.disabled_reason === '10 consecutive failures' && <Badge className="bg-orange-500/20 text-orange-400 text-[10px]">Auto-disabled</Badge>}
+                              {wh.disabled_reason === '10 consecutive failures' && <Badge className="bg-coral-500/20 text-coral-600 text-[10px]">Auto-disabled</Badge>}
                               {expandedWebhook === wh.id ? <ChevronDown className="w-4 h-4 text-gray-500" /> : <ChevronRight className="w-4 h-4 text-gray-500" />}
                             </div>
                           </div>
@@ -572,7 +572,7 @@ const DeveloperPage = () => {
                           <div className="px-4 pb-4 border-t border-gray-800 space-y-4">
                             {/* Actions */}
                             <div className="flex gap-2 pt-3">
-                              <Button size="sm" onClick={() => handleTestWebhook(wh.id)} className="bg-blue-600 hover:bg-blue-700 text-white text-xs h-7" data-testid={`test-webhook-${wh.id}`}>
+                              <Button size="sm" onClick={() => handleTestWebhook(wh.id)} className="bg-blue-600 hover:bg-blue-700 text-navy-900 text-xs h-7" data-testid={`test-webhook-${wh.id}`}>
                                 <Send className="w-3 h-3 mr-1" /> Test
                               </Button>
                               <Button size="sm" variant="outline" onClick={() => handleToggleWebhook(wh.id)} className="border-gray-600 text-gray-300 text-xs h-7" data-testid={`toggle-webhook-${wh.id}`}>
@@ -589,12 +589,12 @@ const DeveloperPage = () => {
                               <div className="grid grid-cols-4 gap-2">
                                 {[
                                   { label: 'Total', value: webhookDetails.stats.total_deliveries },
-                                  { label: 'Success', value: webhookDetails.stats.successful, color: 'text-emerald-400' },
+                                  { label: 'Success', value: webhookDetails.stats.successful, color: 'text-coral-600' },
                                   { label: 'Failed', value: webhookDetails.stats.failed, color: 'text-red-400' },
                                   { label: 'Rate', value: `${webhookDetails.stats.success_rate}%`, color: 'text-[#00d4aa]' },
                                 ].map(s => (
                                   <div key={s.label} className="bg-[#1a2332] rounded p-2 text-center">
-                                    <p className={`text-lg font-bold ${s.color || 'text-white'}`}>{s.value}</p>
+                                    <p className={`text-lg font-bold ${s.color || 'text-navy-900'}`}>{s.value}</p>
                                     <p className="text-gray-500 text-[10px]">{s.label}</p>
                                   </div>
                                 ))}
@@ -612,7 +612,7 @@ const DeveloperPage = () => {
                                     <div key={d.id} className="flex items-center gap-2 py-1.5 border-b border-gray-800 last:border-0 text-xs">
                                       {d.success ? <CheckCircle className="w-3 h-3 text-emerald-500 flex-shrink-0" /> : <XCircle className="w-3 h-3 text-red-400 flex-shrink-0" />}
                                       <span className="text-gray-300 font-mono">{d.event}</span>
-                                      <span className={`${d.success ? 'text-emerald-400' : 'text-red-400'}`}>{d.status_code || 'err'}</span>
+                                      <span className={`${d.success ? 'text-coral-600' : 'text-red-400'}`}>{d.status_code || 'err'}</span>
                                       <span className="text-gray-500">#{d.attempt}</span>
                                       <span className="text-gray-600 ml-auto">{new Date(d.timestamp).toLocaleString()}</span>
                                     </div>
@@ -632,7 +632,7 @@ const DeveloperPage = () => {
             {/* Signature Verification Guide */}
             <Card className="bg-[#1a2332] border-gray-800">
               <CardContent className="p-6">
-                <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                   <Shield className="w-5 h-5 text-blue-400" /> Verifying Webhook Signatures
                 </h3>
                 <p className="text-gray-400 text-sm mb-3">Each webhook delivery includes an <code className="bg-[#0d1b2a] px-1.5 py-0.5 rounded text-[#00d4aa] text-xs">X-Webhook-Signature</code> header with an HMAC-SHA256 signature.</p>

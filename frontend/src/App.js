@@ -55,6 +55,7 @@ const FLNotaryRecruitment = lazy(() => import('./pages/FLNotaryRecruitment'));
 const AdminFLRecruitment = lazy(() => import('./pages/AdminFLRecruitment'));
 const AdminFLRonsp = lazy(() => import('./pages/AdminFLRonsp'));
 const FieldScanner = lazy(() => import('./pages/FieldScanner'));
+const PublicScannerDemo = lazy(() => import('./pages/PublicScannerDemo'));
 const TrustBadges = lazy(() => import('./pages/TrustBadges'));
 const TrustBadgeLanding = lazy(() => import('./pages/TrustBadgeLanding'));
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
@@ -234,6 +235,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/scanner/demo" element={<PublicScannerDemo />} />
             <Route
               path="/trust-hub"
               element={

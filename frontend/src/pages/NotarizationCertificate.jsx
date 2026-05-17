@@ -77,7 +77,7 @@ export default function NotarizationCertificate() {
         <Card className="bg-[#1a1a2e] border-red-500/30 max-w-md w-full">
           <CardContent className="p-8 text-center">
             <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-white mb-2">Certificate Not Available</h2>
+            <h2 className="text-xl font-bold text-navy-900 mb-2">Certificate Not Available</h2>
             <p className="text-gray-400 mb-6">{error}</p>
             <Button onClick={() => navigate(-1)} variant="outline" className="border-[#333]">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -92,14 +92,14 @@ export default function NotarizationCertificate() {
   const verificationUrl = `${window.location.origin}/verify?hash=${certificate?.blockchain_proof?.package_hash}`;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white p-4 md:p-8 print:bg-white print:text-black">
+    <div className="min-h-screen bg-[#0a0a0a] text-navy-900 p-4 md:p-8 print:bg-white print:text-black">
       {/* Header - Hidden in print */}
       <div className="max-w-4xl mx-auto mb-6 print:hidden">
         <div className="flex items-center justify-between">
           <Button 
             onClick={() => navigate(-1)} 
             variant="ghost" 
-            className="text-gray-400 hover:text-white"
+            className="text-gray-400 hover:text-navy-900"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
@@ -125,7 +125,7 @@ export default function NotarizationCertificate() {
               <Shield className="h-10 w-10 text-[#00d4aa] print:text-green-600" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2 print:text-black">
+          <h1 className="text-3xl font-bold text-navy-900 mb-2 print:text-black">
             Digital Notarization Certificate
           </h1>
           <p className="text-[#00d4aa] font-semibold print:text-green-600">
@@ -140,22 +140,22 @@ export default function NotarizationCertificate() {
         <div className="p-8 space-y-8">
           {/* Document Information */}
           <div>
-            <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2 print:text-black">
+            <h2 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2 print:text-black">
               <FileText className="h-5 w-5 text-[#00d4aa] print:text-green-600" />
               Document Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#0d1b2a] rounded-lg p-4 print:bg-gray-50">
               <div>
                 <p className="text-gray-400 text-sm print:text-gray-500">Document Name</p>
-                <p className="text-white font-medium print:text-black">{certificate?.document?.name || 'N/A'}</p>
+                <p className="text-navy-900 font-medium print:text-black">{certificate?.document?.name || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-gray-400 text-sm print:text-gray-500">Document Type</p>
-                <p className="text-white font-medium print:text-black">{certificate?.document?.type || 'N/A'}</p>
+                <p className="text-navy-900 font-medium print:text-black">{certificate?.document?.type || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-gray-400 text-sm print:text-gray-500">Notarization Type</p>
-                <p className="text-white font-medium print:text-black">{certificate?.document?.notarization_type || 'Standard'}</p>
+                <p className="text-navy-900 font-medium print:text-black">{certificate?.document?.notarization_type || 'Standard'}</p>
               </div>
             </div>
           </div>
@@ -163,22 +163,22 @@ export default function NotarizationCertificate() {
           {/* Participants */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2 print:text-black">
+              <h2 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2 print:text-black">
                 <User className="h-5 w-5 text-blue-500" />
                 Requester
               </h2>
               <div className="bg-[#0d1b2a] rounded-lg p-4 print:bg-gray-50">
-                <p className="text-white font-medium print:text-black">{certificate?.requester?.name || 'N/A'}</p>
+                <p className="text-navy-900 font-medium print:text-black">{certificate?.requester?.name || 'N/A'}</p>
                 <p className="text-gray-400 text-sm print:text-gray-600">{certificate?.requester?.email}</p>
               </div>
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2 print:text-black">
+              <h2 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2 print:text-black">
                 <UserCheck className="h-5 w-5 text-green-500" />
                 Notary Public
               </h2>
               <div className="bg-[#0d1b2a] rounded-lg p-4 print:bg-gray-50">
-                <p className="text-white font-medium print:text-black">{certificate?.notary?.name || 'N/A'}</p>
+                <p className="text-navy-900 font-medium print:text-black">{certificate?.notary?.name || 'N/A'}</p>
                 <p className="text-gray-400 text-sm print:text-gray-600">{certificate?.notary?.email}</p>
                 {certificate?.notary?.commission_number && (
                   <p className="text-gray-400 text-xs mt-1 print:text-gray-600">
@@ -191,7 +191,7 @@ export default function NotarizationCertificate() {
 
           {/* Verification Summary */}
           <div>
-            <h2 className="text-lg font-bold text-white mb-4 print:text-black">Verification Summary</h2>
+            <h2 className="text-lg font-bold text-navy-900 mb-4 print:text-black">Verification Summary</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* AI Analysis */}
               <div className="bg-[#0d1b2a] rounded-lg p-4 print:bg-gray-50">
@@ -208,7 +208,7 @@ export default function NotarizationCertificate() {
                     }`} />
                   </div>
                   <div>
-                    <p className="text-white font-medium print:text-black">AI Analysis</p>
+                    <p className="text-navy-900 font-medium print:text-black">AI Analysis</p>
                     <p className="text-gray-400 text-xs print:text-gray-600">Document Verification</p>
                   </div>
                 </div>
@@ -238,7 +238,7 @@ export default function NotarizationCertificate() {
                     }`} />
                   </div>
                   <div>
-                    <p className="text-white font-medium print:text-black">Biometric</p>
+                    <p className="text-navy-900 font-medium print:text-black">Biometric</p>
                     <p className="text-gray-400 text-xs print:text-gray-600">Identity Verification</p>
                   </div>
                 </div>
@@ -268,7 +268,7 @@ export default function NotarizationCertificate() {
                     }`} />
                   </div>
                   <div>
-                    <p className="text-white font-medium print:text-black">Video Session</p>
+                    <p className="text-navy-900 font-medium print:text-black">Video Session</p>
                     <p className="text-gray-400 text-xs print:text-gray-600">Remote Notarization</p>
                   </div>
                 </div>
@@ -287,7 +287,7 @@ export default function NotarizationCertificate() {
 
           {/* Blockchain Proof */}
           <div>
-            <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2 print:text-black">
+            <h2 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2 print:text-black">
               <Link2 className="h-5 w-5 text-[#00d4aa] print:text-green-600" />
               Blockchain Proof
             </h2>
@@ -296,7 +296,7 @@ export default function NotarizationCertificate() {
                 <div className="flex-1 space-y-4">
                   <div>
                     <p className="text-gray-400 text-sm print:text-gray-500">Network</p>
-                    <p className="text-white font-medium print:text-black">{certificate?.blockchain_proof?.network}</p>
+                    <p className="text-navy-900 font-medium print:text-black">{certificate?.blockchain_proof?.network}</p>
                   </div>
                   <div>
                     <p className="text-gray-400 text-sm print:text-gray-500">Package Hash (SHA-256)</p>
@@ -318,7 +318,7 @@ export default function NotarizationCertificate() {
                   </div>
                   <div>
                     <p className="text-gray-400 text-sm print:text-gray-500">HCS Topic ID</p>
-                    <p className="text-white font-mono print:text-black">{certificate?.blockchain_proof?.hcs_topic_id || 'N/A'}</p>
+                    <p className="text-navy-900 font-mono print:text-black">{certificate?.blockchain_proof?.hcs_topic_id || 'N/A'}</p>
                   </div>
                   {certificate?.blockchain_proof?.explorer_url && (
                     <a 
@@ -350,13 +350,13 @@ export default function NotarizationCertificate() {
 
           {/* Component Hashes */}
           <div>
-            <h2 className="text-lg font-bold text-white mb-4 print:text-black">Component Integrity Hashes</h2>
+            <h2 className="text-lg font-bold text-navy-900 mb-4 print:text-black">Component Integrity Hashes</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {certificate?.component_hashes && Object.entries(certificate.component_hashes).map(([key, hash]) => (
                 hash && (
                   <div key={key} className="bg-[#0d1b2a] rounded-lg p-3 print:bg-gray-50">
                     <p className="text-gray-400 text-xs capitalize print:text-gray-500">{key.replace(/_/g, ' ')}</p>
-                    <p className="text-white text-xs font-mono truncate print:text-black" title={hash}>
+                    <p className="text-navy-900 text-xs font-mono truncate print:text-black" title={hash}>
                       {hash}
                     </p>
                   </div>

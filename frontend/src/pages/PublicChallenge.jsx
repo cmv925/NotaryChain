@@ -88,46 +88,46 @@ export default function PublicChallenge() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-sky-400" />
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-coral-600" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white px-4 py-6 flex items-center justify-center" data-testid="public-challenge-page">
-      <Card className="bg-slate-900/80 border-slate-800 max-w-md w-full" data-testid="public-challenge-card">
+    <div className="min-h-screen bg-cream-100 text-navy-900 px-4 py-6 flex items-center justify-center" data-testid="public-challenge-page">
+      <Card className="bg-white/80 border-slate-200 max-w-md w-full" data-testid="public-challenge-card">
         <CardContent className="p-6">
           {/* HEADER */}
           <div className="flex items-center gap-2 mb-4">
-            <Shield className="w-5 h-5 text-sky-400" />
-            <span className="text-sky-400 text-[10px] uppercase tracking-[0.2em] font-bold">Living Identity Re-Attestation</span>
+            <Shield className="w-5 h-5 text-coral-600" />
+            <span className="text-coral-600 text-[10px] uppercase tracking-[0.2em] font-bold">Living Identity Re-Attestation</span>
           </div>
 
           {phase === 'invalid' && (
             <div className="text-center py-8" data-testid="invalid-token-state">
               <XCircle className="w-12 h-12 mx-auto text-red-400 mb-3" />
               <h2 className="text-xl font-bold mb-2">Token Invalid or Expired</h2>
-              <p className="text-sm text-slate-400">This authorization token is no longer valid. Ask the subject to issue a fresh challenge link.</p>
+              <p className="text-sm text-slate-600">This authorization token is no longer valid. Ask the subject to issue a fresh challenge link.</p>
             </div>
           )}
 
           {phase === 'intro' && info && (
             <div data-testid="intro-state">
               <h1 className="text-2xl font-bold mb-1">Verify Identity</h1>
-              <p className="text-sm text-slate-400 mb-5">
-                You are about to verify the identity of <span className="text-white font-semibold">{info.subject_name || 'a subject'}</span> ({info.subject_email_masked}). NotaryChain will compare the captured biometric against their on-chain Genesis Anchor and return a confidence score.
+              <p className="text-sm text-slate-600 mb-5">
+                You are about to verify the identity of <span className="text-navy-900 font-semibold">{info.subject_name || 'a subject'}</span> ({info.subject_email_masked}). NotaryChain will compare the captured biometric against their on-chain Genesis Anchor and return a confidence score.
               </p>
 
-              <div className="bg-slate-800/40 border border-slate-700/40 rounded p-3 mb-5 text-xs space-y-1">
-                <div className="flex items-center justify-between"><span className="text-slate-500">Uses remaining</span><span className="text-white">{info.uses_remaining}</span></div>
+              <div className="bg-cream-200/40 border border-slate-300/40 rounded p-3 mb-5 text-xs space-y-1">
+                <div className="flex items-center justify-between"><span className="text-slate-500">Uses remaining</span><span className="text-navy-900">{info.uses_remaining}</span></div>
                 {info.expires_at && (
-                  <div className="flex items-center justify-between"><span className="text-slate-500">Expires</span><span className="text-white">{new Date(info.expires_at).toLocaleDateString()}</span></div>
+                  <div className="flex items-center justify-between"><span className="text-slate-500">Expires</span><span className="text-navy-900">{new Date(info.expires_at).toLocaleDateString()}</span></div>
                 )}
               </div>
 
               <input type="text" placeholder="Your name (optional)" value={challengerName} onChange={e => setChallengerName(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm mb-4" data-testid="challenger-name-input" />
+                className="w-full bg-cream-200 border border-slate-300 rounded px-3 py-2 text-sm mb-4" data-testid="challenger-name-input" />
 
               <Button onClick={startCapture} className="w-full bg-sky-600 hover:bg-sky-500 h-11" data-testid="start-challenge-btn">
                 <Camera className="w-4 h-4 mr-2" /> Capture Biometric & Verify
@@ -138,7 +138,7 @@ export default function PublicChallenge() {
 
           {phase === 'capturing' && (
             <div data-testid="capturing-state">
-              <p className="text-sm text-slate-400 mb-3">Center the subject's face in the frame.</p>
+              <p className="text-sm text-slate-600 mb-3">Center the subject's face in the frame.</p>
               <div className="relative aspect-[4/3] bg-black rounded overflow-hidden mb-3">
                 {!captured ? (
                   <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
@@ -155,7 +155,7 @@ export default function PublicChallenge() {
                 ) : (
                   <>
                     <Button onClick={() => { setCaptured(null); startCapture(); }} variant="outline" className="flex-1" data-testid="retake-btn">Retake</Button>
-                    <Button onClick={submit} className="flex-1 bg-emerald-600 hover:bg-emerald-500" data-testid="submit-btn">
+                    <Button onClick={submit} className="flex-1 bg-coral-500 hover:bg-coral-500" data-testid="submit-btn">
                       <Shield className="w-4 h-4 mr-2" /> Verify Now
                     </Button>
                   </>
@@ -166,8 +166,8 @@ export default function PublicChallenge() {
 
           {phase === 'submitting' && (
             <div className="text-center py-12" data-testid="submitting-state">
-              <Loader2 className="w-12 h-12 mx-auto animate-spin text-sky-400 mb-3" />
-              <p className="text-sm text-slate-300">Comparing against on-chain Genesis Anchor…</p>
+              <Loader2 className="w-12 h-12 mx-auto animate-spin text-coral-600 mb-3" />
+              <p className="text-sm text-navy-800">Comparing against on-chain Genesis Anchor…</p>
               <p className="text-[10px] text-slate-500 mt-1">GPT-5.2 Vision analysis · Hedera HCS sealing</p>
               <p className="text-[10px] text-slate-600 mt-3">This may take 30-60 seconds for the AI comparison and on-chain seal to complete.</p>
             </div>
@@ -177,30 +177,30 @@ export default function PublicChallenge() {
             <div className="text-center py-2" data-testid="result-state">
               {result.result === 'passed' ? (
                 <>
-                  <CheckCircle className="w-16 h-16 mx-auto text-emerald-400 mb-3" />
-                  <h2 className="text-2xl font-bold text-emerald-400 mb-1">Identity Verified</h2>
+                  <CheckCircle className="w-16 h-16 mx-auto text-coral-600 mb-3" />
+                  <h2 className="text-2xl font-bold text-coral-600 mb-1">Identity Verified</h2>
                 </>
               ) : (
                 <>
-                  <AlertTriangle className="w-16 h-16 mx-auto text-amber-400 mb-3" />
-                  <h2 className="text-2xl font-bold text-amber-400 mb-1">Verification Failed</h2>
+                  <AlertTriangle className="w-16 h-16 mx-auto text-coral-600 mb-3" />
+                  <h2 className="text-2xl font-bold text-coral-600 mb-1">Verification Failed</h2>
                 </>
               )}
-              <p className="text-sm text-slate-400 mb-4">Subject: {result.subject_email_masked}</p>
+              <p className="text-sm text-slate-600 mb-4">Subject: {result.subject_email_masked}</p>
 
               <div className="grid grid-cols-2 gap-2 mb-4 text-left">
-                <div className="bg-slate-800/40 border border-slate-700/40 rounded p-3">
+                <div className="bg-cream-200/40 border border-slate-300/40 rounded p-3">
                   <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Match Confidence</p>
-                  <p className="text-2xl font-bold text-white">{(result.match_confidence * 100).toFixed(0)}%</p>
+                  <p className="text-2xl font-bold text-navy-900">{(result.match_confidence * 100).toFixed(0)}%</p>
                 </div>
-                <div className="bg-slate-800/40 border border-slate-700/40 rounded p-3">
+                <div className="bg-cream-200/40 border border-slate-300/40 rounded p-3">
                   <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Trust Score</p>
-                  <p className="text-2xl font-bold text-white">{result.trust_score}<span className="text-sm text-slate-500"> / 100</span></p>
+                  <p className="text-2xl font-bold text-navy-900">{result.trust_score}<span className="text-sm text-slate-500"> / 100</span></p>
                 </div>
               </div>
 
               {result.hedera_seal?.sealed && (
-                <a href={result.hedera_seal.explorer_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300" data-testid="hedera-seal-link">
+                <a href={result.hedera_seal.explorer_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-xs text-coral-600 hover:text-coral-700" data-testid="hedera-seal-link">
                   <Lock className="w-3 h-3" /> Sealed on Hedera #{result.hedera_seal.sequence_number}
                   <ExternalLink className="w-3 h-3" />
                 </a>

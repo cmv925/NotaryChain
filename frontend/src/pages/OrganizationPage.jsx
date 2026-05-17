@@ -27,7 +27,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const ROLE_BADGES = {
-  owner: { label: 'Owner', color: 'bg-amber-500/15 text-amber-400 border-amber-500/30' },
+  owner: { label: 'Owner', color: 'bg-coral-500/15 text-coral-600 border-gold-500/30' },
   admin: { label: 'Admin', color: 'bg-blue-500/15 text-blue-400 border-blue-500/30' },
   member: { label: 'Member', color: 'bg-gray-500/15 text-gray-400 border-gray-500/30' },
 };
@@ -65,24 +65,24 @@ const CreateOrgModal = ({ onClose, onCreated, token }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" data-testid="create-org-modal">
       <div className="bg-[#1a2332] border border-gray-700 rounded-xl max-w-md w-full p-6">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-white font-bold text-lg">Create Organization</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white"><X className="w-5 h-5" /></button>
+          <h2 className="text-navy-900 font-bold text-lg">Create Organization</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-navy-900"><X className="w-5 h-5" /></button>
         </div>
         <form onSubmit={handleCreate} className="space-y-4">
           <div>
             <Label className="text-gray-200 text-sm">Organization Name *</Label>
-            <Input value={name} onChange={(e) => handleNameChange(e.target.value)} placeholder="Acme Corp" className="bg-[#0a0f1a] border-gray-700 text-white mt-1" data-testid="org-name-input" />
+            <Input value={name} onChange={(e) => handleNameChange(e.target.value)} placeholder="Acme Corp" className="bg-[#0a0f1a] border-gray-700 text-navy-900 mt-1" data-testid="org-name-input" />
           </div>
           <div>
             <Label className="text-gray-200 text-sm">URL Slug *</Label>
-            <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="acme-corp" className="bg-[#0a0f1a] border-gray-700 text-white mt-1" data-testid="org-slug-input" />
+            <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="acme-corp" className="bg-[#0a0f1a] border-gray-700 text-navy-900 mt-1" data-testid="org-slug-input" />
             <p className="text-gray-500 text-xs mt-1">Used in URLs: /org/{slug}</p>
           </div>
           <div>
             <Label className="text-gray-200 text-sm">Description</Label>
-            <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="A brief description..." className="bg-[#0a0f1a] border-gray-700 text-white mt-1" data-testid="org-desc-input" />
+            <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="A brief description..." className="bg-[#0a0f1a] border-gray-700 text-navy-900 mt-1" data-testid="org-desc-input" />
           </div>
-          <Button type="submit" disabled={creating || !name.trim()} className="w-full bg-blue-600 hover:bg-blue-700 text-white" data-testid="create-org-btn">
+          <Button type="submit" disabled={creating || !name.trim()} className="w-full bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="create-org-btn">
             {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
             Create Organization
           </Button>
@@ -119,13 +119,13 @@ const InviteMemberModal = ({ orgId, onClose, onInvited, token }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" data-testid="invite-member-modal">
       <div className="bg-[#1a2332] border border-gray-700 rounded-xl max-w-md w-full p-6">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-white font-bold text-lg">Invite Member</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white"><X className="w-5 h-5" /></button>
+          <h2 className="text-navy-900 font-bold text-lg">Invite Member</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-navy-900"><X className="w-5 h-5" /></button>
         </div>
         <form onSubmit={handleInvite} className="space-y-4">
           <div>
             <Label className="text-gray-200 text-sm">Email Address *</Label>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="colleague@company.com" className="bg-[#0a0f1a] border-gray-700 text-white mt-1" data-testid="invite-email-input" />
+            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="colleague@company.com" className="bg-[#0a0f1a] border-gray-700 text-navy-900 mt-1" data-testid="invite-email-input" />
           </div>
           <div>
             <Label className="text-gray-200 text-sm">Role</Label>
@@ -143,14 +143,14 @@ const InviteMemberModal = ({ orgId, onClose, onInvited, token }) => {
                 >
                   <r.icon className={`w-4 h-4 ${role === r.value ? 'text-blue-400' : 'text-gray-500'}`} />
                   <div>
-                    <p className={`text-sm font-medium ${role === r.value ? 'text-white' : 'text-gray-300'}`}>{r.label}</p>
+                    <p className={`text-sm font-medium ${role === r.value ? 'text-navy-900' : 'text-gray-300'}`}>{r.label}</p>
                     <p className="text-gray-500 text-xs">{r.desc}</p>
                   </div>
                 </button>
               ))}
             </div>
           </div>
-          <Button type="submit" disabled={sending || !email.trim()} className="w-full bg-blue-600 hover:bg-blue-700 text-white" data-testid="send-invite-btn">
+          <Button type="submit" disabled={sending || !email.trim()} className="w-full bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="send-invite-btn">
             {sending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Mail className="w-4 h-4 mr-2" />}
             Send Invitation
           </Button>
@@ -231,7 +231,7 @@ const SSOSettings = ({ orgId, myRole, token }) => {
         <div className="flex items-center gap-3">
           <Lock className="w-5 h-5 text-purple-400" />
           <div>
-            <p className="text-white font-medium">Single Sign-On (SSO)</p>
+            <p className="text-navy-900 font-medium">Single Sign-On (SSO)</p>
             <p className="text-gray-500 text-xs">Allow members to sign in with your identity provider</p>
           </div>
         </div>
@@ -248,37 +248,37 @@ const SSOSettings = ({ orgId, myRole, token }) => {
         <div className="space-y-4 p-4 bg-[#0a0f1a] rounded-lg border border-gray-800">
           <div>
             <Label className="text-gray-200 text-sm">Provider</Label>
-            <select value={form.sso_provider} onChange={(e) => setForm(f => ({ ...f, sso_provider: e.target.value }))} className="w-full bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-white mt-1" data-testid="sso-provider-select">
+            <select value={form.sso_provider} onChange={(e) => setForm(f => ({ ...f, sso_provider: e.target.value }))} className="w-full bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-navy-900 mt-1" data-testid="sso-provider-select">
               <option value="oidc">OpenID Connect (OIDC)</option>
               <option value="saml">SAML 2.0</option>
             </select>
           </div>
           <div>
             <Label className="text-gray-200 text-sm">Issuer URL / IdP URL *</Label>
-            <Input value={form.sso_issuer_url} onChange={(e) => setForm(f => ({ ...f, sso_issuer_url: e.target.value }))} placeholder="https://login.example.com" className="bg-[#1a2332] border-gray-700 text-white mt-1" data-testid="sso-issuer-input" />
+            <Input value={form.sso_issuer_url} onChange={(e) => setForm(f => ({ ...f, sso_issuer_url: e.target.value }))} placeholder="https://login.example.com" className="bg-[#1a2332] border-gray-700 text-navy-900 mt-1" data-testid="sso-issuer-input" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label className="text-gray-200 text-sm">Client ID *</Label>
-              <Input value={form.sso_client_id} onChange={(e) => setForm(f => ({ ...f, sso_client_id: e.target.value }))} className="bg-[#1a2332] border-gray-700 text-white mt-1" data-testid="sso-client-id-input" />
+              <Input value={form.sso_client_id} onChange={(e) => setForm(f => ({ ...f, sso_client_id: e.target.value }))} className="bg-[#1a2332] border-gray-700 text-navy-900 mt-1" data-testid="sso-client-id-input" />
             </div>
             <div>
               <Label className="text-gray-200 text-sm">Client Secret *</Label>
-              <Input type="password" value={form.sso_client_secret} onChange={(e) => setForm(f => ({ ...f, sso_client_secret: e.target.value }))} className="bg-[#1a2332] border-gray-700 text-white mt-1" data-testid="sso-client-secret-input" />
+              <Input type="password" value={form.sso_client_secret} onChange={(e) => setForm(f => ({ ...f, sso_client_secret: e.target.value }))} className="bg-[#1a2332] border-gray-700 text-navy-900 mt-1" data-testid="sso-client-secret-input" />
             </div>
           </div>
           {form.sso_provider === 'saml' && (
             <div>
               <Label className="text-gray-200 text-sm">Metadata URL</Label>
-              <Input value={form.sso_metadata_url} onChange={(e) => setForm(f => ({ ...f, sso_metadata_url: e.target.value }))} placeholder="https://login.example.com/saml/metadata" className="bg-[#1a2332] border-gray-700 text-white mt-1" data-testid="sso-metadata-input" />
+              <Input value={form.sso_metadata_url} onChange={(e) => setForm(f => ({ ...f, sso_metadata_url: e.target.value }))} placeholder="https://login.example.com/saml/metadata" className="bg-[#1a2332] border-gray-700 text-navy-900 mt-1" data-testid="sso-metadata-input" />
             </div>
           )}
           <div>
             <Label className="text-gray-200 text-sm">Allowed Email Domains</Label>
-            <Input value={form.sso_allowed_domains} onChange={(e) => setForm(f => ({ ...f, sso_allowed_domains: e.target.value }))} placeholder="example.com, acme.com" className="bg-[#1a2332] border-gray-700 text-white mt-1" data-testid="sso-domains-input" />
+            <Input value={form.sso_allowed_domains} onChange={(e) => setForm(f => ({ ...f, sso_allowed_domains: e.target.value }))} placeholder="example.com, acme.com" className="bg-[#1a2332] border-gray-700 text-navy-900 mt-1" data-testid="sso-domains-input" />
             <p className="text-gray-500 text-xs mt-1">Comma-separated. Only users with these email domains can SSO.</p>
           </div>
-          <Button onClick={handleSave} disabled={saving} className="bg-blue-600 hover:bg-blue-700 text-white" data-testid="save-sso-btn">
+          <Button onClick={handleSave} disabled={saving} className="bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="save-sso-btn">
             {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
             Save SSO Configuration
           </Button>
@@ -300,11 +300,11 @@ const MemberRow = ({ member: m, orgId, myRole, isAdmin, token, onRemove, onRoleC
           {(m.full_name || m.email)[0].toUpperCase()}
         </div>
         <div>
-          <p className="text-white text-sm font-medium">{m.full_name || m.email}</p>
+          <p className="text-navy-900 text-sm font-medium">{m.full_name || m.email}</p>
           <div className="flex items-center gap-2">
             <p className="text-gray-500 text-xs">{m.email}</p>
             {m.custom_role_id && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-coral-500/15 text-coral-600 border border-coral-200">
                 {roles.find(r => r.id === m.custom_role_id)?.name || 'Custom Role'}
               </span>
             )}
@@ -313,7 +313,7 @@ const MemberRow = ({ member: m, orgId, myRole, isAdmin, token, onRemove, onRoleC
       </div>
       <div className="flex items-center gap-2">
         {m.role === 'owner' ? (
-          <span className="flex items-center gap-1 text-xs text-amber-400"><Crown className="w-3 h-3" /> Owner</span>
+          <span className="flex items-center gap-1 text-xs text-coral-600"><Crown className="w-3 h-3" /> Owner</span>
         ) : canManageRoles && myRole === 'owner' ? (
           <div className="flex items-center gap-1.5">
             <select
@@ -523,10 +523,10 @@ const OrganizationPage = () => {
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Organizations' }]} />
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white" data-testid="org-page-title">Organizations</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-navy-900" data-testid="org-page-title">Organizations</h1>
               <p className="text-gray-400 text-sm mt-1">Manage your teams and enterprise settings</p>
             </div>
-            <Button onClick={() => setShowCreateModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white" data-testid="new-org-btn">
+            <Button onClick={() => setShowCreateModal(true)} className="bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="new-org-btn">
               <Plus className="w-4 h-4 mr-2" /> New Organization
             </Button>
           </div>
@@ -539,10 +539,10 @@ const OrganizationPage = () => {
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-blue-400" />
                     <span className="text-gray-200 text-sm">
-                      <strong className="text-white">{inv.invited_by_name}</strong> invited you to <strong className="text-white">{inv.org_name}</strong> as {inv.role}
+                      <strong className="text-navy-900">{inv.invited_by_name}</strong> invited you to <strong className="text-navy-900">{inv.org_name}</strong> as {inv.role}
                     </span>
                   </div>
-                  <Button size="sm" onClick={() => handleAcceptInvite(inv.token)} className="bg-blue-600 hover:bg-blue-700 text-white" data-testid={`accept-invite-${inv.id}`}>
+                  <Button size="sm" onClick={() => handleAcceptInvite(inv.token)} className="bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid={`accept-invite-${inv.id}`}>
                     <Check className="w-3 h-3 mr-1" /> Accept
                   </Button>
                 </div>
@@ -577,7 +577,7 @@ const OrganizationPage = () => {
                   >
                     <div className="flex items-center gap-2">
                       <Building2 className={`w-4 h-4 ${selectedOrg?.id === org.id ? 'text-blue-400' : 'text-gray-500'}`} />
-                      <span className="text-white font-medium text-sm truncate">{org.name}</span>
+                      <span className="text-navy-900 font-medium text-sm truncate">{org.name}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-1 ml-6">
                       <span className={`text-xs px-1.5 py-0.5 rounded border ${ROLE_BADGES[org.my_role]?.color}`}>
@@ -597,7 +597,7 @@ const OrganizationPage = () => {
                       {/* Org Header */}
                       <div className="flex items-center justify-between mb-5">
                         <div>
-                          <h2 className="text-white font-bold text-xl" data-testid="selected-org-name">{selectedOrg.name}</h2>
+                          <h2 className="text-navy-900 font-bold text-xl" data-testid="selected-org-name">{selectedOrg.name}</h2>
                           <p className="text-gray-500 text-sm">{selectedOrg.description || `/${selectedOrg.slug}`}</p>
                         </div>
                         <span className={`text-xs px-2 py-1 rounded border ${ROLE_BADGES[selectedOrg.my_role]?.color}`}>
@@ -612,7 +612,7 @@ const OrganizationPage = () => {
                             key={id}
                             onClick={() => setActiveTab(id)}
                             className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm transition-all ${
-                              activeTab === id ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+                              activeTab === id ? 'bg-blue-600 text-navy-900' : 'text-gray-400 hover:text-navy-900'
                             }`}
                             data-testid={`tab-${id}`}
                           >
@@ -625,7 +625,7 @@ const OrganizationPage = () => {
                       {activeTab === 'members' && (
                         <div data-testid="members-tab">
                           <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-white font-semibold">Members ({members.length})</h3>
+                            <h3 className="text-navy-900 font-semibold">Members ({members.length})</h3>
                             <div className="flex items-center gap-2">
                               {permSource && (
                                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#1a2332] text-gray-500 border border-gray-800" data-testid="perm-source-badge">
@@ -633,7 +633,7 @@ const OrganizationPage = () => {
                                 </span>
                               )}
                               <PermissionGate permission="members:invite" userPermissions={myPerms} showLock>
-                                <Button size="sm" onClick={() => setShowInviteModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white" data-testid="invite-member-btn">
+                                <Button size="sm" onClick={() => setShowInviteModal(true)} className="bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="invite-member-btn">
                                   <UserPlus className="w-3.5 h-3.5 mr-1" /> Invite
                                 </Button>
                               </PermissionGate>
@@ -670,7 +670,7 @@ const OrganizationPage = () => {
                       {/* Invites Tab */}
                       {activeTab === 'invites' && (
                         <div data-testid="invites-tab">
-                          <h3 className="text-white font-semibold mb-4">Pending Invites ({invites.length})</h3>
+                          <h3 className="text-navy-900 font-semibold mb-4">Pending Invites ({invites.length})</h3>
                           {invites.length === 0 ? (
                             <p className="text-gray-500 text-sm text-center py-8">No pending invites.</p>
                           ) : (
@@ -678,7 +678,7 @@ const OrganizationPage = () => {
                               {invites.map((inv) => (
                                 <div key={inv.id} className="flex items-center justify-between p-3 bg-[#0a0f1a] rounded-lg border border-gray-800">
                                   <div>
-                                    <p className="text-white text-sm">{inv.email}</p>
+                                    <p className="text-navy-900 text-sm">{inv.email}</p>
                                     <p className="text-gray-500 text-xs">Role: {inv.role} &bull; Invited by {inv.invited_by_name}</p>
                                   </div>
                                   <PermissionGate permission="members:invite" userPermissions={myPerms}>
@@ -706,30 +706,30 @@ const OrganizationPage = () => {
                       {/* Settings Tab */}
                       {activeTab === 'settings' && (
                         <div data-testid="settings-tab">
-                          <h3 className="text-white font-semibold mb-4">Organization Settings</h3>
+                          <h3 className="text-navy-900 font-semibold mb-4">Organization Settings</h3>
                           <div className="space-y-4">
                             <div className="p-4 bg-[#0a0f1a] rounded-lg border border-gray-800">
                               <p className="text-gray-400 text-sm mb-1">Organization ID</p>
-                              <p className="text-white text-sm font-mono">{selectedOrg.id}</p>
+                              <p className="text-navy-900 text-sm font-mono">{selectedOrg.id}</p>
                             </div>
                             <div className="p-4 bg-[#0a0f1a] rounded-lg border border-gray-800">
                               <p className="text-gray-400 text-sm mb-1">URL Slug</p>
-                              <p className="text-white text-sm font-mono">/{selectedOrg.slug}</p>
+                              <p className="text-navy-900 text-sm font-mono">/{selectedOrg.slug}</p>
                             </div>
                             <div className="p-4 bg-[#0a0f1a] rounded-lg border border-gray-800">
                               <p className="text-gray-400 text-sm mb-1">Created</p>
-                              <p className="text-white text-sm">{new Date(selectedOrg.created_at).toLocaleDateString()}</p>
+                              <p className="text-navy-900 text-sm">{new Date(selectedOrg.created_at).toLocaleDateString()}</p>
                             </div>
                             <div className="p-4 bg-[#0a0f1a] rounded-lg border border-gray-800">
                               <p className="text-gray-400 text-sm mb-1">Plan</p>
-                              <p className="text-white text-sm capitalize">{selectedOrg.plan}</p>
+                              <p className="text-navy-900 text-sm capitalize">{selectedOrg.plan}</p>
                             </div>
                             <div className="p-4 bg-[#0a0f1a] rounded-lg border border-gray-800">
                               <p className="text-gray-400 text-sm mb-1">Your Permissions</p>
-                              <p className="text-white text-sm">{myPerms.length} permissions via <span className="text-blue-400">{permSource}</span></p>
+                              <p className="text-navy-900 text-sm">{myPerms.length} permissions via <span className="text-blue-400">{permSource}</span></p>
                               <div className="flex flex-wrap gap-1 mt-2">
                                 {myPerms.slice(0, 8).map(p => (
-                                  <span key={p} className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{p}</span>
+                                  <span key={p} className="text-[10px] px-1.5 py-0.5 rounded bg-coral-500/10 text-coral-600 border border-coral-200">{p}</span>
                                 ))}
                                 {myPerms.length > 8 && <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-gray-500">+{myPerms.length - 8} more</span>}
                               </div>

@@ -15,7 +15,7 @@ const API = process.env.REACT_APP_BACKEND_URL;
 
 const urgencyColor = {
   immediate: 'bg-red-500/15 text-red-400',
-  soon: 'bg-amber-500/15 text-amber-400',
+  soon: 'bg-coral-500/15 text-coral-600',
   when_ready: 'bg-blue-500/15 text-blue-400',
 };
 
@@ -74,7 +74,7 @@ export default function AIConductorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white">
+    <div className="min-h-screen bg-[#030712] text-navy-900">
       <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
@@ -83,12 +83,12 @@ export default function AIConductorPage() {
           </Button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-violet-400" />
+              <Sparkles className="w-6 h-6 text-coral-600" />
               AI Conductor
             </h1>
             <p className="text-gray-400 text-sm">Intelligent step-by-step transaction guidance</p>
           </div>
-          {role && <Badge className="bg-violet-500/15 text-violet-400">{role}</Badge>}
+          {role && <Badge className="bg-violet-500/15 text-coral-600">{role}</Badge>}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -97,7 +97,7 @@ export default function AIConductorPage() {
             <Button
               onClick={fetchGuidance}
               disabled={loading}
-              className="w-full bg-violet-600 hover:bg-violet-700 text-white"
+              className="w-full bg-violet-600 hover:bg-violet-700 text-navy-900"
               data-testid="get-guidance-btn"
             >
               {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Zap className="w-4 h-4 mr-2" />}
@@ -106,7 +106,7 @@ export default function AIConductorPage() {
 
             {loading && (
               <div className="flex flex-col items-center py-12 text-gray-400">
-                <Loader2 className="w-8 h-8 animate-spin mb-3 text-violet-400" />
+                <Loader2 className="w-8 h-8 animate-spin mb-3 text-coral-600" />
                 <p className="text-sm">AI Conductor is analyzing your position...</p>
               </div>
             )}
@@ -116,7 +116,7 @@ export default function AIConductorPage() {
                 {/* Greeting & Summary */}
                 <Card className="bg-[#0d1b2a] border-gray-800" data-testid="guidance-summary">
                   <CardContent className="pt-5">
-                    <p className="text-violet-400 font-medium text-sm mb-2">{guidance.greeting}</p>
+                    <p className="text-coral-600 font-medium text-sm mb-2">{guidance.greeting}</p>
                     <p className="text-gray-300 text-sm">{guidance.current_status_summary}</p>
                     {guidance.timeline_estimate && (
                       <p className="text-gray-500 text-xs mt-2 flex items-center gap-1">
@@ -130,17 +130,17 @@ export default function AIConductorPage() {
                 {guidance.next_steps?.length > 0 && (
                   <Card className="bg-[#0d1b2a] border-gray-800" data-testid="next-steps-card">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm text-white">Your Next Steps</CardTitle>
+                      <CardTitle className="text-sm text-navy-900">Your Next Steps</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
                       {guidance.next_steps.map((step, i) => (
                         <div key={i} className="border border-gray-700/50 rounded-lg p-3">
                           <div className="flex items-start justify-between mb-1">
                             <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 rounded-full bg-violet-500/20 text-violet-400 flex items-center justify-center text-xs font-bold">
+                              <div className="w-6 h-6 rounded-full bg-violet-500/20 text-coral-600 flex items-center justify-center text-xs font-bold">
                                 {step.step_number}
                               </div>
-                              <span className="text-white text-sm font-medium">{step.action}</span>
+                              <span className="text-navy-900 text-sm font-medium">{step.action}</span>
                             </div>
                             <Badge className={`text-[10px] ${urgencyColor[step.urgency] || urgencyColor.when_ready}`}>
                               {step.urgency}
@@ -194,8 +194,8 @@ export default function AIConductorPage() {
           <div className="lg:col-span-2">
             <Card className="bg-[#0d1b2a] border-gray-800 h-[600px] flex flex-col" data-testid="conductor-chat">
               <CardHeader className="pb-2 border-b border-gray-800">
-                <CardTitle className="text-sm text-white flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4 text-violet-400" />
+                <CardTitle className="text-sm text-navy-900 flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-coral-600" />
                   Ask the Conductor
                 </CardTitle>
               </CardHeader>
@@ -209,7 +209,7 @@ export default function AIConductorPage() {
                         <button
                           key={q}
                           onClick={() => { setChatInput(q); }}
-                          className="block mx-auto text-violet-400/60 text-[11px] hover:text-violet-400 transition"
+                          className="block mx-auto text-coral-600/60 text-[11px] hover:text-coral-600 transition"
                         >
                           "{q}"
                         </button>
@@ -231,7 +231,7 @@ export default function AIConductorPage() {
                 {sending && (
                   <div className="flex justify-start">
                     <div className="bg-[#1a2332] rounded-lg px-3 py-2">
-                      <Loader2 className="w-4 h-4 animate-spin text-violet-400" />
+                      <Loader2 className="w-4 h-4 animate-spin text-coral-600" />
                     </div>
                   </div>
                 )}
@@ -243,7 +243,7 @@ export default function AIConductorPage() {
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && sendChat()}
                   placeholder="Ask the conductor..."
-                  className="bg-[#1a2332] border-gray-700 text-white text-sm"
+                  className="bg-[#1a2332] border-gray-700 text-navy-900 text-sm"
                   data-testid="conductor-chat-input"
                 />
                 <Button

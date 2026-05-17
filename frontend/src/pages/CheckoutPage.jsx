@@ -107,7 +107,7 @@ const CheckoutPage = () => {
               <Sparkles className="w-4 h-4" />
               Transparent Pricing
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-navy-900 mb-4">
               Notarization Services
             </h1>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
@@ -141,7 +141,7 @@ const CheckoutPage = () => {
             <Button
               variant="outline"
               onClick={() => navigate(`/checkout/crypto?package=${selectedPackage}`)}
-              className="border-orange-500/50 text-orange-400 hover:bg-orange-500/10"
+              className="border-orange-500/50 text-coral-600 hover:bg-coral-500/10"
             >
               <Wallet className="w-4 h-4 mr-2" />
               Pay with Crypto Only
@@ -174,7 +174,7 @@ const CheckoutPage = () => {
                   >
                     {isPopular && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                        <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                        <span className="italic text-coral-600 text-navy-900 text-xs font-semibold px-3 py-1 rounded-full">
                           Popular
                         </span>
                       </div>
@@ -186,14 +186,14 @@ const CheckoutPage = () => {
                         </div>
                         {isSelected && (
                           <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center">
-                            <Check className="w-4 h-4 text-white" />
+                            <Check className="w-4 h-4 text-navy-900" />
                           </div>
                         )}
                       </div>
-                      <h3 className="text-xl font-bold text-white mb-2">{pkg.name}</h3>
+                      <h3 className="text-xl font-bold text-navy-900 mb-2">{pkg.name}</h3>
                       <p className="text-gray-400 text-sm mb-4">{pkg.description}</p>
                       <div className="flex items-baseline gap-1">
-                        <span className="text-3xl font-bold text-white">${pkg.price}</span>
+                        <span className="text-3xl font-bold text-navy-900">${pkg.price}</span>
                         <span className="text-gray-500">USD</span>
                       </div>
                       <ul className="mt-4 space-y-2">
@@ -222,7 +222,7 @@ const CheckoutPage = () => {
             <Button
               onClick={handleCheckout}
               disabled={loading || !selectedPackage}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-6 text-lg"
+              className="w-full italic text-coral-600 hover:from-blue-700 hover:to-purple-700 text-navy-900 py-6 text-lg"
               data-testid="checkout-btn"
             >
               {loading ? (
@@ -248,7 +248,7 @@ const CheckoutPage = () => {
               <div className="w-16 h-16 rounded-full bg-green-600/20 flex items-center justify-center mx-auto mb-4">
                 <Shield className="w-8 h-8 text-green-500" />
               </div>
-              <h4 className="text-white font-semibold mb-2">Legally Binding</h4>
+              <h4 className="text-navy-900 font-semibold mb-2">Legally Binding</h4>
               <p className="text-gray-400 text-sm">
                 All notarizations are legally valid and recognized across states
               </p>
@@ -257,7 +257,7 @@ const CheckoutPage = () => {
               <div className="w-16 h-16 rounded-full bg-blue-600/20 flex items-center justify-center mx-auto mb-4">
                 <FileText className="w-8 h-8 text-blue-500" />
               </div>
-              <h4 className="text-white font-semibold mb-2">Instant Processing</h4>
+              <h4 className="text-navy-900 font-semibold mb-2">Instant Processing</h4>
               <p className="text-gray-400 text-sm">
                 Connect with a notary within minutes, not days
               </p>
@@ -266,7 +266,7 @@ const CheckoutPage = () => {
               <div className="w-16 h-16 rounded-full bg-purple-600/20 flex items-center justify-center mx-auto mb-4">
                 <Wallet className="w-8 h-8 text-purple-500" />
               </div>
-              <h4 className="text-white font-semibold mb-2">Flexible Payments</h4>
+              <h4 className="text-navy-900 font-semibold mb-2">Flexible Payments</h4>
               <p className="text-gray-400 text-sm">
                 Pay with credit card or cryptocurrency
               </p>

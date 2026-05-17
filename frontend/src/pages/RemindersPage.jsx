@@ -50,7 +50,7 @@ export default function RemindersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white">
+    <div className="min-h-screen bg-[#030712] text-navy-900">
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-8">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} data-testid="back-btn">
@@ -58,7 +58,7 @@ export default function RemindersPage() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Bell className="w-6 h-6 text-amber-400" />
+              <Bell className="w-6 h-6 text-coral-600" />
               Smart Reminders
             </h1>
             <p className="text-gray-400 text-sm">Automated notifications & calendar integration</p>
@@ -72,7 +72,7 @@ export default function RemindersPage() {
             {/* Preferences */}
             <Card className="bg-[#0d1b2a] border-gray-800" data-testid="reminder-prefs">
               <CardHeader>
-                <CardTitle className="text-base text-white flex items-center gap-2">
+                <CardTitle className="text-base text-navy-900 flex items-center gap-2">
                   <Settings className="w-4 h-4 text-gray-400" /> Notification Preferences
                 </CardTitle>
               </CardHeader>
@@ -80,14 +80,14 @@ export default function RemindersPage() {
                 {[
                   { key: 'overdue_tasks', label: 'Overdue Task Alerts', desc: 'Get notified when transaction tasks pass their deadline', icon: AlertTriangle, color: 'text-red-400' },
                   { key: 'upcoming_bookings', label: 'Upcoming Booking Reminders', desc: 'Reminder 24h before scheduled notary bookings', icon: Clock, color: 'text-blue-400' },
-                  { key: 'pending_approvals', label: 'Pending Approval Nudges', desc: 'Reminder for approval requests waiting on you', icon: CheckCircle, color: 'text-amber-400' },
+                  { key: 'pending_approvals', label: 'Pending Approval Nudges', desc: 'Reminder for approval requests waiting on you', icon: CheckCircle, color: 'text-coral-600' },
                   { key: 'email_notifications', label: 'Email Notifications', desc: 'Also send critical reminders via email', icon: Bell, color: 'text-purple-400' },
                 ].map(({ key, label, desc, icon: Icon, color }) => (
                   <div key={key} className="flex items-center justify-between py-2">
                     <div className="flex items-start gap-3">
                       <Icon className={`w-4 h-4 mt-0.5 ${color}`} />
                       <div>
-                        <p className="text-white text-sm font-medium">{label}</p>
+                        <p className="text-navy-900 text-sm font-medium">{label}</p>
                         <p className="text-gray-500 text-xs">{desc}</p>
                       </div>
                     </div>
@@ -105,8 +105,8 @@ export default function RemindersPage() {
             {/* Calendar Export */}
             <Card className="bg-[#0d1b2a] border-gray-800" data-testid="calendar-export">
               <CardHeader>
-                <CardTitle className="text-base text-white flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-cyan-400" /> Calendar Integration
+                <CardTitle className="text-base text-navy-900 flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-coral-600" /> Calendar Integration
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">

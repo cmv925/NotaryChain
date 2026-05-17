@@ -15,9 +15,9 @@ const typeIcons = { addition: Plus, deletion: Minus, modification: RefreshCw };
 const typeColors = {
   addition: 'bg-green-500/10 text-green-400 border-green-500/20',
   deletion: 'bg-red-500/10 text-red-400 border-red-500/20',
-  modification: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  modification: 'bg-coral-500/10 text-coral-600 border-amber-500/20',
 };
-const impactColors = { high: 'bg-red-500/15 text-red-400', medium: 'bg-amber-500/15 text-amber-400', low: 'bg-blue-500/15 text-blue-400' };
+const impactColors = { high: 'bg-red-500/15 text-red-400', medium: 'bg-coral-500/15 text-coral-600', low: 'bg-blue-500/15 text-blue-400' };
 
 export default function DocComparePage() {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ export default function DocComparePage() {
   const toggle = (k) => setExpanded((p) => ({ ...p, [k]: !p[k] }));
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white">
+    <div className="min-h-screen bg-[#030712] text-navy-900">
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-8">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} data-testid="back-btn">
@@ -57,7 +57,7 @@ export default function DocComparePage() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
-              <GitCompareArrows className="w-6 h-6 text-orange-400" />
+              <GitCompareArrows className="w-6 h-6 text-coral-600" />
               Document Comparison
             </h1>
             <p className="text-gray-400 text-sm">AI-powered side-by-side diff analysis</p>
@@ -68,7 +68,7 @@ export default function DocComparePage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
           <Card className="bg-[#0d1b2a] border-gray-800">
             <CardHeader className="pb-2">
-              <input value={labelA} onChange={(e) => setLabelA(e.target.value)} className="bg-transparent text-white text-sm font-semibold border-b border-gray-700 pb-1" data-testid="label-a" />
+              <input value={labelA} onChange={(e) => setLabelA(e.target.value)} className="bg-transparent text-navy-900 text-sm font-semibold border-b border-gray-700 pb-1" data-testid="label-a" />
             </CardHeader>
             <CardContent>
               <textarea value={textA} onChange={(e) => setTextA(e.target.value)} rows={10} placeholder="Paste original document text..." className="w-full bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-xs text-gray-300 resize-none" data-testid="text-a" />
@@ -76,7 +76,7 @@ export default function DocComparePage() {
           </Card>
           <Card className="bg-[#0d1b2a] border-gray-800">
             <CardHeader className="pb-2">
-              <input value={labelB} onChange={(e) => setLabelB(e.target.value)} className="bg-transparent text-white text-sm font-semibold border-b border-gray-700 pb-1" data-testid="label-b" />
+              <input value={labelB} onChange={(e) => setLabelB(e.target.value)} className="bg-transparent text-navy-900 text-sm font-semibold border-b border-gray-700 pb-1" data-testid="label-b" />
             </CardHeader>
             <CardContent>
               <textarea value={textB} onChange={(e) => setTextB(e.target.value)} rows={10} placeholder="Paste revised document text..." className="w-full bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-xs text-gray-300 resize-none" data-testid="text-b" />
@@ -84,7 +84,7 @@ export default function DocComparePage() {
           </Card>
         </div>
 
-        <Button onClick={compare} disabled={comparing || !textA.trim() || !textB.trim()} className="w-full bg-orange-600 hover:bg-orange-700 mb-6" data-testid="compare-btn">
+        <Button onClick={compare} disabled={comparing || !textA.trim() || !textB.trim()} className="w-full bg-coral-500 hover:bg-orange-700 mb-6" data-testid="compare-btn">
           {comparing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <GitCompareArrows className="w-4 h-4 mr-2" />}
           {comparing ? 'Comparing...' : 'Compare Documents'}
         </Button>
@@ -97,12 +97,12 @@ export default function DocComparePage() {
               <CardContent className="pt-5">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-white font-semibold text-sm">{result.summary}</p>
+                    <p className="text-navy-900 font-semibold text-sm">{result.summary}</p>
                     <p className="text-gray-500 text-xs mt-1">{result.change_count} changes detected</p>
                   </div>
                   <Badge className={
                     result.significance === 'major' ? 'bg-red-500/15 text-red-400' :
-                    result.significance === 'moderate' ? 'bg-amber-500/15 text-amber-400' :
+                    result.significance === 'moderate' ? 'bg-coral-500/15 text-coral-600' :
                     'bg-green-500/15 text-green-400'
                   }>{result.significance}</Badge>
                 </div>
@@ -121,7 +121,7 @@ export default function DocComparePage() {
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <Icon className="w-4 h-4" />
-                            <span className="text-white text-sm font-medium">{c.section}</span>
+                            <span className="text-navy-900 text-sm font-medium">{c.section}</span>
                             <Badge className={`text-[9px] ${impactColors[c.impact] || ''}`}>{c.impact}</Badge>
                           </div>
                           <Badge variant="outline" className="text-[9px] border-gray-700 text-gray-400">{c.type}</Badge>
@@ -152,15 +152,15 @@ export default function DocComparePage() {
             {result.legal_implications?.length > 0 && (
               <Card className="bg-[#0d1b2a] border-gray-800">
                 <CardHeader className="pb-2 cursor-pointer" onClick={() => toggle('legal')}>
-                  <CardTitle className="text-sm text-white flex items-center justify-between">
-                    <span className="flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-amber-400" /> Legal Implications</span>
+                  <CardTitle className="text-sm text-navy-900 flex items-center justify-between">
+                    <span className="flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-coral-600" /> Legal Implications</span>
                     {expanded.legal ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </CardTitle>
                 </CardHeader>
                 {expanded.legal && (
                   <CardContent className="space-y-1">
                     {result.legal_implications.map((l, i) => (
-                      <p key={i} className="text-gray-400 text-xs flex gap-1.5"><span className="text-amber-400">&#8226;</span> {l}</p>
+                      <p key={i} className="text-gray-400 text-xs flex gap-1.5"><span className="text-coral-600">&#8226;</span> {l}</p>
                     ))}
                   </CardContent>
                 )}

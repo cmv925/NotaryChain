@@ -56,7 +56,7 @@ export default function HandoffAccept() {
     return (
       <Shell>
         <Center>
-          <Loader2 className="w-8 h-8 animate-spin text-emerald-400 mx-auto mb-2" />
+          <Loader2 className="w-8 h-8 animate-spin text-coral-600 mx-auto mb-2" />
           <p className="text-xs text-slate-500">Loading handoff…</p>
         </Center>
       </Shell>
@@ -66,11 +66,11 @@ export default function HandoffAccept() {
   if (error) {
     return (
       <Shell>
-        <Card className="bg-amber-500/5 border-amber-500/30 max-w-md mx-auto" data-testid="handoff-error">
+        <Card className="bg-coral-500/5 border-gold-500/30 max-w-md mx-auto" data-testid="handoff-error">
           <CardContent className="p-8 text-center">
-            <AlertTriangle className="w-10 h-10 text-amber-400 mx-auto mb-2" />
-            <h2 className="text-xl font-bold text-amber-400 mb-1">Invalid handoff link</h2>
-            <p className="text-sm text-slate-400">{error}</p>
+            <AlertTriangle className="w-10 h-10 text-coral-600 mx-auto mb-2" />
+            <h2 className="text-xl font-bold text-coral-600 mb-1">Invalid handoff link</h2>
+            <p className="text-sm text-slate-600">{error}</p>
           </CardContent>
         </Card>
       </Shell>
@@ -80,11 +80,11 @@ export default function HandoffAccept() {
   if (data?.status === 'expired') {
     return (
       <Shell>
-        <Card className="bg-amber-500/5 border-amber-500/30 max-w-md mx-auto" data-testid="handoff-expired">
+        <Card className="bg-coral-500/5 border-gold-500/30 max-w-md mx-auto" data-testid="handoff-expired">
           <CardContent className="p-8 text-center">
-            <Clock className="w-10 h-10 text-amber-400 mx-auto mb-2" />
-            <h2 className="text-xl font-bold text-amber-400 mb-1">Link expired</h2>
-            <p className="text-sm text-slate-400">This handoff link expired on {fmtDate(data.expires_at)}. Contact the asset owner to re-issue.</p>
+            <Clock className="w-10 h-10 text-coral-600 mx-auto mb-2" />
+            <h2 className="text-xl font-bold text-coral-600 mb-1">Link expired</h2>
+            <p className="text-sm text-slate-600">This handoff link expired on {fmtDate(data.expires_at)}. Contact the asset owner to re-issue.</p>
           </CardContent>
         </Card>
       </Shell>
@@ -94,12 +94,12 @@ export default function HandoffAccept() {
   if (data?.status === 'claimed' || accepted) {
     return (
       <Shell>
-        <Card className="bg-emerald-500/5 border-emerald-500/30 max-w-md mx-auto" data-testid="handoff-claimed">
+        <Card className="bg-coral-500/5 border-coral-200 max-w-md mx-auto" data-testid="handoff-claimed">
           <CardContent className="p-8 text-center">
-            <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto mb-2" />
-            <h2 className="text-xl font-bold text-emerald-300 mb-1">Handoff accepted</h2>
-            <p className="text-sm text-slate-400 mb-4">Your share has been recorded on NotaryChain. The asset owner has been notified.</p>
-            <Link to="/" className="text-emerald-400 text-xs hover:underline">Back to NotaryChain →</Link>
+            <CheckCircle className="w-12 h-12 text-coral-600 mx-auto mb-2" />
+            <h2 className="text-xl font-bold text-coral-700 mb-1">Handoff accepted</h2>
+            <p className="text-sm text-slate-600 mb-4">Your share has been recorded on NotaryChain. The asset owner has been notified.</p>
+            <Link to="/" className="text-coral-600 text-xs hover:underline">Back to NotaryChain →</Link>
           </CardContent>
         </Card>
       </Shell>
@@ -119,22 +119,22 @@ export default function HandoffAccept() {
             <span className="text-rose-300 text-[10px] uppercase tracking-[0.25em] font-bold">Beneficiary Handoff</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">Hello{b.name ? `, ${b.name}` : ''}.</h1>
-          <p className="text-slate-400 text-sm max-w-md mx-auto">
+          <p className="text-slate-600 text-sm max-w-md mx-auto">
             {data.owner?.name || 'A NotaryChain user'} has named you as a beneficiary on the asset below.
             Review the details and accept to record your share on the blockchain.
           </p>
         </div>
 
-        <Card className="bg-slate-900/60 border-slate-800 mb-4" data-testid="handoff-asset-card">
+        <Card className="bg-white border-slate-200 mb-4" data-testid="handoff-asset-card">
           <CardContent className="p-6">
             <div className="flex items-start gap-4 mb-4">
-              <div className="w-12 h-12 rounded-lg bg-emerald-500/15 flex items-center justify-center flex-shrink-0">
-                <Icon className="w-6 h-6 text-emerald-400" />
+              <div className="w-12 h-12 rounded-lg bg-coral-500/15 flex items-center justify-center flex-shrink-0">
+                <Icon className="w-6 h-6 text-coral-600" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">{a.asset_type || '—'}</p>
-                <h2 className="text-xl font-bold text-white truncate">{a.title}</h2>
-                {a.description && <p className="text-xs text-slate-400 mt-1">{a.description}</p>}
+                <h2 className="text-xl font-bold text-navy-900 truncate">{a.title}</h2>
+                {a.description && <p className="text-xs text-slate-600 mt-1">{a.description}</p>}
               </div>
             </div>
             <dl className="grid grid-cols-2 gap-3 text-xs">
@@ -143,7 +143,7 @@ export default function HandoffAccept() {
               {a.handoff_started_at && <Row label="Handoff started" value={fmtDate(a.handoff_started_at)} />}
               {a.blockchain_seal?.transaction_id && (
                 <Row label="Hedera tx" value={(
-                  <a href={a.blockchain_seal.explorer_url} target="_blank" rel="noreferrer" className="text-amber-400 hover:underline inline-flex items-center gap-1">
+                  <a href={a.blockchain_seal.explorer_url} target="_blank" rel="noreferrer" className="text-coral-600 hover:underline inline-flex items-center gap-1">
                     {a.blockchain_seal.transaction_id.slice(0, 14)}… <ExternalLink className="w-3 h-3" />
                   </a>
                 )} />
@@ -156,20 +156,20 @@ export default function HandoffAccept() {
           <CardContent className="p-6 text-center">
             <Heart className="w-7 h-7 text-rose-400 mx-auto mb-2" />
             <p className="text-[10px] uppercase tracking-wider text-rose-300 font-bold">Your share</p>
-            <p className="text-5xl font-bold text-white my-2">{(b.share_percent || 0).toFixed(0)}%</p>
-            {b.relationship && <p className="text-xs text-slate-400">Relationship: {b.relationship}</p>}
+            <p className="text-5xl font-bold text-navy-900 my-2">{(b.share_percent || 0).toFixed(0)}%</p>
+            {b.relationship && <p className="text-xs text-slate-600">Relationship: {b.relationship}</p>}
             <p className="text-xs text-slate-500 mt-2">Token expires {fmtDate(data.expires_at)}</p>
           </CardContent>
         </Card>
 
         <div className="flex flex-col-reverse sm:flex-row gap-3 justify-center">
-          <Link to="/" className="text-xs text-slate-400 hover:text-white inline-flex items-center justify-center px-4 py-2">
+          <Link to="/" className="text-xs text-slate-600 hover:text-navy-900 inline-flex items-center justify-center px-4 py-2">
             Decline & exit
           </Link>
           <Button
             onClick={accept}
             disabled={submitting}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 h-11"
+            className="bg-coral-500 hover:bg-coral-500 text-navy-900 px-6 h-11"
             data-testid="accept-handoff-btn"
           >
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : `Accept ${(b.share_percent || 0).toFixed(0)}% share`}
@@ -187,11 +187,11 @@ export default function HandoffAccept() {
 
 function Shell({ children }) {
   return (
-    <div className="min-h-screen bg-slate-950 text-white" data-testid="handoff-page">
-      <div className="border-b border-slate-800 bg-gradient-to-b from-emerald-950/20 to-transparent">
+    <div className="min-h-screen bg-cream-100 text-navy-900" data-testid="handoff-page">
+      <div className="border-b border-slate-200 bg-cream-100">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center gap-2">
-          <Vault className="w-4 h-4 text-emerald-400" />
-          <span className="text-emerald-400 text-[10px] uppercase tracking-[0.25em] font-bold">NotaryChain Asset Vault</span>
+          <Vault className="w-4 h-4 text-coral-600" />
+          <span className="text-coral-600 text-[10px] uppercase tracking-[0.25em] font-bold">NotaryChain Asset Vault</span>
         </div>
       </div>
       <div className="px-6 py-12">{children}</div>

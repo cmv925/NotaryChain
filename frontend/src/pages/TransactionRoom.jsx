@@ -21,7 +21,7 @@ const statusColors = {
   pending_participants: 'bg-yellow-500',
   in_progress: 'bg-blue-500',
   pending_review: 'bg-purple-500',
-  pending_settlement: 'bg-orange-500',
+  pending_settlement: 'bg-coral-500',
   completed: 'bg-green-500',
   cancelled: 'bg-red-500',
   on_hold: 'bg-gray-400'
@@ -34,7 +34,7 @@ const taskStatusColors = {
   completed: 'bg-green-500',
   blocked: 'bg-red-500',
   skipped: 'bg-gray-400',
-  overdue: 'bg-orange-500'
+  overdue: 'bg-coral-500'
 };
 
 const roleIcons = {
@@ -244,7 +244,7 @@ export default function TransactionRoom() {
         <Card className="bg-[#1a1a2e] border-red-500/30">
           <CardContent className="p-6 text-center">
             <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h2 className="text-xl text-white mb-2">Transaction Not Found</h2>
+            <h2 className="text-xl text-navy-900 mb-2">Transaction Not Found</h2>
             <p className="text-gray-400 mb-4">You may not have access to this transaction.</p>
             <Button onClick={() => navigate('/transactions')} variant="outline">
               Back to Transactions
@@ -262,7 +262,7 @@ export default function TransactionRoom() {
   const blockedTasks = tasks.filter(t => t.status === 'blocked').length;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-[#0a0a0a] text-navy-900">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#1a1a2e] to-[#16213e] border-b border-[#333] px-4 sm:px-6 py-4">
         <div className="max-w-7xl mx-auto">
@@ -272,7 +272,7 @@ export default function TransactionRoom() {
                 variant="ghost" 
                 size="sm" 
                 onClick={() => navigate('/transactions')}
-                className="text-gray-400 hover:text-white flex-shrink-0"
+                className="text-gray-400 hover:text-navy-900 flex-shrink-0"
               >
                 <ArrowLeft className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Back</span>
@@ -280,7 +280,7 @@ export default function TransactionRoom() {
               <div className="min-w-0">
                 <h1 className="text-lg sm:text-2xl font-bold truncate">{transaction.name}</h1>
                 <div className="flex items-center gap-2 sm:gap-3 mt-1">
-                  <Badge className={`${statusColors[transaction.status]} text-white text-xs`}>
+                  <Badge className={`${statusColors[transaction.status]} text-navy-900 text-xs`}>
                     {transaction.status.replace(/_/g, ' ').toUpperCase()}
                   </Badge>
                   <span className="text-gray-400 text-xs sm:text-sm hidden sm:inline">
@@ -356,7 +356,7 @@ export default function TransactionRoom() {
                 variant="outline"
                 size="sm"
                 onClick={() => navigate(`/conductor/${transactionId}`)}
-                className="border-violet-500/50 text-violet-400 hover:bg-violet-500/10"
+                className="border-violet-500/50 text-coral-600 hover:bg-violet-500/10"
                 data-testid="conductor-btn"
               >
                 <Sparkles className="h-4 w-4 sm:mr-2" />
@@ -367,7 +367,7 @@ export default function TransactionRoom() {
                 variant="outline"
                 size="sm"
                 onClick={() => navigate(`/evidence-package/${transactionId}`)}
-                className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10"
+                className="border-emerald-500/50 text-coral-600 hover:bg-coral-500/10"
                 data-testid="evidence-pkg-btn"
               >
                 <Shield className="h-4 w-4 sm:mr-2" />
@@ -408,7 +408,7 @@ export default function TransactionRoom() {
               className={`px-3 sm:px-4 py-3 text-xs sm:text-sm font-medium transition-colors relative whitespace-nowrap ${
                 activeTab === tab 
                   ? 'text-[#00d4aa]' 
-                  : 'text-gray-400 hover:text-white'
+                  : 'text-gray-400 hover:text-navy-900'
               }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -430,7 +430,7 @@ export default function TransactionRoom() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm">Total Tasks</p>
-                    <p className="text-3xl font-bold text-white">{tasks.length}</p>
+                    <p className="text-3xl font-bold text-navy-900">{tasks.length}</p>
                   </div>
                   <div className="h-12 w-12 rounded-full bg-blue-500/20 flex items-center justify-center">
                     <FileText className="h-6 w-6 text-blue-500" />
@@ -451,7 +451,7 @@ export default function TransactionRoom() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm">Participants</p>
-                    <p className="text-3xl font-bold text-white">{participants.length}</p>
+                    <p className="text-3xl font-bold text-navy-900">{participants.length}</p>
                   </div>
                   <div className="h-12 w-12 rounded-full bg-purple-500/20 flex items-center justify-center">
                     <Users className="h-6 w-6 text-purple-500" />
@@ -477,7 +477,7 @@ export default function TransactionRoom() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm">Messages</p>
-                    <p className="text-3xl font-bold text-white">{messages.length}</p>
+                    <p className="text-3xl font-bold text-navy-900">{messages.length}</p>
                   </div>
                   <div className="h-12 w-12 rounded-full bg-[#00d4aa]/20 flex items-center justify-center">
                     <MessageSquare className="h-6 w-6 text-[#00d4aa]" />
@@ -489,21 +489,21 @@ export default function TransactionRoom() {
             {/* Transaction Details */}
             <Card className="bg-[#1a1a2e] border-[#333] lg:col-span-2">
               <CardHeader>
-                <CardTitle className="text-white">Transaction Details</CardTitle>
+                <CardTitle className="text-navy-900">Transaction Details</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-gray-400 text-sm">Type</p>
-                    <p className="text-white">{transaction.transaction_type.replace(/_/g, ' ')}</p>
+                    <p className="text-navy-900">{transaction.transaction_type.replace(/_/g, ' ')}</p>
                   </div>
                   <div>
                     <p className="text-gray-400 text-sm">Blueprint</p>
-                    <p className="text-white">{transaction.blueprint_name || 'Custom'}</p>
+                    <p className="text-navy-900">{transaction.blueprint_name || 'Custom'}</p>
                   </div>
                   <div>
                     <p className="text-gray-400 text-sm">Target Date</p>
-                    <p className="text-white">
+                    <p className="text-navy-900">
                       {transaction.target_completion_date 
                         ? new Date(transaction.target_completion_date).toLocaleDateString()
                         : 'Not set'}
@@ -511,7 +511,7 @@ export default function TransactionRoom() {
                   </div>
                   <div>
                     <p className="text-gray-400 text-sm">Created</p>
-                    <p className="text-white">{new Date(transaction.created_at).toLocaleDateString()}</p>
+                    <p className="text-navy-900">{new Date(transaction.created_at).toLocaleDateString()}</p>
                   </div>
                 </div>
                 
@@ -540,7 +540,7 @@ export default function TransactionRoom() {
             {/* Quick Actions */}
             <Card className="bg-[#1a1a2e] border-[#333]">
               <CardHeader>
-                <CardTitle className="text-white">Quick Actions</CardTitle>
+                <CardTitle className="text-navy-900">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button 
@@ -593,14 +593,14 @@ export default function TransactionRoom() {
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-4">
                           <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                            task.status === 'completed' ? 'bg-green-500 text-white' : 'bg-[#333] text-gray-400'
+                            task.status === 'completed' ? 'bg-green-500 text-navy-900' : 'bg-[#333] text-gray-400'
                           }`}>
                             {task.status === 'completed' ? '✓' : index + 1}
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <h3 className="font-semibold text-white">{task.name}</h3>
-                              <Badge className={`${taskStatusColors[task.status]} text-white text-xs`}>
+                              <h3 className="font-semibold text-navy-900">{task.name}</h3>
+                              <Badge className={`${taskStatusColors[task.status]} text-navy-900 text-xs`}>
                                 {task.status.replace(/_/g, ' ')}
                               </Badge>
                             </div>
@@ -668,7 +668,7 @@ export default function TransactionRoom() {
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-white truncate">{participant.name}</h3>
+                          <h3 className="font-semibold text-navy-900 truncate">{participant.name}</h3>
                           <p className="text-gray-400 text-sm truncate">{participant.email}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <Badge className="bg-[#333] text-gray-300 text-xs">
@@ -715,7 +715,7 @@ export default function TransactionRoom() {
                       <div className={`max-w-[70%] ${
                         msg.sender_id === current_participant?.id 
                           ? 'bg-[#00d4aa] text-black' 
-                          : 'bg-[#333] text-white'
+                          : 'bg-[#333] text-navy-900'
                       } rounded-lg px-4 py-2`}>
                         <p className={`text-xs mb-1 ${
                           msg.sender_id === current_participant?.id ? 'text-black/60' : 'text-gray-400'
@@ -747,7 +747,7 @@ export default function TransactionRoom() {
                     value={newMessage}
                     onChange={(e) => { setNewMessage(e.target.value); sendTyping(); }}
                     placeholder="Type a message..."
-                    className="flex-1 bg-[#0d1b2a] border-[#333] text-white"
+                    className="flex-1 bg-[#0d1b2a] border-[#333] text-navy-900"
                     disabled={!current_participant?.can_send_messages}
                   />
                   <Button 
@@ -783,7 +783,7 @@ export default function TransactionRoom() {
                           <FileText className="h-5 w-5 text-gray-400" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-white truncate">{doc.name}</h3>
+                          <h3 className="font-medium text-navy-900 truncate">{doc.name}</h3>
                           <p className="text-gray-400 text-sm">
                             {doc.file_type} • {(doc.file_size / 1024).toFixed(1)} KB
                           </p>
@@ -852,7 +852,7 @@ export default function TransactionRoom() {
                 {/* Recommendations */}
                 <Card className="bg-[#1a1a2e] border-[#333] lg:col-span-2">
                   <CardHeader>
-                    <CardTitle className="text-white">AI Recommendations</CardTitle>
+                    <CardTitle className="text-navy-900">AI Recommendations</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {aiRecommendations.recommendations.length === 0 ? (
@@ -879,7 +879,7 @@ export default function TransactionRoom() {
                               {rec.priority} priority
                             </span>
                           </div>
-                          <p className="text-white">{rec.message}</p>
+                          <p className="text-navy-900">{rec.message}</p>
                           {rec.action && (
                             <p className="text-gray-400 text-sm mt-1">Action: {rec.action}</p>
                           )}

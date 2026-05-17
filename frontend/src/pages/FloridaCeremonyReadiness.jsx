@@ -154,11 +154,11 @@ export default function FloridaCeremonyReadiness() {
   if (!isAuthenticated) {
     return (
       <Shell>
-        <Card className="bg-slate-900/60 border-slate-800 max-w-md mx-auto" data-testid="fl-readiness-login-required">
+        <Card className="bg-white border-slate-200 max-w-md mx-auto" data-testid="fl-readiness-login-required">
           <CardContent className="p-8 text-center">
             <Shield className="w-10 h-10 text-slate-500 mx-auto mb-2" />
             <h2 className="text-xl font-bold mb-1">Sign in required</h2>
-            <Link to="/login"><Button className="bg-emerald-600 hover:bg-emerald-500 mt-3">Sign in</Button></Link>
+            <Link to="/login"><Button className="bg-coral-500 hover:bg-coral-500 mt-3">Sign in</Button></Link>
           </CardContent>
         </Card>
       </Shell>
@@ -172,17 +172,17 @@ export default function FloridaCeremonyReadiness() {
         <div className="flex items-end justify-between gap-3 mb-4 flex-wrap">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Sun className="w-5 h-5 text-orange-400" />
-              <span className="text-orange-400 text-[10px] uppercase tracking-[0.25em] font-bold">Florida · Ceremony Readiness</span>
+              <Sun className="w-5 h-5 text-coral-600" />
+              <span className="text-coral-600 text-[10px] uppercase tracking-[0.25em] font-bold">Florida · Ceremony Readiness</span>
             </div>
             <h1 className="text-3xl font-bold">Pre-ceremony checks</h1>
-            <p className="text-slate-400 text-sm mt-1">Every Florida notarization must pass these gates before sealing.</p>
+            <p className="text-slate-600 text-sm mt-1">Every Florida notarization must pass these gates before sealing.</p>
             <p className="text-[10px] text-slate-600 font-mono mt-1">ceremony_id: {ceremonyId}</p>
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-xs text-slate-400">Document type:</label>
+            <label className="text-xs text-slate-600">Document type:</label>
             <select value={documentType} onChange={(e) => setDocumentType(e.target.value)}
-              className="bg-slate-900/60 border border-slate-800 rounded-md px-3 h-9 text-sm text-white" data-testid="document-type-select">
+              className="bg-white border border-slate-200 rounded-md px-3 h-9 text-sm text-navy-900" data-testid="document-type-select">
               <option value="deed">Deed</option>
               <option value="poa">Power of Attorney</option>
               <option value="affidavit">Affidavit</option>
@@ -193,21 +193,21 @@ export default function FloridaCeremonyReadiness() {
         </div>
 
         {/* Readiness summary */}
-        <Card className={`mb-6 ${readiness?.ready ? 'bg-emerald-500/5 border-emerald-500/30' : 'bg-amber-500/5 border-amber-500/30'}`} data-testid="readiness-summary">
+        <Card className={`mb-6 ${readiness?.ready ? 'bg-coral-500/5 border-coral-200' : 'bg-coral-500/5 border-gold-500/30'}`} data-testid="readiness-summary">
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
               {readiness?.ready
-                ? <CheckCircle className="w-7 h-7 text-emerald-400" />
-                : <AlertTriangle className="w-7 h-7 text-amber-400" />}
+                ? <CheckCircle className="w-7 h-7 text-coral-600" />
+                : <AlertTriangle className="w-7 h-7 text-coral-600" />}
               <div>
-                <h3 className={`font-bold ${readiness?.ready ? 'text-emerald-300' : 'text-amber-300'}`}>
+                <h3 className={`font-bold ${readiness?.ready ? 'text-coral-700' : 'text-coral-700'}`}>
                   {readiness?.ready ? 'Ready to seal' : 'Pending gates'}
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600">
                   {readiness ? `${Object.values(gates).filter(g => g.passed).length} of ${Object.keys(gates).length} gates passed` : 'Loading…'}
                 </p>
               </div>
-              <Button onClick={loadReadiness} variant="outline" size="sm" className="ml-auto bg-slate-900/60 border-slate-700 text-white hover:bg-slate-800" data-testid="refresh-readiness-btn">
+              <Button onClick={loadReadiness} variant="outline" size="sm" className="ml-auto bg-white border-slate-300 text-navy-900 hover:bg-cream-200" data-testid="refresh-readiness-btn">
                 {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Refresh'}
               </Button>
             </div>
@@ -221,7 +221,7 @@ export default function FloridaCeremonyReadiness() {
 
         {/* GATE: Jurisdiction qualifier */}
         <SectionCard title="1. Jurisdiction qualifier" icon={MapPin} testId="jurisdiction-section">
-          <p className="text-xs text-slate-400 mb-4">Confirm Florida nexus and capture principal location.</p>
+          <p className="text-xs text-slate-600 mb-4">Confirm Florida nexus and capture principal location.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
             <Checkbox label="Concerns Florida property" checked={juris.concerns_fl_property}
               onChange={v => setJuris(j => ({ ...j, concerns_fl_property: v }))} testId="check-fl-property" />
@@ -230,7 +230,7 @@ export default function FloridaCeremonyReadiness() {
           </div>
           <FormField label="Nexus basis">
             <select value={juris.fl_nexus_basis} onChange={(e) => updateBasis(e.target.value)}
-              className="bg-slate-900/60 border border-slate-800 rounded-md px-3 h-10 text-sm text-white w-full" data-testid="nexus-basis-select">
+              className="bg-white border border-slate-200 rounded-md px-3 h-10 text-sm text-navy-900 w-full" data-testid="nexus-basis-select">
               {NEXUS_OPTIONS.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
             </select>
             <p className="text-[10px] text-slate-500 mt-1">Tick at least one box above (property / law) unless filing a FL-resident online will.</p>
@@ -238,11 +238,11 @@ export default function FloridaCeremonyReadiness() {
           {juris.fl_nexus_basis === 'other' && (
             <FormField label="Details">
               <Input value={juris.nexus_details} onChange={e => setJuris(j => ({ ...j, nexus_details: e.target.value }))}
-                className="bg-slate-900/60 border-slate-800" data-testid="nexus-details-input" />
+                className="bg-white border-slate-200" data-testid="nexus-details-input" />
             </FormField>
           )}
           <div className="flex items-center gap-2 mt-3">
-            <Button onClick={captureGPS} size="sm" variant="outline" className="bg-slate-800/60 border-slate-700 text-white hover:bg-slate-800" data-testid="capture-gps-btn">
+            <Button onClick={captureGPS} size="sm" variant="outline" className="bg-cream-200 border-slate-300 text-navy-900 hover:bg-cream-200" data-testid="capture-gps-btn">
               <MapPin className="w-3 h-3 mr-1" /> {juris.geo_lat ? 'Re-capture GPS' : 'Capture GPS'}
             </Button>
             {juris.geo_lat && (
@@ -250,7 +250,7 @@ export default function FloridaCeremonyReadiness() {
                 {juris.geo_lat.toFixed(4)}, {juris.geo_lng.toFixed(4)} (±{juris.geo_accuracy_m?.toFixed(0)}m)
               </span>
             )}
-            <Button onClick={submitJuris} disabled={savingJuris} className="ml-auto bg-emerald-600 hover:bg-emerald-500" size="sm" data-testid="submit-juris-btn">
+            <Button onClick={submitJuris} disabled={savingJuris} className="ml-auto bg-coral-500 hover:bg-coral-500" size="sm" data-testid="submit-juris-btn">
               {savingJuris ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Submit'}
             </Button>
           </div>
@@ -258,8 +258,8 @@ export default function FloridaCeremonyReadiness() {
 
         {/* GATE: KBA */}
         <SectionCard title="2. Identity proofing (KBA)" icon={Shield} testId="kba-section">
-          <p className="text-xs text-slate-400 mb-3">Take the 5-question quiz. Required by FL Stat. 117.295.</p>
-          <Button onClick={() => setShowKBA(true)} className="bg-emerald-600 hover:bg-emerald-500" data-testid="open-kba-btn">
+          <p className="text-xs text-slate-600 mb-3">Take the 5-question quiz. Required by FL Stat. 117.295.</p>
+          <Button onClick={() => setShowKBA(true)} className="bg-coral-500 hover:bg-coral-500" data-testid="open-kba-btn">
             Launch KBA quiz
           </Button>
         </SectionCard>
@@ -267,22 +267,22 @@ export default function FloridaCeremonyReadiness() {
         {/* GATE: Witnesses (only for wills) */}
         {documentType === 'will' && (
           <SectionCard title="3. Online will — 2 witnesses" icon={Users} testId="witnesses-section">
-            <p className="text-xs text-slate-400 mb-4">FL Stat. 732.522 requires 2 witnesses present on video.</p>
+            <p className="text-xs text-slate-600 mb-4">FL Stat. 732.522 requires 2 witnesses present on video.</p>
             {witnesses.length > 0 && (
               <div className="space-y-2 mb-4">
                 {witnesses.map(w => (
-                  <div key={w.witness_id} className="flex items-center gap-3 bg-slate-800/40 rounded p-3 text-xs" data-testid={`witness-row-${w.witness_id}`}>
-                    <Users className="w-4 h-4 text-orange-400" />
+                  <div key={w.witness_id} className="flex items-center gap-3 bg-cream-200/40 rounded p-3 text-xs" data-testid={`witness-row-${w.witness_id}`}>
+                    <Users className="w-4 h-4 text-coral-600" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-white font-medium truncate">{w.name}</p>
+                      <p className="text-navy-900 font-medium truncate">{w.name}</p>
                       <p className="text-slate-500">{w.email} {w.relationship ? `· ${w.relationship}` : ''}</p>
                     </div>
                     <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded font-bold ${
-                      w.status === 'accepted' ? 'bg-emerald-500/15 text-emerald-300' : 'bg-slate-700/50 text-slate-300'
+                      w.status === 'accepted' ? 'bg-coral-500/15 text-coral-700' : 'bg-slate-700/50 text-navy-800'
                     }`}>{w.status}</span>
                     {witnessLinks[w.witness_id] && (
                       <button onClick={() => navigator.clipboard.writeText(window.location.origin + witnessLinks[w.witness_id]).then(() => toast.success('Link copied'))}
-                        className="text-slate-500 hover:text-emerald-400" title="Copy witness link" data-testid={`copy-witness-link-${w.witness_id}`}>
+                        className="text-slate-500 hover:text-coral-600" title="Copy witness link" data-testid={`copy-witness-link-${w.witness_id}`}>
                         <Copy className="w-3 h-3" />
                       </button>
                     )}
@@ -293,15 +293,15 @@ export default function FloridaCeremonyReadiness() {
             {witnesses.length < 2 && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2">
                 <Input placeholder="Name" value={witnessForm.name} onChange={e => setWitnessForm(f => ({ ...f, name: e.target.value }))}
-                  className="bg-slate-900/60 border-slate-800 text-sm" data-testid="witness-name-input" />
+                  className="bg-white border-slate-200 text-sm" data-testid="witness-name-input" />
                 <Input type="email" placeholder="Email" value={witnessForm.email} onChange={e => setWitnessForm(f => ({ ...f, email: e.target.value }))}
-                  className="bg-slate-900/60 border-slate-800 text-sm" data-testid="witness-email-input" />
+                  className="bg-white border-slate-200 text-sm" data-testid="witness-email-input" />
                 <Input placeholder="Relationship (optional)" value={witnessForm.relationship} onChange={e => setWitnessForm(f => ({ ...f, relationship: e.target.value }))}
-                  className="bg-slate-900/60 border-slate-800 text-sm" data-testid="witness-relationship-input" />
+                  className="bg-white border-slate-200 text-sm" data-testid="witness-relationship-input" />
               </div>
             )}
             {witnesses.length < 2 && (
-              <Button onClick={inviteWitness} className="bg-emerald-600 hover:bg-emerald-500" size="sm" data-testid="invite-witness-btn">
+              <Button onClick={inviteWitness} className="bg-coral-500 hover:bg-coral-500" size="sm" data-testid="invite-witness-btn">
                 <Plus className="w-3 h-3 mr-1" /> Invite witness ({witnesses.length}/2)
               </Button>
             )}
@@ -310,16 +310,16 @@ export default function FloridaCeremonyReadiness() {
 
         {/* GATE: A/V quality */}
         <SectionCard title={`${documentType === 'will' ? '4' : '3'}. A/V recording quality`} icon={Video} testId="av-section">
-          <p className="text-xs text-slate-400 mb-3">Minimum 720p, 16kHz audio, 30s duration.</p>
+          <p className="text-xs text-slate-600 mb-3">Minimum 720p, 16kHz audio, 30s duration.</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-            <FormField label="Width"><Input type="number" value={avForm.video_width} onChange={e => setAvForm(f => ({ ...f, video_width: parseInt(e.target.value) || 0 }))} className="bg-slate-900/60 border-slate-800" data-testid="av-width-input" /></FormField>
-            <FormField label="Height"><Input type="number" value={avForm.video_height} onChange={e => setAvForm(f => ({ ...f, video_height: parseInt(e.target.value) || 0 }))} className="bg-slate-900/60 border-slate-800" data-testid="av-height-input" /></FormField>
-            <FormField label="Audio Hz"><Input type="number" value={avForm.audio_sample_rate_hz} onChange={e => setAvForm(f => ({ ...f, audio_sample_rate_hz: parseInt(e.target.value) || 0 }))} className="bg-slate-900/60 border-slate-800" data-testid="av-audio-input" /></FormField>
-            <FormField label="Duration s"><Input type="number" value={avForm.recording_duration_sec} onChange={e => setAvForm(f => ({ ...f, recording_duration_sec: parseInt(e.target.value) || 0 }))} className="bg-slate-900/60 border-slate-800" data-testid="av-duration-input" /></FormField>
+            <FormField label="Width"><Input type="number" value={avForm.video_width} onChange={e => setAvForm(f => ({ ...f, video_width: parseInt(e.target.value) || 0 }))} className="bg-white border-slate-200" data-testid="av-width-input" /></FormField>
+            <FormField label="Height"><Input type="number" value={avForm.video_height} onChange={e => setAvForm(f => ({ ...f, video_height: parseInt(e.target.value) || 0 }))} className="bg-white border-slate-200" data-testid="av-height-input" /></FormField>
+            <FormField label="Audio Hz"><Input type="number" value={avForm.audio_sample_rate_hz} onChange={e => setAvForm(f => ({ ...f, audio_sample_rate_hz: parseInt(e.target.value) || 0 }))} className="bg-white border-slate-200" data-testid="av-audio-input" /></FormField>
+            <FormField label="Duration s"><Input type="number" value={avForm.recording_duration_sec} onChange={e => setAvForm(f => ({ ...f, recording_duration_sec: parseInt(e.target.value) || 0 }))} className="bg-white border-slate-200" data-testid="av-duration-input" /></FormField>
           </div>
-          <Button onClick={submitAV} className="bg-emerald-600 hover:bg-emerald-500" size="sm" data-testid="submit-av-btn">Report A/V</Button>
+          <Button onClick={submitAV} className="bg-coral-500 hover:bg-coral-500" size="sm" data-testid="submit-av-btn">Report A/V</Button>
           {avResult && (
-            <div className={`mt-3 p-3 rounded text-xs ${avResult.passed ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300' : 'bg-red-500/10 border border-red-500/30 text-red-300'}`} data-testid="av-result">
+            <div className={`mt-3 p-3 rounded text-xs ${avResult.passed ? 'bg-coral-500/10 border border-coral-200 text-coral-700' : 'bg-red-500/10 border border-red-500/30 text-red-300'}`} data-testid="av-result">
               {avResult.passed ? '✓ A/V quality OK' : `✗ Issues: ${avResult.issues.map(i => i.type).join(', ')}`}
             </div>
           )}
@@ -340,10 +340,10 @@ export default function FloridaCeremonyReadiness() {
 
 function Shell({ children }) {
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <div className="border-b border-slate-800 bg-gradient-to-b from-orange-950/20 to-transparent">
+    <div className="min-h-screen bg-cream-100 text-navy-900">
+      <div className="border-b border-slate-200 bg-cream-100">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center gap-3">
-          <Link to="/dashboard" className="text-xs text-slate-400 hover:text-white inline-flex items-center gap-1">
+          <Link to="/dashboard" className="text-xs text-slate-600 hover:text-navy-900 inline-flex items-center gap-1">
             <ChevronLeft className="w-4 h-4" /> Back
           </Link>
         </div>
@@ -355,10 +355,10 @@ function Shell({ children }) {
 
 function SectionCard({ title, icon: Icon, testId, children }) {
   return (
-    <Card className="bg-slate-900/60 border-slate-800 mb-4" data-testid={testId}>
+    <Card className="bg-white border-slate-200 mb-4" data-testid={testId}>
       <CardContent className="p-5">
         <div className="flex items-center gap-2 mb-2">
-          <Icon className="w-4 h-4 text-orange-400" />
+          <Icon className="w-4 h-4 text-coral-600" />
           <h3 className="font-bold text-sm">{title}</h3>
         </div>
         {children}
@@ -380,7 +380,7 @@ function Checkbox({ label, checked, onChange, testId }) {
   return (
     <label className="flex items-center gap-2 cursor-pointer text-sm" data-testid={testId}>
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="w-4 h-4 accent-emerald-500" />
-      <span className="text-slate-300">{label}</span>
+      <span className="text-navy-800">{label}</span>
     </label>
   );
 }
@@ -394,8 +394,8 @@ function Gate({ name, passed, testId }) {
   };
   return (
     <div className="flex items-center gap-2 text-xs" data-testid={testId}>
-      {passed ? <CheckCircle className="w-4 h-4 text-emerald-400" /> : <Lock className="w-4 h-4 text-slate-500" />}
-      <span className={passed ? 'text-emerald-300' : 'text-slate-400'}>{labels[name] || name.replace(/_/g, ' ')}</span>
+      {passed ? <CheckCircle className="w-4 h-4 text-coral-600" /> : <Lock className="w-4 h-4 text-slate-500" />}
+      <span className={passed ? 'text-coral-700' : 'text-slate-600'}>{labels[name] || name.replace(/_/g, ' ')}</span>
     </div>
   );
 }

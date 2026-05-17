@@ -84,15 +84,15 @@ export default function AdminIntegrations() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-6" data-testid="admin-integrations-page">
+    <div className="min-h-screen bg-cream-100 text-navy-900 p-6" data-testid="admin-integrations-page">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <p className="text-sky-400 text-xs uppercase tracking-[0.2em] mb-1">Admin</p>
+            <p className="text-coral-600 text-xs uppercase tracking-[0.2em] mb-1">Admin</p>
             <h1 className="text-3xl font-bold flex items-center gap-3">
-              <Link2 className="w-7 h-7 text-sky-400" /> Integrations
+              <Link2 className="w-7 h-7 text-coral-600" /> Integrations
             </h1>
-            <p className="text-slate-400 text-sm mt-1">CRM, email, and third-party sync status.</p>
+            <p className="text-slate-600 text-sm mt-1">CRM, email, and third-party sync status.</p>
           </div>
           <Button onClick={loadAll} variant="outline" size="sm" data-testid="refresh-integrations-btn" disabled={loading}>
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
@@ -108,22 +108,22 @@ export default function AdminIntegrations() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {/* GoHighLevel Card */}
-          <Card className="bg-slate-900/60 border-slate-800" data-testid="ghl-card">
+          <Card className="bg-white border-slate-200" data-testid="ghl-card">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <Users className="w-5 h-5 text-sky-400" /> GoHighLevel CRM
+                  <Users className="w-5 h-5 text-coral-600" /> GoHighLevel CRM
                 </CardTitle>
                 {ghlStatus?.connected ? (
-                  <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30">
+                  <Badge className="bg-coral-500/15 text-coral-600 border-coral-200">
                     <CheckCircle className="w-3 h-3 mr-1" /> Connected
                   </Badge>
                 ) : ghlStatus?.configured ? (
-                  <Badge className="bg-amber-500/15 text-amber-400 border-amber-500/30">
+                  <Badge className="bg-coral-500/15 text-coral-600 border-gold-500/30">
                     <AlertCircle className="w-3 h-3 mr-1" /> Error
                   </Badge>
                 ) : (
-                  <Badge className="bg-slate-700/40 text-slate-400 border-slate-600/30">Not configured</Badge>
+                  <Badge className="bg-slate-700/40 text-slate-600 border-slate-600/30">Not configured</Badge>
                 )}
               </div>
             </CardHeader>
@@ -139,12 +139,12 @@ export default function AdminIntegrations() {
               )}
 
               {ghlPipelines.length > 0 && (
-                <div className="pt-2 border-t border-slate-800">
+                <div className="pt-2 border-t border-slate-200">
                   <p className="text-slate-500 text-xs uppercase tracking-wider mb-2">Pipelines ({ghlPipelines.length})</p>
                   <div className="space-y-1">
                     {ghlPipelines.map(p => (
                       <div key={p.id} className="flex items-center justify-between text-xs" data-testid={`pipeline-${p.id}`}>
-                        <span className={p.id === ghlStatus?.pipeline_id ? 'text-sky-400 font-semibold' : 'text-slate-300'}>
+                        <span className={p.id === ghlStatus?.pipeline_id ? 'text-coral-600 font-semibold' : 'text-navy-800'}>
                           {p.id === ghlStatus?.pipeline_id ? '★ ' : ''}{p.name}
                         </span>
                         <span className="text-slate-600">{p.stages.length} stages</span>
@@ -155,21 +155,21 @@ export default function AdminIntegrations() {
               )}
 
               {/* Test contact */}
-              <div className="pt-3 border-t border-slate-800 space-y-2">
+              <div className="pt-3 border-t border-slate-200 space-y-2">
                 <p className="text-slate-500 text-xs uppercase tracking-wider">Test Sync</p>
                 <Input placeholder="email@example.com" value={testEmail} onChange={e => setTestEmail(e.target.value)}
-                       className="bg-slate-800/60 border-slate-700 h-9 text-xs" data-testid="ghl-test-email-input" />
+                       className="bg-cream-200 border-slate-300 h-9 text-xs" data-testid="ghl-test-email-input" />
                 <div className="grid grid-cols-3 gap-2">
                   <Input placeholder="Name" value={testName} onChange={e => setTestName(e.target.value)}
-                         className="bg-slate-800/60 border-slate-700 h-9 text-xs" data-testid="ghl-test-name-input" />
+                         className="bg-cream-200 border-slate-300 h-9 text-xs" data-testid="ghl-test-name-input" />
                   <select value={testRole} onChange={e => setTestRole(e.target.value)}
-                          className="bg-slate-800/60 border border-slate-700 rounded-md h-9 text-xs px-2" data-testid="ghl-test-role-select">
+                          className="bg-cream-200 border border-slate-300 rounded-md h-9 text-xs px-2" data-testid="ghl-test-role-select">
                     <option value="user">User</option>
                     <option value="notary">Notary</option>
                     <option value="admin">Admin</option>
                   </select>
                   <select value={testTier} onChange={e => setTestTier(e.target.value)}
-                          className="bg-slate-800/60 border border-slate-700 rounded-md h-9 text-xs px-2" data-testid="ghl-test-tier-select">
+                          className="bg-cream-200 border border-slate-300 rounded-md h-9 text-xs px-2" data-testid="ghl-test-tier-select">
                     <option value="starter">Starter</option>
                     <option value="professional">Professional</option>
                     <option value="enterprise">Enterprise</option>
@@ -186,18 +186,18 @@ export default function AdminIntegrations() {
           </Card>
 
           {/* Email Card */}
-          <Card className="bg-slate-900/60 border-slate-800" data-testid="email-card">
+          <Card className="bg-white border-slate-200" data-testid="email-card">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <Mail className="w-5 h-5 text-emerald-400" /> Email (Resend)
+                  <Mail className="w-5 h-5 text-coral-600" /> Email (Resend)
                 </CardTitle>
                 {emailStatus?.mode === 'custom_domain' ? (
-                  <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30">
+                  <Badge className="bg-coral-500/15 text-coral-600 border-coral-200">
                     <CheckCircle className="w-3 h-3 mr-1" /> Custom domain live
                   </Badge>
                 ) : (
-                  <Badge className="bg-amber-500/15 text-amber-400 border-amber-500/30">Sandbox</Badge>
+                  <Badge className="bg-coral-500/15 text-coral-600 border-gold-500/30">Sandbox</Badge>
                 )}
               </div>
             </CardHeader>
@@ -210,10 +210,10 @@ export default function AdminIntegrations() {
                 </>
               )}
               {emailDomain && (
-                <div className="pt-2 border-t border-slate-800 space-y-1.5">
+                <div className="pt-2 border-t border-slate-200 space-y-1.5">
                   <p className="text-slate-500 text-xs uppercase tracking-wider">Resend Domain</p>
                   <KV label="Status" value={
-                    <span className={emailDomain.verified ? 'text-emerald-400' : 'text-amber-400'}>
+                    <span className={emailDomain.verified ? 'text-coral-600' : 'text-coral-600'}>
                       {emailDomain.status}
                     </span>
                   } />
@@ -221,9 +221,9 @@ export default function AdminIntegrations() {
                   {emailDomain.created_at && <KV label="Created" value={new Date(emailDomain.created_at).toLocaleDateString()} />}
                 </div>
               )}
-              <div className="pt-3 border-t border-slate-800">
+              <div className="pt-3 border-t border-slate-200">
                 <a href="https://resend.com/domains" target="_blank" rel="noreferrer"
-                   className="text-xs text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1" data-testid="resend-dashboard-link">
+                   className="text-xs text-coral-600 hover:text-coral-700 inline-flex items-center gap-1" data-testid="resend-dashboard-link">
                   Open Resend Dashboard <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
@@ -232,7 +232,7 @@ export default function AdminIntegrations() {
         </div>
 
         {/* Event Sync Matrix */}
-        <Card className="mt-5 bg-slate-900/60 border-slate-800">
+        <Card className="mt-5 bg-white border-slate-200">
           <CardHeader><CardTitle className="text-base">Active Sync Hooks</CardTitle></CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
@@ -243,10 +243,10 @@ export default function AdminIntegrations() {
                 ['HTS Token Minted', 'Add note to creator with token_id + purpose', 'hts_routes.mint'],
                 ['Subscription Upgraded', 'Move opportunity to Contract Signed + note', 'subscription_routes.checkout'],
               ].map(([event, desc, origin]) => (
-                <div key={event} className="flex items-center gap-3 bg-slate-800/40 rounded-md p-2.5 border border-slate-700/40" data-testid={`sync-hook-${event.toLowerCase().replace(/ /g, '-')}`}>
-                  <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <div key={event} className="flex items-center gap-3 bg-cream-200/40 rounded-md p-2.5 border border-slate-300/40" data-testid={`sync-hook-${event.toLowerCase().replace(/ /g, '-')}`}>
+                  <CheckCircle className="w-4 h-4 text-coral-600 flex-shrink-0" />
                   <div className="min-w-0 flex-1">
-                    <p className="text-white font-medium">{event}</p>
+                    <p className="text-navy-900 font-medium">{event}</p>
                     <p className="text-slate-500">{desc}</p>
                   </div>
                   <span className="text-[10px] text-slate-600 font-mono hidden md:inline">{origin}</span>

@@ -67,7 +67,7 @@ const OktaCallback = () => {
         ) : (
           <div>
             <RefreshCw className="w-10 h-10 text-blue-500 animate-spin mx-auto mb-4" />
-            <p className="text-white text-lg">Completing sign in...</p>
+            <p className="text-navy-900 text-lg">Completing sign in...</p>
             <p className="text-gray-400 text-sm mt-2">Verifying your identity with Okta</p>
           </div>
         )}

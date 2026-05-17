@@ -246,7 +246,7 @@ const CryptoCheckout = () => {
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Wallet className="w-10 h-10 text-orange-500" />
-              <h1 className="text-4xl font-bold text-white">
+              <h1 className="text-4xl font-bold text-navy-900">
                 Pay with Crypto
               </h1>
             </div>
@@ -261,18 +261,18 @@ const CryptoCheckout = () => {
               {[1, 2, 3].map((s) => (
                 <React.Fragment key={s}>
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                    step >= s ? 'bg-orange-500 text-white' : 'bg-gray-700 text-gray-400'
+                    step >= s ? 'bg-coral-500 text-navy-900' : 'bg-gray-700 text-gray-400'
                   }`}>
                     {step > s ? <CheckCircle className="w-5 h-5" /> : s}
                   </div>
-                  {s < 3 && <div className={`flex-1 h-1 ${step > s ? 'bg-orange-500' : 'bg-gray-700'}`} />}
+                  {s < 3 && <div className={`flex-1 h-1 ${step > s ? 'bg-coral-500' : 'bg-gray-700'}`} />}
                 </React.Fragment>
               ))}
             </div>
             <div className="flex justify-between max-w-md mx-auto mt-2 text-sm">
-              <span className={step >= 1 ? 'text-orange-400' : 'text-gray-500'}>Select</span>
-              <span className={step >= 2 ? 'text-orange-400' : 'text-gray-500'}>Pay</span>
-              <span className={step >= 3 ? 'text-orange-400' : 'text-gray-500'}>Confirm</span>
+              <span className={step >= 1 ? 'text-coral-600' : 'text-gray-500'}>Select</span>
+              <span className={step >= 2 ? 'text-coral-600' : 'text-gray-500'}>Pay</span>
+              <span className={step >= 3 ? 'text-coral-600' : 'text-gray-500'}>Confirm</span>
             </div>
           </div>
 
@@ -282,7 +282,7 @@ const CryptoCheckout = () => {
               {/* Package Selection */}
               <Card className="bg-[#1a2332] border-gray-800">
                 <CardContent className="p-6">
-                  <h2 className="text-xl font-bold text-white mb-4">Select Package</h2>
+                  <h2 className="text-xl font-bold text-navy-900 mb-4">Select Package</h2>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {packages.map((pkg) => (
                       <button
@@ -290,12 +290,12 @@ const CryptoCheckout = () => {
                         onClick={() => setSelectedPackage(pkg.id)}
                         className={`p-4 rounded-lg border text-left transition-all ${
                           selectedPackage === pkg.id
-                            ? 'border-orange-500 bg-orange-500/10'
+                            ? 'border-orange-500 bg-coral-500/10'
                             : 'border-gray-700 hover:border-gray-600'
                         }`}
                       >
-                        <p className="text-white font-medium text-sm">{pkg.name}</p>
-                        <p className="text-orange-400 font-bold">${pkg.price_usd}</p>
+                        <p className="text-navy-900 font-medium text-sm">{pkg.name}</p>
+                        <p className="text-coral-600 font-bold">${pkg.price_usd}</p>
                       </button>
                     ))}
                   </div>
@@ -305,7 +305,7 @@ const CryptoCheckout = () => {
               {/* Crypto Selection */}
               <Card className="bg-[#1a2332] border-gray-800">
                 <CardContent className="p-6">
-                  <h2 className="text-xl font-bold text-white mb-4">Select Cryptocurrency</h2>
+                  <h2 className="text-xl font-bold text-navy-900 mb-4">Select Cryptocurrency</h2>
                   <div className="grid grid-cols-2 gap-4">
                     {supportedCryptos.map((crypto) => {
                       const cryptoPrice = prices[selectedPackage]?.[crypto.symbol];
@@ -315,23 +315,23 @@ const CryptoCheckout = () => {
                           onClick={() => setSelectedCrypto(crypto)}
                           className={`p-4 rounded-lg border flex items-center gap-4 transition-all ${
                             selectedCrypto?.id === crypto.id
-                              ? 'border-orange-500 bg-orange-500/10'
+                              ? 'border-orange-500 bg-coral-500/10'
                               : 'border-gray-700 hover:border-gray-600'
                           }`}
                           data-testid={`crypto-${crypto.symbol}`}
                         >
                           <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                            crypto.symbol === 'BTC' ? 'bg-orange-500/20 text-orange-400' :
+                            crypto.symbol === 'BTC' ? 'bg-coral-500/20 text-coral-600' :
                             crypto.symbol === 'ETH' ? 'bg-blue-500/20 text-blue-400' :
                             'bg-green-500/20 text-green-400'
                           }`}>
                             <CryptoIcon symbol={crypto.symbol} className="w-6 h-6" />
                           </div>
                           <div className="text-left">
-                            <p className="text-white font-bold">{crypto.symbol}</p>
+                            <p className="text-navy-900 font-bold">{crypto.symbol}</p>
                             <p className="text-gray-400 text-sm">{crypto.name}</p>
                             {cryptoPrice && (
-                              <p className="text-orange-400 text-sm">
+                              <p className="text-coral-600 text-sm">
                                 ≈ {cryptoPrice.amount.toFixed(6)} {crypto.symbol}
                               </p>
                             )}
@@ -345,25 +345,25 @@ const CryptoCheckout = () => {
 
               {/* Summary & Continue */}
               {selectedPkg && selectedCrypto && (
-                <Card className="bg-gradient-to-r from-orange-600/20 to-yellow-600/20 border-orange-500/30">
+                <Card className="bg-gradient-to-r from-orange-600/20 to-yellow-600/20 border-coral-200">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <p className="text-gray-400 text-sm">You're paying</p>
-                        <p className="text-2xl font-bold text-white">${selectedPkg.price_usd}</p>
-                        <p className="text-orange-400">
+                        <p className="text-2xl font-bold text-navy-900">${selectedPkg.price_usd}</p>
+                        <p className="text-coral-600">
                           ≈ {prices[selectedPackage]?.[selectedCrypto.symbol]?.amount.toFixed(8)} {selectedCrypto.symbol}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="text-gray-400 text-sm">For</p>
-                        <p className="text-white font-medium">{selectedPkg.name}</p>
+                        <p className="text-navy-900 font-medium">{selectedPkg.name}</p>
                       </div>
                     </div>
                     <Button
                       onClick={handleCreatePayment}
                       disabled={loading}
-                      className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4"
+                      className="w-full bg-coral-500 hover:bg-coral-500 text-navy-900 py-4"
                       data-testid="continue-to-payment-btn"
                     >
                       {loading ? (
@@ -390,7 +390,7 @@ const CryptoCheckout = () => {
               <Button
                 variant="ghost"
                 onClick={() => { setStep(1); setPayment(null); }}
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-navy-900"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back
@@ -400,13 +400,13 @@ const CryptoCheckout = () => {
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
                     <div className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center ${
-                      payment.crypto_symbol === 'BTC' ? 'bg-orange-500/20 text-orange-400' :
+                      payment.crypto_symbol === 'BTC' ? 'bg-coral-500/20 text-coral-600' :
                       payment.crypto_symbol === 'ETH' ? 'bg-blue-500/20 text-blue-400' :
                       'bg-green-500/20 text-green-400'
                     }`}>
                       <CryptoIcon symbol={payment.crypto_symbol} className="w-8 h-8" />
                     </div>
-                    <h2 className="text-xl font-bold text-white">
+                    <h2 className="text-xl font-bold text-navy-900">
                       Send {payment.crypto_symbol}
                     </h2>
                     <p className="text-gray-400">
@@ -418,14 +418,14 @@ const CryptoCheckout = () => {
                   <div className="bg-[#0a0f1a] rounded-lg p-4 mb-4">
                     <p className="text-gray-500 text-sm mb-1">Amount to Send</p>
                     <div className="flex items-center justify-between">
-                      <p className="text-3xl font-bold text-white">
+                      <p className="text-3xl font-bold text-navy-900">
                         {payment.crypto_amount} {payment.crypto_symbol}
                       </p>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => copyToClipboard(payment.crypto_amount.toString(), 'Amount')}
-                        className="text-gray-400 hover:text-white"
+                        className="text-gray-400 hover:text-navy-900"
                       >
                         <Copy className="w-4 h-4" />
                       </Button>
@@ -437,14 +437,14 @@ const CryptoCheckout = () => {
                   <div className="bg-[#0a0f1a] rounded-lg p-4 mb-4">
                     <p className="text-gray-500 text-sm mb-1">{payment.network} Address</p>
                     <div className="flex items-center gap-2">
-                      <code className="flex-1 text-orange-400 text-sm break-all">
+                      <code className="flex-1 text-coral-600 text-sm break-all">
                         {payment.wallet_address}
                       </code>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => copyToClipboard(payment.wallet_address, 'Address')}
-                        className="text-gray-400 hover:text-white shrink-0"
+                        className="text-gray-400 hover:text-navy-900 shrink-0"
                       >
                         {copied ? <CheckCircle className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
                       </Button>
@@ -482,7 +482,7 @@ const CryptoCheckout = () => {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-gray-400">Confirmations</span>
-                      <span className="text-white">
+                      <span className="text-navy-900">
                         {paymentStatus?.confirmations || 0} / {payment.confirmations_required}
                       </span>
                     </div>
@@ -508,7 +508,7 @@ const CryptoCheckout = () => {
                     <Button
                       onClick={handleSimulateConfirm}
                       disabled={loading || paymentStatus?.status === 'confirmed'}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white"
+                      className="w-full bg-green-600 hover:bg-green-700 text-navy-900"
                       data-testid="simulate-confirm-btn"
                     >
                       {loading ? (
@@ -531,7 +531,7 @@ const CryptoCheckout = () => {
                 <div className="w-20 h-20 rounded-full bg-green-500/20 mx-auto mb-6 flex items-center justify-center">
                   <CheckCircle className="w-10 h-10 text-green-400" />
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Payment Confirmed!</h2>
+                <h2 className="text-2xl font-bold text-navy-900 mb-2">Payment Confirmed!</h2>
                 <p className="text-gray-400 mb-6">
                   Your cryptocurrency payment has been successfully processed.
                 </p>
@@ -541,13 +541,13 @@ const CryptoCheckout = () => {
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <p className="text-gray-500">Amount Paid</p>
-                        <p className="text-white font-medium">
+                        <p className="text-navy-900 font-medium">
                           {payment.crypto_amount} {payment.crypto_symbol}
                         </p>
                       </div>
                       <div>
                         <p className="text-gray-500">USD Value</p>
-                        <p className="text-white font-medium">${payment.usd_amount}</p>
+                        <p className="text-navy-900 font-medium">${payment.usd_amount}</p>
                       </div>
                       <div>
                         <p className="text-gray-500">Payment ID</p>
@@ -555,7 +555,7 @@ const CryptoCheckout = () => {
                       </div>
                       <div>
                         <p className="text-gray-500">Network</p>
-                        <p className="text-white font-medium">{payment.network}</p>
+                        <p className="text-navy-900 font-medium">{payment.network}</p>
                       </div>
                     </div>
                   </div>

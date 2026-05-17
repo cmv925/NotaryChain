@@ -14,8 +14,8 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 function SignerBadge({ signer }) {
   const statusMap = {
-    completed: { bg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30', icon: CheckCircle },
-    pending: { bg: 'bg-amber-500/10 text-amber-400 border-amber-500/30', icon: Clock },
+    completed: { bg: 'bg-coral-500/15 text-coral-600 border-coral-200', icon: CheckCircle },
+    pending: { bg: 'bg-coral-500/10 text-coral-600 border-gold-500/30', icon: Clock },
   };
   const s = statusMap[signer.status] || statusMap.pending;
   const Icon = s.icon;
@@ -23,11 +23,11 @@ function SignerBadge({ signer }) {
     <div data-testid={`signer-${signer.signer_id}`}
       className={`flex items-center justify-between p-3 rounded-lg border ${s.bg}`}>
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-white">
+        <div className="w-8 h-8 rounded-full bg-cream-200 flex items-center justify-center text-xs font-bold text-navy-900">
           {signer.name?.[0]?.toUpperCase() || '?'}
         </div>
         <div>
-          <span className="text-sm text-white font-medium">{signer.name}</span>
+          <span className="text-sm text-navy-900 font-medium">{signer.name}</span>
           <p className="text-[10px] text-slate-500">{signer.email}</p>
         </div>
       </div>
@@ -120,36 +120,36 @@ export default function MultiSignature() {
 
         <div className="flex items-center gap-3 mt-4 mb-6">
           <div className="w-10 h-10 rounded-xl bg-violet-500/15 border border-violet-500/30 flex items-center justify-center">
-            <Users className="w-5 h-5 text-violet-400" />
+            <Users className="w-5 h-5 text-coral-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">Multi-Signature Ceremonies</h1>
+            <h1 className="text-xl font-bold text-navy-900">Multi-Signature Ceremonies</h1>
             <p className="text-xs text-slate-500">Require 2+ signers with biometric verification per ceremony</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Create Form */}
-          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5">
-            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">New Multi-Sig Ceremony</h3>
+          <div className="bg-white border border-slate-200 rounded-xl p-5">
+            <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-4">New Multi-Sig Ceremony</h3>
             <div className="space-y-3">
               <Input data-testid="multi-sig-doc-name" value={docName} onChange={e => setDocName(e.target.value)}
-                placeholder="Document name" className="bg-slate-900/60 border-slate-700 text-white" />
+                placeholder="Document name" className="bg-white border-slate-300 text-navy-900" />
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] text-slate-500 uppercase tracking-wider">Signers ({signers.length})</span>
                   <button data-testid="add-signer-btn" onClick={addSigner}
-                    className="text-[10px] text-sky-400 hover:text-sky-300 flex items-center gap-1">
+                    className="text-[10px] text-coral-600 hover:text-sky-300 flex items-center gap-1">
                     <Plus className="w-3 h-3" /> Add Signer
                   </button>
                 </div>
                 {signers.map((s, i) => (
                   <div key={i} className="flex gap-2 items-center">
                     <Input value={s.name} onChange={e => updateSigner(i, 'name', e.target.value)}
-                      placeholder={`Signer ${i + 1} name`} className="bg-slate-900/60 border-slate-700 text-white text-xs flex-1" />
+                      placeholder={`Signer ${i + 1} name`} className="bg-white border-slate-300 text-navy-900 text-xs flex-1" />
                     <Input value={s.email} onChange={e => updateSigner(i, 'email', e.target.value)}
-                      placeholder="Email" className="bg-slate-900/60 border-slate-700 text-white text-xs flex-1" />
+                      placeholder="Email" className="bg-white border-slate-300 text-navy-900 text-xs flex-1" />
                     {signers.length > 2 && (
                       <button onClick={() => removeSigner(i)} className="text-red-400 hover:text-red-300 p-1">
                         <Trash2 className="w-3.5 h-3.5" />
@@ -160,26 +160,26 @@ export default function MultiSignature() {
               </div>
 
               <Button data-testid="create-multi-sig-btn" onClick={createCeremony} disabled={creating}
-                className="w-full bg-violet-600 hover:bg-violet-700 text-white">
+                className="w-full bg-violet-600 hover:bg-violet-700 text-navy-900">
                 {creating ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Creating...</> : <><Send className="w-4 h-4 mr-2" />Create Multi-Sig Ceremony</>}
               </Button>
             </div>
           </div>
 
           {/* Detail View */}
-          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5">
+          <div className="bg-white border border-slate-200 rounded-xl p-5">
             {selectedCeremony ? (
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-semibold text-white">{selectedCeremony.document_name}</h3>
+                  <h3 className="text-sm font-semibold text-navy-900">{selectedCeremony.document_name}</h3>
                   <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded border ${
-                    selectedCeremony.status === 'all_signed' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                    selectedCeremony.status === 'all_signed' ? 'bg-coral-500/15 text-coral-600 border-coral-200' : 'bg-coral-500/10 text-coral-600 border-gold-500/30'
                   }`}>{selectedCeremony.status.replace(/_/g, ' ')}</span>
                 </div>
                 <div className="flex items-center gap-3 mb-4 text-xs text-slate-500">
                   <span>{selectedCeremony.completed_signers}/{selectedCeremony.total_signers} signed</span>
-                  <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-500 rounded-full transition-all"
+                  <div className="flex-1 h-1.5 bg-cream-200 rounded-full overflow-hidden">
+                    <div className="h-full bg-coral-500 rounded-full transition-all"
                       style={{ width: `${(selectedCeremony.completed_signers / selectedCeremony.total_signers) * 100}%` }} />
                   </div>
                 </div>
@@ -190,7 +190,7 @@ export default function MultiSignature() {
                       {s.status === 'pending' && (
                         <Button size="sm" onClick={() => signCeremony(selectedCeremony.ceremony_id, s.signer_id)}
                           data-testid={`sign-btn-${s.signer_id}`}
-                          className="mt-1 w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs">
+                          className="mt-1 w-full bg-coral-500 hover:bg-emerald-700 text-navy-900 text-xs">
                           <UserCheck className="w-3 h-3 mr-1" /> Sign as {s.name}
                         </Button>
                       )}
@@ -210,8 +210,8 @@ export default function MultiSignature() {
         </div>
 
         {/* Ceremonies List */}
-        <div className="mt-6 bg-slate-900/40 border border-slate-800 rounded-xl p-5">
-          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Your Multi-Sig Ceremonies</h3>
+        <div className="mt-6 bg-white border border-slate-200 rounded-xl p-5">
+          <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-4">Your Multi-Sig Ceremonies</h3>
           {loading ? (
             <div className="flex justify-center py-8"><Loader2 className="w-5 h-5 animate-spin text-slate-500" /></div>
           ) : ceremonies.length === 0 ? (
@@ -222,18 +222,18 @@ export default function MultiSignature() {
                 <button key={i} data-testid={`multi-sig-item-${i}`}
                   onClick={() => setSelectedCeremony(c)}
                   className={`w-full text-left flex items-center justify-between p-3 rounded-lg border transition-all ${
-                    selectedCeremony?.ceremony_id === c.ceremony_id ? 'border-violet-500/40 bg-violet-500/5' : 'border-slate-800 hover:border-slate-700'
+                    selectedCeremony?.ceremony_id === c.ceremony_id ? 'border-violet-500/40 bg-violet-500/5' : 'border-slate-200 hover:border-slate-300'
                   }`}>
                   <div className="flex items-center gap-3">
                     <FileText className="w-4 h-4 text-slate-500" />
                     <div>
-                      <span className="text-sm text-white">{c.document_name}</span>
+                      <span className="text-sm text-navy-900">{c.document_name}</span>
                       <p className="text-[10px] text-slate-500">{c.completed_signers}/{c.total_signers} signed &middot; {new Date(c.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded ${
-                      c.status === 'all_signed' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
+                      c.status === 'all_signed' ? 'bg-coral-500/15 text-coral-600' : 'bg-coral-500/10 text-coral-600'
                     }`}>{c.status === 'all_signed' ? 'Complete' : 'Pending'}</span>
                     <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
                   </div>

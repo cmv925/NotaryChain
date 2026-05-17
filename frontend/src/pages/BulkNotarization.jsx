@@ -118,7 +118,7 @@ const BulkNotarization = () => {
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Bulk Notarization' }]} />
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 flex items-center gap-3">
                 <Layers className="w-7 h-7 text-blue-400" />
                 Bulk Notarization
               </h1>
@@ -137,7 +137,7 @@ const BulkNotarization = () => {
             <Card className="bg-[#1a2332] border-gray-800" data-testid="batch-create-form">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-semibold text-white">Create Batch</h2>
+                  <h2 className="text-lg font-semibold text-navy-900">Create Batch</h2>
                   <Button onClick={() => setView('list')} variant="ghost" className="text-gray-400">Cancel</Button>
                 </div>
 
@@ -147,7 +147,7 @@ const BulkNotarization = () => {
                     value={batchName}
                     onChange={e => setBatchName(e.target.value)}
                     placeholder="e.g., Q1 Real Estate Closings"
-                    className="bg-[#0a0f1a] border-gray-700 text-white"
+                    className="bg-[#0a0f1a] border-gray-700 text-navy-900"
                     data-testid="batch-name-input"
                   />
                 </div>
@@ -174,14 +174,14 @@ const BulkNotarization = () => {
                         value={doc.document_name}
                         onChange={e => updateDocument(idx, 'document_name', e.target.value)}
                         placeholder="Document name"
-                        className="bg-[#1a2332] border-gray-700 text-white text-sm"
+                        className="bg-[#1a2332] border-gray-700 text-navy-900 text-sm"
                         data-testid={`doc-name-${idx}`}
                       />
                       <div className="grid grid-cols-2 gap-3">
                         <select
                           value={doc.document_type}
                           onChange={e => updateDocument(idx, 'document_type', e.target.value)}
-                          className="bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-white text-sm focus:border-blue-500 outline-none"
+                          className="bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none"
                           data-testid={`doc-type-${idx}`}
                         >
                           {DOC_TYPES.map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}
@@ -189,7 +189,7 @@ const BulkNotarization = () => {
                         <select
                           value={doc.notarization_type}
                           onChange={e => updateDocument(idx, 'notarization_type', e.target.value)}
-                          className="bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-white text-sm focus:border-blue-500 outline-none"
+                          className="bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none"
                           data-testid={`doc-notar-type-${idx}`}
                         >
                           {NOTAR_TYPES.map(t => <option key={t} value={t}>{t.toUpperCase()}</option>)}
@@ -210,7 +210,7 @@ const BulkNotarization = () => {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-lg font-semibold text-white">{selectedBatch.name}</h2>
+                    <h2 className="text-lg font-semibold text-navy-900">{selectedBatch.name}</h2>
                     <p className="text-gray-400 text-xs">{selectedBatch.total_documents} documents &middot; {new Date(selectedBatch.created_at).toLocaleDateString()}</p>
                   </div>
                   <div className="flex gap-2">
@@ -239,7 +239,7 @@ const BulkNotarization = () => {
                     <div key={req.id} className="flex items-center gap-3 p-3 bg-[#0d1520] rounded-lg border border-gray-800">
                       <FileText className="w-4 h-4 text-blue-400 flex-shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-white truncate">{req.document_name}</p>
+                        <p className="text-sm text-navy-900 truncate">{req.document_name}</p>
                         <p className="text-xs text-gray-500">{req.document_type}</p>
                       </div>
                       <span className={`px-2 py-0.5 rounded-full text-xs ${
@@ -274,7 +274,7 @@ const BulkNotarization = () => {
                         <div className="flex items-center gap-3">
                           <Layers className="w-5 h-5 text-blue-400" />
                           <div>
-                            <p className="text-white font-medium">{batch.name}</p>
+                            <p className="text-navy-900 font-medium">{batch.name}</p>
                             <p className="text-gray-500 text-xs">{batch.total_documents} docs &middot; {batch.completed_count || 0} completed &middot; {new Date(batch.created_at).toLocaleDateString()}</p>
                           </div>
                         </div>

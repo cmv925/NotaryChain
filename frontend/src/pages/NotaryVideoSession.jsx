@@ -180,7 +180,7 @@ const NotaryVideoSession = () => {
         <div className="pt-32 pb-24 px-6">
           <div className="max-w-xl mx-auto text-center">
             <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-white mb-2">Error</h1>
+            <h1 className="text-2xl font-bold text-navy-900 mb-2">Error</h1>
             <p className="text-gray-400 mb-6">{error}</p>
             <Button onClick={() => navigate('/dashboard')} className="bg-blue-600 hover:bg-blue-700">
               Back to Dashboard
@@ -203,13 +203,13 @@ const NotaryVideoSession = () => {
               <Button
                 variant="ghost"
                 onClick={() => navigate('/dashboard')}
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-navy-900"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back
               </Button>
               <div>
-                <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+                <h1 className="text-2xl font-bold text-navy-900 flex items-center gap-2">
                   <Video className="w-6 h-6 text-blue-500" />
                   Notarization Session
                 </h1>
@@ -251,7 +251,7 @@ const NotaryVideoSession = () => {
                       <div className="w-24 h-24 rounded-full bg-blue-600/20 flex items-center justify-center mb-6">
                         <Camera className="w-12 h-12 text-blue-500" />
                       </div>
-                      <h2 className="text-2xl font-bold text-white mb-2">
+                      <h2 className="text-2xl font-bold text-navy-900 mb-2">
                         Ready to Start?
                       </h2>
                       <p className="text-gray-400 text-center mb-6 max-w-md">
@@ -276,11 +276,11 @@ const NotaryVideoSession = () => {
                       <div className="w-24 h-24 rounded-full bg-green-600/20 flex items-center justify-center mb-6">
                         <CheckCircle className="w-12 h-12 text-green-500" />
                       </div>
-                      <h2 className="text-2xl font-bold text-white mb-2">
+                      <h2 className="text-2xl font-bold text-navy-900 mb-2">
                         Session Ready
                       </h2>
                       <p className="text-gray-400 text-center mb-2">
-                        Room: <span className="text-white font-mono">{videoSession.room_name}</span>
+                        Room: <span className="text-navy-900 font-mono">{videoSession.room_name}</span>
                       </p>
                       <p className="text-gray-500 text-sm mb-6">
                         Click below to join the video call
@@ -316,7 +316,7 @@ const NotaryVideoSession = () => {
                       <div className="w-24 h-24 rounded-full bg-gray-600/20 flex items-center justify-center mb-6">
                         <CheckCircle className="w-12 h-12 text-gray-400" />
                       </div>
-                      <h2 className="text-2xl font-bold text-white mb-2">
+                      <h2 className="text-2xl font-bold text-navy-900 mb-2">
                         Session Ended
                       </h2>
                       <p className="text-gray-400 text-center mb-6">
@@ -348,18 +348,18 @@ const NotaryVideoSession = () => {
               {/* Session Info */}
               <Card className="bg-[#1a2332] border-gray-800">
                 <CardContent className="p-4">
-                  <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                  <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                     <FileText className="w-5 h-5 text-blue-500" />
                     Document Details
                   </h3>
                   <div className="space-y-3 text-sm">
                     <div>
                       <span className="text-gray-500">Document:</span>
-                      <p className="text-white">{notaryRequest?.document_name}</p>
+                      <p className="text-navy-900">{notaryRequest?.document_name}</p>
                     </div>
                     <div>
                       <span className="text-gray-500">Type:</span>
-                      <p className="text-white capitalize">{notaryRequest?.document_type}</p>
+                      <p className="text-navy-900 capitalize">{notaryRequest?.document_type}</p>
                     </div>
                     <div>
                       <span className="text-gray-500">Status:</span>
@@ -378,7 +378,7 @@ const NotaryVideoSession = () => {
               {/* Participants */}
               <Card className="bg-[#1a2332] border-gray-800">
                 <CardContent className="p-4">
-                  <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                  <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                     <Users className="w-5 h-5 text-blue-500" />
                     Signers
                   </h3>
@@ -386,12 +386,12 @@ const NotaryVideoSession = () => {
                     {notaryRequest?.signers?.map((signer, index) => (
                       <div key={index} className="flex items-center gap-2 text-sm">
                         <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
-                          <span className="text-white text-xs">
+                          <span className="text-navy-900 text-xs">
                             {signer.name?.charAt(0)?.toUpperCase() || '?'}
                           </span>
                         </div>
                         <div>
-                          <p className="text-white">{signer.name}</p>
+                          <p className="text-navy-900">{signer.name}</p>
                           <p className="text-gray-500 text-xs">{signer.email}</p>
                         </div>
                       </div>
@@ -403,7 +403,7 @@ const NotaryVideoSession = () => {
               {/* Security Info */}
               <Card className="bg-[#1a2332] border-gray-800">
                 <CardContent className="p-4">
-                  <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                  <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                     <Shield className="w-5 h-5 text-green-500" />
                     Security
                   </h3>
@@ -428,14 +428,14 @@ const NotaryVideoSession = () => {
               {videoSession && (
                 <Card className="bg-[#1a2332] border-gray-800">
                   <CardContent className="p-4">
-                    <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                    <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                       <Clock className="w-5 h-5 text-blue-500" />
                       Session
                     </h3>
                     <div className="space-y-2 text-sm">
                       <div>
                         <span className="text-gray-500">Expires:</span>
-                        <p className="text-white">
+                        <p className="text-navy-900">
                           {new Date(videoSession.expires_at).toLocaleTimeString()}
                         </p>
                       </div>

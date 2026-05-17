@@ -97,10 +97,10 @@ const DigitalSeal = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/notary/dashboard')} className="text-gray-400 hover:text-white">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/notary/dashboard')} className="text-gray-400 hover:text-navy-900">
                 <ArrowLeft className="w-5 h-5 sm:mr-2" /><span className="hidden sm:inline">Dashboard</span>
               </Button>
-              <h1 className="text-white font-semibold flex items-center gap-2 text-sm sm:text-base">
+              <h1 className="text-navy-900 font-semibold flex items-center gap-2 text-sm sm:text-base">
                 <Shield className="w-5 h-5 text-[#00d4aa]" /> Digital Seal
               </h1>
             </div>
@@ -113,7 +113,7 @@ const DigitalSeal = () => {
         {/* Active Seal Display */}
         <Card className="bg-[#1a2332] border-gray-800" data-testid="active-seal-card">
           <CardContent className="p-6">
-            <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+            <h2 className="text-navy-900 font-semibold mb-4 flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-[#00d4aa]" /> Active Seal
             </h2>
             {activeSeal ? (
@@ -128,9 +128,9 @@ const DigitalSeal = () => {
                   />
                 </div>
                 <div className="space-y-2 text-sm">
-                  <p className="text-gray-400">File: <span className="text-white">{activeSeal.original_name}</span></p>
-                  <p className="text-gray-400">Type: <span className="text-white uppercase">{activeSeal.file_type?.replace('.', '')}</span></p>
-                  <p className="text-gray-400">Uploaded: <span className="text-white">{new Date(activeSeal.created_at).toLocaleDateString()}</span></p>
+                  <p className="text-gray-400">File: <span className="text-navy-900">{activeSeal.original_name}</span></p>
+                  <p className="text-gray-400">Type: <span className="text-navy-900 uppercase">{activeSeal.file_type?.replace('.', '')}</span></p>
+                  <p className="text-gray-400">Uploaded: <span className="text-navy-900">{new Date(activeSeal.created_at).toLocaleDateString()}</span></p>
                   <Badge className="bg-[#00d4aa]/20 text-[#00d4aa] border-[#00d4aa]/30">Active</Badge>
                 </div>
               </div>
@@ -149,7 +149,7 @@ const DigitalSeal = () => {
         {/* Upload */}
         <Card className="bg-[#1a2332] border-gray-800">
           <CardContent className="p-6">
-            <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+            <h2 className="text-navy-900 font-semibold mb-4 flex items-center gap-2">
               <Upload className="w-5 h-5 text-blue-400" /> Upload New Seal
             </h2>
             <div className="border-2 border-dashed border-gray-700 rounded-lg p-8 text-center hover:border-[#00d4aa]/50 transition-colors">
@@ -178,7 +178,7 @@ const DigitalSeal = () => {
         {/* All Seals */}
         <Card className="bg-[#1a2332] border-gray-800">
           <CardContent className="p-6">
-            <h2 className="text-white font-semibold mb-4">All Seals ({seals.length})</h2>
+            <h2 className="text-navy-900 font-semibold mb-4">All Seals ({seals.length})</h2>
             {loading ? (
               <p className="text-gray-500 text-center py-6">Loading seals...</p>
             ) : seals.length === 0 ? (
@@ -195,13 +195,13 @@ const DigitalSeal = () => {
                         onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<div class="text-gray-600 text-xs">No preview</div>'; }}
                       />
                     </div>
-                    <p className="text-white text-sm font-medium truncate">{seal.original_name}</p>
+                    <p className="text-navy-900 text-sm font-medium truncate">{seal.original_name}</p>
                     <p className="text-gray-500 text-xs mb-3">{new Date(seal.created_at).toLocaleDateString()}</p>
                     <div className="flex items-center gap-2">
                       {seal.is_active ? (
                         <Badge className="bg-[#00d4aa]/20 text-[#00d4aa] text-xs border-[#00d4aa]/30">Active</Badge>
                       ) : (
-                        <Button size="sm" variant="outline" onClick={() => handleActivate(seal.id)} className="border-gray-600 text-gray-300 hover:text-white text-xs h-7" data-testid={`activate-seal-${seal.id}`}>
+                        <Button size="sm" variant="outline" onClick={() => handleActivate(seal.id)} className="border-gray-600 text-gray-300 hover:text-navy-900 text-xs h-7" data-testid={`activate-seal-${seal.id}`}>
                           Set Active
                         </Button>
                       )}

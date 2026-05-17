@@ -92,7 +92,7 @@ const QuickSealDemo = () => {
               <Shield className="w-4 h-4 text-yellow-400" />
               <span className="text-yellow-400 font-semibold text-sm">Live Demo</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-navy-900 mb-4">
               Try Quick Seal™ for Free
             </h1>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
@@ -109,7 +109,7 @@ const QuickSealDemo = () => {
                     <div
                       className={`w-12 h-12 rounded-full flex items-center justify-center font-bold transition-all ${
                         step >= num
-                          ? 'bg-blue-600 text-white'
+                          ? 'bg-blue-600 text-navy-900'
                           : 'bg-gray-800 text-gray-500'
                       }`}
                     >
@@ -143,7 +143,7 @@ const QuickSealDemo = () => {
                   <div className="w-24 h-24 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Upload className="w-12 h-12 text-blue-500" />
                   </div>
-                  <h2 className="text-2xl font-bold text-white mb-4">Upload Your Document</h2>
+                  <h2 className="text-2xl font-bold text-navy-900 mb-4">Upload Your Document</h2>
                   <p className="text-gray-400 mb-8">
                     Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG (Max 10MB)
                   </p>
@@ -154,7 +154,7 @@ const QuickSealDemo = () => {
                       onChange={handleFileUpload}
                       accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
                     />
-                    <div className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold transition-all shadow-lg shadow-blue-600/30">
+                    <div className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-navy-900 px-8 py-4 rounded-lg font-semibold transition-all shadow-lg shadow-blue-600/30">
                       <Upload className="w-5 h-5" />
                       Choose File
                     </div>
@@ -171,7 +171,7 @@ const QuickSealDemo = () => {
                   <div className="flex items-start gap-6 mb-8">
                     <FileText className="w-12 h-12 text-blue-500 flex-shrink-0" />
                     <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-white mb-2">{fileName}</h3>
+                      <h3 className="text-xl font-semibold text-navy-900 mb-2">{fileName}</h3>
                       <p className="text-gray-400 text-sm">{fileSize}</p>
                     </div>
                   </div>
@@ -183,7 +183,7 @@ const QuickSealDemo = () => {
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-white font-semibold">Generating SHA-256 Hash...</span>
+                        <span className="text-navy-900 font-semibold">Generating SHA-256 Hash...</span>
                         {step > 2 ? (
                           <CheckCircle2 className="w-5 h-5 text-green-400" />
                         ) : (
@@ -198,7 +198,7 @@ const QuickSealDemo = () => {
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-white font-semibold">Recording on Hedera Blockchain...</span>
+                        <span className="text-navy-900 font-semibold">Recording on Hedera Blockchain...</span>
                         {step > 3 ? (
                           <CheckCircle2 className="w-5 h-5 text-green-400" />
                         ) : (
@@ -217,7 +217,7 @@ const QuickSealDemo = () => {
                     <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
                       <CheckCircle2 className="w-10 h-10 text-green-400" />
                     </div>
-                    <h2 className="text-2xl font-bold text-white mb-2">Document Sealed Successfully!</h2>
+                    <h2 className="text-2xl font-bold text-navy-900 mb-2">Document Sealed Successfully!</h2>
                     <p className="text-gray-400">Your document is now secured on the blockchain</p>
                   </div>
 
@@ -226,7 +226,7 @@ const QuickSealDemo = () => {
                     <div className="flex items-center gap-4 mb-4">
                       <FileText className="w-10 h-10 text-blue-500" />
                       <div>
-                        <h3 className="text-white font-semibold">{fileName}</h3>
+                        <h3 className="text-navy-900 font-semibold">{fileName}</h3>
                         <p className="text-gray-400 text-sm">{fileSize}</p>
                       </div>
                     </div>
@@ -240,7 +240,7 @@ const QuickSealDemo = () => {
                           </code>
                           <button
                             onClick={() => copyToClipboard(hash)}
-                            className="text-gray-400 hover:text-white transition-colors"
+                            className="text-gray-400 hover:text-navy-900 transition-colors"
                           >
                             <Copy className="w-4 h-4" />
                           </button>
@@ -255,7 +255,7 @@ const QuickSealDemo = () => {
                             href={`https://hashscan.io/mainnet/transaction/${txId}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-400 hover:text-white transition-colors"
+                            className="text-gray-400 hover:text-navy-900 transition-colors"
                           >
                             <ExternalLink className="w-4 h-4" />
                           </a>
@@ -276,14 +276,14 @@ const QuickSealDemo = () => {
                   {/* Actions */}
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-6"
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-navy-900 py-6"
                       onClick={() => window.print()}
                     >
                       <Download className="w-5 h-5 mr-2" />
                       Download Certificate
                     </Button>
                     <Button
-                      className="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-6"
+                      className="flex-1 bg-gray-800 hover:bg-gray-700 text-navy-900 py-6"
                       onClick={reset}
                     >
                       <Upload className="w-5 h-5 mr-2" />
@@ -293,10 +293,10 @@ const QuickSealDemo = () => {
 
                   {/* Pricing CTA */}
                   <div className="mt-8 p-6 bg-gradient-to-r from-blue-600/10 to-purple-600/10 border border-blue-500/30 rounded-lg text-center">
-                    <p className="text-white mb-3">
+                    <p className="text-navy-900 mb-3">
                       <span className="font-semibold">Only $5 per seal</span> • Unlimited verifications • Forever accessible
                     </p>
-                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-navy-900">
                       Get Started with Full Access
                     </Button>
                   </div>
@@ -310,7 +310,7 @@ const QuickSealDemo = () => {
             <Card className="bg-[#1a2332] border border-gray-800">
               <CardContent className="p-6 text-center">
                 <Shield className="w-10 h-10 text-blue-500 mx-auto mb-4" />
-                <h3 className="text-white font-semibold mb-2">Permanent Proof</h3>
+                <h3 className="text-navy-900 font-semibold mb-2">Permanent Proof</h3>
                 <p className="text-gray-400 text-sm">
                   Immutable record on Hedera blockchain that lasts forever
                 </p>
@@ -319,7 +319,7 @@ const QuickSealDemo = () => {
             <Card className="bg-[#1a2332] border border-gray-800">
               <CardContent className="p-6 text-center">
                 <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto mb-4" />
-                <h3 className="text-white font-semibold mb-2">Instant Processing</h3>
+                <h3 className="text-navy-900 font-semibold mb-2">Instant Processing</h3>
                 <p className="text-gray-400 text-sm">
                   Get your timestamp in under 10 seconds
                 </p>
@@ -328,7 +328,7 @@ const QuickSealDemo = () => {
             <Card className="bg-[#1a2332] border border-gray-800">
               <CardContent className="p-6 text-center">
                 <ExternalLink className="w-10 h-10 text-purple-500 mx-auto mb-4" />
-                <h3 className="text-white font-semibold mb-2">Public Verification</h3>
+                <h3 className="text-navy-900 font-semibold mb-2">Public Verification</h3>
                 <p className="text-gray-400 text-sm">
                   Anyone can verify authenticity on the blockchain
                 </p>

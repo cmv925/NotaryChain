@@ -67,12 +67,12 @@ export default function FloridaNotaryOnboard() {
   if (!isAuthenticated) {
     return (
       <Shell>
-        <Card className="bg-slate-900/60 border-slate-800 max-w-md mx-auto" data-testid="fl-onboard-login-required">
+        <Card className="bg-white border-slate-200 max-w-md mx-auto" data-testid="fl-onboard-login-required">
           <CardContent className="p-8 text-center">
             <Shield className="w-10 h-10 text-slate-500 mx-auto mb-2" />
             <h2 className="text-xl font-bold mb-1">Sign in to onboard</h2>
-            <p className="text-sm text-slate-400 mb-4">Florida notary onboarding requires a NotaryChain account.</p>
-            <Link to="/login"><Button className="bg-emerald-600 hover:bg-emerald-500">Sign in</Button></Link>
+            <p className="text-sm text-slate-600 mb-4">Florida notary onboarding requires a NotaryChain account.</p>
+            <Link to="/login"><Button className="bg-coral-500 hover:bg-coral-500">Sign in</Button></Link>
           </CardContent>
         </Card>
       </Shell>
@@ -80,7 +80,7 @@ export default function FloridaNotaryOnboard() {
   }
 
   if (loading) {
-    return <Shell><Center><Loader2 className="w-8 h-8 animate-spin text-emerald-400" /></Center></Shell>;
+    return <Shell><Center><Loader2 className="w-8 h-8 animate-spin text-coral-600" /></Center></Shell>;
   }
 
   const status = existing?.status;
@@ -89,13 +89,13 @@ export default function FloridaNotaryOnboard() {
     const c = existing.credentials;
     return (
       <Shell>
-        <Card className="bg-emerald-500/5 border-emerald-500/30 max-w-xl mx-auto" data-testid="fl-onboard-verified">
+        <Card className="bg-coral-500/5 border-coral-200 max-w-xl mx-auto" data-testid="fl-onboard-verified">
           <CardContent className="p-8">
             <div className="flex items-start gap-3 mb-4">
-              <CheckCircle className="w-9 h-9 text-emerald-400 flex-shrink-0" />
+              <CheckCircle className="w-9 h-9 text-coral-600 flex-shrink-0" />
               <div>
-                <h2 className="text-2xl font-bold text-emerald-300">You're a verified Florida online notary.</h2>
-                <p className="text-sm text-slate-400 mt-1">Commission {c.fl_commission_number} · verified {fmtDate(c.verified_at)}</p>
+                <h2 className="text-2xl font-bold text-coral-700">You're a verified Florida online notary.</h2>
+                <p className="text-sm text-slate-600 mt-1">Commission {c.fl_commission_number} · verified {fmtDate(c.verified_at)}</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3 text-xs mt-6">
@@ -105,8 +105,8 @@ export default function FloridaNotaryOnboard() {
               <Field label="Training provider" value={c.fl_training_provider} />
             </div>
             <div className="mt-6 flex gap-2">
-              <Link to="/dashboard"><Button variant="outline" className="bg-slate-900/60 border-slate-700 text-white hover:bg-slate-800">Back to dashboard</Button></Link>
-              <Link to="/florida"><Button className="bg-emerald-600 hover:bg-emerald-500">View Florida page</Button></Link>
+              <Link to="/dashboard"><Button variant="outline" className="bg-white border-slate-300 text-navy-900 hover:bg-cream-200">Back to dashboard</Button></Link>
+              <Link to="/florida"><Button className="bg-coral-500 hover:bg-coral-500">View Florida page</Button></Link>
             </div>
           </CardContent>
         </Card>
@@ -117,11 +117,11 @@ export default function FloridaNotaryOnboard() {
   if (status === 'pending_review') {
     return (
       <Shell>
-        <Card className="bg-amber-500/5 border-amber-500/30 max-w-xl mx-auto" data-testid="fl-onboard-pending">
+        <Card className="bg-coral-500/5 border-gold-500/30 max-w-xl mx-auto" data-testid="fl-onboard-pending">
           <CardContent className="p-8 text-center">
-            <Loader2 className="w-9 h-9 text-amber-400 mx-auto mb-2" />
-            <h2 className="text-2xl font-bold text-amber-300 mb-1">Under review</h2>
-            <p className="text-sm text-slate-400 mb-3">Your Florida notary credentials are being verified by our compliance team. This typically takes under 48 hours.</p>
+            <Loader2 className="w-9 h-9 text-coral-600 mx-auto mb-2" />
+            <h2 className="text-2xl font-bold text-coral-700 mb-1">Under review</h2>
+            <p className="text-sm text-slate-600 mb-3">Your Florida notary credentials are being verified by our compliance team. This typically takes under 48 hours.</p>
             <p className="text-[11px] text-slate-500">Commission #{existing.credentials?.fl_commission_number}</p>
           </CardContent>
         </Card>
@@ -162,7 +162,7 @@ export default function FloridaNotaryOnboard() {
           <Card className="bg-red-500/5 border-red-500/30 mb-4">
             <CardContent className="p-4 text-sm">
               <p className="text-red-300 font-bold mb-1">Previous submission rejected</p>
-              <p className="text-xs text-slate-400">{existing.credentials?.rejection_reason}. Update the fields below and resubmit.</p>
+              <p className="text-xs text-slate-600">{existing.credentials?.rejection_reason}. Update the fields below and resubmit.</p>
             </CardContent>
           </Card>
         )}
@@ -177,34 +177,34 @@ export default function FloridaNotaryOnboard() {
               <React.Fragment key={s.id}>
                 <div className="flex flex-col items-center gap-1" data-testid={`step-${s.id}`}>
                   <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-colors ${
-                    done ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300' :
-                    active ? 'bg-emerald-500/10 border-emerald-500 text-emerald-300' :
-                    'bg-slate-800/60 border-slate-700 text-slate-500'
+                    done ? 'bg-coral-500/20 border-emerald-500 text-coral-700' :
+                    active ? 'bg-coral-500/10 border-emerald-500 text-coral-700' :
+                    'bg-cream-200 border-slate-300 text-slate-500'
                   }`}>
                     {done ? <CheckCircle className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
                   </div>
-                  <span className={`text-[10px] uppercase tracking-wider hidden sm:block ${active || done ? 'text-emerald-300' : 'text-slate-500'}`}>{s.label}</span>
+                  <span className={`text-[10px] uppercase tracking-wider hidden sm:block ${active || done ? 'text-coral-700' : 'text-slate-500'}`}>{s.label}</span>
                 </div>
-                {i < STEPS.length - 1 && <div className={`flex-1 h-0.5 ${done ? 'bg-emerald-500/40' : 'bg-slate-800'}`} />}
+                {i < STEPS.length - 1 && <div className={`flex-1 h-0.5 ${done ? 'bg-coral-500/40' : 'bg-cream-200'}`} />}
               </React.Fragment>
             );
           })}
         </div>
 
-        <Card className="bg-slate-900/60 border-slate-800">
+        <Card className="bg-white border-slate-200">
           <CardContent className="p-6">
             {step === 0 && (
               <div data-testid="fl-step-commission">
                 <h2 className="text-xl font-bold mb-1">Your Florida commission</h2>
-                <p className="text-xs text-slate-400 mb-5">Find these on your commission certificate (issued by FL Department of State).</p>
+                <p className="text-xs text-slate-600 mb-5">Find these on your commission certificate (issued by FL Department of State).</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField label="Commission number *" hint="Format: GG followed by 6-8 digits">
                     <Input value={form.fl_commission_number} onChange={e => update('fl_commission_number', e.target.value.toUpperCase())}
-                      placeholder="GG123456" className="bg-slate-800/60 border-slate-700 uppercase font-mono" data-testid="commission-input" />
+                      placeholder="GG123456" className="bg-cream-200 border-slate-300 uppercase font-mono" data-testid="commission-input" />
                   </FormField>
                   <FormField label="Commission expires *">
                     <Input type="date" value={form.fl_commission_expires.slice(0,10)} onChange={e => update('fl_commission_expires', e.target.value)}
-                      className="bg-slate-800/60 border-slate-700" data-testid="commission-expires-input" />
+                      className="bg-cream-200 border-slate-300" data-testid="commission-expires-input" />
                   </FormField>
                 </div>
               </div>
@@ -213,23 +213,23 @@ export default function FloridaNotaryOnboard() {
             {step === 1 && (
               <div data-testid="fl-step-bond">
                 <h2 className="text-xl font-bold mb-1">Your $25,000 bond</h2>
-                <p className="text-xs text-slate-400 mb-5">Florida requires a $25,000 surety bond. Enter your active bond details.</p>
+                <p className="text-xs text-slate-600 mb-5">Florida requires a $25,000 surety bond. Enter your active bond details.</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField label="Bond provider *">
                     <Input value={form.fl_bond_provider} onChange={e => update('fl_bond_provider', e.target.value)}
-                      placeholder="Sun Bonding Co" className="bg-slate-800/60 border-slate-700" data-testid="bond-provider-input" />
+                      placeholder="Sun Bonding Co" className="bg-cream-200 border-slate-300" data-testid="bond-provider-input" />
                   </FormField>
                   <FormField label="Bond number *">
                     <Input value={form.fl_bond_number} onChange={e => update('fl_bond_number', e.target.value)}
-                      placeholder="SB-12345" className="bg-slate-800/60 border-slate-700 font-mono" data-testid="bond-number-input" />
+                      placeholder="SB-12345" className="bg-cream-200 border-slate-300 font-mono" data-testid="bond-number-input" />
                   </FormField>
                   <FormField label="Bond amount (USD) *" hint="Must be ≥ $25,000">
                     <Input type="number" min={25000} step={1000} value={form.fl_bond_amount_usd} onChange={e => update('fl_bond_amount_usd', parseFloat(e.target.value) || 0)}
-                      className="bg-slate-800/60 border-slate-700" data-testid="bond-amount-input" />
+                      className="bg-cream-200 border-slate-300" data-testid="bond-amount-input" />
                   </FormField>
                   <FormField label="Bond expires *">
                     <Input type="date" value={form.fl_bond_expires_at.slice(0,10)} onChange={e => update('fl_bond_expires_at', e.target.value)}
-                      className="bg-slate-800/60 border-slate-700" data-testid="bond-expires-input" />
+                      className="bg-cream-200 border-slate-300" data-testid="bond-expires-input" />
                   </FormField>
                 </div>
               </div>
@@ -238,18 +238,18 @@ export default function FloridaNotaryOnboard() {
             {step === 2 && (
               <div data-testid="fl-step-training">
                 <h2 className="text-xl font-bold mb-1">RON training certification</h2>
-                <p className="text-xs text-slate-400 mb-5">Florida requires completion of a state-approved RON training course.</p>
+                <p className="text-xs text-slate-600 mb-5">Florida requires completion of a state-approved RON training course.</p>
                 <div className="space-y-4">
                   <FormField label="Training provider *">
                     <select value={form.fl_training_provider} onChange={e => update('fl_training_provider', e.target.value)}
-                      className="bg-slate-800/60 border border-slate-700 rounded-md px-3 h-10 text-sm text-white w-full" data-testid="training-provider-select">
+                      className="bg-cream-200 border border-slate-300 rounded-md px-3 h-10 text-sm text-navy-900 w-full" data-testid="training-provider-select">
                       {APPROVED_TRAINING.map(t => <option key={t}>{t}</option>)}
                       <option value="other">Other approved provider</option>
                     </select>
                   </FormField>
                   <FormField label="Certificate URL (optional)">
                     <Input value={form.fl_training_certificate_url} onChange={e => update('fl_training_certificate_url', e.target.value)}
-                      placeholder="https://..." className="bg-slate-800/60 border-slate-700 font-mono text-xs" data-testid="training-cert-input" />
+                      placeholder="https://..." className="bg-cream-200 border-slate-300 font-mono text-xs" data-testid="training-cert-input" />
                     <p className="text-[10px] text-slate-500 mt-1">A link to your certificate of completion. We can also verify via certificate number during review.</p>
                   </FormField>
                 </div>
@@ -259,19 +259,19 @@ export default function FloridaNotaryOnboard() {
             {step === 3 && (
               <div data-testid="fl-step-seal">
                 <h2 className="text-xl font-bold mb-1">E-seal & digital signature</h2>
-                <p className="text-xs text-slate-400 mb-5">Optional now — you can upload these after verification too.</p>
+                <p className="text-xs text-slate-600 mb-5">Optional now — you can upload these after verification too.</p>
                 <div className="space-y-4">
                   <FormField label="Seal image URL (optional)">
                     <Input value={form.fl_seal_image_url} onChange={e => update('fl_seal_image_url', e.target.value)}
-                      placeholder="https://..." className="bg-slate-800/60 border-slate-700 font-mono text-xs" data-testid="seal-image-input" />
+                      placeholder="https://..." className="bg-cream-200 border-slate-300 font-mono text-xs" data-testid="seal-image-input" />
                   </FormField>
                   <FormField label="E-signature provider ID (optional)">
                     <Input value={form.fl_e_signature_id} onChange={e => update('fl_e_signature_id', e.target.value)}
-                      placeholder="Provider account/key ID" className="bg-slate-800/60 border-slate-700" data-testid="esig-input" />
+                      placeholder="Provider account/key ID" className="bg-cream-200 border-slate-300" data-testid="esig-input" />
                   </FormField>
                   <FormField label="Notes for review team (optional)">
                     <Textarea rows={2} value={form.notes} onChange={e => update('notes', e.target.value)}
-                      placeholder="Anything our compliance team should know?" className="bg-slate-800/60 border-slate-700" data-testid="notes-input" />
+                      placeholder="Anything our compliance team should know?" className="bg-cream-200 border-slate-300" data-testid="notes-input" />
                   </FormField>
                 </div>
               </div>
@@ -280,7 +280,7 @@ export default function FloridaNotaryOnboard() {
             {step === 4 && (
               <div data-testid="fl-step-review">
                 <h2 className="text-xl font-bold mb-1">Review & submit</h2>
-                <p className="text-xs text-slate-400 mb-5">We’ll verify against FL Department of State records within 48 hours.</p>
+                <p className="text-xs text-slate-600 mb-5">We’ll verify against FL Department of State records within 48 hours.</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <Field label="Commission #" value={form.fl_commission_number} />
                   <Field label="Commission expires" value={fmtDate(form.fl_commission_expires)} />
@@ -291,8 +291,8 @@ export default function FloridaNotaryOnboard() {
                   <Field label="Training" value={form.fl_training_provider} />
                   {form.fl_seal_image_url && <Field label="Seal" value="Provided" />}
                 </div>
-                <Card className="bg-slate-800/40 border-slate-700 mt-5">
-                  <CardContent className="p-3 text-[11px] text-slate-400">
+                <Card className="bg-cream-200/40 border-slate-300 mt-5">
+                  <CardContent className="p-3 text-[11px] text-slate-600">
                     By submitting, you certify that the information above is accurate, your bond and commission are active,
                     and you have completed Florida-approved RON training. Misrepresentation may result in account suspension
                     and notification to the FL Department of State.
@@ -302,12 +302,12 @@ export default function FloridaNotaryOnboard() {
             )}
 
             {/* Navigation */}
-            <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-800">
+            <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-200">
               <Button
                 variant="outline"
                 disabled={step === 0 || submitting}
                 onClick={() => setStep(s => Math.max(0, s - 1))}
-                className="bg-slate-800/60 border-slate-700 text-white hover:bg-slate-800"
+                className="bg-cream-200 border-slate-300 text-navy-900 hover:bg-cream-200"
                 data-testid="step-back-btn"
               >
                 <ChevronLeft className="w-4 h-4 mr-1" /> Back
@@ -316,7 +316,7 @@ export default function FloridaNotaryOnboard() {
                 <Button
                   onClick={() => setStep(s => Math.min(STEPS.length - 1, s + 1))}
                   disabled={!stepValid()}
-                  className="bg-emerald-600 hover:bg-emerald-500"
+                  className="bg-coral-500 hover:bg-coral-500"
                   data-testid="step-next-btn"
                 >
                   Next <ChevronRight className="w-4 h-4 ml-1" />
@@ -325,7 +325,7 @@ export default function FloridaNotaryOnboard() {
                 <Button
                   onClick={submit}
                   disabled={submitting}
-                  className="bg-emerald-600 hover:bg-emerald-500"
+                  className="bg-coral-500 hover:bg-coral-500"
                   data-testid="submit-fl-onboard-btn"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Submit for review'}
@@ -341,14 +341,14 @@ export default function FloridaNotaryOnboard() {
 
 function Shell({ children }) {
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <div className="border-b border-slate-800 bg-gradient-to-b from-emerald-950/20 to-transparent">
+    <div className="min-h-screen bg-cream-100 text-navy-900">
+      <div className="border-b border-slate-200 bg-cream-100">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center gap-3">
-          <Link to="/dashboard" className="text-xs text-slate-400 hover:text-white inline-flex items-center gap-1">
+          <Link to="/dashboard" className="text-xs text-slate-600 hover:text-navy-900 inline-flex items-center gap-1">
             <ChevronLeft className="w-4 h-4" /> Back
           </Link>
           <div className="ml-auto flex items-center gap-2">
-            <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-emerald-400">Florida · Notary Onboarding</span>
+            <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-coral-600">Florida · Notary Onboarding</span>
           </div>
         </div>
       </div>

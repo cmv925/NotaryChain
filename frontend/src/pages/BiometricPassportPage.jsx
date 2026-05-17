@@ -77,7 +77,7 @@ export default function BiometricPassport() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white">
+    <div className="min-h-screen bg-[#030712] text-navy-900">
       <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
@@ -86,7 +86,7 @@ export default function BiometricPassport() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Fingerprint className="w-6 h-6 text-cyan-400" />
+              <Fingerprint className="w-6 h-6 text-coral-600" />
               Biometric Passport
             </h1>
             <p className="text-gray-400 text-sm">Multi-modal biometric identity credentials</p>
@@ -96,14 +96,14 @@ export default function BiometricPassport() {
         {/* Generate Section */}
         <Card className="bg-[#0d1b2a] border-gray-800 mb-6">
           <CardContent className="pt-5">
-            <h3 className="text-white text-sm font-semibold mb-3">Generate Passport from Session</h3>
+            <h3 className="text-navy-900 text-sm font-semibold mb-3">Generate Passport from Session</h3>
             <p className="text-gray-500 text-xs mb-3">Enter the session ID from your biometric verification to generate a unified Biometric Passport.</p>
             <div className="flex gap-3">
               <input
                 value={sessionId}
                 onChange={(e) => setSessionId(e.target.value)}
                 placeholder="Enter biometric session ID..."
-                className="flex-1 bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
+                className="flex-1 bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-sm text-navy-900"
                 data-testid="session-id-input"
               />
               <Button onClick={generatePassport} disabled={generating || !sessionId.trim()} className="bg-cyan-600 hover:bg-cyan-700" data-testid="generate-passport-btn">
@@ -123,27 +123,27 @@ export default function BiometricPassport() {
                   ? <CheckCircle className="w-5 h-5 text-green-400" />
                   : <XCircle className="w-5 h-5 text-red-400" />}
                 <div>
-                  <p className="text-white font-semibold text-sm">
+                  <p className="text-navy-900 font-semibold text-sm">
                     {verifyResult.integrity_verified ? 'Integrity Verified' : 'Integrity Compromised'}
                   </p>
                   <p className="text-gray-400 text-xs">Hash: {verifyResult.biometric_hash?.substring(0, 24)}...</p>
                 </div>
                 {verifyResult.expired && (
-                  <Badge className="bg-amber-500/15 text-amber-400 ml-auto">Expired</Badge>
+                  <Badge className="bg-coral-500/15 text-coral-600 ml-auto">Expired</Badge>
                 )}
               </div>
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div><span className="text-gray-500">Score:</span> <span className="text-white">{(verifyResult.composite_score * 100).toFixed(1)}%</span></div>
-                <div><span className="text-gray-500">Modalities:</span> <span className="text-white">{verifyResult.modalities_verified?.join(', ')}</span></div>
-                <div><span className="text-gray-500">Issued:</span> <span className="text-white">{verifyResult.issued_at ? new Date(verifyResult.issued_at).toLocaleDateString() : '-'}</span></div>
-                <div><span className="text-gray-500">Expires:</span> <span className="text-white">{verifyResult.expires_at ? new Date(verifyResult.expires_at).toLocaleDateString() : '-'}</span></div>
+                <div><span className="text-gray-500">Score:</span> <span className="text-navy-900">{(verifyResult.composite_score * 100).toFixed(1)}%</span></div>
+                <div><span className="text-gray-500">Modalities:</span> <span className="text-navy-900">{verifyResult.modalities_verified?.join(', ')}</span></div>
+                <div><span className="text-gray-500">Issued:</span> <span className="text-navy-900">{verifyResult.issued_at ? new Date(verifyResult.issued_at).toLocaleDateString() : '-'}</span></div>
+                <div><span className="text-gray-500">Expires:</span> <span className="text-navy-900">{verifyResult.expires_at ? new Date(verifyResult.expires_at).toLocaleDateString() : '-'}</span></div>
               </div>
             </CardContent>
           </Card>
         )}
 
         {/* Passports List */}
-        <h2 className="text-white font-semibold mb-4">My Passports</h2>
+        <h2 className="text-navy-900 font-semibold mb-4">My Passports</h2>
         {loading ? (
           <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 text-gray-500 animate-spin" /></div>
         ) : passports.length === 0 ? (
@@ -162,17 +162,17 @@ export default function BiometricPassport() {
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
-                        p.status === 'verified' ? 'bg-green-500/20 text-green-400' : 'bg-amber-500/20 text-amber-400'
+                        p.status === 'verified' ? 'bg-green-500/20 text-green-400' : 'bg-coral-500/20 text-coral-600'
                       }`}>
                         {Math.round(p.composite_score * 100)}%
                       </div>
                       <div>
-                        <p className="text-white text-sm font-medium">Passport #{p.id.substring(0, 8)}</p>
+                        <p className="text-navy-900 text-sm font-medium">Passport #{p.id.substring(0, 8)}</p>
                         <p className="text-gray-500 text-xs">Session: {p.session_id?.substring(0, 16)}...</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge className={p.status === 'verified' ? 'bg-green-500/15 text-green-400' : 'bg-amber-500/15 text-amber-400'}>
+                      <Badge className={p.status === 'verified' ? 'bg-green-500/15 text-green-400' : 'bg-coral-500/15 text-coral-600'}>
                         {p.status}
                       </Badge>
                       <Button

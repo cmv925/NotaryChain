@@ -19,9 +19,9 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 /* ── Agent Status Badge ─────────────────────────── */
 function AgentStatusBadge({ status }) {
   const map = {
-    idle: { label: 'STANDBY', cls: 'bg-slate-700/60 text-slate-300 border-slate-600' },
+    idle: { label: 'STANDBY', cls: 'bg-slate-700/60 text-navy-800 border-slate-600' },
     running: { label: 'PROCESSING', cls: 'bg-blue-500/20 text-blue-400 border-blue-500/50 animate-pulse' },
-    passed: { label: 'PASS', cls: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50' },
+    passed: { label: 'PASS', cls: 'bg-coral-500/20 text-coral-600 border-emerald-500/50' },
     failed: { label: 'FAIL', cls: 'bg-red-500/20 text-red-400 border-red-500/50' },
   };
   const s = map[status] || map.idle;
@@ -36,12 +36,12 @@ function AgentStatusBadge({ status }) {
 function ConfidenceBar({ value, status }) {
   if (value == null) return <div className="h-1.5 w-full bg-slate-700/50 rounded-sm" />;
   const pct = Math.round(value * 100);
-  const color = status === 'passed' ? 'bg-emerald-500' : status === 'failed' ? 'bg-red-500' : 'bg-blue-500';
+  const color = status === 'passed' ? 'bg-coral-500' : status === 'failed' ? 'bg-red-500' : 'bg-blue-500';
   return (
     <div className="space-y-1">
       <div className="flex justify-between text-[11px]">
-        <span className="text-slate-400 font-medium tracking-wide uppercase">Confidence</span>
-        <span className="text-white font-bold font-mono">{pct}%</span>
+        <span className="text-slate-600 font-medium tracking-wide uppercase">Confidence</span>
+        <span className="text-navy-900 font-bold font-mono">{pct}%</span>
       </div>
       <div className="h-1.5 w-full bg-slate-700/50 rounded-sm overflow-hidden">
         <div className={`h-full ${color} rounded-sm transition-all duration-1000 ease-out`} style={{ width: `${pct}%` }} />
@@ -65,7 +65,7 @@ function AgentCard({ name, icon: Icon, agent, accent }) {
               <Icon className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-white font-semibold text-sm tracking-tight">{name} Agent</h3>
+              <h3 className="text-navy-900 font-semibold text-sm tracking-tight">{name} Agent</h3>
               <div className="flex items-center gap-1.5">
                 <p className="text-slate-500 text-[11px] tracking-wide uppercase">
                   {name === 'Verifier' ? 'Biometric & ID' : name === 'Witness' ? 'Audit & Evidence' : 'Blockchain & Compliance'}
@@ -95,8 +95,8 @@ function AgentCard({ name, icon: Icon, agent, accent }) {
               const s = typeof val === 'object' ? val.status : 'PASS';
               return (
                 <div key={key} className="flex items-center justify-between text-[11px]">
-                  <span className="text-slate-400">{key.replace(/_/g, ' ')}</span>
-                  <span className={s === 'PASS' || s === 'VALID' ? 'text-emerald-400' : 'text-red-400'}>{s}</span>
+                  <span className="text-slate-600">{key.replace(/_/g, ' ')}</span>
+                  <span className={s === 'PASS' || s === 'VALID' ? 'text-coral-600' : 'text-red-400'}>{s}</span>
                 </div>
               );
             })}
@@ -107,25 +107,25 @@ function AgentCard({ name, icon: Icon, agent, accent }) {
         {agent.details?.real_audit && agent.details?.evidence && (
           <div className="mt-3 space-y-1.5 text-[11px]">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">merkle root</span>
+              <span className="text-slate-600">merkle root</span>
               <code className="text-blue-400 font-mono">{agent.details.evidence.audit_integrity?.merkle_root?.slice(0, 16)}</code>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">timeline entries</span>
-              <span className="text-emerald-400">{agent.details.evidence.audit_integrity?.entries}</span>
+              <span className="text-slate-600">timeline entries</span>
+              <span className="text-coral-600">{agent.details.evidence.audit_integrity?.entries}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">evidence items</span>
-              <span className="text-emerald-400">{agent.details.evidence.evidence_package?.items_collected}</span>
+              <span className="text-slate-600">evidence items</span>
+              <span className="text-coral-600">{agent.details.evidence.evidence_package?.items_collected}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">tamper proof</span>
-              <span className="text-emerald-400">{agent.details.evidence.evidence_package?.tamper_proof ? 'VALID' : 'INVALID'}</span>
+              <span className="text-slate-600">tamper proof</span>
+              <span className="text-coral-600">{agent.details.evidence.evidence_package?.tamper_proof ? 'VALID' : 'INVALID'}</span>
             </div>
             {agent.details.audit_log_written && (
               <div className="flex items-center gap-1.5 mt-1">
-                <CheckCircle className="w-3 h-3 text-emerald-400" />
-                <span className="text-emerald-400">Audit log written</span>
+                <CheckCircle className="w-3 h-3 text-coral-600" />
+                <span className="text-coral-600">Audit log written</span>
               </div>
             )}
           </div>
@@ -149,7 +149,7 @@ function ConsensusOracle({ consensus, blockchainSeal }) {
       <Card className="bg-[#1a2332] border-[#334155] rounded-sm" data-testid="consensus-oracle">
         <CardContent className="p-6 text-center">
           <Vote className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-          <h3 className="text-white font-semibold text-lg tracking-tight mb-1">Consensus Oracle</h3>
+          <h3 className="text-navy-900 font-semibold text-lg tracking-tight mb-1">Consensus Oracle</h3>
           <p className="text-slate-500 text-sm">Awaiting agent verdicts...</p>
           <div className="flex justify-center gap-4 mt-4">
             {['Verifier', 'Witness', 'Sealer'].map(a => (
@@ -172,15 +172,15 @@ function ConsensusOracle({ consensus, blockchainSeal }) {
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-sm flex items-center justify-center ${isApproved ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+            <div className={`w-10 h-10 rounded-sm flex items-center justify-center ${isApproved ? 'bg-coral-500/20 text-coral-600' : 'bg-red-500/20 text-red-400'}`}>
               {isApproved ? <ShieldCheck className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
             </div>
             <div>
-              <h3 className="text-white font-semibold text-lg tracking-tight">Consensus Oracle</h3>
+              <h3 className="text-navy-900 font-semibold text-lg tracking-tight">Consensus Oracle</h3>
               <p className="text-slate-500 text-[11px] tracking-wide uppercase">2-of-3 multi-agent vote</p>
             </div>
           </div>
-          <span className={`px-3 py-1.5 text-xs font-bold tracking-wider uppercase rounded-sm border ${isApproved ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50' : 'bg-red-500/20 text-red-400 border-red-500/50'}`} data-testid="consensus-result">
+          <span className={`px-3 py-1.5 text-xs font-bold tracking-wider uppercase rounded-sm border ${isApproved ? 'bg-coral-500/20 text-coral-600 border-emerald-500/50' : 'bg-red-500/20 text-red-400 border-red-500/50'}`} data-testid="consensus-result">
             {consensus.result}
           </span>
         </div>
@@ -188,19 +188,19 @@ function ConsensusOracle({ consensus, blockchainSeal }) {
         {/* Vote Display */}
         <div className="grid grid-cols-3 gap-3 mb-4">
           {Object.entries(consensus.votes).map(([agent, vote]) => (
-            <div key={agent} className={`p-3 rounded-sm border text-center ${vote === 'PASS' ? 'bg-emerald-500/10 border-emerald-500/30' : vote === 'FAIL' ? 'bg-red-500/10 border-red-500/30' : 'bg-slate-700/30 border-slate-600'}`} data-testid={`vote-${agent}`}>
+            <div key={agent} className={`p-3 rounded-sm border text-center ${vote === 'PASS' ? 'bg-coral-500/10 border-coral-200' : vote === 'FAIL' ? 'bg-red-500/10 border-red-500/30' : 'bg-slate-700/30 border-slate-600'}`} data-testid={`vote-${agent}`}>
               <div className="flex justify-center mb-1">
-                {vote === 'PASS' ? <CheckCircle className="w-5 h-5 text-emerald-400" /> : vote === 'FAIL' ? <XCircle className="w-5 h-5 text-red-400" /> : <Clock className="w-5 h-5 text-slate-500" />}
+                {vote === 'PASS' ? <CheckCircle className="w-5 h-5 text-coral-600" /> : vote === 'FAIL' ? <XCircle className="w-5 h-5 text-red-400" /> : <Clock className="w-5 h-5 text-slate-500" />}
               </div>
-              <p className="text-xs text-slate-400 capitalize">{agent}</p>
-              <p className={`text-xs font-bold ${vote === 'PASS' ? 'text-emerald-400' : vote === 'FAIL' ? 'text-red-400' : 'text-slate-500'}`}>{vote || '—'}</p>
+              <p className="text-xs text-slate-600 capitalize">{agent}</p>
+              <p className={`text-xs font-bold ${vote === 'PASS' ? 'text-coral-600' : vote === 'FAIL' ? 'text-red-400' : 'text-slate-500'}`}>{vote || '—'}</p>
             </div>
           ))}
         </div>
 
         <div className="flex items-center justify-between text-sm mb-3">
-          <span className="text-slate-400">Vote Tally</span>
-          <span className="text-white font-mono font-bold">{consensus.pass_count} / {consensus.total_votes} PASS</span>
+          <span className="text-slate-600">Vote Tally</span>
+          <span className="text-navy-900 font-mono font-bold">{consensus.pass_count} / {consensus.total_votes} PASS</span>
         </div>
 
         {/* Blockchain Seal */}
@@ -208,15 +208,15 @@ function ConsensusOracle({ consensus, blockchainSeal }) {
           <div className="mt-4 pt-4 border-t border-[#334155]">
             <div className="flex items-center gap-2 mb-3">
               <Blocks className="w-4 h-4 text-blue-400" />
-              <span className="text-white font-semibold text-sm">Blockchain Seal</span>
+              <span className="text-navy-900 font-semibold text-sm">Blockchain Seal</span>
               {blockchainSeal.hcs_submitted && (
-                <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-1.5 py-0.5 rounded-sm">HCS VERIFIED</span>
+                <span className="text-[10px] font-bold bg-coral-500/20 text-coral-600 border border-emerald-500/40 px-1.5 py-0.5 rounded-sm">HCS VERIFIED</span>
               )}
             </div>
             <div className="space-y-2 text-[11px]">
               <div className="flex justify-between">
                 <span className="text-slate-500">Network</span>
-                <span className="text-white font-mono">{blockchainSeal.network}</span>
+                <span className="text-navy-900 font-mono">{blockchainSeal.network}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Topic ID</span>
@@ -231,16 +231,16 @@ function ConsensusOracle({ consensus, blockchainSeal }) {
               {blockchainSeal.sequence_number != null && (
                 <div className="flex justify-between">
                   <span className="text-slate-500">Sequence #</span>
-                  <span className="text-white font-mono">{blockchainSeal.sequence_number}</span>
+                  <span className="text-navy-900 font-mono">{blockchainSeal.sequence_number}</span>
                 </div>
               )}
               <div className="flex justify-between">
                 <span className="text-slate-500">Consensus Hash</span>
-                <code className="text-emerald-400 font-mono">{blockchainSeal.consensus_hash}</code>
+                <code className="text-coral-600 font-mono">{blockchainSeal.consensus_hash}</code>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Sealed At</span>
-                <span className="text-white font-mono">{new Date(blockchainSeal.sealed_at).toLocaleString()}</span>
+                <span className="text-navy-900 font-mono">{new Date(blockchainSeal.sealed_at).toLocaleString()}</span>
               </div>
               {blockchainSeal.explorer_url && (
                 <a href={blockchainSeal.explorer_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-blue-400 hover:text-blue-300 mt-1" data-testid="explorer-link">
@@ -427,9 +427,9 @@ const CeremonyDashboard = () => {
 
   const agents = ceremony?.agents || { verifier: { status: 'idle' }, witness: { status: 'idle' }, sealer: { status: 'idle' } };
   const statusColor = {
-    pending: 'text-slate-400',
+    pending: 'text-slate-600',
     in_progress: 'text-blue-400',
-    sealed: 'text-emerald-400',
+    sealed: 'text-coral-600',
     consensus_failed: 'text-red-400',
   };
 
@@ -442,7 +442,7 @@ const CeremonyDashboard = () => {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <Shield className="w-5 h-5 text-blue-500" />
-                <h1 className="text-white font-semibold tracking-tight">Notarization Ceremony</h1>
+                <h1 className="text-navy-900 font-semibold tracking-tight">Notarization Ceremony</h1>
               </div>
             </div>
             <Button size="sm" onClick={() => { setShowNew(true); setCeremony(null); setForm({ document_name: '', signer_name: '', id_image_base64: null, selfie_base64: null }); }} className="bg-blue-600 hover:bg-blue-700 rounded-sm text-xs" data-testid="new-ceremony-btn">
@@ -459,8 +459,8 @@ const CeremonyDashboard = () => {
           {/* Left Sidebar — History */}
           <div className="lg:col-span-3 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-white font-semibold text-sm tracking-tight">Ceremony History</h2>
-              <Button variant="ghost" size="sm" onClick={fetchList} className="text-slate-500 hover:text-white h-7 w-7 p-0">
+              <h2 className="text-navy-900 font-semibold text-sm tracking-tight">Ceremony History</h2>
+              <Button variant="ghost" size="sm" onClick={fetchList} className="text-slate-500 hover:text-navy-900 h-7 w-7 p-0">
                 <RotateCcw className="w-3.5 h-3.5" />
               </Button>
             </div>
@@ -475,11 +475,11 @@ const CeremonyDashboard = () => {
                   data-testid={`ceremony-item-${c.ceremony_id}`}
                 >
                   <div className="flex items-center justify-between">
-                    <p className="text-white text-sm font-medium truncate">{c.document_name}</p>
+                    <p className="text-navy-900 text-sm font-medium truncate">{c.document_name}</p>
                     <ChevronRight className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" />
                   </div>
                   <div className="flex items-center justify-between mt-1">
-                    <span className={`text-[10px] font-bold tracking-wider uppercase ${c.status === 'sealed' ? 'text-emerald-400' : c.status === 'consensus_failed' ? 'text-red-400' : 'text-slate-500'}`}>
+                    <span className={`text-[10px] font-bold tracking-wider uppercase ${c.status === 'sealed' ? 'text-coral-600' : c.status === 'consensus_failed' ? 'text-red-400' : 'text-slate-500'}`}>
                       {c.status === 'sealed' ? 'SEALED' : c.status === 'consensus_failed' ? 'REJECTED' : c.status?.toUpperCase()}
                     </span>
                     <span className="text-slate-600 text-[10px]">{new Date(c.created_at).toLocaleDateString()}</span>
@@ -500,27 +500,27 @@ const CeremonyDashboard = () => {
                       <div className="w-14 h-14 rounded-sm bg-blue-500/20 flex items-center justify-center mx-auto mb-4">
                         <Shield className="w-7 h-7 text-blue-400" />
                       </div>
-                      <h2 className="text-2xl font-bold text-white tracking-tight mb-2">Initialize Ceremony</h2>
-                      <p className="text-slate-400 text-sm">Start a multi-agent notarization verification pipeline</p>
+                      <h2 className="text-2xl font-bold text-navy-900 tracking-tight mb-2">Initialize Ceremony</h2>
+                      <p className="text-slate-600 text-sm">Start a multi-agent notarization verification pipeline</p>
                     </div>
                     <div className="space-y-4">
                       <div>
-                        <label className="text-white text-sm block mb-1.5 font-medium">Document Name</label>
+                        <label className="text-navy-900 text-sm block mb-1.5 font-medium">Document Name</label>
                         <Input
                           value={form.document_name}
                           onChange={e => setForm(f => ({ ...f, document_name: e.target.value }))}
                           placeholder="e.g., Power of Attorney - Smith Estate"
-                          className="bg-[#0f1825] border-[#334155] text-white rounded-sm"
+                          className="bg-[#0f1825] border-[#334155] text-navy-900 rounded-sm"
                           data-testid="ceremony-doc-name"
                         />
                       </div>
                       <div>
-                        <label className="text-white text-sm block mb-1.5 font-medium">Signer Name</label>
+                        <label className="text-navy-900 text-sm block mb-1.5 font-medium">Signer Name</label>
                         <Input
                           value={form.signer_name}
                           onChange={e => setForm(f => ({ ...f, signer_name: e.target.value }))}
                           placeholder="e.g., John Smith"
-                          className="bg-[#0f1825] border-[#334155] text-white rounded-sm"
+                          className="bg-[#0f1825] border-[#334155] text-navy-900 rounded-sm"
                           data-testid="ceremony-signer-name"
                         />
                       </div>
@@ -529,8 +529,8 @@ const CeremonyDashboard = () => {
                       <div className="pt-2 border-t border-[#334155]">
                         <div className="flex items-center gap-2 mb-3">
                           <ScanFace className="w-4 h-4 text-purple-400" />
-                          <span className="text-white text-sm font-medium">AI Biometric Verification</span>
-                          <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-sm">GPT-5.2 Vision</span>
+                          <span className="text-navy-900 text-sm font-medium">AI Biometric Verification</span>
+                          <span className="text-[10px] text-slate-500 bg-cream-200 px-2 py-0.5 rounded-sm">GPT-5.2 Vision</span>
                         </div>
                         <p className="text-slate-500 text-xs mb-3">Upload images or use your webcam for real AI-powered identity verification. Without images, the Verifier Agent uses simulated checks.</p>
 
@@ -538,10 +538,10 @@ const CeremonyDashboard = () => {
                           {/* ID Document */}
                           <div>
                             <div className="flex items-center justify-between mb-1.5">
-                              <label className="text-slate-300 text-xs">ID Document</label>
+                              <label className="text-navy-800 text-xs">ID Document</label>
                               <div className="flex gap-1">
-                                <button onClick={() => { setIdCaptureMode('upload'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors ${idCaptureMode === 'upload' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' : 'text-slate-500 hover:text-slate-300'}`} data-testid="id-mode-upload">Upload</button>
-                                <button onClick={() => { setIdCaptureMode('webcam'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors flex items-center gap-0.5 ${idCaptureMode === 'webcam' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' : 'text-slate-500 hover:text-slate-300'}`} data-testid="id-mode-webcam"><Camera className="w-2.5 h-2.5" />Cam</button>
+                                <button onClick={() => { setIdCaptureMode('upload'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors ${idCaptureMode === 'upload' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' : 'text-slate-500 hover:text-navy-800'}`} data-testid="id-mode-upload">Upload</button>
+                                <button onClick={() => { setIdCaptureMode('webcam'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors flex items-center gap-0.5 ${idCaptureMode === 'webcam' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' : 'text-slate-500 hover:text-navy-800'}`} data-testid="id-mode-webcam"><Camera className="w-2.5 h-2.5" />Cam</button>
                               </div>
                             </div>
                             {idCaptureMode === 'webcam' ? (
@@ -585,10 +585,10 @@ const CeremonyDashboard = () => {
                           {/* Selfie Photo */}
                           <div>
                             <div className="flex items-center justify-between mb-1.5">
-                              <label className="text-slate-300 text-xs">Selfie Photo</label>
+                              <label className="text-navy-800 text-xs">Selfie Photo</label>
                               <div className="flex gap-1">
-                                <button onClick={() => { setSelfieCaptureMode('upload'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors ${selfieCaptureMode === 'upload' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' : 'text-slate-500 hover:text-slate-300'}`} data-testid="selfie-mode-upload">Upload</button>
-                                <button onClick={() => { setSelfieCaptureMode('webcam'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors flex items-center gap-0.5 ${selfieCaptureMode === 'webcam' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' : 'text-slate-500 hover:text-slate-300'}`} data-testid="selfie-mode-webcam"><Camera className="w-2.5 h-2.5" />Cam</button>
+                                <button onClick={() => { setSelfieCaptureMode('upload'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors ${selfieCaptureMode === 'upload' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' : 'text-slate-500 hover:text-navy-800'}`} data-testid="selfie-mode-upload">Upload</button>
+                                <button onClick={() => { setSelfieCaptureMode('webcam'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors flex items-center gap-0.5 ${selfieCaptureMode === 'webcam' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' : 'text-slate-500 hover:text-navy-800'}`} data-testid="selfie-mode-webcam"><Camera className="w-2.5 h-2.5" />Cam</button>
                               </div>
                             </div>
                             {selfieCaptureMode === 'webcam' ? (
@@ -645,11 +645,11 @@ const CeremonyDashboard = () => {
                 {/* Ceremony Header */}
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-xl font-bold text-white tracking-tight">{ceremony.document_name}</h2>
+                    <h2 className="text-xl font-bold text-navy-900 tracking-tight">{ceremony.document_name}</h2>
                     <div className="flex items-center gap-3 mt-1">
-                      <span className="text-slate-500 text-xs">Signer: <span className="text-slate-300">{ceremony.signer_name}</span></span>
+                      <span className="text-slate-500 text-xs">Signer: <span className="text-navy-800">{ceremony.signer_name}</span></span>
                       <span className="text-slate-700">|</span>
-                      <span className={`text-xs font-bold tracking-wider uppercase ${statusColor[ceremony.status] || 'text-slate-400'}`} data-testid="ceremony-status">
+                      <span className={`text-xs font-bold tracking-wider uppercase ${statusColor[ceremony.status] || 'text-slate-600'}`} data-testid="ceremony-status">
                         {ceremony.status?.toUpperCase()}
                       </span>
                       {ceremony.has_id_image && (
@@ -667,20 +667,20 @@ const CeremonyDashboard = () => {
                     </Button>
                   )}
                   {ceremony.status === 'consensus_failed' && (
-                    <Button onClick={handleExecute} disabled={executing} variant="outline" className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10 rounded-sm" data-testid="retry-ceremony-btn">
+                    <Button onClick={handleExecute} disabled={executing} variant="outline" className="border-amber-500/50 text-coral-600 hover:bg-coral-500/10 rounded-sm" data-testid="retry-ceremony-btn">
                       <RotateCcw className="w-4 h-4 mr-2" /> Retry
                     </Button>
                   )}
                   {ceremony.status === 'sealed' && ceremony.has_certificate && (
                     <a href={`${API}/ceremony/${ceremony.ceremony_id}/certificate`} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 rounded-sm" data-testid="download-certificate-btn">
+                      <Button variant="outline" className="border-emerald-500/50 text-coral-600 hover:bg-coral-500/10 rounded-sm" data-testid="download-certificate-btn">
                         <FileSearch className="w-4 h-4 mr-2" /> Download Certificate
                       </Button>
                     </a>
                   )}
                   {(ceremony.status === 'sealed' || ceremony.status === 'consensus_failed') && (
                     <Button variant="outline" onClick={() => navigate(`/ceremony-replay/${ceremony.ceremony_id}`)}
-                      className="border-sky-500/50 text-sky-400 hover:bg-sky-500/10 rounded-sm" data-testid="replay-ceremony-btn">
+                      className="border-sky-500/50 text-coral-600 hover:bg-sky-500/10 rounded-sm" data-testid="replay-ceremony-btn">
                       <Play className="w-4 h-4 mr-2" /> Replay
                     </Button>
                   )}
@@ -690,19 +690,19 @@ const CeremonyDashboard = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                   <AgentCard name="Verifier" icon={ScanFace} agent={agents.verifier} accent="bg-purple-500/20 text-purple-400" />
                   <AgentCard name="Witness" icon={Eye} agent={agents.witness} accent="bg-blue-500/20 text-blue-400" />
-                  <AgentCard name="Sealer" icon={Lock} agent={agents.sealer} accent="bg-amber-500/20 text-amber-400" />
+                  <AgentCard name="Sealer" icon={Lock} agent={agents.sealer} accent="bg-coral-500/20 text-coral-600" />
                 </div>
 
                 {/* Pipeline Flow Indicator */}
                 <div className="flex items-center justify-center gap-2 py-2">
                   {['verifier', 'witness', 'sealer'].map((a, i) => (
                     <React.Fragment key={a}>
-                      <div className={`w-3 h-3 rounded-full border-2 transition-all duration-500 ${agents[a].status === 'passed' ? 'bg-emerald-500 border-emerald-500' : agents[a].status === 'failed' ? 'bg-red-500 border-red-500' : agents[a].status === 'running' ? 'bg-blue-500 border-blue-500 animate-pulse' : 'bg-transparent border-slate-600'}`} />
-                      {i < 2 && <div className={`w-16 h-0.5 transition-all duration-500 ${agents[a].status === 'passed' ? 'bg-emerald-500' : agents[a].status === 'failed' ? 'bg-red-500' : 'bg-slate-700'}`} />}
+                      <div className={`w-3 h-3 rounded-full border-2 transition-all duration-500 ${agents[a].status === 'passed' ? 'bg-coral-500 border-emerald-500' : agents[a].status === 'failed' ? 'bg-red-500 border-red-500' : agents[a].status === 'running' ? 'bg-blue-500 border-blue-500 animate-pulse' : 'bg-transparent border-slate-600'}`} />
+                      {i < 2 && <div className={`w-16 h-0.5 transition-all duration-500 ${agents[a].status === 'passed' ? 'bg-coral-500' : agents[a].status === 'failed' ? 'bg-red-500' : 'bg-slate-700'}`} />}
                     </React.Fragment>
                   ))}
                   <div className="w-8 h-0.5 bg-slate-700" />
-                  <div className={`w-4 h-4 rounded-sm border-2 transition-all duration-500 ${ceremony.status === 'sealed' ? 'bg-emerald-500 border-emerald-500' : ceremony.status === 'consensus_failed' ? 'bg-red-500 border-red-500' : 'bg-transparent border-slate-600'}`} />
+                  <div className={`w-4 h-4 rounded-sm border-2 transition-all duration-500 ${ceremony.status === 'sealed' ? 'bg-coral-500 border-emerald-500' : ceremony.status === 'consensus_failed' ? 'bg-red-500 border-red-500' : 'bg-transparent border-slate-600'}`} />
                 </div>
 
                 {/* Consensus Oracle */}
@@ -713,8 +713,8 @@ const CeremonyDashboard = () => {
                   <Card className="bg-[#0f1825] border-[#334155] rounded-sm" data-testid="ceremony-stream-log">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-2 mb-3">
-                        <div className={`w-2 h-2 rounded-full ${executing ? 'bg-blue-500 animate-pulse' : 'bg-emerald-500'}`} />
-                        <span className="text-slate-400 text-xs font-bold tracking-wider uppercase">
+                        <div className={`w-2 h-2 rounded-full ${executing ? 'bg-blue-500 animate-pulse' : 'bg-coral-500'}`} />
+                        <span className="text-slate-600 text-xs font-bold tracking-wider uppercase">
                           {executing ? 'Live Stream' : 'Execution Log'}
                         </span>
                       </div>
@@ -723,12 +723,12 @@ const CeremonyDashboard = () => {
                           <div key={i} className="flex items-start gap-2">
                             <span className="text-slate-600 flex-shrink-0">{entry.time}</span>
                             <span className={
-                              entry.msg.includes('PASS') ? 'text-emerald-400' :
+                              entry.msg.includes('PASS') ? 'text-coral-600' :
                               entry.msg.includes('FAIL') ? 'text-red-400' :
-                              entry.msg.includes('APPROVED') ? 'text-emerald-400' :
+                              entry.msg.includes('APPROVED') ? 'text-coral-600' :
                               entry.msg.includes('REJECTED') ? 'text-red-400' :
                               entry.msg.includes('Hedera') ? 'text-blue-400' :
-                              'text-slate-300'
+                              'text-navy-800'
                             }>{entry.msg}</span>
                           </div>
                         ))}

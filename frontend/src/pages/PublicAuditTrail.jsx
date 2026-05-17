@@ -9,9 +9,9 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 function StatCard({ label, value, icon: Icon, accent }) {
   return (
     <div data-testid={`stat-${label.toLowerCase().replace(/\s/g, '-')}`}
-      className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 text-center group hover:border-slate-700 transition-all">
+      className="bg-white border border-slate-200 rounded-xl p-5 text-center group hover:border-slate-300 transition-all">
       <Icon className={`w-5 h-5 mx-auto mb-2 ${accent || 'text-slate-500'}`} />
-      <div className="text-2xl font-bold text-white">{typeof value === 'number' ? value.toLocaleString() : value}</div>
+      <div className="text-2xl font-bold text-navy-900">{typeof value === 'number' ? value.toLocaleString() : value}</div>
       <div className="text-[10px] text-slate-500 uppercase tracking-wider mt-1">{label}</div>
     </div>
   );
@@ -19,19 +19,19 @@ function StatCard({ label, value, icon: Icon, accent }) {
 
 function SealRow({ seal }) {
   return (
-    <div data-testid="seal-row" className="flex items-center justify-between py-3 border-b border-slate-800/50 last:border-0">
+    <div data-testid="seal-row" className="flex items-center justify-between py-3 border-b border-slate-200/50 last:border-0">
       <div className="flex items-center gap-3">
         <div className={`w-2 h-2 rounded-full ${seal.result === 'APPROVED' ? 'bg-emerald-400' : 'bg-red-400'}`} />
         <div>
-          <span className="text-sm text-white">{seal.document_type}</span>
+          <span className="text-sm text-navy-900">{seal.document_type}</span>
           <span className="text-[10px] text-slate-600 ml-2">{seal.ceremony_id}</span>
         </div>
       </div>
       <div className="flex items-center gap-4">
         {seal.hash && (
-          <span className="text-[10px] font-mono text-sky-400/70">{seal.hash}</span>
+          <span className="text-[10px] font-mono text-coral-600/70">{seal.hash}</span>
         )}
-        <span className="text-[10px] text-slate-500 uppercase bg-slate-800 px-2 py-0.5 rounded">{seal.network}</span>
+        <span className="text-[10px] text-slate-500 uppercase bg-cream-200 px-2 py-0.5 rounded">{seal.network}</span>
         <span className="text-[11px] text-slate-500">{new Date(seal.date).toLocaleDateString()}</span>
       </div>
     </div>
@@ -82,25 +82,25 @@ export default function PublicAuditTrail() {
         {/* Header */}
         <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-2 mb-3">
-            <Shield className="w-6 h-6 text-sky-400" />
-            <h1 className="text-2xl font-bold text-white tracking-tight">NotaryChain Audit Trail</h1>
+            <Shield className="w-6 h-6 text-coral-600" />
+            <h1 className="text-2xl font-bold text-navy-900 tracking-tight">NotaryChain Audit Trail</h1>
           </div>
           <p className="text-sm text-slate-500 max-w-lg mx-auto">
             Real-time, publicly verifiable platform statistics. Every notarization is sealed on Hedera Mainnet.
           </p>
           <div className="flex items-center justify-center gap-2 mt-3">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[11px] text-emerald-400">Live &middot; Updated {new Date(data?.last_updated).toLocaleTimeString()}</span>
+            <span className="text-[11px] text-coral-600">Live &middot; Updated {new Date(data?.last_updated).toLocaleTimeString()}</span>
           </div>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
-          <StatCard label="Notarizations" value={stats.total_notarizations} icon={FileText} accent="text-sky-400" />
-          <StatCard label="Blockchain Seals" value={stats.blockchain_seals} icon={Link} accent="text-emerald-400" />
-          <StatCard label="Approval Rate" value={`${stats.approval_rate}%`} icon={CheckCircle} accent="text-emerald-400" />
-          <StatCard label="Registered Users" value={stats.registered_users} icon={Users} accent="text-violet-400" />
-          <StatCard label="Platform Uptime" value={stats.platform_uptime} icon={Zap} accent="text-amber-400" />
+          <StatCard label="Notarizations" value={stats.total_notarizations} icon={FileText} accent="text-coral-600" />
+          <StatCard label="Blockchain Seals" value={stats.blockchain_seals} icon={Link} accent="text-coral-600" />
+          <StatCard label="Approval Rate" value={`${stats.approval_rate}%`} icon={CheckCircle} accent="text-coral-600" />
+          <StatCard label="Registered Users" value={stats.registered_users} icon={Users} accent="text-coral-600" />
+          <StatCard label="Platform Uptime" value={stats.platform_uptime} icon={Zap} accent="text-coral-600" />
         </div>
 
         {/* Secondary Stats */}
@@ -112,18 +112,18 @@ export default function PublicAuditTrail() {
         </div>
 
         {/* Volume Chart */}
-        <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 mb-8">
+        <div className="bg-white border border-slate-200 rounded-xl p-5 mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Daily Volume (14 days)</h3>
+            <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Daily Volume (14 days)</h3>
             <BarChart3 className="w-4 h-4 text-slate-600" />
           </div>
           <VolumeChart data={data?.daily_volume} />
         </div>
 
         {/* Recent Seals */}
-        <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 mb-8">
+        <div className="bg-white border border-slate-200 rounded-xl p-5 mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Recent Blockchain Seals</h3>
+            <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Recent Blockchain Seals</h3>
             <Globe className="w-4 h-4 text-slate-600" />
           </div>
           <div>
@@ -137,7 +137,7 @@ export default function PublicAuditTrail() {
         {/* Verify CTA */}
         <div className="text-center">
           <a href="/verify-certificate" data-testid="verify-link"
-            className="inline-flex items-center gap-2 text-sm text-sky-400 hover:text-sky-300 transition-colors">
+            className="inline-flex items-center gap-2 text-sm text-coral-600 hover:text-sky-300 transition-colors">
             <Shield className="w-4 h-4" />
             Verify a Certificate
             <ArrowRight className="w-3.5 h-3.5" />

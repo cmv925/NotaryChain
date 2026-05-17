@@ -123,7 +123,7 @@ const SharedDraftViewer = () => {
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Shared Draft' }]} />
           <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
           <p className="text-gray-400">This shared draft was not found or the link has expired.</p>
-          <Button onClick={() => navigate('/templates')} className="mt-4 bg-blue-600 text-white">
+          <Button onClick={() => navigate('/templates')} className="mt-4 bg-blue-600 text-navy-900">
             Browse Templates
           </Button>
         </div>
@@ -143,7 +143,7 @@ const SharedDraftViewer = () => {
           <div className="mb-6 p-3 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center gap-2" data-testid="shared-draft-banner">
             <Share2 className="w-4 h-4 text-purple-400" />
             <span className="text-purple-300 text-sm">
-              Shared by <strong className="text-white">{draft.owner_email}</strong>
+              Shared by <strong className="text-navy-900">{draft.owner_email}</strong>
               {draft.allow_edit ? (
                 <span className="ml-1 text-green-400">&bull; You can edit</span>
               ) : (
@@ -152,7 +152,7 @@ const SharedDraftViewer = () => {
             </span>
           </div>
 
-          <h1 className="text-2xl font-bold text-white mb-1" data-testid="shared-draft-title">{draft.name}</h1>
+          <h1 className="text-2xl font-bold text-navy-900 mb-1" data-testid="shared-draft-title">{draft.name}</h1>
           <p className="text-gray-400 text-sm mb-4">Template: {draft.template_name} &bull; Version {draft.version}</p>
 
           {/* Collaboration Presence Bar */}
@@ -166,9 +166,9 @@ const SharedDraftViewer = () => {
 
           {/* Conflict Warning */}
           {conflictWarning && (
-            <div className="mb-4 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center gap-2 animate-in fade-in" data-testid="conflict-warning">
-              <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
-              <span className="text-amber-300 text-sm">{conflictWarning}</span>
+            <div className="mb-4 p-2.5 rounded-lg bg-coral-500/10 border border-gold-500/30 flex items-center gap-2 animate-in fade-in" data-testid="conflict-warning">
+              <AlertTriangle className="w-4 h-4 text-coral-600 flex-shrink-0" />
+              <span className="text-coral-700 text-sm">{conflictWarning}</span>
             </div>
           )}
 
@@ -191,7 +191,7 @@ const SharedDraftViewer = () => {
                           onChange={(e) => handleFieldChange(key, e.target.value)}
                           onFocus={() => handleFieldFocus(key)}
                           rows={3}
-                          className="w-full mt-1 bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white text-sm focus:border-blue-500 focus:outline-none resize-none"
+                          className="w-full mt-1 bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 focus:outline-none resize-none"
                           data-testid={`shared-field-${key}`}
                         />
                       ) : (
@@ -199,12 +199,12 @@ const SharedDraftViewer = () => {
                           value={value}
                           onChange={(e) => handleFieldChange(key, e.target.value)}
                           onFocus={() => handleFieldFocus(key)}
-                          className="bg-[#0a0f1a] border-gray-700 text-white mt-1"
+                          className="bg-[#0a0f1a] border-gray-700 text-navy-900 mt-1"
                           data-testid={`shared-field-${key}`}
                         />
                       )
                     ) : (
-                      <p className="text-white text-sm mt-1 bg-[#0a0f1a] rounded-md px-3 py-2 border border-gray-800" data-testid={`shared-field-${key}`}>
+                      <p className="text-navy-900 text-sm mt-1 bg-[#0a0f1a] rounded-md px-3 py-2 border border-gray-800" data-testid={`shared-field-${key}`}>
                         {value || <span className="text-gray-600 italic">Empty</span>}
                       </p>
                     )}
@@ -217,7 +217,7 @@ const SharedDraftViewer = () => {
                   <Button
                     onClick={handleSave}
                     disabled={saving || saved}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-blue-600 hover:bg-blue-700 text-navy-900"
                     data-testid="save-shared-changes"
                   >
                     {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : saved ? <CheckCircle className="w-4 h-4 mr-2" /> : <Save className="w-4 h-4 mr-2" />}

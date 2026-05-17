@@ -24,12 +24,12 @@ const ICON_MAP = {
 
 const CATEGORY_CONFIG = {
   lifecycle: { label: 'Lifecycle', color: 'bg-blue-500', text: 'text-blue-400', ring: 'ring-blue-500/30' },
-  people: { label: 'People', color: 'bg-violet-500', text: 'text-violet-400', ring: 'ring-violet-500/30' },
-  tasks: { label: 'Tasks', color: 'bg-amber-500', text: 'text-amber-400', ring: 'ring-amber-500/30' },
-  documents: { label: 'Documents', color: 'bg-cyan-500', text: 'text-cyan-400', ring: 'ring-cyan-500/30' },
+  people: { label: 'People', color: 'bg-violet-500', text: 'text-coral-600', ring: 'ring-violet-500/30' },
+  tasks: { label: 'Tasks', color: 'bg-coral-500', text: 'text-coral-600', ring: 'ring-amber-500/30' },
+  documents: { label: 'Documents', color: 'bg-cyan-500', text: 'text-coral-600', ring: 'ring-cyan-500/30' },
   ai: { label: 'AI', color: 'bg-pink-500', text: 'text-pink-400', ring: 'ring-pink-500/30' },
-  verification: { label: 'Verification', color: 'bg-emerald-500', text: 'text-emerald-400', ring: 'ring-emerald-500/30' },
-  blockchain: { label: 'Blockchain', color: 'bg-orange-500', text: 'text-orange-400', ring: 'ring-orange-500/30' },
+  verification: { label: 'Verification', color: 'bg-coral-500', text: 'text-coral-600', ring: 'ring-emerald-500/30' },
+  blockchain: { label: 'Blockchain', color: 'bg-coral-500', text: 'text-coral-600', ring: 'ring-orange-500/30' },
 };
 
 const SEVERITY_DOT = {
@@ -188,7 +188,7 @@ export default function TransactionTimeline() {
   });
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white">
+    <div className="min-h-screen bg-[#030712] text-navy-900">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
@@ -247,7 +247,7 @@ export default function TransactionTimeline() {
             <div className="mb-6">
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2 text-gray-400 hover:text-white text-sm mb-2 transition"
+                className="flex items-center gap-2 text-gray-400 hover:text-navy-900 text-sm mb-2 transition"
                 data-testid="filter-toggle"
               >
                 <Filter className="w-4 h-4" />
@@ -273,7 +273,7 @@ export default function TransactionTimeline() {
                   {activeFilters.size > 0 && (
                     <button
                       onClick={() => setActiveFilters(new Set())}
-                      className="px-3 py-1.5 rounded-full text-xs text-gray-500 hover:text-white bg-gray-800/30"
+                      className="px-3 py-1.5 rounded-full text-xs text-gray-500 hover:text-navy-900 bg-gray-800/30"
                     >
                       Clear
                     </button>
@@ -306,7 +306,7 @@ export default function TransactionTimeline() {
             ) : (
               <div className="relative" data-testid="timeline-container">
                 {/* Vertical line */}
-                <div className="absolute left-[23px] top-0 bottom-0 w-px bg-gradient-to-b from-blue-500/40 via-gray-700/40 to-transparent" />
+                <div className="absolute left-[23px] top-0 bottom-0 w-px bg-cream-100" />
 
                 {dateGroups.map(([dateLabel, events], gi) => (
                   <div key={dateLabel} className="mb-8">
@@ -348,7 +348,7 @@ export default function TransactionTimeline() {
                             <div className="flex items-start justify-between mb-1">
                               <div className="flex items-center gap-2 flex-1 min-w-0">
                                 <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${SEVERITY_DOT[ev.severity] || SEVERITY_DOT.info}`} />
-                                <h4 className="text-white text-sm font-medium truncate">{ev.title}</h4>
+                                <h4 className="text-navy-900 text-sm font-medium truncate">{ev.title}</h4>
                               </div>
                               <div className="flex items-center gap-2 flex-shrink-0 ml-2">
                                 {ev._live && (
@@ -369,15 +369,15 @@ export default function TransactionTimeline() {
                                 <div className="grid grid-cols-2 gap-2 text-[11px]">
                                   <div>
                                     <span className="text-gray-600">Event #</span>
-                                    <span className="text-white ml-1">{ev.sequence}</span>
+                                    <span className="text-navy-900 ml-1">{ev.sequence}</span>
                                   </div>
                                   <div>
                                     <span className="text-gray-600">Type</span>
-                                    <span className="text-white ml-1">{ev.type}</span>
+                                    <span className="text-navy-900 ml-1">{ev.type}</span>
                                   </div>
                                   <div className="col-span-2">
                                     <span className="text-gray-600">Timestamp</span>
-                                    <span className="text-white ml-1">{formatFullDate(ev.timestamp)}</span>
+                                    <span className="text-navy-900 ml-1">{formatFullDate(ev.timestamp)}</span>
                                   </div>
                                   {ev.metadata && Object.entries(ev.metadata).filter(([_, v]) => v).map(([k, v]) => (
                                     <div key={k}>

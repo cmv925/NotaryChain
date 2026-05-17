@@ -229,7 +229,7 @@ const NotaryOnboarding = () => {
   if (checkingStatus) {
     return (
       <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+        <div className="text-navy-900 text-xl">Loading...</div>
       </div>
     );
   }
@@ -240,13 +240,13 @@ const NotaryOnboarding = () => {
       <div className="min-h-screen bg-[#0f1825] py-12">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
-          <h1 className="text-4xl font-bold text-white mb-4">You're Approved!</h1>
+          <h1 className="text-4xl font-bold text-navy-900 mb-4">You're Approved!</h1>
           <p className="text-gray-400 text-lg mb-8">
             Congratulations! Your notary application has been approved.
           </p>
           <Button
             onClick={() => navigate('/notary/dashboard')}
-            className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg"
+            className="bg-green-600 hover:bg-green-700 text-navy-900 px-8 py-4 text-lg"
           >
             Go to Notary Dashboard
             <ArrowRight className="ml-2 w-5 h-5" />
@@ -264,7 +264,7 @@ const NotaryOnboarding = () => {
           <div className="inline-flex items-center gap-2 mb-4">
             <Shield className="w-10 h-10 text-blue-500" />
           </div>
-          <h1 className="text-4xl font-bold text-white mb-4">Become a NotaryChain Notary</h1>
+          <h1 className="text-4xl font-bold text-navy-900 mb-4">Become a NotaryChain Notary</h1>
           <p className="text-gray-400 text-lg">
             Join our network of certified notaries and start earning
           </p>
@@ -284,7 +284,7 @@ const NotaryOnboarding = () => {
                 onClick={() => existingProfile?.has_profile && setStep(s.num)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
                   step === s.num 
-                    ? 'bg-blue-600 text-white' 
+                    ? 'bg-blue-600 text-navy-900' 
                     : step > s.num || (existingProfile?.has_profile && s.num <= 2)
                     ? 'bg-green-600/20 text-green-400 border border-green-500/30'
                     : 'bg-gray-800 text-gray-400'
@@ -305,14 +305,14 @@ const NotaryOnboarding = () => {
             {/* Step 1: Personal Information */}
             {step === 1 && (
               <form onSubmit={(e) => { e.preventDefault(); setStep(2); }} className="space-y-6">
-                <h2 className="text-2xl font-semibold text-white mb-6 flex items-center gap-2">
+                <h2 className="text-2xl font-semibold text-navy-900 mb-6 flex items-center gap-2">
                   <User className="w-6 h-6 text-blue-500" />
                   Personal Information
                 </h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="full_legal_name" className="text-white mb-2 block">
+                    <Label htmlFor="full_legal_name" className="text-navy-900 mb-2 block">
                       Full Legal Name *
                     </Label>
                     <Input
@@ -321,12 +321,12 @@ const NotaryOnboarding = () => {
                       required
                       value={formData.full_legal_name}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-white"
+                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
                       placeholder="John Doe"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="phone_number" className="text-white mb-2 block">
+                    <Label htmlFor="phone_number" className="text-navy-900 mb-2 block">
                       Phone Number *
                     </Label>
                     <Input
@@ -336,14 +336,14 @@ const NotaryOnboarding = () => {
                       required
                       value={formData.phone_number}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-white"
+                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
                       placeholder="(555) 123-4567"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="address" className="text-white mb-2 block">
+                  <Label htmlFor="address" className="text-navy-900 mb-2 block">
                     Street Address *
                   </Label>
                   <Input
@@ -352,14 +352,14 @@ const NotaryOnboarding = () => {
                     required
                     value={formData.address}
                     onChange={handleChange}
-                    className="bg-[#0a0f1a] border-gray-700 text-white"
+                    className="bg-[#0a0f1a] border-gray-700 text-navy-900"
                     placeholder="123 Main St, Suite 100"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="city" className="text-white mb-2 block">
+                    <Label htmlFor="city" className="text-navy-900 mb-2 block">
                       City *
                     </Label>
                     <Input
@@ -368,12 +368,12 @@ const NotaryOnboarding = () => {
                       required
                       value={formData.city}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-white"
+                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
                       placeholder="Los Angeles"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="zip_code" className="text-white mb-2 block">
+                    <Label htmlFor="zip_code" className="text-navy-900 mb-2 block">
                       ZIP Code *
                     </Label>
                     <Input
@@ -382,14 +382,14 @@ const NotaryOnboarding = () => {
                       required
                       value={formData.zip_code}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-white"
+                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
                       placeholder="90001"
                     />
                   </div>
                 </div>
 
                 <div className="flex justify-end">
-                  <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-8">
+                  <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-navy-900 px-8">
                     Next: License Details
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
@@ -400,14 +400,14 @@ const NotaryOnboarding = () => {
             {/* Step 2: License Information */}
             {step === 2 && (
               <form onSubmit={handleSubmitProfile} className="space-y-6">
-                <h2 className="text-2xl font-semibold text-white mb-6 flex items-center gap-2">
+                <h2 className="text-2xl font-semibold text-navy-900 mb-6 flex items-center gap-2">
                   <Award className="w-6 h-6 text-blue-500" />
                   License & Credentials
                 </h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="license_number" className="text-white mb-2 block">
+                    <Label htmlFor="license_number" className="text-navy-900 mb-2 block">
                       License Number *
                     </Label>
                     <Input
@@ -416,11 +416,11 @@ const NotaryOnboarding = () => {
                       required
                       value={formData.license_number}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-white"
+                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="license_state" className="text-white mb-2 block">
+                    <Label htmlFor="license_state" className="text-navy-900 mb-2 block">
                       License State *
                     </Label>
                     <select
@@ -429,7 +429,7 @@ const NotaryOnboarding = () => {
                       required
                       value={formData.license_state}
                       onChange={handleChange}
-                      className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white"
+                      className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-navy-900"
                     >
                       <option value="">Select State</option>
                       {US_STATES.map(state => (
@@ -441,7 +441,7 @@ const NotaryOnboarding = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="commission_expiry" className="text-white mb-2 block">
+                    <Label htmlFor="commission_expiry" className="text-navy-900 mb-2 block">
                       Commission Expiry *
                     </Label>
                     <Input
@@ -451,11 +451,11 @@ const NotaryOnboarding = () => {
                       required
                       value={formData.commission_expiry}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-white"
+                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="years_experience" className="text-white mb-2 block">
+                    <Label htmlFor="years_experience" className="text-navy-900 mb-2 block">
                       Years of Experience
                     </Label>
                     <Input
@@ -465,14 +465,14 @@ const NotaryOnboarding = () => {
                       min="0"
                       value={formData.years_experience}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-white"
+                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="hourly_rate" className="text-white mb-2 block">
+                    <Label htmlFor="hourly_rate" className="text-navy-900 mb-2 block">
                       Hourly Rate ($)
                     </Label>
                     <Input
@@ -482,7 +482,7 @@ const NotaryOnboarding = () => {
                       step="0.01"
                       value={formData.hourly_rate}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-white"
+                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
                       placeholder="50.00"
                     />
                   </div>
@@ -495,13 +495,13 @@ const NotaryOnboarding = () => {
                         onChange={handleChange}
                         className="rounded"
                       />
-                      <span className="text-white">RON Certified</span>
+                      <span className="text-navy-900">RON Certified</span>
                     </label>
                   </div>
                 </div>
 
                 <div>
-                  <Label className="text-white mb-3 block">Specializations</Label>
+                  <Label className="text-navy-900 mb-3 block">Specializations</Label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {SPECIALIZATIONS.map((spec) => (
                       <button
@@ -510,7 +510,7 @@ const NotaryOnboarding = () => {
                         onClick={() => toggleSpecialization(spec)}
                         className={`px-4 py-2 rounded-lg border text-sm transition-all ${
                           formData.specializations.includes(spec)
-                            ? 'bg-blue-600 border-blue-500 text-white'
+                            ? 'bg-blue-600 border-blue-500 text-navy-900'
                             : 'bg-[#0a0f1a] border-gray-700 text-gray-300 hover:border-blue-500'
                         }`}
                       >
@@ -521,7 +521,7 @@ const NotaryOnboarding = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="bio" className="text-white mb-2 block">
+                  <Label htmlFor="bio" className="text-navy-900 mb-2 block">
                     Professional Bio
                   </Label>
                   <textarea
@@ -530,7 +530,7 @@ const NotaryOnboarding = () => {
                     value={formData.bio}
                     onChange={handleChange}
                     rows={4}
-                    className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
+                    className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-navy-900 focus:border-blue-500 focus:outline-none"
                     placeholder="Tell us about your experience and why you'd be a great addition to our network..."
                   />
                 </div>
@@ -548,7 +548,7 @@ const NotaryOnboarding = () => {
                   <Button 
                     type="submit" 
                     disabled={loading}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+                    className="bg-blue-600 hover:bg-blue-700 text-navy-900 px-8"
                   >
                     {loading ? 'Saving...' : existingProfile?.has_profile ? 'Next: Upload Documents' : 'Save & Continue'}
                     <ArrowRight className="ml-2 w-5 h-5" />
@@ -560,7 +560,7 @@ const NotaryOnboarding = () => {
             {/* Step 3: Document Upload */}
             {step === 3 && (
               <div className="space-y-6">
-                <h2 className="text-2xl font-semibold text-white mb-6 flex items-center gap-2">
+                <h2 className="text-2xl font-semibold text-navy-900 mb-6 flex items-center gap-2">
                   <Upload className="w-6 h-6 text-blue-500" />
                   Upload Credentials
                 </h2>
@@ -591,7 +591,7 @@ const NotaryOnboarding = () => {
                               <FileText className="w-6 h-6 text-gray-400" />
                             )}
                             <div>
-                              <h4 className="text-white font-medium">
+                              <h4 className="text-navy-900 font-medium">
                                 {cred.label} {cred.required && <span className="text-red-400">*</span>}
                               </h4>
                               <p className="text-gray-400 text-sm">{cred.description}</p>
@@ -609,7 +609,7 @@ const NotaryOnboarding = () => {
                                   onChange={(e) => handleFileUpload(cred.id, e.target.files[0])}
                                   disabled={loading}
                                 />
-                                <span className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors">
+                                <span className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-navy-900 rounded-lg text-sm transition-colors">
                                   <Upload className="w-4 h-4 mr-2" />
                                   Upload
                                 </span>
@@ -644,7 +644,7 @@ const NotaryOnboarding = () => {
                   </Button>
                   <Button 
                     onClick={() => navigate('/dashboard')}
-                    className="bg-green-600 hover:bg-green-700 text-white px-8"
+                    className="bg-green-600 hover:bg-green-700 text-navy-900 px-8"
                   >
                     Done - Go to Dashboard
                     <ArrowRight className="ml-2 w-5 h-5" />

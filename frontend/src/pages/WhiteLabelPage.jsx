@@ -99,14 +99,14 @@ const WhiteLabelPage = () => {
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'White-Label Embed' }]} />
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
-                <Code className="w-7 h-7 text-emerald-400" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 flex items-center gap-3">
+                <Code className="w-7 h-7 text-coral-600" />
                 White-Label Embed
               </h1>
               <p className="text-gray-400 text-sm mt-1">Embed NotaryChain notarization in your own website</p>
             </div>
             <div className="flex gap-2">
-              <Button onClick={() => setShowCreate(true)} className="bg-emerald-600 hover:bg-emerald-700" data-testid="create-embed-btn">
+              <Button onClick={() => setShowCreate(true)} className="bg-coral-500 hover:bg-emerald-700" data-testid="create-embed-btn">
                 <Plus className="w-4 h-4 mr-1" /> New Config
               </Button>
             </div>
@@ -115,26 +115,26 @@ const WhiteLabelPage = () => {
           {showCreate && (
             <Card className="bg-[#1a2332] border-gray-800 mb-6" data-testid="embed-create-form">
               <CardContent className="p-6">
-                <h2 className="text-lg font-semibold text-white mb-4">Create Embed Configuration</h2>
+                <h2 className="text-lg font-semibold text-navy-900 mb-4">Create Embed Configuration</h2>
                 <div className="space-y-4">
                   <div>
                     <label className="text-sm text-gray-300 block mb-1">Configuration Name *</label>
-                    <Input value={formName} onChange={e => setFormName(e.target.value)} placeholder="e.g., My Law Firm Widget" className="bg-[#0a0f1a] border-gray-700 text-white" data-testid="embed-name-input" />
+                    <Input value={formName} onChange={e => setFormName(e.target.value)} placeholder="e.g., My Law Firm Widget" className="bg-[#0a0f1a] border-gray-700 text-navy-900" data-testid="embed-name-input" />
                   </div>
                   <div>
                     <label className="text-sm text-gray-300 block mb-1">Allowed Origins (comma-separated)</label>
-                    <Input value={formOrigins} onChange={e => setFormOrigins(e.target.value)} placeholder="https://mysite.com, https://app.mysite.com" className="bg-[#0a0f1a] border-gray-700 text-white" data-testid="embed-origins-input" />
+                    <Input value={formOrigins} onChange={e => setFormOrigins(e.target.value)} placeholder="https://mysite.com, https://app.mysite.com" className="bg-[#0a0f1a] border-gray-700 text-navy-900" data-testid="embed-origins-input" />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="text-sm text-gray-300 block mb-1">Company Name</label>
-                      <Input value={formCompany} onChange={e => setFormCompany(e.target.value)} placeholder="Your Company" className="bg-[#0a0f1a] border-gray-700 text-white" data-testid="embed-company-input" />
+                      <Input value={formCompany} onChange={e => setFormCompany(e.target.value)} placeholder="Your Company" className="bg-[#0a0f1a] border-gray-700 text-navy-900" data-testid="embed-company-input" />
                     </div>
                     <div>
                       <label className="text-sm text-gray-300 block mb-1">Primary Color</label>
                       <div className="flex items-center gap-2">
                         <input type="color" value={formColor} onChange={e => setFormColor(e.target.value)} className="w-10 h-10 rounded cursor-pointer bg-transparent" data-testid="embed-color-input" />
-                        <Input value={formColor} onChange={e => setFormColor(e.target.value)} className="bg-[#0a0f1a] border-gray-700 text-white flex-1" />
+                        <Input value={formColor} onChange={e => setFormColor(e.target.value)} className="bg-[#0a0f1a] border-gray-700 text-navy-900 flex-1" />
                       </div>
                     </div>
                   </div>
@@ -143,7 +143,7 @@ const WhiteLabelPage = () => {
                     <label className="text-sm text-gray-400">Show "Powered by NotaryChain" branding</label>
                   </div>
                   <div className="flex gap-2">
-                    <Button onClick={handleCreate} disabled={creating} className="bg-emerald-600 hover:bg-emerald-700" data-testid="embed-create-submit">
+                    <Button onClick={handleCreate} disabled={creating} className="bg-coral-500 hover:bg-emerald-700" data-testid="embed-create-submit">
                       {creating ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <CheckCircle className="w-4 h-4 mr-1" />}
                       Create
                     </Button>
@@ -161,7 +161,7 @@ const WhiteLabelPage = () => {
               <CardContent className="p-12 text-center">
                 <Code className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                 <p className="text-gray-400 mb-4">No embed configurations yet. Create one to get started.</p>
-                <Button onClick={() => setShowCreate(true)} className="bg-emerald-600 hover:bg-emerald-700">
+                <Button onClick={() => setShowCreate(true)} className="bg-coral-500 hover:bg-emerald-700">
                   <Plus className="w-4 h-4 mr-1" /> Create Configuration
                 </Button>
               </CardContent>
@@ -175,7 +175,7 @@ const WhiteLabelPage = () => {
                       <div className="flex items-center gap-3">
                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: config.primary_color }} />
                         <div>
-                          <h3 className="text-white font-semibold">{config.name}</h3>
+                          <h3 className="text-navy-900 font-semibold">{config.name}</h3>
                           <p className="text-gray-500 text-xs">{config.company_name} &middot; Key: {config.embed_key}</p>
                         </div>
                       </div>

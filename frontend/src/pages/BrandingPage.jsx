@@ -59,7 +59,7 @@ export default function BrandingPage() {
   if (loading) return <div className="min-h-screen bg-[#030712] flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-gray-500" /></div>;
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white">
+    <div className="min-h-screen bg-[#030712] text-navy-900">
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-8">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} data-testid="back-btn">
@@ -77,7 +77,7 @@ export default function BrandingPage() {
         <div className="space-y-6">
           {/* Logo */}
           <Card className="bg-[#0d1b2a] border-gray-800" data-testid="logo-section">
-            <CardHeader><CardTitle className="text-base text-white">Logo</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-base text-navy-900">Logo</CardTitle></CardHeader>
             <CardContent className="flex items-center gap-6">
               <div className="w-20 h-20 rounded-xl bg-[#1a2332] border border-gray-700 flex items-center justify-center overflow-hidden">
                 {branding?.logo_url
@@ -98,22 +98,22 @@ export default function BrandingPage() {
 
           {/* Display Name & Tagline */}
           <Card className="bg-[#0d1b2a] border-gray-800" data-testid="identity-section">
-            <CardHeader><CardTitle className="text-base text-white">Identity</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-base text-navy-900">Identity</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div>
                 <label className="text-gray-400 text-xs block mb-1">Display Name</label>
-                <Input value={branding?.display_name || ''} onChange={(e) => update('display_name', e.target.value)} placeholder="Your Company Name" className="bg-[#1a2332] border-gray-700 text-white" data-testid="display-name" />
+                <Input value={branding?.display_name || ''} onChange={(e) => update('display_name', e.target.value)} placeholder="Your Company Name" className="bg-[#1a2332] border-gray-700 text-navy-900" data-testid="display-name" />
               </div>
               <div>
                 <label className="text-gray-400 text-xs block mb-1">Tagline</label>
-                <Input value={branding?.tagline || ''} onChange={(e) => update('tagline', e.target.value)} placeholder="Trusted Digital Notarization" className="bg-[#1a2332] border-gray-700 text-white" data-testid="tagline" />
+                <Input value={branding?.tagline || ''} onChange={(e) => update('tagline', e.target.value)} placeholder="Trusted Digital Notarization" className="bg-[#1a2332] border-gray-700 text-navy-900" data-testid="tagline" />
               </div>
             </CardContent>
           </Card>
 
           {/* Colors */}
           <Card className="bg-[#0d1b2a] border-gray-800" data-testid="colors-section">
-            <CardHeader><CardTitle className="text-base text-white">Brand Colors</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-base text-navy-900">Brand Colors</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               {[
                 { key: 'primary_color', label: 'Primary Color' },
@@ -128,7 +128,7 @@ export default function BrandingPage() {
                     data-testid={key}
                   />
                   <div className="flex-1">
-                    <p className="text-white text-sm">{label}</p>
+                    <p className="text-navy-900 text-sm">{label}</p>
                     <p className="text-gray-500 text-xs">{branding?.[key] || '#00d4aa'}</p>
                   </div>
                   <div className="w-24 h-8 rounded-md" style={{ backgroundColor: branding?.[key] || '#00d4aa' }} />
@@ -148,8 +148,8 @@ export default function BrandingPage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <div className="px-4 py-2 rounded-md text-sm text-white" style={{ backgroundColor: branding?.primary_color || '#00d4aa' }}>Primary Button</div>
-                <div className="px-4 py-2 rounded-md text-sm text-white" style={{ backgroundColor: branding?.accent_color || '#0ea5e9' }}>Accent Button</div>
+                <div className="px-4 py-2 rounded-md text-sm text-navy-900" style={{ backgroundColor: branding?.primary_color || '#00d4aa' }}>Primary Button</div>
+                <div className="px-4 py-2 rounded-md text-sm text-navy-900" style={{ backgroundColor: branding?.accent_color || '#0ea5e9' }}>Accent Button</div>
               </div>
             </CardContent>
           </Card>

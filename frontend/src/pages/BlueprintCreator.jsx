@@ -183,7 +183,7 @@ export default function BlueprintCreator() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white p-6">
+    <div className="min-h-screen bg-[#0a0a0a] text-navy-900 p-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -191,7 +191,7 @@ export default function BlueprintCreator() {
             <Button 
               onClick={() => navigate(-1)} 
               variant="ghost" 
-              className="text-gray-400 hover:text-white"
+              className="text-gray-400 hover:text-navy-900"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back
@@ -235,7 +235,7 @@ export default function BlueprintCreator() {
             {/* Basic Info */}
             <Card className="bg-[#1a1a2e] border-[#333]">
               <CardHeader>
-                <CardTitle className="text-white">Blueprint Details</CardTitle>
+                <CardTitle className="text-navy-900">Blueprint Details</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -244,7 +244,7 @@ export default function BlueprintCreator() {
                     value={blueprint.name}
                     onChange={(e) => setBlueprint({ ...blueprint, name: e.target.value })}
                     placeholder="e.g., Commercial Lease Agreement"
-                    className="bg-[#0d1b2a] border-[#333] text-white"
+                    className="bg-[#0d1b2a] border-[#333] text-navy-900"
                   />
                 </div>
                 <div>
@@ -253,7 +253,7 @@ export default function BlueprintCreator() {
                     value={blueprint.description}
                     onChange={(e) => setBlueprint({ ...blueprint, description: e.target.value })}
                     placeholder="Describe this workflow..."
-                    className="bg-[#0d1b2a] border-[#333] text-white"
+                    className="bg-[#0d1b2a] border-[#333] text-navy-900"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -262,7 +262,7 @@ export default function BlueprintCreator() {
                     <select
                       value={blueprint.transaction_type}
                       onChange={(e) => setBlueprint({ ...blueprint, transaction_type: e.target.value })}
-                      className="w-full p-2 rounded-lg bg-[#0d1b2a] border border-[#333] text-white"
+                      className="w-full p-2 rounded-lg bg-[#0d1b2a] border border-[#333] text-navy-900"
                     >
                       {transactionTypes.map(type => (
                         <option key={type.value} value={type.value}>{type.label}</option>
@@ -275,7 +275,7 @@ export default function BlueprintCreator() {
                       type="number"
                       value={blueprint.estimated_total_days}
                       onChange={(e) => setBlueprint({ ...blueprint, estimated_total_days: parseInt(e.target.value) || 30 })}
-                      className="bg-[#0d1b2a] border-[#333] text-white"
+                      className="bg-[#0d1b2a] border-[#333] text-navy-900"
                     />
                   </div>
                 </div>
@@ -285,7 +285,7 @@ export default function BlueprintCreator() {
             {/* Steps */}
             <Card className="bg-[#1a1a2e] border-[#333]">
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-white">Workflow Steps ({blueprint.steps.length})</CardTitle>
+                <CardTitle className="text-navy-900">Workflow Steps ({blueprint.steps.length})</CardTitle>
                 <Button onClick={addStep} size="sm" className="bg-[#00d4aa] text-black hover:bg-[#00b894]">
                   <Plus className="h-4 w-4 mr-1" />
                   Add Step
@@ -313,14 +313,14 @@ export default function BlueprintCreator() {
                             <button 
                               onClick={(e) => { e.stopPropagation(); moveStep(step.id, 'up'); }}
                               disabled={index === 0}
-                              className="text-gray-400 hover:text-white disabled:opacity-30"
+                              className="text-gray-400 hover:text-navy-900 disabled:opacity-30"
                             >
                               <ChevronUp className="h-4 w-4" />
                             </button>
                             <button 
                               onClick={(e) => { e.stopPropagation(); moveStep(step.id, 'down'); }}
                               disabled={index === blueprint.steps.length - 1}
-                              className="text-gray-400 hover:text-white disabled:opacity-30"
+                              className="text-gray-400 hover:text-navy-900 disabled:opacity-30"
                             >
                               <ChevronDown className="h-4 w-4" />
                             </button>
@@ -331,14 +331,14 @@ export default function BlueprintCreator() {
                           </div>
                           
                           <div className="flex-1 min-w-0">
-                            <p className="text-white font-medium truncate">
+                            <p className="text-navy-900 font-medium truncate">
                               {step.name || `Step ${step.order}`}
                             </p>
                             <div className="flex items-center gap-2 mt-1">
                               {step.requires_document && <Badge className="bg-purple-500/20 text-purple-400 text-xs">Doc</Badge>}
                               {step.requires_signature && <Badge className="bg-blue-500/20 text-blue-400 text-xs">Sign</Badge>}
                               {step.requires_notarization && <Badge className="bg-green-500/20 text-green-400 text-xs">Notary</Badge>}
-                              {step.requires_payment && <Badge className="bg-orange-500/20 text-orange-400 text-xs">Pay</Badge>}
+                              {step.requires_payment && <Badge className="bg-coral-500/20 text-coral-600 text-xs">Pay</Badge>}
                             </div>
                           </div>
                           
@@ -360,7 +360,7 @@ export default function BlueprintCreator() {
                                   value={step.name}
                                   onChange={(e) => updateStep(step.id, 'name', e.target.value)}
                                   placeholder="e.g., Document Review"
-                                  className="bg-[#1a1a2e] border-[#333] text-white text-sm"
+                                  className="bg-[#1a1a2e] border-[#333] text-navy-900 text-sm"
                                 />
                               </div>
                               <div>
@@ -369,7 +369,7 @@ export default function BlueprintCreator() {
                                   type="number"
                                   value={step.estimated_duration_hours}
                                   onChange={(e) => updateStep(step.id, 'estimated_duration_hours', parseInt(e.target.value) || 24)}
-                                  className="bg-[#1a1a2e] border-[#333] text-white text-sm"
+                                  className="bg-[#1a1a2e] border-[#333] text-navy-900 text-sm"
                                 />
                               </div>
                             </div>
@@ -380,7 +380,7 @@ export default function BlueprintCreator() {
                                 value={step.description}
                                 onChange={(e) => updateStep(step.id, 'description', e.target.value)}
                                 placeholder="Describe what needs to happen in this step..."
-                                className="bg-[#1a1a2e] border-[#333] text-white text-sm"
+                                className="bg-[#1a1a2e] border-[#333] text-navy-900 text-sm"
                               />
                             </div>
                             
@@ -466,7 +466,7 @@ export default function BlueprintCreator() {
             {/* Required Roles */}
             <Card className="bg-[#1a1a2e] border-[#333]">
               <CardHeader>
-                <CardTitle className="text-white text-sm flex items-center gap-2">
+                <CardTitle className="text-navy-900 text-sm flex items-center gap-2">
                   <Users className="h-4 w-4 text-blue-500" />
                   Required Roles
                 </CardTitle>
@@ -493,7 +493,7 @@ export default function BlueprintCreator() {
             {/* Required Documents */}
             <Card className="bg-[#1a1a2e] border-[#333]">
               <CardHeader>
-                <CardTitle className="text-white text-sm flex items-center gap-2">
+                <CardTitle className="text-navy-900 text-sm flex items-center gap-2">
                   <FileText className="h-4 w-4 text-purple-500" />
                   Required Documents
                 </CardTitle>
@@ -504,7 +504,7 @@ export default function BlueprintCreator() {
                     value={newDocument}
                     onChange={(e) => setNewDocument(e.target.value)}
                     placeholder="Document name..."
-                    className="bg-[#0d1b2a] border-[#333] text-white text-sm"
+                    className="bg-[#0d1b2a] border-[#333] text-navy-900 text-sm"
                     onKeyPress={(e) => e.key === 'Enter' && addDocument()}
                   />
                   <Button onClick={addDocument} size="sm" variant="outline" className="border-[#333]">
@@ -532,7 +532,7 @@ export default function BlueprintCreator() {
             {/* AI Settings */}
             <Card className="bg-[#1a1a2e] border-[#333]">
               <CardHeader>
-                <CardTitle className="text-white text-sm flex items-center gap-2">
+                <CardTitle className="text-navy-900 text-sm flex items-center gap-2">
                   <Settings className="h-4 w-4 text-[#00d4aa]" />
                   AI Settings
                 </CardTitle>
@@ -557,24 +557,24 @@ export default function BlueprintCreator() {
             {/* Summary */}
             <Card className="bg-[#1a1a2e] border-[#333]">
               <CardHeader>
-                <CardTitle className="text-white text-sm">Summary</CardTitle>
+                <CardTitle className="text-navy-900 text-sm">Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Total Steps</span>
-                  <span className="text-white font-medium">{blueprint.steps.length}</span>
+                  <span className="text-navy-900 font-medium">{blueprint.steps.length}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Required Roles</span>
-                  <span className="text-white font-medium">{blueprint.required_roles.length}</span>
+                  <span className="text-navy-900 font-medium">{blueprint.required_roles.length}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Documents</span>
-                  <span className="text-white font-medium">{blueprint.required_documents.length}</span>
+                  <span className="text-navy-900 font-medium">{blueprint.required_documents.length}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Est. Duration</span>
-                  <span className="text-white font-medium">{blueprint.estimated_total_days} days</span>
+                  <span className="text-navy-900 font-medium">{blueprint.estimated_total_days} days</span>
                 </div>
               </CardContent>
             </Card>
@@ -584,7 +584,7 @@ export default function BlueprintCreator() {
 
       {/* Preview Dialog */}
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="bg-[#1a1a2e] border-[#333] text-white max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="bg-[#1a1a2e] border-[#333] text-navy-900 max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Blueprint Preview</DialogTitle>
           </DialogHeader>
@@ -597,11 +597,11 @@ export default function BlueprintCreator() {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-gray-400">Type:</span>
-                <span className="ml-2 text-white">{blueprint.transaction_type}</span>
+                <span className="ml-2 text-navy-900">{blueprint.transaction_type}</span>
               </div>
               <div>
                 <span className="text-gray-400">Duration:</span>
-                <span className="ml-2 text-white">{blueprint.estimated_total_days} days</span>
+                <span className="ml-2 text-navy-900">{blueprint.estimated_total_days} days</span>
               </div>
             </div>
             
@@ -612,7 +612,7 @@ export default function BlueprintCreator() {
                   <div key={step.id} className="p-3 bg-[#0d1b2a] rounded-lg">
                     <div className="flex items-center gap-2">
                       <span className="text-[#00d4aa] font-bold">{idx + 1}.</span>
-                      <span className="text-white">{step.name || 'Unnamed Step'}</span>
+                      <span className="text-navy-900">{step.name || 'Unnamed Step'}</span>
                     </div>
                     {step.description && (
                       <p className="text-gray-400 text-xs mt-1">{step.description}</p>
@@ -621,7 +621,7 @@ export default function BlueprintCreator() {
                       {step.requires_document && <Badge className="bg-purple-500/20 text-purple-400 text-xs">Document</Badge>}
                       {step.requires_signature && <Badge className="bg-blue-500/20 text-blue-400 text-xs">Signature</Badge>}
                       {step.requires_notarization && <Badge className="bg-green-500/20 text-green-400 text-xs">Notarization</Badge>}
-                      {step.requires_payment && <Badge className="bg-orange-500/20 text-orange-400 text-xs">Payment</Badge>}
+                      {step.requires_payment && <Badge className="bg-coral-500/20 text-coral-600 text-xs">Payment</Badge>}
                     </div>
                   </div>
                 ))}

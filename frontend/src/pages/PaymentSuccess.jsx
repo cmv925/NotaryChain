@@ -74,7 +74,7 @@ const PaymentSuccess = () => {
               {status === 'checking' && (
                 <>
                   <Loader2 className="w-16 h-16 text-blue-500 animate-spin mx-auto mb-6" />
-                  <h1 className="text-2xl font-bold text-white mb-2">
+                  <h1 className="text-2xl font-bold text-navy-900 mb-2">
                     Verifying Payment...
                   </h1>
                   <p className="text-gray-400">
@@ -88,7 +88,7 @@ const PaymentSuccess = () => {
                   <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-6">
                     <CheckCircle className="w-10 h-10 text-green-500" />
                   </div>
-                  <h1 className="text-3xl font-bold text-white mb-2">
+                  <h1 className="text-3xl font-bold text-navy-900 mb-2">
                     Payment Successful!
                   </h1>
                   <p className="text-gray-400 mb-6">
@@ -97,18 +97,18 @@ const PaymentSuccess = () => {
 
                   {paymentDetails && (
                     <div className="bg-[#0a0f1a] rounded-lg p-4 mb-6 text-left">
-                      <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                      <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                         <FileText className="w-5 h-5 text-blue-500" />
                         Payment Details
                       </h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span className="text-gray-500">Service:</span>
-                          <span className="text-white">{paymentDetails.package?.name}</span>
+                          <span className="text-navy-900">{paymentDetails.package?.name}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-500">Amount:</span>
-                          <span className="text-white">
+                          <span className="text-navy-900">
                             ${paymentDetails.amount} {paymentDetails.currency?.toUpperCase()}
                           </span>
                         </div>
@@ -144,7 +144,7 @@ const PaymentSuccess = () => {
                   <div className="w-20 h-20 rounded-full bg-yellow-500/20 flex items-center justify-center mx-auto mb-6">
                     <Loader2 className="w-10 h-10 text-yellow-500" />
                   </div>
-                  <h1 className="text-2xl font-bold text-white mb-2">
+                  <h1 className="text-2xl font-bold text-navy-900 mb-2">
                     Payment Processing
                   </h1>
                   <p className="text-gray-400 mb-6">
@@ -164,7 +164,7 @@ const PaymentSuccess = () => {
                   <div className="w-20 h-20 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-6">
                     <ExternalLink className="w-10 h-10 text-red-500" />
                   </div>
-                  <h1 className="text-2xl font-bold text-white mb-2">
+                  <h1 className="text-2xl font-bold text-navy-900 mb-2">
                     {status === 'expired' ? 'Session Expired' : 'Verification Error'}
                   </h1>
                   <p className="text-gray-400 mb-6">

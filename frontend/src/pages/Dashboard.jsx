@@ -25,12 +25,12 @@ function BentoAction({ icon: Icon, label, desc, onClick, accent, ...props }) {
       onClick={onClick}
       className={`flex items-center gap-3 w-full p-3 text-sm rounded-md transition-all duration-200 text-left border ${
         accent
-          ? 'bg-sky-500/10 text-white border-sky-500/30 hover:bg-sky-500/20 hover:border-sky-500/50'
-          : 'text-slate-300 border-transparent hover:text-white hover:bg-slate-800/50 hover:border-slate-700'
+          ? 'bg-sky-500/10 text-navy-900 border-sky-500/30 hover:bg-sky-500/20 hover:border-sky-500/50'
+          : 'text-navy-800 border-transparent hover:text-navy-900 hover:bg-cream-200/50 hover:border-slate-300'
       }`}
       {...props}
     >
-      <Icon className={`w-4 h-4 flex-shrink-0 ${accent ? 'text-sky-400' : 'text-slate-500'}`} />
+      <Icon className={`w-4 h-4 flex-shrink-0 ${accent ? 'text-coral-600' : 'text-slate-500'}`} />
       <div className="flex-1 min-w-0">
         <span className="font-medium text-sm">{label}</span>
         {desc && <span className="text-slate-500 text-[10px] ml-2">{desc}</span>}
@@ -99,7 +99,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
-        <div className="text-white text-xl">Loading dashboard...</div>
+        <div className="text-navy-900 text-xl">Loading dashboard...</div>
       </div>
     );
   }
@@ -107,60 +107,60 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-[#0f1825]">
       {/* Glassmorphism Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#0f1825]/80 border-b border-slate-800 px-6 py-4" data-testid="dashboard-header">
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#0f1825]/80 border-b border-slate-200 px-6 py-4" data-testid="dashboard-header">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
             <Shield className="w-7 h-7 text-sky-500" />
-            <span className="text-lg font-bold text-white tracking-tight">
+            <span className="text-lg font-bold text-navy-900 tracking-tight">
               Notary<span className="text-sky-500">Chain</span>
             </span>
           </div>
           <div className="flex items-center gap-3">
             <NotificationBell token={token} />
-            <Button onClick={toggleTheme} variant="ghost" size="icon" className="text-slate-400 hover:text-white" data-testid="theme-toggle">
+            <Button onClick={toggleTheme} variant="ghost" size="icon" className="text-slate-600 hover:text-navy-900" data-testid="theme-toggle">
               {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-slate-800/50 transition-all" data-testid="user-menu-trigger">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-500 to-violet-600 flex items-center justify-center text-white text-xs font-bold">
+                <button className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-cream-200/50 transition-all" data-testid="user-menu-trigger">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-500 to-violet-600 flex items-center justify-center text-navy-900 text-xs font-bold">
                     {user?.full_name?.[0] || 'U'}
                   </div>
                   <div className="text-left hidden sm:block">
-                    <div className="text-white text-sm font-medium leading-none">{user?.full_name}</div>
+                    <div className="text-navy-900 text-sm font-medium leading-none">{user?.full_name}</div>
                     <div className="text-slate-500 text-[10px] mt-0.5 flex items-center gap-1.5">
                       {user?.email}
-                      {isAdmin && <span className="bg-sky-500/20 text-sky-400 border border-sky-500/30 px-1 py-px rounded text-[8px] font-bold">ADMIN</span>}
-                      {isNotary && <span className="bg-violet-500/20 text-violet-400 border border-violet-500/30 px-1 py-px rounded text-[8px] font-bold">NOTARY</span>}
+                      {isAdmin && <span className="bg-sky-500/20 text-coral-600 border border-sky-500/30 px-1 py-px rounded text-[8px] font-bold">ADMIN</span>}
+                      {isNotary && <span className="bg-violet-500/20 text-coral-600 border border-violet-500/30 px-1 py-px rounded text-[8px] font-bold">NOTARY</span>}
                     </div>
                   </div>
                   <ChevronDown className="w-3.5 h-3.5 text-slate-500 hidden sm:block" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-[#162032] border-slate-800 text-slate-300">
-                <DropdownMenuItem onClick={() => navigate('/subscription')} className="hover:bg-slate-800/50 cursor-pointer" data-testid="menu-plan">
+              <DropdownMenuContent align="end" className="w-48 bg-[#162032] border-slate-200 text-navy-800">
+                <DropdownMenuItem onClick={() => navigate('/subscription')} className="hover:bg-cream-200/50 cursor-pointer" data-testid="menu-plan">
                   <CreditCard className="w-4 h-4 mr-2" /> Plan
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/settings/security')} className="hover:bg-slate-800/50 cursor-pointer" data-testid="menu-security">
+                <DropdownMenuItem onClick={() => navigate('/settings/security')} className="hover:bg-cream-200/50 cursor-pointer" data-testid="menu-security">
                   <Settings className="w-4 h-4 mr-2" /> Security
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/compliance')} className="hover:bg-slate-800/50 cursor-pointer" data-testid="menu-privacy">
+                <DropdownMenuItem onClick={() => navigate('/compliance')} className="hover:bg-cream-200/50 cursor-pointer" data-testid="menu-privacy">
                   <Lock className="w-4 h-4 mr-2" /> Privacy
                 </DropdownMenuItem>
                 {isAdmin && (
-                  <DropdownMenuItem onClick={() => navigate('/developers')} className="hover:bg-slate-800/50 cursor-pointer" data-testid="menu-api">
+                  <DropdownMenuItem onClick={() => navigate('/developers')} className="hover:bg-cream-200/50 cursor-pointer" data-testid="menu-api">
                     <Code className="w-4 h-4 mr-2" /> API
                   </DropdownMenuItem>
                 )}
                 {(isAdmin || isNotary) && (
-                  <DropdownMenuItem onClick={() => navigate('/organizations')} className="hover:bg-slate-800/50 cursor-pointer" data-testid="menu-org">
+                  <DropdownMenuItem onClick={() => navigate('/organizations')} className="hover:bg-cream-200/50 cursor-pointer" data-testid="menu-org">
                     <Building2 className="w-4 h-4 mr-2" /> Organizations
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onClick={() => navigate('/my-drafts')} className="hover:bg-slate-800/50 cursor-pointer" data-testid="menu-drafts">
+                <DropdownMenuItem onClick={() => navigate('/my-drafts')} className="hover:bg-cream-200/50 cursor-pointer" data-testid="menu-drafts">
                   <Save className="w-4 h-4 mr-2" /> My Drafts
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-slate-800" />
+                <DropdownMenuSeparator className="bg-cream-200" />
                 <DropdownMenuItem onClick={handleLogout} className="hover:bg-red-500/10 text-red-400 cursor-pointer" data-testid="menu-logout">
                   <LogOut className="w-4 h-4 mr-2" /> {t('nav.logout')}
                 </DropdownMenuItem>
@@ -172,18 +172,18 @@ const Dashboard = () => {
 
       <div className="max-w-7xl mx-auto px-6">
         {/* Stats Strip */}
-        <div className="grid grid-cols-1 md:grid-cols-3 border-b border-slate-800" data-testid="stats-section">
-          <div className="p-8 md:border-r border-slate-800 hover:bg-slate-800/10 transition-colors">
-            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-2">Total Seals</p>
-            <p className="text-4xl font-light tracking-tighter text-white" data-testid="total-seals">{stats.total_seals}</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 border-b border-slate-200" data-testid="stats-section">
+          <div className="p-8 md:border-r border-slate-200 hover:bg-cream-200/10 transition-colors">
+            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-2">Total Seals</p>
+            <p className="text-4xl font-light tracking-tighter text-navy-900" data-testid="total-seals">{stats.total_seals}</p>
           </div>
-          <div className="p-8 md:border-r border-slate-800 hover:bg-slate-800/10 transition-colors">
-            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-2">Last 30 Days</p>
-            <p className="text-4xl font-light tracking-tighter text-white" data-testid="recent-seals">{stats.recent_seals}</p>
+          <div className="p-8 md:border-r border-slate-200 hover:bg-cream-200/10 transition-colors">
+            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-2">Last 30 Days</p>
+            <p className="text-4xl font-light tracking-tighter text-navy-900" data-testid="recent-seals">{stats.recent_seals}</p>
           </div>
-          <div className="p-8 hover:bg-slate-800/10 transition-colors">
-            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-2">Member Since</p>
-            <p className="text-xl font-light tracking-tight text-white">
+          <div className="p-8 hover:bg-cream-200/10 transition-colors">
+            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-2">Member Since</p>
+            <p className="text-xl font-light tracking-tight text-navy-900">
               {new Date(stats.user_since).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
             </p>
           </div>
@@ -192,10 +192,10 @@ const Dashboard = () => {
         {/* Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
           {/* Core Actions — spans 2 cols */}
-          <div className="col-span-1 md:col-span-2 bg-[#162032] border border-slate-800 p-6 rounded-lg relative overflow-hidden" data-testid="core-actions">
+          <div className="col-span-1 md:col-span-2 bg-[#162032] border border-slate-200 p-6 rounded-lg relative overflow-hidden" data-testid="core-actions">
             <div className="absolute inset-0 opacity-[0.04] bg-cover bg-center mix-blend-overlay" style={{ backgroundImage: "url('https://images.pexels.com/photos/3612932/pexels-photo-3612932.jpeg?auto=compress&cs=tinysrgb&dpr=1&h=400&w=600')" }} />
             <div className="relative z-10">
-              <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-5">Core Actions</h3>
+              <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-5">Core Actions</h3>
               <div className="space-y-2">
                 <BentoAction icon={Upload} label="Quick Seal" desc="Instant blockchain timestamp" onClick={() => navigate('/demo')} accent data-testid="quick-seal-btn" />
                 <BentoAction icon={FileText} label="Request Notarization" desc="Full notary service" onClick={() => navigate('/request-notarization')} data-testid="request-notary-btn" />
@@ -205,8 +205,8 @@ const Dashboard = () => {
           </div>
 
           {/* AI Intelligence */}
-          <div className="border border-slate-800 p-6 rounded-lg bg-[#0f1825]" data-testid="ai-section">
-            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-5">AI Intelligence</h3>
+          <div className="border border-slate-200 p-6 rounded-lg bg-[#0f1825]" data-testid="ai-section">
+            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-5">AI Intelligence</h3>
             <div className="space-y-2">
               <BentoAction icon={Brain} label="AI Intelligence Hub" desc="Risk, Match, Voice" onClick={() => navigate('/ai-intelligence')} accent data-testid="ai-hub-btn" />
               <BentoAction icon={Wand2} label="AI Doc Generator" onClick={() => navigate('/ai-generator')} data-testid="ai-gen-btn" />
@@ -217,8 +217,8 @@ const Dashboard = () => {
           </div>
 
           {/* Security & Identity */}
-          <div className="border border-slate-800 p-6 rounded-lg bg-[#0f1825]" data-testid="security-section">
-            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-5">Security & Identity</h3>
+          <div className="border border-slate-200 p-6 rounded-lg bg-[#0f1825]" data-testid="security-section">
+            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-5">Security & Identity</h3>
             <div className="space-y-2">
               <BentoAction icon={Network} label="Trust Hub" desc="Identity + TrustLayer + Vault" onClick={() => navigate('/trust-hub')} accent data-testid="trust-hub-btn" />
               <BentoAction icon={Activity} label="Living Identity" desc="Continuous biometric trust" onClick={() => navigate('/identity')} data-testid="living-identity-btn" />
@@ -234,8 +234,8 @@ const Dashboard = () => {
           </div>
 
           {/* Network & Tools — full width */}
-          <div className="col-span-1 md:col-span-4 pt-6 border-t border-slate-800 mt-2" data-testid="network-section">
-            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-4">Network & Tools</h3>
+          <div className="col-span-1 md:col-span-4 pt-6 border-t border-slate-200 mt-2" data-testid="network-section">
+            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-4">Network & Tools</h3>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               <BentoAction icon={BookOpen} label="Templates" onClick={() => navigate('/templates')} data-testid="templates-btn" />
               <BentoAction icon={CalendarClock} label="My Bookings" onClick={() => navigate('/my-bookings')} data-testid="bookings-btn" />
@@ -269,50 +269,50 @@ const Dashboard = () => {
 
         {/* Notary Requests */}
         {notaryRequests.length > 0 && (
-          <div className="mt-8 border border-slate-800 rounded-lg overflow-hidden bg-[#0f1825]" data-testid="notary-requests">
-            <div className="bg-slate-900/50 border-b border-slate-800 px-6 py-4 flex items-center gap-2">
+          <div className="mt-8 border border-slate-200 rounded-lg overflow-hidden bg-[#0f1825]" data-testid="notary-requests">
+            <div className="bg-white/50 border-b border-slate-200 px-6 py-4 flex items-center gap-2">
               <FileText className="w-4 h-4 text-sky-500" />
-              <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400">My Notarization Requests</h2>
+              <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600">My Notarization Requests</h2>
             </div>
             <div className="divide-y divide-slate-800/50">
               {notaryRequests.slice(0, 5).map((request) => (
                 <div key={request.id}>
-                  <div className="px-6 py-4 hover:bg-slate-800/20 transition-colors">
+                  <div className="px-6 py-4 hover:bg-cream-200/20 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                          request.status === 'pending' ? 'bg-amber-500/10' :
-                          request.status === 'in_session' ? 'bg-emerald-500/10' :
-                          request.status === 'completed' ? 'bg-sky-500/10' : 'bg-slate-800'
+                          request.status === 'pending' ? 'bg-coral-500/10' :
+                          request.status === 'in_session' ? 'bg-coral-500/10' :
+                          request.status === 'completed' ? 'bg-sky-500/10' : 'bg-cream-200'
                         }`}>
                           {request.status === 'in_session' ? (
-                            <Video className="w-4 h-4 text-emerald-400" />
+                            <Video className="w-4 h-4 text-coral-600" />
                           ) : (
                             <FileText className={`w-4 h-4 ${
-                              request.status === 'pending' ? 'text-amber-400' :
-                              request.status === 'completed' ? 'text-sky-400' : 'text-slate-500'
+                              request.status === 'pending' ? 'text-coral-600' :
+                              request.status === 'completed' ? 'text-coral-600' : 'text-slate-500'
                             }`} />
                           )}
                         </div>
                         <div>
-                          <h4 className="text-white font-medium text-sm">{request.document_name}</h4>
+                          <h4 className="text-navy-900 font-medium text-sm">{request.document_name}</h4>
                           <p className="text-slate-500 text-[10px]">{request.document_type} | {new Date(request.created_at).toLocaleDateString()}</p>
                         </div>
                         <ExpiryBadge request={request} />
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0 ml-2">
                         <span className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
-                          request.status === 'pending' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
-                          request.status === 'in_session' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                          request.status === 'assigned' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' :
-                          request.status === 'completed' ? 'bg-slate-500/10 text-slate-400 border border-slate-500/20' :
-                          'bg-slate-500/10 text-slate-400 border border-slate-500/20'
+                          request.status === 'pending' ? 'bg-coral-500/10 text-coral-600 border border-amber-500/20' :
+                          request.status === 'in_session' ? 'bg-coral-500/10 text-coral-600 border border-coral-200' :
+                          request.status === 'assigned' ? 'bg-sky-500/10 text-coral-600 border border-sky-500/20' :
+                          request.status === 'completed' ? 'bg-slate-500/10 text-slate-600 border border-slate-500/20' :
+                          'bg-slate-500/10 text-slate-600 border border-slate-500/20'
                         }`}>
                           {request.status?.replace('_', ' ')}
                         </span>
                         {request.hcs_topic_id && (
                           <Button onClick={() => setExpandedRequest(expandedRequest === request.id ? null : request.id)}
-                            size="sm" variant="outline" className="border-slate-700 text-slate-400 hover:text-white hover:border-sky-500/50 h-7 text-[10px]"
+                            size="sm" variant="outline" className="border-slate-300 text-slate-600 hover:text-navy-900 hover:border-sky-500/50 h-7 text-[10px]"
                             data-testid={`audit-trail-btn-${request.id}`}>
                             <Shield className="w-3 h-3 mr-1" /> Audit
                             {expandedRequest === request.id ? <ChevronUp className="w-3 h-3 ml-1" /> : <ChevronDown className="w-3 h-3 ml-1" />}
@@ -320,7 +320,7 @@ const Dashboard = () => {
                         )}
                         {(request.status === 'pending' || request.status === 'assigned' || request.status === 'in_session') && (
                           <Button onClick={() => navigate(`/session/${request.id}`)} size="sm"
-                            className={`h-7 text-[10px] ${request.status === 'in_session' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-sky-600 hover:bg-sky-700'}`}>
+                            className={`h-7 text-[10px] ${request.status === 'in_session' ? 'bg-coral-500 hover:bg-emerald-700' : 'bg-sky-600 hover:bg-sky-700'}`}>
                             {request.status === 'in_session' ? <><Play className="w-3 h-3 mr-1" /> Join</> : <><Video className="w-3 h-3 mr-1" /> Start</>}
                           </Button>
                         )}
@@ -340,44 +340,44 @@ const Dashboard = () => {
         )}
 
         {/* Recent Document Seals */}
-        <div className="mt-8 mb-8 border border-slate-800 rounded-lg overflow-hidden bg-[#0f1825]" data-testid="recent-seals-section">
-          <div className="bg-slate-900/50 border-b border-slate-800 px-6 py-4">
-            <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400">Recent Document Seals</h2>
+        <div className="mt-8 mb-8 border border-slate-200 rounded-lg overflow-hidden bg-[#0f1825]" data-testid="recent-seals-section">
+          <div className="bg-white/50 border-b border-slate-200 px-6 py-4">
+            <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600">Recent Document Seals</h2>
           </div>
 
           {documents.length === 0 ? (
             <div className="text-center py-16">
               <FileText className="w-12 h-12 text-slate-700 mx-auto mb-4" />
-              <p className="text-slate-400 text-sm mb-4">No documents sealed yet</p>
-              <Button onClick={() => navigate('/demo')} className="bg-sky-600 hover:bg-sky-700 text-white text-sm">
+              <p className="text-slate-600 text-sm mb-4">No documents sealed yet</p>
+              <Button onClick={() => navigate('/demo')} className="bg-sky-600 hover:bg-sky-700 text-navy-900 text-sm">
                 Seal Your First Document
               </Button>
             </div>
           ) : (
             <div className="divide-y divide-slate-800/50">
               {documents.map((doc) => (
-                <div key={doc.id} className="px-6 py-5 hover:bg-slate-800/20 transition-colors">
+                <div key={doc.id} className="px-6 py-5 hover:bg-cream-200/20 transition-colors">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-4 flex-1">
-                      <div className="w-10 h-10 bg-sky-500/5 rounded-lg flex items-center justify-center flex-shrink-0 border border-slate-800">
+                      <div className="w-10 h-10 bg-sky-500/5 rounded-lg flex items-center justify-center flex-shrink-0 border border-slate-200">
                         <FileText className="w-5 h-5 text-sky-500" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-white font-medium text-sm mb-0.5">{doc.file_name}</h3>
+                        <h3 className="text-navy-900 font-medium text-sm mb-0.5">{doc.file_name}</h3>
                         <p className="text-slate-500 text-[10px] mb-3">{doc.file_size} | {new Date(doc.timestamp).toLocaleString()}</p>
                         <div className="space-y-1.5">
                           <div>
                             <label className="text-slate-600 text-[10px] block mb-0.5">SHA-256</label>
                             <div className="flex items-center gap-2">
-                              <code className="text-sky-400/80 text-[10px] font-mono bg-[#162032] px-2 py-1 rounded flex-1 overflow-hidden text-ellipsis">{doc.sha256_hash}</code>
-                              <button onClick={() => copyHash(doc.sha256_hash)} className="text-slate-600 hover:text-white p-1 transition-colors"><Copy className="w-3.5 h-3.5" /></button>
+                              <code className="text-coral-600/80 text-[10px] font-mono bg-[#162032] px-2 py-1 rounded flex-1 overflow-hidden text-ellipsis">{doc.sha256_hash}</code>
+                              <button onClick={() => copyHash(doc.sha256_hash)} className="text-slate-600 hover:text-navy-900 p-1 transition-colors"><Copy className="w-3.5 h-3.5" /></button>
                             </div>
                           </div>
                           <div>
                             <label className="text-slate-600 text-[10px] block mb-0.5">Transaction ID</label>
                             <div className="flex items-center gap-2">
-                              <code className="text-emerald-400/80 text-[10px] font-mono bg-[#162032] px-2 py-1 rounded">{doc.transaction_id}</code>
-                              <a href={`https://hashscan.io/mainnet/transaction/${doc.transaction_id}`} target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-white p-1 transition-colors">
+                              <code className="text-coral-600/80 text-[10px] font-mono bg-[#162032] px-2 py-1 rounded">{doc.transaction_id}</code>
+                              <a href={`https://hashscan.io/mainnet/transaction/${doc.transaction_id}`} target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-navy-900 p-1 transition-colors">
                                 <ExternalLink className="w-3.5 h-3.5" />
                               </a>
                             </div>
@@ -385,7 +385,7 @@ const Dashboard = () => {
                         </div>
                       </div>
                     </div>
-                    <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded border border-emerald-500/20">
+                    <span className="bg-coral-500/10 text-coral-600 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded border border-coral-200">
                       {doc.status}
                     </span>
                   </div>

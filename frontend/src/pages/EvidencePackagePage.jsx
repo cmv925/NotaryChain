@@ -61,7 +61,7 @@ export default function EvidencePackagePage() {
   const Section = ({ title, icon: Icon, color, badge, id, children }) => (
     <Card className="bg-[#0d1b2a] border-gray-800">
       <CardHeader className="pb-2 cursor-pointer" onClick={() => toggle(id)}>
-        <CardTitle className="text-sm text-white flex items-center justify-between">
+        <CardTitle className="text-sm text-navy-900 flex items-center justify-between">
           <span className="flex items-center gap-2">
             <Icon className={`w-4 h-4 ${color}`} />
             {title}
@@ -77,7 +77,7 @@ export default function EvidencePackagePage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white">
+    <div className="min-h-screen bg-[#030712] text-navy-900">
       <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
@@ -86,7 +86,7 @@ export default function EvidencePackagePage() {
           </Button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Package className="w-6 h-6 text-emerald-400" />
+              <Package className="w-6 h-6 text-coral-600" />
               Evidence Package
             </h1>
             <p className="text-gray-400 text-sm">Forensic-grade transaction evidence bundle</p>
@@ -99,7 +99,7 @@ export default function EvidencePackagePage() {
             {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Package className="w-4 h-4 mr-2" />}
             Load Latest Package
           </Button>
-          <Button onClick={generatePackage} disabled={generating} className="bg-emerald-600 hover:bg-emerald-700" data-testid="generate-package-btn">
+          <Button onClick={generatePackage} disabled={generating} className="bg-coral-500 hover:bg-emerald-700" data-testid="generate-package-btn">
             {generating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Shield className="w-4 h-4 mr-2" />}
             Generate New Package
           </Button>
@@ -107,7 +107,7 @@ export default function EvidencePackagePage() {
 
         {(loading || generating) && !pkg && (
           <div className="flex flex-col items-center py-16 text-gray-400">
-            <Loader2 className="w-8 h-8 animate-spin mb-3 text-emerald-400" />
+            <Loader2 className="w-8 h-8 animate-spin mb-3 text-coral-600" />
             <p className="text-sm">{generating ? 'Compiling evidence...' : 'Loading...'}</p>
           </div>
         )}
@@ -115,12 +115,12 @@ export default function EvidencePackagePage() {
         {pkg && (
           <div className="space-y-4">
             {/* Overview */}
-            <Card className="bg-gradient-to-r from-[#0d1b2a] to-[#0d2b1a] border-emerald-500/20" data-testid="package-overview">
+            <Card className="bg-gradient-to-r from-[#0d1b2a] to-[#0d2b1a] border-coral-200" data-testid="package-overview">
               <CardContent className="pt-5">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <p className="text-emerald-400 text-xs font-semibold mb-1">EVIDENCE PACKAGE v{pkg.version}</p>
-                    <h2 className="text-white text-lg font-bold">{pkg.transaction?.name}</h2>
+                    <p className="text-coral-600 text-xs font-semibold mb-1">EVIDENCE PACKAGE v{pkg.version}</p>
+                    <h2 className="text-navy-900 text-lg font-bold">{pkg.transaction?.name}</h2>
                     <p className="text-gray-400 text-xs">{pkg.transaction?.type?.replace(/_/g, ' ')}</p>
                   </div>
                   <Badge className={pkg.transaction?.status === 'completed' ? 'bg-green-500/15 text-green-400' : 'bg-blue-500/15 text-blue-400'}>
@@ -130,35 +130,35 @@ export default function EvidencePackagePage() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div className="bg-[#0a1520] rounded-lg p-3 text-center">
                     <p className="text-gray-500 text-[10px]">Package ID</p>
-                    <p className="text-white text-xs font-mono">{pkg.id?.substring(0, 12)}...</p>
+                    <p className="text-navy-900 text-xs font-mono">{pkg.id?.substring(0, 12)}...</p>
                   </div>
                   <div className="bg-[#0a1520] rounded-lg p-3 text-center">
                     <p className="text-gray-500 text-[10px]">Generated</p>
-                    <p className="text-white text-xs">{pkg.generated_at ? new Date(pkg.generated_at).toLocaleDateString() : '-'}</p>
+                    <p className="text-navy-900 text-xs">{pkg.generated_at ? new Date(pkg.generated_at).toLocaleDateString() : '-'}</p>
                   </div>
                   <div className="bg-[#0a1520] rounded-lg p-3 text-center">
                     <p className="text-gray-500 text-[10px]">Progress</p>
-                    <p className="text-white text-xs">{pkg.transaction?.progress}%</p>
+                    <p className="text-navy-900 text-xs">{pkg.transaction?.progress}%</p>
                   </div>
                   <div className="bg-[#0a1520] rounded-lg p-3 text-center">
                     <p className="text-gray-500 text-[10px]">Integrity</p>
-                    <p className="text-emerald-400 text-xs font-mono">{pkg.integrity_hash?.substring(0, 12)}...</p>
+                    <p className="text-coral-600 text-xs font-mono">{pkg.integrity_hash?.substring(0, 12)}...</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Blockchain Proof */}
-            <Section title="Blockchain Proof" icon={Shield} color="text-cyan-400" id="blockchain"
+            <Section title="Blockchain Proof" icon={Shield} color="text-coral-600" id="blockchain"
               badge={pkg.blockchain_proof?.settlement_hash ? <Badge className="bg-green-500/15 text-green-400 text-[10px]">Sealed</Badge> : null}>
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between"><span className="text-gray-500">Network</span><span className="text-white">{pkg.blockchain_proof?.network}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Topic ID</span><span className="text-white font-mono">{pkg.blockchain_proof?.topic_id || '-'}</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Network</span><span className="text-navy-900">{pkg.blockchain_proof?.network}</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Topic ID</span><span className="text-navy-900 font-mono">{pkg.blockchain_proof?.topic_id || '-'}</span></div>
                 {pkg.blockchain_proof?.settlement_hash && (
                   <div>
                     <span className="text-gray-500 block mb-1">Settlement Hash</span>
                     <div className="flex items-center gap-2">
-                      <code className="text-emerald-400 bg-[#1a2332] px-2 py-1 rounded text-[10px] break-all flex-1">{pkg.blockchain_proof.settlement_hash}</code>
+                      <code className="text-coral-600 bg-[#1a2332] px-2 py-1 rounded text-[10px] break-all flex-1">{pkg.blockchain_proof.settlement_hash}</code>
                       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyHash(pkg.blockchain_proof.settlement_hash)}>
                         <Copy className="w-3 h-3 text-gray-400" />
                       </Button>
@@ -179,7 +179,7 @@ export default function EvidencePackagePage() {
                 {pkg.participants?.map((p, i) => (
                   <div key={i} className="flex items-center justify-between bg-[#1a2332] rounded-lg p-2">
                     <div>
-                      <span className="text-white text-xs">{p.name}</span>
+                      <span className="text-navy-900 text-xs">{p.name}</span>
                       <span className="text-gray-500 text-[10px] ml-2">{p.email}</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -194,7 +194,7 @@ export default function EvidencePackagePage() {
             </Section>
 
             {/* Tasks */}
-            <Section title={`Tasks (${pkg.tasks?.length || 0})`} icon={FileText} color="text-amber-400" id="tasks">
+            <Section title={`Tasks (${pkg.tasks?.length || 0})`} icon={FileText} color="text-coral-600" id="tasks">
               <div className="space-y-1">
                 {pkg.tasks?.map((t, i) => (
                   <div key={i} className="flex items-center justify-between py-1.5 border-b border-gray-800/50 last:border-0">
@@ -203,9 +203,9 @@ export default function EvidencePackagePage() {
                       <span className={`text-xs ${t.status === 'completed' ? 'text-gray-300' : 'text-gray-500'}`}>{t.name}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      {t.requires_signature && <Badge className="text-[8px] bg-violet-500/15 text-violet-400">SIG</Badge>}
-                      {t.requires_notarization && <Badge className="text-[8px] bg-cyan-500/15 text-cyan-400">NOT</Badge>}
-                      {t.requires_document && <Badge className="text-[8px] bg-amber-500/15 text-amber-400">DOC</Badge>}
+                      {t.requires_signature && <Badge className="text-[8px] bg-violet-500/15 text-coral-600">SIG</Badge>}
+                      {t.requires_notarization && <Badge className="text-[8px] bg-cyan-500/15 text-coral-600">NOT</Badge>}
+                      {t.requires_document && <Badge className="text-[8px] bg-coral-500/15 text-coral-600">DOC</Badge>}
                     </div>
                   </div>
                 ))}
@@ -216,13 +216,13 @@ export default function EvidencePackagePage() {
             <Section title="Biometric Evidence" icon={Fingerprint} color="text-purple-400" id="biometric"
               badge={<Badge className="bg-purple-500/15 text-purple-400 text-[10px]">{pkg.biometric_evidence?.individual_verifications || 0} verifications</Badge>}>
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between"><span className="text-gray-500">Passports</span><span className="text-white">{pkg.biometric_evidence?.passports?.length || 0}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Modalities</span><span className="text-white">{pkg.biometric_evidence?.modalities_used?.join(', ') || 'None'}</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Passports</span><span className="text-navy-900">{pkg.biometric_evidence?.passports?.length || 0}</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Modalities</span><span className="text-navy-900">{pkg.biometric_evidence?.modalities_used?.join(', ') || 'None'}</span></div>
                 {pkg.biometric_evidence?.passports?.map((bp, i) => (
                   <div key={i} className="bg-[#1a2332] rounded-lg p-2">
                     <div className="flex justify-between">
                       <span className="text-gray-400">Passport #{bp.id?.substring(0, 8)}</span>
-                      <Badge className={bp.status === 'verified' ? 'bg-green-500/15 text-green-400 text-[10px]' : 'bg-amber-500/15 text-amber-400 text-[10px]'}>{bp.status}</Badge>
+                      <Badge className={bp.status === 'verified' ? 'bg-green-500/15 text-green-400 text-[10px]' : 'bg-coral-500/15 text-coral-600 text-[10px]'}>{bp.status}</Badge>
                     </div>
                     <p className="text-gray-600 text-[10px] mt-1">Score: {(bp.composite_score * 100).toFixed(1)}%</p>
                   </div>
@@ -233,8 +233,8 @@ export default function EvidencePackagePage() {
             {/* Communication */}
             <Section title="Communication Record" icon={MessageSquare} color="text-teal-400" id="communication">
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between"><span className="text-gray-500">Total Messages</span><span className="text-white">{pkg.communication?.total_messages || 0}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">AI Conductor Sessions</span><span className="text-white">{pkg.communication?.conductor_guidance_sessions || 0}</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Total Messages</span><span className="text-navy-900">{pkg.communication?.total_messages || 0}</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">AI Conductor Sessions</span><span className="text-navy-900">{pkg.communication?.conductor_guidance_sessions || 0}</span></div>
               </div>
             </Section>
 
@@ -245,7 +245,7 @@ export default function EvidencePackagePage() {
                   {Object.entries(pkg.component_hashes).map(([key, hash]) => (
                     <div key={key} className="flex items-center justify-between">
                       <span className="text-gray-500 text-xs capitalize">{key}</span>
-                      <code className="text-emerald-400 text-[10px] font-mono">{hash?.substring(0, 20)}...</code>
+                      <code className="text-coral-600 text-[10px] font-mono">{hash?.substring(0, 20)}...</code>
                     </div>
                   ))}
                 </div>

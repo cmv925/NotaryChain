@@ -103,7 +103,7 @@ const AIDocumentGenerator = () => {
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'AI Document Generator' }]} />
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 flex items-center gap-3">
                 <Wand2 className="w-7 h-7 text-purple-400" />
                 AI Document Generator
               </h1>
@@ -123,13 +123,13 @@ const AIDocumentGenerator = () => {
               <div className="lg:col-span-2">
                 <Card className="bg-[#1a2332] border-gray-800" data-testid="generator-form">
                   <CardContent className="p-6">
-                    <h2 className="text-lg font-semibold text-white mb-4">Describe Your Document</h2>
+                    <h2 className="text-lg font-semibold text-navy-900 mb-4">Describe Your Document</h2>
                     <div className="mb-4">
                       <label className="text-sm text-gray-300 block mb-1">Document Type (optional)</label>
                       <select
                         value={selectedType}
                         onChange={e => setSelectedType(e.target.value)}
-                        className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white text-sm"
+                        className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-navy-900 text-sm"
                         data-testid="doc-type-select"
                       >
                         <option value="">Auto-detect from description</option>
@@ -143,7 +143,7 @@ const AIDocumentGenerator = () => {
                         onChange={e => setDescription(e.target.value)}
                         placeholder="e.g., I need a bill of sale for a 2020 Toyota Camry. The seller is John Smith from Austin, TX and the buyer is Jane Doe from Dallas, TX. The sale price is $15,000..."
                         rows={5}
-                        className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white text-sm focus:border-purple-500 outline-none resize-none"
+                        className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-purple-500 outline-none resize-none"
                         data-testid="doc-description-input"
                       />
                     </div>
@@ -159,7 +159,7 @@ const AIDocumentGenerator = () => {
               <div>
                 <Card className="bg-[#1a2332] border-gray-800">
                   <CardContent className="p-4">
-                    <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-navy-900 mb-3 flex items-center gap-2">
                       <Clock className="w-4 h-4 text-gray-400" /> Recent Documents
                     </h3>
                     {history.length === 0 ? (
@@ -173,7 +173,7 @@ const AIDocumentGenerator = () => {
                             className="w-full text-left p-2 bg-[#0d1520] rounded border border-gray-800 hover:border-purple-500/30 transition-colors"
                             data-testid={`history-doc-${doc.id}`}
                           >
-                            <p className="text-white text-xs font-medium truncate">{doc.result?.title || doc.description?.slice(0, 40)}</p>
+                            <p className="text-navy-900 text-xs font-medium truncate">{doc.result?.title || doc.description?.slice(0, 40)}</p>
                             <p className="text-gray-500 text-[10px]">{new Date(doc.created_at).toLocaleDateString()}</p>
                           </button>
                         ))}
@@ -189,16 +189,16 @@ const AIDocumentGenerator = () => {
             <div data-testid="generated-document">
               <Card className="bg-[#1a2332] border-gray-800 mb-4">
                 <CardContent className="p-6">
-                  <h2 className="text-xl font-bold text-white mb-2" data-testid="doc-title">{result.title}</h2>
+                  <h2 className="text-xl font-bold text-navy-900 mb-2" data-testid="doc-title">{result.title}</h2>
                   {result.disclaimer && (
-                    <p className="text-amber-400/80 text-xs bg-amber-500/10 p-2 rounded mb-4 border border-amber-500/20">{result.disclaimer}</p>
+                    <p className="text-coral-600/80 text-xs bg-coral-500/10 p-2 rounded mb-4 border border-amber-500/20">{result.disclaimer}</p>
                   )}
 
                   {/* Document Content */}
                   <div className="space-y-4">
                     {(result.sections || []).map((section, i) => (
                       <div key={i} className="bg-[#0d1520] rounded-lg p-4 border border-gray-800">
-                        <h3 className="text-white font-semibold text-sm mb-2">{section.heading}</h3>
+                        <h3 className="text-navy-900 font-semibold text-sm mb-2">{section.heading}</h3>
                         <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{section.content}</p>
                       </div>
                     ))}
@@ -214,7 +214,7 @@ const AIDocumentGenerator = () => {
                         {Object.entries(result.fields).map(([key, val]) => (
                           <div key={key} className="text-xs">
                             <span className="text-gray-400">{key.replace(/_/g, ' ')}:</span>
-                            <span className="text-white ml-1">{val}</span>
+                            <span className="text-navy-900 ml-1">{val}</span>
                           </div>
                         ))}
                       </div>
@@ -241,7 +241,7 @@ const AIDocumentGenerator = () => {
               {/* Refine */}
               <Card className="bg-[#1a2332] border-gray-800">
                 <CardContent className="p-4">
-                  <h3 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-navy-900 mb-2 flex items-center gap-2">
                     <RefreshCw className="w-4 h-4 text-purple-400" /> Refine Document
                   </h3>
                   <div className="flex gap-2">
@@ -249,7 +249,7 @@ const AIDocumentGenerator = () => {
                       value={feedback}
                       onChange={e => setFeedback(e.target.value)}
                       placeholder="e.g., Add a clause about late payment penalties..."
-                      className="bg-[#0a0f1a] border-gray-700 text-white flex-1"
+                      className="bg-[#0a0f1a] border-gray-700 text-navy-900 flex-1"
                       data-testid="refine-input"
                     />
                     <Button onClick={handleRefine} disabled={refining || !feedback.trim()} className="bg-purple-600 hover:bg-purple-700" data-testid="refine-btn">

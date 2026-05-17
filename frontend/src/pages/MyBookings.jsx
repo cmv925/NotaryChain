@@ -16,7 +16,7 @@ import { Breadcrumbs } from '../components/Breadcrumbs';
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const statusCfg = {
-  pending: { color: 'text-amber-400', bg: 'bg-amber-500/15', border: 'border-amber-500/30', label: 'Pending' },
+  pending: { color: 'text-coral-600', bg: 'bg-coral-500/15', border: 'border-gold-500/30', label: 'Pending' },
   confirmed: { color: 'text-green-400', bg: 'bg-green-500/15', border: 'border-green-500/30', label: 'Confirmed' },
   completed: { color: 'text-blue-400', bg: 'bg-blue-500/15', border: 'border-blue-500/30', label: 'Completed' },
   cancelled: { color: 'text-red-400', bg: 'bg-red-500/15', border: 'border-red-500/30', label: 'Cancelled' },
@@ -65,7 +65,7 @@ const MyBookings = () => {
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'My Bookings' }]} />
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 flex items-center gap-3">
                 <Calendar className="w-7 h-7 text-blue-400" />
                 My Bookings
               </h1>
@@ -111,7 +111,7 @@ const MyBookings = () => {
               {/* Upcoming */}
               {upcoming.length > 0 && (
                 <div>
-                  <h2 className="text-lg font-semibold text-white mb-3">Upcoming</h2>
+                  <h2 className="text-lg font-semibold text-navy-900 mb-3">Upcoming</h2>
                   <div className="space-y-3" data-testid="upcoming-bookings">
                     {upcoming.map(b => {
                       const cfg = statusCfg[b.status] || statusCfg.pending;
@@ -120,12 +120,12 @@ const MyBookings = () => {
                           <CardContent className="p-4">
                             <div className="flex items-start gap-4">
                               <div className="w-14 text-center flex-shrink-0">
-                                <div className="text-2xl font-bold text-white">{b.date.split('-')[2]}</div>
+                                <div className="text-2xl font-bold text-navy-900">{b.date.split('-')[2]}</div>
                                 <div className="text-xs text-gray-500">{new Date(b.date + 'T12:00:00').toLocaleString('en', { month: 'short' })}</div>
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <h3 className="text-white font-semibold truncate">{b.document_name}</h3>
+                                  <h3 className="text-navy-900 font-semibold truncate">{b.document_name}</h3>
                                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${cfg.bg} ${cfg.color}`}>{cfg.label}</span>
                                 </div>
                                 <div className="flex items-center gap-3 text-sm text-gray-400">

@@ -134,7 +134,7 @@ const VideoWitness = () => {
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Video Witness' }]} />
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 flex items-center gap-3">
                 <Video className="w-7 h-7 text-rose-400" />
                 Video Witness Recording
               </h1>
@@ -152,7 +152,7 @@ const VideoWitness = () => {
             <Card className="bg-[#1a2332] border-green-500/30" data-testid="upload-success">
               <CardContent className="p-8 text-center">
                 <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-white mb-2">Video Submitted!</h2>
+                <h2 className="text-2xl font-bold text-navy-900 mb-2">Video Submitted!</h2>
                 <p className="text-gray-400 mb-6">Your witness recording has been uploaded. The notary will review it.</p>
                 <div className="flex gap-3 justify-center">
                   <Button onClick={() => { setUploadSuccess(false); setView('select'); setRecordedBlob(null); setRecordedUrl(null); }} className="bg-blue-600 hover:bg-blue-700">Record Another</Button>
@@ -174,14 +174,14 @@ const VideoWitness = () => {
                   <CardContent className="p-4 flex items-center gap-3">
                     <Video className="w-5 h-5 text-rose-400 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-white text-sm font-medium">{rec.instruction_type} verification</p>
+                      <p className="text-navy-900 text-sm font-medium">{rec.instruction_type} verification</p>
                       <p className="text-gray-500 text-xs">{new Date(rec.created_at).toLocaleString()} &middot; {(rec.file_size / 1024 / 1024).toFixed(1)}MB</p>
                     </div>
                     <span className={`px-2 py-0.5 rounded-full text-xs ${
                       rec.status === 'approved' ? 'bg-green-500/15 text-green-400' :
                       rec.status === 'rejected' ? 'bg-red-500/15 text-red-400' :
                       rec.status === 'under_review' ? 'bg-blue-500/15 text-blue-400' :
-                      'bg-amber-500/15 text-amber-400'
+                      'bg-coral-500/15 text-coral-600'
                     }`}>{rec.status}</span>
                   </CardContent>
                 </Card>
@@ -192,11 +192,11 @@ const VideoWitness = () => {
               {/* Select Request */}
               <Card className="bg-[#1a2332] border-gray-800" data-testid="select-request">
                 <CardContent className="p-5">
-                  <h2 className="text-lg font-semibold text-white mb-3">1. Select Notarization Request</h2>
+                  <h2 className="text-lg font-semibold text-navy-900 mb-3">1. Select Notarization Request</h2>
                   <select
                     value={requestId}
                     onChange={e => setRequestId(e.target.value)}
-                    className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white text-sm"
+                    className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-navy-900 text-sm"
                     data-testid="request-select"
                   >
                     <option value="">Choose a request...</option>
@@ -210,7 +210,7 @@ const VideoWitness = () => {
               {/* Select Verification Type */}
               <Card className="bg-[#1a2332] border-gray-800" data-testid="select-type">
                 <CardContent className="p-5">
-                  <h2 className="text-lg font-semibold text-white mb-3">2. Verification Type</h2>
+                  <h2 className="text-lg font-semibold text-navy-900 mb-3">2. Verification Type</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {instructions.map(instr => (
                       <button
@@ -221,7 +221,7 @@ const VideoWitness = () => {
                         }`}
                         data-testid={`type-${instr.id}`}
                       >
-                        <h3 className="text-white font-medium text-sm">{instr.title}</h3>
+                        <h3 className="text-navy-900 font-medium text-sm">{instr.title}</h3>
                         <p className="text-gray-500 text-xs mt-1">{instr.steps.length} steps &middot; ~{instr.duration_seconds}s</p>
                       </button>
                     ))}
@@ -245,7 +245,7 @@ const VideoWitness = () => {
               {currentInstr && (
                 <Card className="bg-[#1a2332] border-gray-800" data-testid="recording-instructions">
                   <CardContent className="p-4">
-                    <h3 className="text-white font-semibold text-sm mb-2 flex items-center gap-2">
+                    <h3 className="text-navy-900 font-semibold text-sm mb-2 flex items-center gap-2">
                       <Shield className="w-4 h-4 text-rose-400" /> Instructions
                     </h3>
                     <ol className="space-y-1">
@@ -272,7 +272,7 @@ const VideoWitness = () => {
                     {recording && (
                       <div className="absolute top-3 left-3 flex items-center gap-2 bg-red-600/90 px-2.5 py-1 rounded-full">
                         <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                        <span className="text-white text-xs font-medium">Recording</span>
+                        <span className="text-navy-900 text-xs font-medium">Recording</span>
                       </div>
                     )}
                   </div>

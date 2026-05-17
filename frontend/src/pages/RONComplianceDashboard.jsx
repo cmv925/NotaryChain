@@ -16,7 +16,7 @@ import axios from 'axios';
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const statusConfig = {
-  full: { label: 'Full RON', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: CheckCircle, dotColor: 'bg-emerald-500' },
+  full: { label: 'Full RON', color: 'bg-coral-500/20 text-coral-600 border-coral-200', icon: CheckCircle, dotColor: 'bg-coral-500' },
   limited: { label: 'Limited', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: AlertTriangle, dotColor: 'bg-yellow-500' },
   pending: { label: 'Pending', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', icon: Clock, dotColor: 'bg-blue-500' },
   prohibited: { label: 'Prohibited', color: 'bg-red-500/20 text-red-400 border-red-500/30', icon: XCircle, dotColor: 'bg-red-500' },
@@ -85,10 +85,10 @@ const RONComplianceDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/admin')} className="text-gray-400 hover:text-white">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/admin')} className="text-gray-400 hover:text-navy-900">
                 <ArrowLeft className="w-5 h-5 sm:mr-2" /><span className="hidden sm:inline">Admin</span>
               </Button>
-              <h1 className="text-white font-semibold flex items-center gap-2 text-sm sm:text-base">
+              <h1 className="text-navy-900 font-semibold flex items-center gap-2 text-sm sm:text-base">
                 <Shield className="w-5 h-5 text-[#00d4aa]" /> RON Compliance Engine
               </h1>
             </div>
@@ -102,8 +102,8 @@ const RONComplianceDashboard = () => {
         {stats && (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" data-testid="compliance-stats">
             {[
-              { label: 'Jurisdictions', value: stats.total_jurisdictions, color: 'text-white' },
-              { label: 'Full RON', value: stats.full_ron, color: 'text-emerald-400' },
+              { label: 'Jurisdictions', value: stats.total_jurisdictions, color: 'text-navy-900' },
+              { label: 'Full RON', value: stats.full_ron, color: 'text-coral-600' },
               { label: 'Limited', value: stats.limited_ron, color: 'text-yellow-400' },
               { label: 'Pending', value: stats.pending_legislation, color: 'text-blue-400' },
               { label: 'Prohibited', value: stats.prohibited, color: 'text-red-400' },
@@ -130,7 +130,7 @@ const RONComplianceDashboard = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTab === tab.id ? 'bg-[#00d4aa] text-black' : 'text-gray-400 hover:text-white'
+                activeTab === tab.id ? 'bg-[#00d4aa] text-black' : 'text-gray-400 hover:text-navy-900'
               }`}
               data-testid={`tab-${tab.id}`}
             >
@@ -149,7 +149,7 @@ const RONComplianceDashboard = () => {
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   placeholder="Search state..."
-                  className="bg-[#1a2332] border-gray-700 text-white pl-10"
+                  className="bg-[#1a2332] border-gray-700 text-navy-900 pl-10"
                   data-testid="state-search"
                 />
               </div>
@@ -180,7 +180,7 @@ const RONComplianceDashboard = () => {
                   <div key={status}>
                     <div className="flex items-center gap-2 mb-3">
                       <div className={`w-2.5 h-2.5 rounded-full ${cfg.dotColor}`} />
-                      <h3 className="text-white font-medium text-sm">{cfg.label} ({stateList.length})</h3>
+                      <h3 className="text-navy-900 font-medium text-sm">{cfg.label} ({stateList.length})</h3>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" data-testid={`state-grid-${status}`}>
                       {stateList.map(state => {
@@ -194,7 +194,7 @@ const RONComplianceDashboard = () => {
                             >
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                  <span className="text-white font-mono font-bold text-sm bg-[#0d1b2a] px-2 py-1 rounded">{state.state_code}</span>
+                                  <span className="text-navy-900 font-mono font-bold text-sm bg-[#0d1b2a] px-2 py-1 rounded">{state.state_code}</span>
                                   <span className="text-gray-300 text-sm">{state.name}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -252,7 +252,7 @@ const RONComplianceDashboard = () => {
         {activeTab === 'violations' && (
           <Card className="bg-[#1a2332] border-gray-800" data-testid="violations-list">
             <CardContent className="p-6">
-              <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+              <h3 className="text-navy-900 font-semibold mb-4 flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-red-400" /> Compliance Violations & Warnings
               </h3>
               {violations.length === 0 ? (
@@ -266,7 +266,7 @@ const RONComplianceDashboard = () => {
                     <div key={v.id || i} className="bg-[#0d1b2a] rounded-lg p-4 border border-gray-700" data-testid={`violation-${i}`}>
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-white font-mono font-bold text-sm bg-[#1a2332] px-2 py-0.5 rounded">{v.state_code}</span>
+                          <span className="text-navy-900 font-mono font-bold text-sm bg-[#1a2332] px-2 py-0.5 rounded">{v.state_code}</span>
                           <span className="text-gray-300 text-sm">{v.document_type}</span>
                           {!v.compliant && <Badge className="bg-red-500/20 text-red-400 text-[10px]">Failed</Badge>}
                           {v.compliant && v.warnings?.length > 0 && <Badge className="bg-yellow-500/20 text-yellow-400 text-[10px]">Warning</Badge>}
@@ -295,14 +295,14 @@ const RONComplianceDashboard = () => {
           <Card className="bg-[#1a2332] border-gray-800" data-testid="activity-log">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-white font-semibold flex items-center gap-2">
+                <h3 className="text-navy-900 font-semibold flex items-center gap-2">
                   <Activity className="w-5 h-5 text-blue-400" /> Validation Activity
                 </h3>
                 {activity?.summary && (
                   <div className="flex gap-3 text-xs">
-                    <span className="text-gray-400">Checks: <span className="text-white">{activity.summary.total_checks}</span></span>
+                    <span className="text-gray-400">Checks: <span className="text-navy-900">{activity.summary.total_checks}</span></span>
                     <span className="text-gray-400">Failed: <span className="text-red-400">{activity.summary.failed}</span></span>
-                    <span className="text-gray-400">Pass Rate: <span className="text-emerald-400">{activity.summary.pass_rate}%</span></span>
+                    <span className="text-gray-400">Pass Rate: <span className="text-coral-600">{activity.summary.pass_rate}%</span></span>
                   </div>
                 )}
               </div>
@@ -317,7 +317,7 @@ const RONComplianceDashboard = () => {
                       ) : (
                         <XCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
                       )}
-                      <span className="text-white font-mono text-sm w-8">{a.state_code}</span>
+                      <span className="text-navy-900 font-mono text-sm w-8">{a.state_code}</span>
                       <span className="text-gray-300 text-sm flex-1">{a.document_type}</span>
                       <span className="text-gray-500 text-xs">{a.signer_count} signer(s)</span>
                       <span className="text-gray-500 text-xs">{new Date(a.timestamp).toLocaleString()}</span>

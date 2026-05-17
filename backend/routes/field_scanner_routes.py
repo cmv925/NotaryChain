@@ -56,6 +56,50 @@ class ScanCreate(BaseModel):
     run_ai: bool = True
 
 
+class PublicDemoScan(BaseModel):
+    pages: List[ScanPage] = Field(min_length=1, max_length=3)
+
+
+@router.post("/demo")
+async def public_demo_scan(body: PublicDemoScan, request: Request):
+    """
+    Public, rate-limited demo of the AI forgery scanner.
+    • No auth, no Hedera anchoring, no persistent record.
+    • Returns: doc_hash, ai_analysis (GPT-5.2 Vision).
+    • Limit: 5 demos per IP per UTC day.
+    """
+    from datetime import datetime, timezone
+    from services.field_scanner_service import canonical_document_hash, analyze_pages_for_forgery
+
+    ip = (request.headers.get("x-forwarded-for", "").split(",")[0].strip()
+          or (request.client.host if request.client else "unknown"))
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    bucket = f"{ip}:{today}"
+
+    used = await db.scanner_demo_quota.count_documents({"bucket": bucket})
+    if used >= 5:
+        raise HTTPException(status_code=429, detail=f"Daily demo limit reached (5 per day). Sign up for unlimited scans.")
+    await db.scanner_demo_quota.insert_one({"bucket": bucket, "ip": ip, "at": datetime.now(timezone.utc).isoformat()})
+
+    page_b64_list = [p.image_base64 for p in body.pages]
+    doc_hash, page_hashes = canonical_document_hash(page_b64_list)
+    analysis = await analyze_pages_for_forgery(page_b64_list)
+
+    return {
+        "document_hash": doc_hash,
+        "page_hashes": page_hashes,
+        "page_count": len(body.pages),
+        "ai_analysis": analysis,
+        "demo_only": True,
+        "demos_remaining_today": max(0, 5 - used - 1),
+        "upsell": {
+            "anchor_on_hedera": False,
+            "persistent_record": False,
+            "message": "Demo verdict is not persisted or anchored. Sign up to seal your scan on Hedera mainnet and keep a permanent record.",
+        },
+    }
+
+
 @router.post("/scans")
 async def create_scan(body: ScanCreate, request: Request):
     user = await _get_user(request)

@@ -72,7 +72,7 @@ const PricingPage = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Pricing' }]} />
           <div className="text-center mb-10 sm:mb-16">
-            <h1 className="text-3xl sm:text-5xl font-bold text-white mb-3 sm:mb-4">Simple, Transparent Pricing</h1>
+            <h1 className="text-3xl sm:text-5xl font-bold text-navy-900 mb-3 sm:mb-4">Simple, Transparent Pricing</h1>
             <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
               Choose the plan that fits your needs. Upgrade or downgrade anytime.
             </p>
@@ -93,7 +93,7 @@ const PricingPage = () => {
                 >
                   {isPopular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="bg-blue-600 text-white text-xs font-bold px-4 py-1 rounded-full">Most Popular</span>
+                      <span className="bg-blue-600 text-navy-900 text-xs font-bold px-4 py-1 rounded-full">Most Popular</span>
                     </div>
                   )}
                   <CardContent className="p-6 sm:p-8">
@@ -102,14 +102,14 @@ const PricingPage = () => {
                         <Icon className={`w-5 h-5 ${accent.text}`} />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-white">{plan.name}</h3>
+                        <h3 className="text-lg font-bold text-navy-900">{plan.name}</h3>
                         <p className="text-gray-500 text-xs">{plan.description}</p>
                       </div>
                     </div>
 
                     <div className="mb-6">
                       <div className="flex items-baseline gap-1">
-                        <span className="text-4xl font-bold text-white">${plan.price === 0 ? '0' : plan.price}</span>
+                        <span className="text-4xl font-bold text-navy-900">${plan.price === 0 ? '0' : plan.price}</span>
                         <span className="text-gray-500 text-sm">/{plan.interval}</span>
                       </div>
                       {plan.discount_pct > 0 && (
@@ -122,7 +122,7 @@ const PricingPage = () => {
                     </div>
 
                     <Button
-                      className={`w-full mb-6 text-white ${isCurrent ? 'bg-gray-700 cursor-default' : accent.btn}`}
+                      className={`w-full mb-6 text-navy-900 ${isCurrent ? 'bg-gray-700 cursor-default' : accent.btn}`}
                       disabled={isCurrent || loading === plan.id}
                       onClick={() => handleSubscribe(plan.id)}
                       data-testid={`subscribe-btn-${plan.id}`}

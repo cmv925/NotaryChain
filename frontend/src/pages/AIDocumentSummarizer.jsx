@@ -73,7 +73,7 @@ const AIDocumentSummarizer = () => {
     setExpandedSections(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const complexityColors = { simple: 'text-green-400 bg-green-500/15', moderate: 'text-amber-400 bg-amber-500/15', complex: 'text-red-400 bg-red-500/15' };
+  const complexityColors = { simple: 'text-green-400 bg-green-500/15', moderate: 'text-coral-600 bg-coral-500/15', complex: 'text-red-400 bg-red-500/15' };
 
   return (
     <div className="min-h-screen bg-[#0f1825]">
@@ -83,7 +83,7 @@ const AIDocumentSummarizer = () => {
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'AI Summarizer' }]} />
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 flex items-center gap-3">
                 <FileSearch className="w-7 h-7 text-teal-400" />
                 AI Document Summarizer
               </h1>
@@ -96,7 +96,7 @@ const AIDocumentSummarizer = () => {
             <div>
               <Card className="bg-[#1a2332] border-gray-800 mb-4" data-testid="upload-panel">
                 <CardContent className="p-5">
-                  <h3 className="text-sm font-semibold text-white mb-3">Upload Document</h3>
+                  <h3 className="text-sm font-semibold text-navy-900 mb-3">Upload Document</h3>
                   <div
                     onClick={() => fileRef.current?.click()}
                     className="border-2 border-dashed border-gray-700 rounded-lg p-6 text-center cursor-pointer hover:border-teal-500/50 transition-colors"
@@ -157,7 +157,7 @@ const AIDocumentSummarizer = () => {
                           onClick={() => loadSummary(s.id)}
                           className="w-full text-left p-2 bg-[#0d1520] rounded border border-gray-800 hover:border-teal-500/30 transition-colors"
                         >
-                          <p className="text-white text-xs truncate">{s.file_name}</p>
+                          <p className="text-navy-900 text-xs truncate">{s.file_name}</p>
                           <p className="text-gray-500 text-[10px]">{s.result?.document_type_detected} &middot; {new Date(s.created_at).toLocaleDateString()}</p>
                         </button>
                       ))}
@@ -184,7 +184,7 @@ const AIDocumentSummarizer = () => {
                   <Card className="bg-[#1a2332] border-gray-800">
                     <CardContent className="p-5">
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-white font-semibold flex items-center gap-2">
+                        <h3 className="text-navy-900 font-semibold flex items-center gap-2">
                           <BookOpen className="w-4 h-4 text-teal-400" />
                           Summary
                           {result.file_name && <span className="text-gray-500 text-xs font-normal">— {result.file_name}</span>}
@@ -209,7 +209,7 @@ const AIDocumentSummarizer = () => {
                     <Card className="bg-[#1a2332] border-gray-800">
                       <CardContent className="p-4">
                         <button onClick={() => toggleSection('terms')} className="w-full flex items-center justify-between">
-                          <h3 className="text-white font-semibold text-sm flex items-center gap-2"><Tag className="w-4 h-4 text-purple-400" /> Key Terms ({result.result.key_terms.length})</h3>
+                          <h3 className="text-navy-900 font-semibold text-sm flex items-center gap-2"><Tag className="w-4 h-4 text-purple-400" /> Key Terms ({result.result.key_terms.length})</h3>
                           {expandedSections.terms ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
                         </button>
                         {expandedSections.terms !== false && (
@@ -227,7 +227,7 @@ const AIDocumentSummarizer = () => {
                   {result.result?.parties?.length > 0 && (
                     <Card className="bg-[#1a2332] border-gray-800">
                       <CardContent className="p-4">
-                        <h3 className="text-white font-semibold text-sm flex items-center gap-2 mb-2"><Users className="w-4 h-4 text-blue-400" /> Parties</h3>
+                        <h3 className="text-navy-900 font-semibold text-sm flex items-center gap-2 mb-2"><Users className="w-4 h-4 text-blue-400" /> Parties</h3>
                         <div className="flex flex-wrap gap-2">
                           {result.result.parties.map((p, i) => (
                             <span key={i} className="px-2.5 py-1 bg-blue-500/10 text-blue-400 text-xs rounded border border-blue-500/20">
@@ -244,9 +244,9 @@ const AIDocumentSummarizer = () => {
                     {result.result?.important_dates?.length > 0 && (
                       <Card className="bg-[#1a2332] border-gray-800">
                         <CardContent className="p-4">
-                          <h3 className="text-white font-semibold text-sm flex items-center gap-2 mb-2"><Calendar className="w-4 h-4 text-amber-400" /> Dates</h3>
+                          <h3 className="text-navy-900 font-semibold text-sm flex items-center gap-2 mb-2"><Calendar className="w-4 h-4 text-coral-600" /> Dates</h3>
                           {result.result.important_dates.map((d, i) => (
-                            <div key={i} className="text-xs mb-1"><span className="text-amber-400">{d.date}</span> <span className="text-gray-500">— {d.context}</span></div>
+                            <div key={i} className="text-xs mb-1"><span className="text-coral-600">{d.date}</span> <span className="text-gray-500">— {d.context}</span></div>
                           ))}
                         </CardContent>
                       </Card>
@@ -254,7 +254,7 @@ const AIDocumentSummarizer = () => {
                     {result.result?.key_obligations?.length > 0 && (
                       <Card className="bg-[#1a2332] border-gray-800">
                         <CardContent className="p-4">
-                          <h3 className="text-white font-semibold text-sm flex items-center gap-2 mb-2"><Scale className="w-4 h-4 text-green-400" /> Obligations</h3>
+                          <h3 className="text-navy-900 font-semibold text-sm flex items-center gap-2 mb-2"><Scale className="w-4 h-4 text-green-400" /> Obligations</h3>
                           {result.result.key_obligations.map((o, i) => (
                             <p key={i} className="text-gray-400 text-xs mb-1 flex gap-1">
                               <span className="text-green-400">&#8226;</span> {o}

@@ -253,7 +253,7 @@ const NotaryDashboard = () => {
       pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
       assigned: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
       in_progress: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-      reviewing: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+      reviewing: 'bg-coral-500/20 text-coral-600 border-coral-200',
       completed: 'bg-green-500/20 text-green-400 border-green-500/30',
       rejected: 'bg-red-500/20 text-red-400 border-red-500/30',
     };
@@ -266,8 +266,8 @@ const NotaryDashboard = () => {
     
     if (scheduled) {
       const hoursUntil = (scheduled - now) / (1000 * 60 * 60);
-      if (hoursUntil < 0) return { label: 'Overdue', class: 'bg-red-500 text-white' };
-      if (hoursUntil < 2) return { label: 'Urgent', class: 'bg-orange-500 text-white' };
+      if (hoursUntil < 0) return { label: 'Overdue', class: 'bg-red-500 text-navy-900' };
+      if (hoursUntil < 2) return { label: 'Urgent', class: 'bg-coral-500 text-navy-900' };
       if (hoursUntil < 24) return { label: 'Today', class: 'bg-yellow-500 text-black' };
     }
     return null;
@@ -295,7 +295,7 @@ const NotaryDashboard = () => {
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
         <div className="text-center">
           <RefreshCw className="w-12 h-12 text-[#00d4aa] animate-spin mx-auto mb-4" />
-          <div className="text-white text-xl">Loading dashboard...</div>
+          <div className="text-navy-900 text-xl">Loading dashboard...</div>
         </div>
       </div>
     );
@@ -310,7 +310,7 @@ const NotaryDashboard = () => {
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
                 <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-[#00d4aa]" />
-                <span className="text-lg sm:text-xl font-bold text-white">
+                <span className="text-lg sm:text-xl font-bold text-navy-900">
                   Notary<span className="text-[#00d4aa]">Chain</span>
                 </span>
               </div>
@@ -326,7 +326,7 @@ const NotaryDashboard = () => {
                 onClick={fetchDashboardData}
                 variant="ghost"
                 size="sm"
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-navy-900"
                 data-testid="refresh-btn"
               >
                 <RefreshCw className="w-4 h-4" />
@@ -335,7 +335,7 @@ const NotaryDashboard = () => {
                 onClick={() => navigate('/dashboard')}
                 variant="outline"
                 size="sm"
-                className="border-[#333] text-gray-300 hover:text-white hidden sm:flex"
+                className="border-[#333] text-gray-300 hover:text-navy-900 hidden sm:flex"
               >
                 {t('notary.user_view')}
               </Button>
@@ -343,7 +343,7 @@ const NotaryDashboard = () => {
                 onClick={handleLogout}
                 variant="outline"
                 size="sm"
-                className="border-[#333] text-gray-300 hover:text-white hover:border-red-500"
+                className="border-[#333] text-gray-300 hover:text-navy-900 hover:border-red-500"
               >
                 <LogOut className="w-4 h-4" />
               </Button>
@@ -360,7 +360,7 @@ const NotaryDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-xs">{t('notary.todays_earnings')}</p>
-                  <p className="text-2xl font-bold text-white">${todayEarnings}</p>
+                  <p className="text-2xl font-bold text-navy-900">${todayEarnings}</p>
                 </div>
                 <DollarSign className="w-8 h-8 text-green-400" />
               </div>
@@ -372,7 +372,7 @@ const NotaryDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-xs">{t('notary.total_completed')}</p>
-                  <p className="text-2xl font-bold text-white">{stats?.total_completed || 0}</p>
+                  <p className="text-2xl font-bold text-navy-900">{stats?.total_completed || 0}</p>
                 </div>
                 <CheckCircle className="w-8 h-8 text-blue-400" />
               </div>
@@ -384,7 +384,7 @@ const NotaryDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-xs">{t('notary.in_progress')}</p>
-                  <p className="text-2xl font-bold text-white">{assignedRequests.length}</p>
+                  <p className="text-2xl font-bold text-navy-900">{assignedRequests.length}</p>
                 </div>
                 <Clock className="w-8 h-8 text-yellow-400" />
               </div>
@@ -396,7 +396,7 @@ const NotaryDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-xs">{t('notary.available_label')}</p>
-                  <p className="text-2xl font-bold text-white">{pendingRequests.length}</p>
+                  <p className="text-2xl font-bold text-navy-900">{pendingRequests.length}</p>
                 </div>
                 <FileText className="w-8 h-8 text-purple-400" />
               </div>
@@ -408,7 +408,7 @@ const NotaryDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-xs">{t('notary.lifetime_earnings')}</p>
-                  <p className="text-2xl font-bold text-white">${estimatedEarnings}</p>
+                  <p className="text-2xl font-bold text-navy-900">${estimatedEarnings}</p>
                 </div>
                 <Award className="w-8 h-8 text-[#00d4aa]" />
               </div>
@@ -435,7 +435,7 @@ const NotaryDashboard = () => {
                 const activeSession = assignedRequests.find(r => r.status === 'in_progress');
                 if (activeSession) navigate(`/session/${activeSession.id}`);
               }}
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-green-600 hover:bg-green-700 text-navy-900"
             >
               <Play className="w-4 h-4 mr-2" />
               {t('notary.rejoin')}
@@ -465,7 +465,7 @@ const NotaryDashboard = () => {
                     className={`px-4 py-2 rounded-md font-medium transition-all flex items-center gap-2 ${
                       activeTab === tab.id
                         ? `bg-${tab.color}-500/20 text-${tab.color}-400`
-                        : 'text-gray-400 hover:text-white hover:bg-[#333]/50'
+                        : 'text-gray-400 hover:text-navy-900 hover:bg-[#333]/50'
                     }`}
                     data-testid={`${tab.id}-tab`}
                   >
@@ -488,7 +488,7 @@ const NotaryDashboard = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t('notary.search_requests')}
-                    className="pl-9 w-48 bg-[#1a1a2e] border-[#333] text-white"
+                    className="pl-9 w-48 bg-[#1a1a2e] border-[#333] text-navy-900"
                   />
                 </div>
               </div>
@@ -575,8 +575,8 @@ const NotaryDashboard = () => {
                 <div data-testid="schedule-tab-content">
                   <Card className="bg-[#1a1a2e] border-[#333] mb-4">
                     <CardContent className="p-4">
-                      <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-                        <CalendarClock className="w-5 h-5 text-amber-400" />
+                      <h2 className="text-lg font-semibold text-navy-900 flex items-center gap-2 mb-4">
+                        <CalendarClock className="w-5 h-5 text-coral-600" />
                         Booking Availability
                       </h2>
                       <p className="text-gray-400 text-sm mb-4">Set your weekly schedule and manage blocked dates. Clients can book sessions from the Marketplace.</p>
@@ -593,7 +593,7 @@ const NotaryDashboard = () => {
             {/* Performance Card */}
             <Card className="bg-[#1a1a2e] border-[#333]">
               <CardHeader className="pb-2">
-                <CardTitle className="text-white text-sm flex items-center gap-2">
+                <CardTitle className="text-navy-900 text-sm flex items-center gap-2">
                   <BarChart3 className="w-4 h-4 text-[#00d4aa]" />
                   Performance
                 </CardTitle>
@@ -602,7 +602,7 @@ const NotaryDashboard = () => {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-gray-400">This Week</span>
-                    <span className="text-white">{Math.min(completedRequests.length, 7)} / 10</span>
+                    <span className="text-navy-900">{Math.min(completedRequests.length, 7)} / 10</span>
                   </div>
                   <Progress value={Math.min(completedRequests.length, 7) * 10} className="h-2" />
                 </div>
@@ -611,7 +611,7 @@ const NotaryDashboard = () => {
                     <Star className="w-4 h-4 text-yellow-400" />
                     <span className="text-gray-400 text-sm">Rating</span>
                   </div>
-                  <span className="text-white font-semibold">4.9</span>
+                  <span className="text-navy-900 font-semibold">4.9</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -626,12 +626,12 @@ const NotaryDashboard = () => {
             {/* Quick Actions */}
             <Card className="bg-[#1a1a2e] border-[#333]">
               <CardHeader className="pb-2">
-                <CardTitle className="text-white text-sm">Quick Actions</CardTitle>
+                <CardTitle className="text-navy-900 text-sm">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Button
                   variant="outline"
-                  className="w-full justify-start border-[#333] text-gray-300 hover:text-white"
+                  className="w-full justify-start border-[#333] text-gray-300 hover:text-navy-900"
                   onClick={() => navigate('/transactions')}
                 >
                   <Briefcase className="w-4 h-4 mr-2" />
@@ -639,7 +639,7 @@ const NotaryDashboard = () => {
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full justify-start border-[#333] text-gray-300 hover:text-white"
+                  className="w-full justify-start border-[#333] text-gray-300 hover:text-navy-900"
                   onClick={() => navigate('/notary/journal')}
                   data-testid="notary-journal-link"
                 >
@@ -648,7 +648,7 @@ const NotaryDashboard = () => {
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full justify-start border-[#333] text-gray-300 hover:text-white"
+                  className="w-full justify-start border-[#333] text-gray-300 hover:text-navy-900"
                   onClick={() => navigate('/notary/seal')}
                   data-testid="digital-seal-link"
                 >
@@ -657,7 +657,7 @@ const NotaryDashboard = () => {
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full justify-start border-[#333] text-gray-300 hover:text-white"
+                  className="w-full justify-start border-[#333] text-gray-300 hover:text-navy-900"
                   onClick={() => setActiveTab('pending')}
                 >
                   <FileText className="w-4 h-4 mr-2" />
@@ -665,7 +665,7 @@ const NotaryDashboard = () => {
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full justify-start border-[#333] text-gray-300 hover:text-white"
+                  className="w-full justify-start border-[#333] text-gray-300 hover:text-navy-900"
                   onClick={() => navigate('/notary/onboarding')}
                 >
                   <Settings className="w-4 h-4 mr-2" />
@@ -682,7 +682,7 @@ const NotaryDashboard = () => {
                     <Bell className="w-4 h-4 text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-white text-sm font-medium">Pro Tip</p>
+                    <p className="text-navy-900 text-sm font-medium">Pro Tip</p>
                     <p className="text-gray-400 text-xs mt-1">
                       Complete identity verification before starting video sessions for smoother notarizations.
                     </p>
@@ -756,7 +756,7 @@ const RequestCard = ({
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="text-white font-semibold truncate">{request.document_name}</h3>
+                  <h3 className="text-navy-900 font-semibold truncate">{request.document_name}</h3>
                   <Badge className={`${getStatusBadge(request.status)} text-xs`}>
                     {request.status?.replace('_', ' ')}
                   </Badge>
@@ -777,7 +777,7 @@ const RequestCard = ({
                   onClick={onViewDetails}
                   variant="ghost"
                   size="sm"
-                  className="text-gray-400 hover:text-white"
+                  className="text-gray-400 hover:text-navy-900"
                 >
                   <Eye className="w-4 h-4" />
                 </Button>
@@ -787,7 +787,7 @@ const RequestCard = ({
                     onClick={onAccept}
                     disabled={processingAction === request.id}
                     size="sm"
-                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                    className="bg-purple-600 hover:bg-purple-700 text-navy-900"
                     data-testid={`accept-${request.id}`}
                   >
                     {processingAction === request.id ? (
@@ -807,7 +807,7 @@ const RequestCard = ({
                       onClick={onStartSession}
                       disabled={processingAction === request.id}
                       size="sm"
-                      className="bg-green-600 hover:bg-green-700 text-white"
+                      className="bg-green-600 hover:bg-green-700 text-navy-900"
                       data-testid={`start-session-${request.id}`}
                     >
                       <Video className="w-4 h-4 mr-1" />
@@ -902,7 +902,7 @@ const RequestDetailModal = ({
         {/* Header */}
         <div className="p-6 border-b border-[#333] flex items-center justify-between sticky top-0 bg-[#1a1a2e] z-10">
           <div>
-            <h2 className="text-xl font-bold text-white">{request.document_name}</h2>
+            <h2 className="text-xl font-bold text-navy-900">{request.document_name}</h2>
             <div className="flex items-center gap-2 mt-1">
               <Badge className={getStatusBadge(request.status)}>
                 {request.status?.replace('_', ' ')}
@@ -915,7 +915,7 @@ const RequestDetailModal = ({
           <Button
             variant="ghost"
             onClick={onClose}
-            className="text-gray-400 hover:text-white"
+            className="text-gray-400 hover:text-navy-900"
           >
             <XCircle className="w-5 h-5" />
           </Button>
@@ -926,15 +926,15 @@ const RequestDetailModal = ({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-[#0d1b2a] rounded-lg p-3">
               <p className="text-gray-500 text-xs mb-1">Type</p>
-              <p className="text-white text-sm capitalize">{request.notarization_type}</p>
+              <p className="text-navy-900 text-sm capitalize">{request.notarization_type}</p>
             </div>
             <div className="bg-[#0d1b2a] rounded-lg p-3">
               <p className="text-gray-500 text-xs mb-1">Signers</p>
-              <p className="text-white text-sm">{request.signers?.length || 1}</p>
+              <p className="text-navy-900 text-sm">{request.signers?.length || 1}</p>
             </div>
             <div className="bg-[#0d1b2a] rounded-lg p-3">
               <p className="text-gray-500 text-xs mb-1">Scheduled</p>
-              <p className="text-white text-sm">
+              <p className="text-navy-900 text-sm">
                 {request.scheduled_time
                   ? new Date(request.scheduled_time).toLocaleDateString()
                   : 'Flexible'}
@@ -942,7 +942,7 @@ const RequestDetailModal = ({
             </div>
             <div className="bg-[#0d1b2a] rounded-lg p-3">
               <p className="text-gray-500 text-xs mb-1">Created</p>
-              <p className="text-white text-sm">{new Date(request.created_at).toLocaleDateString()}</p>
+              <p className="text-navy-900 text-sm">{new Date(request.created_at).toLocaleDateString()}</p>
             </div>
           </div>
 
@@ -957,7 +957,7 @@ const RequestDetailModal = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => copyToClipboard(request.id)}
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-navy-900"
               >
                 <Copy className="w-4 h-4" />
               </Button>
@@ -967,7 +967,7 @@ const RequestDetailModal = ({
           {/* Signers */}
           {request.signers?.length > 0 && (
             <div>
-              <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+              <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                 <User className="w-4 h-4 text-blue-500" />
                 Signers ({request.signers.length})
               </h3>
@@ -978,7 +978,7 @@ const RequestDetailModal = ({
                       <User className="w-4 h-4 text-blue-400" />
                     </div>
                     <div>
-                      <p className="text-white text-sm">{signer.name || 'N/A'}</p>
+                      <p className="text-navy-900 text-sm">{signer.name || 'N/A'}</p>
                       <p className="text-gray-500 text-xs">{signer.email || 'No email'}</p>
                     </div>
                   </div>
@@ -989,7 +989,7 @@ const RequestDetailModal = ({
 
           {/* Verification Status */}
           <div>
-            <h3 className="text-white font-semibold mb-3">Verification Status</h3>
+            <h3 className="text-navy-900 font-semibold mb-3">Verification Status</h3>
             <div className="grid grid-cols-2 gap-3">
               <div className={`rounded-lg p-4 border ${
                 request.biometric_verified 
@@ -1021,15 +1021,15 @@ const RequestDetailModal = ({
           {/* AI Co-pilot */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-white font-semibold flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-amber-400" />
+              <h3 className="text-navy-900 font-semibold flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-coral-600" />
                 AI Co-pilot
               </h3>
               <Button
                 onClick={onRunCopilot}
                 disabled={loadingCopilot}
                 size="sm"
-                className="bg-amber-600/80 hover:bg-amber-600 text-white text-xs"
+                className="bg-amber-600/80 hover:bg-amber-600 text-navy-900 text-xs"
                 data-testid="run-copilot-btn"
               >
                 {loadingCopilot ? <RefreshCw className="w-3 h-3 mr-1 animate-spin" /> : <Brain className="w-3 h-3 mr-1" />}
@@ -1039,7 +1039,7 @@ const RequestDetailModal = ({
 
             {loadingCopilot && (
               <div className="bg-[#0d1b2a] rounded-lg p-6 text-center">
-                <RefreshCw className="w-6 h-6 text-amber-400 animate-spin mx-auto mb-2" />
+                <RefreshCw className="w-6 h-6 text-coral-600 animate-spin mx-auto mb-2" />
                 <p className="text-gray-400 text-sm">AI Co-pilot is analyzing...</p>
               </div>
             )}
@@ -1053,11 +1053,11 @@ const RequestDetailModal = ({
                     <div className="flex items-center gap-1.5">
                       <Gauge className="w-4 h-4 text-gray-400" />
                       <span className="text-gray-400 text-xs">Readiness:</span>
-                      <span className="text-white text-xs font-bold">{copilotData.readiness_score ?? '-'}/100</span>
+                      <span className="text-navy-900 text-xs font-bold">{copilotData.readiness_score ?? '-'}/100</span>
                     </div>
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
                       copilotData.risk_level === 'low' ? 'bg-green-500/15 text-green-400' :
-                      copilotData.risk_level === 'medium' ? 'bg-amber-500/15 text-amber-400' :
+                      copilotData.risk_level === 'medium' ? 'bg-coral-500/15 text-coral-600' :
                       'bg-red-500/15 text-red-400'
                     }`}>
                       {copilotData.risk_level?.toUpperCase()} RISK
@@ -1068,14 +1068,14 @@ const RequestDetailModal = ({
                 {/* Key Highlights */}
                 {copilotData.key_highlights?.length > 0 && (
                   <div className="bg-[#0d1b2a] rounded-lg p-3">
-                    <h4 className="text-white text-xs font-semibold mb-2">Key Highlights</h4>
+                    <h4 className="text-navy-900 text-xs font-semibold mb-2">Key Highlights</h4>
                     <div className="space-y-1.5">
                       {copilotData.key_highlights.map((h, i) => (
                         <div key={i} className="flex items-center justify-between text-xs">
                           <span className="text-gray-400">{h.label}</span>
                           <span className={`font-medium ${
                             h.status === 'ok' ? 'text-green-400' :
-                            h.status === 'warning' ? 'text-amber-400' : 'text-red-400'
+                            h.status === 'warning' ? 'text-coral-600' : 'text-red-400'
                           }`}>{h.value}</span>
                         </div>
                       ))}
@@ -1095,7 +1095,7 @@ const RequestDetailModal = ({
                           <div className="flex items-center gap-1.5 mb-0.5">
                             <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
                               f.severity === 'high' ? 'bg-red-500/20 text-red-400' :
-                              f.severity === 'medium' ? 'bg-amber-500/20 text-amber-400' :
+                              f.severity === 'medium' ? 'bg-coral-500/20 text-coral-600' :
                               'bg-blue-500/20 text-blue-400'
                             }`}>{f.severity?.toUpperCase()}</span>
                             <span className="text-gray-300">{f.description}</span>
@@ -1110,7 +1110,7 @@ const RequestDetailModal = ({
                 {/* Checklist */}
                 {copilotData.checklist?.length > 0 && (
                   <div className="bg-[#0d1b2a] rounded-lg p-3">
-                    <h4 className="text-white text-xs font-semibold mb-2 flex items-center gap-1.5">
+                    <h4 className="text-navy-900 text-xs font-semibold mb-2 flex items-center gap-1.5">
                       <ClipboardList className="w-3.5 h-3.5 text-blue-400" /> Pre-Notarization Checklist
                     </h4>
                     <div className="space-y-1">
@@ -1129,10 +1129,10 @@ const RequestDetailModal = ({
                 {/* Recommendations */}
                 {copilotData.recommendations?.length > 0 && (
                   <div className="bg-[#0d1b2a] rounded-lg p-3">
-                    <h4 className="text-white text-xs font-semibold mb-2">Recommendations</h4>
+                    <h4 className="text-navy-900 text-xs font-semibold mb-2">Recommendations</h4>
                     {copilotData.recommendations.map((r, i) => (
                       <p key={i} className="text-gray-400 text-xs mb-1 flex gap-1.5">
-                        <span className="text-amber-400">&#8226;</span> {r}
+                        <span className="text-coral-600">&#8226;</span> {r}
                       </p>
                     ))}
                   </div>
@@ -1161,7 +1161,7 @@ const RequestDetailModal = ({
                       {Object.entries(journalPrefill).filter(([k]) => k !== '_id').map(([key, val]) => (
                         <div key={key}>
                           <span className="text-gray-500 capitalize">{key.replace(/_/g, ' ')}:</span>
-                          <span className="text-white ml-1">{String(val) || '-'}</span>
+                          <span className="text-navy-900 ml-1">{String(val) || '-'}</span>
                         </div>
                       ))}
                     </div>
@@ -1183,7 +1183,7 @@ const RequestDetailModal = ({
 
           {/* AI Document Analysis (legacy) */}
           <div>
-            <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+            <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
               <Brain className="w-4 h-4 text-purple-500" />
               AI Document Analysis
             </h3>
@@ -1196,12 +1196,12 @@ const RequestDetailModal = ({
               <div className="bg-[#0d1b2a] rounded-lg p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400 text-sm">Document Type Detected</span>
-                  <span className="text-white">{aiAnalysis.document_type || 'Unknown'}</span>
+                  <span className="text-navy-900">{aiAnalysis.document_type || 'Unknown'}</span>
                 </div>
                 {aiAnalysis.signatures_detected !== undefined && (
                   <div className="flex items-center justify-between">
                     <span className="text-gray-400 text-sm">Signatures Detected</span>
-                    <span className="text-white">{aiAnalysis.signatures_detected}</span>
+                    <span className="text-navy-900">{aiAnalysis.signatures_detected}</span>
                   </div>
                 )}
                 {aiAnalysis.key_entities?.length > 0 && (
@@ -1228,7 +1228,7 @@ const RequestDetailModal = ({
           {/* Blockchain Info */}
           {request.hcs_topic_id && (
             <div className="bg-[#0d1b2a] rounded-lg p-4">
-              <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+              <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                 <Link2 className="w-4 h-4 text-[#00d4aa]" />
                 Blockchain Record
               </h3>
@@ -1255,7 +1255,7 @@ const RequestDetailModal = ({
           {/* Notes */}
           {request.notes && (
             <div className="bg-[#0d1b2a] rounded-lg p-4">
-              <h3 className="text-white font-semibold mb-2">Notes</h3>
+              <h3 className="text-navy-900 font-semibold mb-2">Notes</h3>
               <p className="text-gray-300 text-sm">{request.notes}</p>
             </div>
           )}
@@ -1266,7 +1266,7 @@ const RequestDetailModal = ({
               <Button
                 onClick={onAccept}
                 disabled={processingAction === request.id}
-                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+                className="flex-1 bg-purple-600 hover:bg-purple-700 text-navy-900"
               >
                 {processingAction === request.id ? (
                   <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
@@ -1282,7 +1282,7 @@ const RequestDetailModal = ({
                 <Button
                   onClick={onStartSession}
                   disabled={processingAction === request.id}
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-navy-900"
                 >
                   <Video className="w-4 h-4 mr-2" />
                   {request.status === 'assigned' ? 'Start Session' : 'Join Session'}

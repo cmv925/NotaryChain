@@ -160,14 +160,14 @@ const BookingCalendar = () => {
           {notary && (
             <Card className="bg-[#1a2332] border-gray-800 mb-6" data-testid="booking-notary-header">
               <CardContent className="p-5 flex items-center gap-4">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-navy-900 text-xl font-bold flex-shrink-0">
                   {notary.name?.charAt(0) || '?'}
                 </div>
                 <div className="flex-1">
-                  <h1 className="text-xl font-bold text-white">{notary.name}</h1>
+                  <h1 className="text-xl font-bold text-navy-900">{notary.name}</h1>
                   <div className="flex items-center gap-3 text-sm text-gray-400 mt-0.5">
                     <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {notary.license_state}</span>
-                    <span className="flex items-center gap-1"><Star className="w-3.5 h-3.5 text-amber-400" /> {notary.avg_rating}</span>
+                    <span className="flex items-center gap-1"><Star className="w-3.5 h-3.5 text-coral-600" /> {notary.avg_rating}</span>
                     <span>${notary.hourly_rate}/hr</span>
                     {notary.ron_certified && <span className="text-green-400">RON Certified</span>}
                   </div>
@@ -182,13 +182,13 @@ const BookingCalendar = () => {
             <Card className="bg-[#1a2332] border-green-500/30" data-testid="booking-success">
               <CardContent className="p-8 text-center">
                 <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-white mb-2">Booking Submitted!</h2>
+                <h2 className="text-2xl font-bold text-navy-900 mb-2">Booking Submitted!</h2>
                 <p className="text-gray-400 mb-6">Your notarization session has been booked. The notary will confirm shortly.</p>
                 <div className="bg-[#0d1520] rounded-lg p-4 border border-gray-800 max-w-sm mx-auto mb-6 text-left">
-                  <div className="flex justify-between py-1"><span className="text-gray-500 text-sm">Date</span><span className="text-white text-sm font-medium">{bookingSuccess.date}</span></div>
-                  <div className="flex justify-between py-1"><span className="text-gray-500 text-sm">Time</span><span className="text-white text-sm font-medium">{bookingSuccess.start_time} - {bookingSuccess.end_time}</span></div>
-                  <div className="flex justify-between py-1"><span className="text-gray-500 text-sm">Document</span><span className="text-white text-sm font-medium">{bookingSuccess.document_name}</span></div>
-                  <div className="flex justify-between py-1"><span className="text-gray-500 text-sm">Status</span><span className="text-amber-400 text-sm font-medium">Pending Confirmation</span></div>
+                  <div className="flex justify-between py-1"><span className="text-gray-500 text-sm">Date</span><span className="text-navy-900 text-sm font-medium">{bookingSuccess.date}</span></div>
+                  <div className="flex justify-between py-1"><span className="text-gray-500 text-sm">Time</span><span className="text-navy-900 text-sm font-medium">{bookingSuccess.start_time} - {bookingSuccess.end_time}</span></div>
+                  <div className="flex justify-between py-1"><span className="text-gray-500 text-sm">Document</span><span className="text-navy-900 text-sm font-medium">{bookingSuccess.document_name}</span></div>
+                  <div className="flex justify-between py-1"><span className="text-gray-500 text-sm">Status</span><span className="text-coral-600 text-sm font-medium">Pending Confirmation</span></div>
                 </div>
                 <div className="flex gap-3 justify-center">
                   <Button onClick={() => navigate('/my-bookings')} className="bg-blue-600 hover:bg-blue-700" data-testid="go-to-bookings">
@@ -206,7 +206,7 @@ const BookingCalendar = () => {
               {availability?.weekly_slots && (
                 <Card className="bg-[#1a2332] border-gray-800 mb-0 lg:col-span-2" data-testid="weekly-availability-overview">
                   <CardContent className="p-5">
-                    <h3 className="text-white font-semibold mb-3 text-sm">Weekly Availability Pattern</h3>
+                    <h3 className="text-navy-900 font-semibold mb-3 text-sm">Weekly Availability Pattern</h3>
                     <div className="grid grid-cols-7 gap-2">
                       {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((day, i) => {
                         const daySlots = availability.weekly_slots.filter(s => s.day_of_week === i);
@@ -217,11 +217,11 @@ const BookingCalendar = () => {
                           return acc + ((eh * 60 + em) - (sh * 60 + sm)) / 60;
                         }, 0);
                         return (
-                          <div key={day} className={`rounded-xl p-3 text-center border transition-all ${hasSlots ? 'bg-emerald-500/5 border-emerald-500/20 hover:bg-emerald-500/10' : 'bg-gray-800/20 border-gray-800'}`}>
-                            <p className={`text-xs font-bold mb-1 ${hasSlots ? 'text-emerald-400' : 'text-gray-600'}`}>{day}</p>
+                          <div key={day} className={`rounded-xl p-3 text-center border transition-all ${hasSlots ? 'bg-coral-500/5 border-coral-200 hover:bg-coral-500/10' : 'bg-gray-800/20 border-gray-800'}`}>
+                            <p className={`text-xs font-bold mb-1 ${hasSlots ? 'text-coral-600' : 'text-gray-600'}`}>{day}</p>
                             {hasSlots ? (
                               <>
-                                <p className="text-white text-lg font-bold">{daySlots.length}</p>
+                                <p className="text-navy-900 text-lg font-bold">{daySlots.length}</p>
                                 <p className="text-gray-500 text-[10px]">{totalHours.toFixed(0)}h available</p>
                               </>
                             ) : (
@@ -242,7 +242,7 @@ const BookingCalendar = () => {
                     <Button onClick={prevMonth} variant="ghost" className="text-gray-400 h-8 w-8 p-0" data-testid="cal-prev">
                       <ChevronLeft className="w-5 h-5" />
                     </Button>
-                    <h2 className="text-white font-semibold" data-testid="cal-month">{monthName}</h2>
+                    <h2 className="text-navy-900 font-semibold" data-testid="cal-month">{monthName}</h2>
                     <Button onClick={nextMonth} variant="ghost" className="text-gray-400 h-8 w-8 p-0" data-testid="cal-next">
                       <ChevronRight className="w-5 h-5" />
                     </Button>
@@ -271,8 +271,8 @@ const BookingCalendar = () => {
                           onClick={() => available && handleDateClick(day)}
                           disabled={!available}
                           className={`aspect-square rounded-lg flex items-center justify-center text-sm font-medium transition-all
-                            ${isSelected ? 'bg-blue-600 text-white ring-2 ring-blue-400' :
-                              available ? 'bg-[#0d1520] text-white hover:bg-blue-600/30 cursor-pointer border border-gray-800 hover:border-blue-500/50' :
+                            ${isSelected ? 'bg-blue-600 text-navy-900 ring-2 ring-blue-400' :
+                              available ? 'bg-[#0d1520] text-navy-900 hover:bg-blue-600/30 cursor-pointer border border-gray-800 hover:border-blue-500/50' :
                               'text-gray-700 cursor-not-allowed'}
                             ${isToday && !isSelected ? 'ring-1 ring-amber-500/50' : ''}
                           `}
@@ -297,7 +297,7 @@ const BookingCalendar = () => {
                 {selectedDate && (
                   <Card className="bg-[#1a2332] border-gray-800" data-testid="time-slots">
                     <CardContent className="p-5">
-                      <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                      <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                         <Clock className="w-4 h-4 text-blue-400" />
                         Available Times — {new Date(selectedDate + 'T12:00:00').toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' })}
                       </h3>
@@ -329,10 +329,10 @@ const BookingCalendar = () => {
                                       onClick={() => setSelectedSlot(slot)}
                                       className={`py-2.5 px-3 rounded-lg text-sm font-medium transition-all border
                                         ${selectedSlot?.start_time === slot.start_time
-                                          ? 'bg-blue-600 text-white border-blue-400'
+                                          ? 'bg-blue-600 text-navy-900 border-blue-400'
                                           : slot.booked
                                             ? 'bg-red-500/10 text-red-400/50 border-red-500/20 cursor-not-allowed line-through'
-                                            : 'bg-[#0d1520] text-gray-300 border-gray-800 hover:border-blue-500/50 hover:text-white'}
+                                            : 'bg-[#0d1520] text-gray-300 border-gray-800 hover:border-blue-500/50 hover:text-navy-900'}
                                       `}
                                       disabled={slot.booked}
                                       data-testid={`slot-${slot.start_time}`}
@@ -353,7 +353,7 @@ const BookingCalendar = () => {
                 {selectedSlot && (
                   <Card className="bg-[#1a2332] border-gray-800" data-testid="booking-form">
                     <CardContent className="p-5">
-                      <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                      <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                         <FileText className="w-4 h-4 text-green-400" />
                         Booking Details
                       </h3>
@@ -369,7 +369,7 @@ const BookingCalendar = () => {
                             value={docName}
                             onChange={e => setDocName(e.target.value)}
                             placeholder="e.g., Power of Attorney for John Smith"
-                            className="bg-[#0a0f1a] border-gray-700 text-white"
+                            className="bg-[#0a0f1a] border-gray-700 text-navy-900"
                             data-testid="booking-doc-name"
                           />
                         </div>
@@ -378,7 +378,7 @@ const BookingCalendar = () => {
                           <select
                             value={docType}
                             onChange={e => setDocType(e.target.value)}
-                            className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white text-sm focus:border-blue-500 outline-none"
+                            className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none"
                             data-testid="booking-doc-type"
                           >
                             {DOC_TYPES.map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}
@@ -391,7 +391,7 @@ const BookingCalendar = () => {
                             onChange={e => setNotes(e.target.value)}
                             placeholder="Any additional details..."
                             rows={2}
-                            className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white text-sm focus:border-blue-500 outline-none resize-none"
+                            className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none resize-none"
                             data-testid="booking-notes"
                           />
                         </div>

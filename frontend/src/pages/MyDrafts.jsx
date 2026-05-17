@@ -64,10 +64,10 @@ const MyDrafts = () => {
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'My Drafts' }]} />
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white" data-testid="my-drafts-title">My Drafts</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-navy-900" data-testid="my-drafts-title">My Drafts</h1>
               <p className="text-gray-400 text-sm mt-1">Resume your saved template drafts</p>
             </div>
-            <Button onClick={() => navigate('/templates')} className="bg-blue-600 hover:bg-blue-700 text-white" data-testid="browse-templates-btn">
+            <Button onClick={() => navigate('/templates')} className="bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="browse-templates-btn">
               Browse Templates
             </Button>
           </div>
@@ -80,7 +80,7 @@ const MyDrafts = () => {
                 <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                 <p className="text-gray-400 mb-2">No drafts yet</p>
                 <p className="text-gray-500 text-sm mb-4">Start from a template and save your progress as a draft.</p>
-                <Button onClick={() => navigate('/templates')} className="bg-blue-600 hover:bg-blue-700 text-white">
+                <Button onClick={() => navigate('/templates')} className="bg-blue-600 hover:bg-blue-700 text-navy-900">
                   Browse Templates
                 </Button>
               </CardContent>
@@ -94,7 +94,7 @@ const MyDrafts = () => {
                       <FileText className="w-5 h-5 text-blue-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white font-medium text-sm truncate">{draft.name}</p>
+                      <p className="text-navy-900 font-medium text-sm truncate">{draft.name}</p>
                       <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
@@ -113,7 +113,7 @@ const MyDrafts = () => {
                       <Button
                         size="sm"
                         onClick={() => navigate(`/templates/${draft.template_id}/fill?draft=${draft.id}`)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                        className="bg-blue-600 hover:bg-blue-700 text-navy-900"
                         data-testid={`resume-draft-${draft.id}`}
                       >
                         <Edit className="w-3.5 h-3.5 mr-1" /> Resume

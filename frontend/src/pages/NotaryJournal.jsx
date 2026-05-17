@@ -85,10 +85,10 @@ const NotaryJournal = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/notary/dashboard')} className="text-gray-400 hover:text-white">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/notary/dashboard')} className="text-gray-400 hover:text-navy-900">
                 <ArrowLeft className="w-5 h-5 sm:mr-2" /><span className="hidden sm:inline">Dashboard</span>
               </Button>
-              <h1 className="text-white font-semibold flex items-center gap-2 text-sm sm:text-base">
+              <h1 className="text-navy-900 font-semibold flex items-center gap-2 text-sm sm:text-base">
                 <BookOpen className="w-5 h-5 text-[#00d4aa]" /> Notary Journal
               </h1>
             </div>
@@ -117,7 +117,7 @@ const NotaryJournal = () => {
                   <Icon className="w-5 h-5 text-[#00d4aa] flex-shrink-0" />
                   <div>
                     <p className="text-xs text-gray-500">{label}</p>
-                    <p className="text-lg font-bold text-white">{value}</p>
+                    <p className="text-lg font-bold text-navy-900">{value}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -133,7 +133,7 @@ const NotaryJournal = () => {
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               placeholder="Search by signer or document..."
-              className="pl-10 bg-[#1a2332] border-gray-700 text-white"
+              className="pl-10 bg-[#1a2332] border-gray-700 text-navy-900"
               data-testid="journal-search"
             />
           </div>
@@ -163,7 +163,7 @@ const NotaryJournal = () => {
                     <td className="px-4 py-3 text-gray-500 font-mono text-xs">{e.entry_number}</td>
                     <td className="px-4 py-3 text-gray-400 text-xs">{new Date(e.created_at).toLocaleDateString()}</td>
                     <td className="px-4 py-3">
-                      <p className="text-white font-medium truncate max-w-[200px]">{e.document_name}</p>
+                      <p className="text-navy-900 font-medium truncate max-w-[200px]">{e.document_name}</p>
                       <p className="text-gray-500 text-xs">{e.document_type}</p>
                     </td>
                     <td className="px-4 py-3 text-gray-300">{e.signer_name}</td>
@@ -192,18 +192,18 @@ const NotaryJournal = () => {
           <Card className="w-full max-w-lg bg-[#1a2332] border-gray-700" data-testid="add-entry-modal">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-white">New Journal Entry</h2>
-                <button onClick={() => setShowAdd(false)} className="text-gray-400 hover:text-white"><X className="w-5 h-5" /></button>
+                <h2 className="text-lg font-bold text-navy-900">New Journal Entry</h2>
+                <button onClick={() => setShowAdd(false)} className="text-gray-400 hover:text-navy-900"><X className="w-5 h-5" /></button>
               </div>
               <form onSubmit={handleSubmit} className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs text-gray-400 mb-1 block">Document Name *</label>
-                    <Input value={form.document_name} onChange={e => setForm({...form, document_name: e.target.value})} className="bg-[#0d1b2a] border-gray-700 text-white text-sm" required data-testid="entry-doc-name" />
+                    <Input value={form.document_name} onChange={e => setForm({...form, document_name: e.target.value})} className="bg-[#0d1b2a] border-gray-700 text-navy-900 text-sm" required data-testid="entry-doc-name" />
                   </div>
                   <div>
                     <label className="text-xs text-gray-400 mb-1 block">Document Type</label>
-                    <select value={form.document_type} onChange={e => setForm({...form, document_type: e.target.value})} className="w-full bg-[#0d1b2a] border border-gray-700 text-white text-sm rounded-md px-3 py-2">
+                    <select value={form.document_type} onChange={e => setForm({...form, document_type: e.target.value})} className="w-full bg-[#0d1b2a] border border-gray-700 text-navy-900 text-sm rounded-md px-3 py-2">
                       {['affidavit','power_of_attorney','deed','contract','will','trust','other'].map(t => <option key={t} value={t}>{t.replace(/_/g,' ')}</option>)}
                     </select>
                   </div>
@@ -211,30 +211,30 @@ const NotaryJournal = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs text-gray-400 mb-1 block">Signer Name *</label>
-                    <Input value={form.signer_name} onChange={e => setForm({...form, signer_name: e.target.value})} className="bg-[#0d1b2a] border-gray-700 text-white text-sm" required data-testid="entry-signer" />
+                    <Input value={form.signer_name} onChange={e => setForm({...form, signer_name: e.target.value})} className="bg-[#0d1b2a] border-gray-700 text-navy-900 text-sm" required data-testid="entry-signer" />
                   </div>
                   <div>
                     <label className="text-xs text-gray-400 mb-1 block">Fee Charged ($)</label>
-                    <Input type="number" step="0.01" min="0" value={form.fee_charged} onChange={e => setForm({...form, fee_charged: parseFloat(e.target.value) || 0})} className="bg-[#0d1b2a] border-gray-700 text-white text-sm" data-testid="entry-fee" />
+                    <Input type="number" step="0.01" min="0" value={form.fee_charged} onChange={e => setForm({...form, fee_charged: parseFloat(e.target.value) || 0})} className="bg-[#0d1b2a] border-gray-700 text-navy-900 text-sm" data-testid="entry-fee" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs text-gray-400 mb-1 block">ID Type</label>
-                    <select value={form.identification_type} onChange={e => setForm({...form, identification_type: e.target.value})} className="w-full bg-[#0d1b2a] border border-gray-700 text-white text-sm rounded-md px-3 py-2">
+                    <select value={form.identification_type} onChange={e => setForm({...form, identification_type: e.target.value})} className="w-full bg-[#0d1b2a] border border-gray-700 text-navy-900 text-sm rounded-md px-3 py-2">
                       {['drivers_license','passport','state_id','military_id','other'].map(t => <option key={t} value={t}>{t.replace(/_/g,' ')}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="text-xs text-gray-400 mb-1 block">Notarization Type</label>
-                    <select value={form.notarization_type} onChange={e => setForm({...form, notarization_type: e.target.value})} className="w-full bg-[#0d1b2a] border border-gray-700 text-white text-sm rounded-md px-3 py-2">
+                    <select value={form.notarization_type} onChange={e => setForm({...form, notarization_type: e.target.value})} className="w-full bg-[#0d1b2a] border border-gray-700 text-navy-900 text-sm rounded-md px-3 py-2">
                       {['acknowledgment','jurat','oath','affirmation','copy_certification','other'].map(t => <option key={t} value={t}>{t.replace(/_/g,' ')}</option>)}
                     </select>
                   </div>
                 </div>
                 <div>
                   <label className="text-xs text-gray-400 mb-1 block">Notes</label>
-                  <textarea value={form.notes} onChange={e => setForm({...form, notes: e.target.value})} className="w-full bg-[#0d1b2a] border border-gray-700 text-white text-sm rounded-md px-3 py-2 h-16 resize-none" />
+                  <textarea value={form.notes} onChange={e => setForm({...form, notes: e.target.value})} className="w-full bg-[#0d1b2a] border border-gray-700 text-navy-900 text-sm rounded-md px-3 py-2 h-16 resize-none" />
                 </div>
                 <div className="flex justify-end gap-2 pt-2">
                   <Button type="button" variant="ghost" onClick={() => setShowAdd(false)} className="text-gray-400">Cancel</Button>

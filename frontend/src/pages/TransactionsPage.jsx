@@ -21,7 +21,7 @@ const statusColors = {
   pending_participants: 'bg-yellow-500',
   in_progress: 'bg-blue-500',
   pending_review: 'bg-purple-500',
-  pending_settlement: 'bg-orange-500',
+  pending_settlement: 'bg-coral-500',
   completed: 'bg-green-500',
   cancelled: 'bg-red-500',
   on_hold: 'bg-gray-400'
@@ -171,7 +171,7 @@ export default function TransactionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white p-6">
+    <div className="min-h-screen bg-[#0a0a0a] text-navy-900 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumbs */}
         <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Transactions' }]} />
@@ -189,7 +189,7 @@ export default function TransactionsPage() {
                 New Transaction
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-[#1a1a2e] border-[#333] text-white max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="bg-[#1a1a2e] border-[#333] text-navy-900 max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-xl">Create New Transaction</DialogTitle>
               </DialogHeader>
@@ -230,7 +230,7 @@ export default function TransactionsPage() {
                       value={newTransaction.name}
                       onChange={(e) => setNewTransaction({ ...newTransaction, name: e.target.value })}
                       placeholder="e.g., Property Sale - 123 Main St"
-                      className="bg-[#0d1b2a] border-[#333] text-white"
+                      className="bg-[#0d1b2a] border-[#333] text-navy-900"
                     />
                   </div>
                   
@@ -240,7 +240,7 @@ export default function TransactionsPage() {
                       value={newTransaction.description}
                       onChange={(e) => setNewTransaction({ ...newTransaction, description: e.target.value })}
                       placeholder="Brief description of the transaction"
-                      className="bg-[#0d1b2a] border-[#333] text-white"
+                      className="bg-[#0d1b2a] border-[#333] text-navy-900"
                     />
                   </div>
                   
@@ -249,7 +249,7 @@ export default function TransactionsPage() {
                     <select
                       value={newTransaction.transaction_type}
                       onChange={(e) => setNewTransaction({ ...newTransaction, transaction_type: e.target.value })}
-                      className="w-full p-2 rounded-lg bg-[#0d1b2a] border border-[#333] text-white"
+                      className="w-full p-2 rounded-lg bg-[#0d1b2a] border border-[#333] text-navy-900"
                     >
                       <option value="real_estate_closing">Real Estate Closing</option>
                       <option value="business_contract">Business Contract</option>
@@ -268,18 +268,18 @@ export default function TransactionsPage() {
                       value={newParticipant.email}
                       onChange={(e) => setNewParticipant({ ...newParticipant, email: e.target.value })}
                       placeholder="Email"
-                      className="flex-1 bg-[#0d1b2a] border-[#333] text-white"
+                      className="flex-1 bg-[#0d1b2a] border-[#333] text-navy-900"
                     />
                     <Input
                       value={newParticipant.name}
                       onChange={(e) => setNewParticipant({ ...newParticipant, name: e.target.value })}
                       placeholder="Name"
-                      className="w-32 bg-[#0d1b2a] border-[#333] text-white"
+                      className="w-32 bg-[#0d1b2a] border-[#333] text-navy-900"
                     />
                     <select
                       value={newParticipant.role}
                       onChange={(e) => setNewParticipant({ ...newParticipant, role: e.target.value })}
-                      className="w-32 p-2 rounded-lg bg-[#0d1b2a] border border-[#333] text-white"
+                      className="w-32 p-2 rounded-lg bg-[#0d1b2a] border border-[#333] text-navy-900"
                     >
                       <option value="signer">Signer</option>
                       <option value="buyer">Buyer</option>
@@ -299,7 +299,7 @@ export default function TransactionsPage() {
                       {newTransaction.participants.map((p, idx) => (
                         <div key={idx} className="flex items-center justify-between p-2 bg-[#0d1b2a] rounded-lg">
                           <div className="flex items-center gap-3">
-                            <span className="text-white">{p.email}</span>
+                            <span className="text-navy-900">{p.email}</span>
                             <Badge className="bg-[#333] text-gray-300">{p.role}</Badge>
                           </div>
                           <Button 
@@ -367,7 +367,7 @@ export default function TransactionsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Total</p>
-                  <p className="text-2xl font-bold text-white">{stats.total}</p>
+                  <p className="text-2xl font-bold text-navy-900">{stats.total}</p>
                 </div>
                 <div className="h-10 w-10 rounded-full bg-blue-500/20 flex items-center justify-center">
                   <FileText className="h-5 w-5 text-blue-500" />
@@ -381,7 +381,7 @@ export default function TransactionsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Active</p>
-                  <p className="text-2xl font-bold text-white">{stats.active}</p>
+                  <p className="text-2xl font-bold text-navy-900">{stats.active}</p>
                 </div>
                 <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center">
                   <Clock className="h-5 w-5 text-green-500" />
@@ -395,7 +395,7 @@ export default function TransactionsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Completed</p>
-                  <p className="text-2xl font-bold text-white">{stats.completed}</p>
+                  <p className="text-2xl font-bold text-navy-900">{stats.completed}</p>
                 </div>
                 <div className="h-10 w-10 rounded-full bg-[#00d4aa]/20 flex items-center justify-center">
                   <CheckCircle2 className="h-5 w-5 text-[#00d4aa]" />
@@ -409,7 +409,7 @@ export default function TransactionsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Pending</p>
-                  <p className="text-2xl font-bold text-white">{stats.pending}</p>
+                  <p className="text-2xl font-bold text-navy-900">{stats.pending}</p>
                 </div>
                 <div className="h-10 w-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
                   <AlertTriangle className="h-5 w-5 text-yellow-500" />
@@ -427,14 +427,14 @@ export default function TransactionsPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search transactions..."
-              className="pl-10 bg-[#1a1a2e] border-[#333] text-white"
+              className="pl-10 bg-[#1a1a2e] border-[#333] text-navy-900"
             />
           </div>
           
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="p-2 rounded-lg bg-[#1a1a2e] border border-[#333] text-white"
+            className="p-2 rounded-lg bg-[#1a1a2e] border border-[#333] text-navy-900"
           >
             <option value="all">All Status</option>
             <option value="draft">Draft</option>
@@ -449,7 +449,7 @@ export default function TransactionsPage() {
           <Card className="bg-[#1a1a2e] border-[#333]">
             <CardContent className="p-12 text-center">
               <FileText className="h-16 w-16 text-gray-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">No Transactions Yet</h3>
+              <h3 className="text-xl font-semibold text-navy-900 mb-2">No Transactions Yet</h3>
               <p className="text-gray-400 mb-6">Create your first transaction to get started with AI-powered orchestration.</p>
               <Button 
                 onClick={() => setShowCreateDialog(true)}
@@ -478,8 +478,8 @@ export default function TransactionsPage() {
                         </div>
                         <div>
                           <div className="flex items-center gap-3">
-                            <h3 className="font-semibold text-white text-lg">{tx.name}</h3>
-                            <Badge className={`${statusColors[tx.status]} text-white`}>
+                            <h3 className="font-semibold text-navy-900 text-lg">{tx.name}</h3>
+                            <Badge className={`${statusColors[tx.status]} text-navy-900`}>
                               {tx.status.replace(/_/g, ' ')}
                             </Badge>
                           </div>

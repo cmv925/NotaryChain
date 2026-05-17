@@ -127,7 +127,7 @@ const CompliancePage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
-        <p className="text-white">Loading...</p>
+        <p className="text-navy-900">Loading...</p>
       </div>
     );
   }
@@ -138,10 +138,10 @@ const CompliancePage = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-navy-900">
                 <ArrowLeft className="w-5 h-5 sm:mr-2" /><span className="hidden sm:inline">Dashboard</span>
               </Button>
-              <h1 className="text-white font-semibold flex items-center gap-2 text-sm sm:text-base">
+              <h1 className="text-navy-900 font-semibold flex items-center gap-2 text-sm sm:text-base">
                 <Shield className="w-5 h-5 text-[#00d4aa]" /> Privacy & Compliance
               </h1>
             </div>
@@ -168,7 +168,7 @@ const CompliancePage = () => {
                 onClick={handleCancelDeletion}
                 disabled={cancelling}
                 size="sm"
-                className="bg-red-500 hover:bg-red-600 text-white"
+                className="bg-red-500 hover:bg-red-600 text-navy-900"
                 data-testid="cancel-deletion-btn"
               >
                 {cancelling ? 'Cancelling...' : 'Cancel Deletion'}
@@ -180,7 +180,7 @@ const CompliancePage = () => {
         {/* Privacy Settings */}
         <Card className="bg-[#1a2332] border-gray-800" data-testid="privacy-settings-card">
           <CardContent className="p-6">
-            <h2 className="text-white font-semibold mb-1 flex items-center gap-2">
+            <h2 className="text-navy-900 font-semibold mb-1 flex items-center gap-2">
               <Lock className="w-5 h-5 text-blue-400" /> Privacy Settings
             </h2>
             <p className="text-gray-500 text-sm mb-5">Control how your data is used on the platform</p>
@@ -188,7 +188,7 @@ const CompliancePage = () => {
               {privacyOptions.map(({ key, label, desc }) => (
                 <div key={key} className="flex items-center justify-between py-2 border-b border-gray-800 last:border-0">
                   <div>
-                    <p className="text-white text-sm font-medium">{label}</p>
+                    <p className="text-navy-900 text-sm font-medium">{label}</p>
                     <p className="text-gray-500 text-xs">{desc}</p>
                   </div>
                   <button
@@ -208,7 +208,7 @@ const CompliancePage = () => {
         {/* Data Export */}
         <Card className="bg-[#1a2332] border-gray-800" data-testid="data-export-card">
           <CardContent className="p-6">
-            <h2 className="text-white font-semibold mb-1 flex items-center gap-2">
+            <h2 className="text-navy-900 font-semibold mb-1 flex items-center gap-2">
               <Download className="w-5 h-5 text-[#00d4aa]" /> Data Export
             </h2>
             <p className="text-gray-500 text-sm mb-4">Download a copy of all your data (GDPR Article 20 - Right to Data Portability)</p>
@@ -268,7 +268,7 @@ const CompliancePage = () => {
                       value={deletePassword}
                       onChange={e => setDeletePassword(e.target.value)}
                       placeholder="Enter your password to confirm"
-                      className="bg-[#0d1b2a] border-gray-700 text-white"
+                      className="bg-[#0d1b2a] border-gray-700 text-navy-900"
                       data-testid="deletion-password-input"
                     />
                   </div>
@@ -278,7 +278,7 @@ const CompliancePage = () => {
                       value={deleteReason}
                       onChange={e => setDeleteReason(e.target.value)}
                       placeholder="Why are you leaving?"
-                      className="w-full bg-[#0d1b2a] border border-gray-700 text-white text-sm rounded-md px-3 py-2 h-16 resize-none"
+                      className="w-full bg-[#0d1b2a] border border-gray-700 text-navy-900 text-sm rounded-md px-3 py-2 h-16 resize-none"
                       data-testid="deletion-reason-input"
                     />
                   </div>
@@ -293,7 +293,7 @@ const CompliancePage = () => {
                     <Button
                       onClick={handleDeleteRequest}
                       disabled={deleting || !deletePassword}
-                      className="bg-red-500 hover:bg-red-600 text-white"
+                      className="bg-red-500 hover:bg-red-600 text-navy-900"
                       data-testid="confirm-deletion-btn"
                     >
                       {deleting ? 'Processing...' : 'Confirm Deletion'}

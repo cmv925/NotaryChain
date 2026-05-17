@@ -25,11 +25,11 @@ const AGENT_CONFIG = {
 };
 
 const STATUS_MAP = {
-  pending: { label: 'Pending', cls: 'bg-slate-700/40 text-slate-300 border-slate-600' },
+  pending: { label: 'Pending', cls: 'bg-slate-700/40 text-navy-800 border-slate-600' },
   in_progress: { label: 'Scoring', cls: 'bg-blue-500/20 text-blue-400 border-blue-500/40 animate-pulse' },
-  sealed: { label: 'Sealed', cls: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' },
+  sealed: { label: 'Sealed', cls: 'bg-coral-500/20 text-coral-600 border-emerald-500/40' },
   rejected: { label: 'Rejected', cls: 'bg-red-500/20 text-red-400 border-red-500/40' },
-  escalated: { label: 'Escalated', cls: 'bg-amber-500/20 text-amber-400 border-amber-500/40' },
+  escalated: { label: 'Escalated', cls: 'bg-coral-500/20 text-coral-600 border-amber-500/40' },
 };
 
 function StatusBadge({ status }) {
@@ -57,7 +57,7 @@ function ScoreRing({ score, size = 64, color = 'cyan' }) {
           className="transition-all duration-1000 ease-out" />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-white font-bold text-sm font-mono">{score ?? '--'}</span>
+        <span className="text-navy-900 font-bold text-sm font-mono">{score ?? '--'}</span>
       </div>
     </div>
   );
@@ -277,19 +277,19 @@ export default function ANANDashboard() {
   // ═══════════════════════════════════════════════════════
   if (view === 'list' || !ceremonyId) {
     return (
-      <div className="min-h-screen bg-[#060a12] text-white">
+      <div className="min-h-screen bg-[#060a12] text-navy-900">
         <div className="bg-[#0a0f1a] border-b border-[#1a2540] sticky top-0 z-20">
           <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center">
-                <Brain className="w-5 h-5 text-white" />
+                <Brain className="w-5 h-5 text-navy-900" />
               </div>
               <div>
-                <h1 className="text-white font-bold text-lg tracking-tight">ANAN — Agent Network</h1>
+                <h1 className="text-navy-900 font-bold text-lg tracking-tight">ANAN — Agent Network</h1>
                 <p className="text-slate-500 text-[10px] tracking-wider uppercase">Autonomous Notary Agent Network</p>
               </div>
             </div>
-            <Button onClick={() => setShowCreate(true)} className="bg-cyan-600 hover:bg-cyan-700 text-white" data-testid="anan-create-btn">
+            <Button onClick={() => setShowCreate(true)} className="bg-cyan-600 hover:bg-cyan-700 text-navy-900" data-testid="anan-create-btn">
               <Zap className="w-4 h-4 mr-2" /> New ANAN Ceremony
             </Button>
           </div>
@@ -316,31 +316,31 @@ export default function ANANDashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                      <Shield className="w-5 h-5 text-emerald-400" />
+                    <div className="w-9 h-9 rounded-lg bg-coral-500/10 flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-coral-600" />
                     </div>
                     <div>
-                      <p className="text-slate-400 text-[10px] uppercase tracking-wider">SAN E&O Insurance Bond</p>
-                      <p className="text-white font-bold">${bond.balance?.toLocaleString()} <span className="text-slate-500 text-xs font-normal">/ $1,000,000</span></p>
+                      <p className="text-slate-600 text-[10px] uppercase tracking-wider">SAN E&O Insurance Bond</p>
+                      <p className="text-navy-900 font-bold">${bond.balance?.toLocaleString()} <span className="text-slate-500 text-xs font-normal">/ $1,000,000</span></p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="w-48 h-2 bg-[#1a2540] rounded-full overflow-hidden">
-                      <div className={`h-full rounded-full transition-all ${bond.health === 'healthy' ? 'bg-emerald-500' : bond.health === 'warning' ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${bond.health_pct}%` }} />
+                      <div className={`h-full rounded-full transition-all ${bond.health === 'healthy' ? 'bg-coral-500' : bond.health === 'warning' ? 'bg-coral-500' : 'bg-red-500'}`} style={{ width: `${bond.health_pct}%` }} />
                     </div>
-                    <span className={`text-xs font-bold ${bond.health === 'healthy' ? 'text-emerald-400' : bond.health === 'warning' ? 'text-amber-400' : 'text-red-400'}`}>{bond.health_pct}%</span>
+                    <span className={`text-xs font-bold ${bond.health === 'healthy' ? 'text-coral-600' : bond.health === 'warning' ? 'text-coral-600' : 'text-red-400'}`}>{bond.health_pct}%</span>
                   </div>
                 </div>
                 {/* On-Chain Status */}
                 {bond.on_chain && (
                   <div className="mt-3 pt-3 border-t border-[#1a2540] flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Blocks className="w-3.5 h-3.5 text-orange-400" />
+                      <Blocks className="w-3.5 h-3.5 text-coral-600" />
                       <span className="text-[10px] text-slate-500 uppercase tracking-wider">On-Chain Ledger</span>
                       {bond.on_chain.enabled ? (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold" data-testid="bond-chain-active">ACTIVE</span>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-coral-500/10 text-coral-600 border border-coral-200 font-bold" data-testid="bond-chain-active">ACTIVE</span>
                       ) : (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-500/10 text-slate-400 border border-slate-500/20 font-bold">SDK PENDING</span>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-500/10 text-slate-600 border border-slate-500/20 font-bold">SDK PENDING</span>
                       )}
                     </div>
                     <div className="flex items-center gap-3">
@@ -348,9 +348,9 @@ export default function ANANDashboard() {
                         <span className="text-[10px] text-slate-500 font-mono" data-testid="bond-topic-id">Topic: {bond.on_chain.bond_topic_id}</span>
                       )}
                       {bond.on_chain.network && (
-                        <span className="text-[10px] text-orange-400 font-bold uppercase">{bond.on_chain.network}</span>
+                        <span className="text-[10px] text-coral-600 font-bold uppercase">{bond.on_chain.network}</span>
                       )}
-                      <Button size="sm" variant="outline" className="border-[#1a2540] text-slate-400 text-[10px] h-6"
+                      <Button size="sm" variant="outline" className="border-[#1a2540] text-slate-600 text-[10px] h-6"
                         onClick={async () => {
                           try {
                             const res = await axios.get(`${API}/anan/bond/verify`, { headers });
@@ -379,8 +379,8 @@ export default function ANANDashboard() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <Award className="w-4 h-4 text-violet-400" />
-                      <h3 className="text-white font-bold text-sm">Agent Reputation</h3>
+                      <Award className="w-4 h-4 text-coral-600" />
+                      <h3 className="text-navy-900 font-bold text-sm">Agent Reputation</h3>
                     </div>
                     <Button size="sm" onClick={handleTuneWeights} disabled={actionLoading === 'tune'}
                       className="bg-violet-600 hover:bg-violet-700 text-[10px] h-7" data-testid="anan-tune-btn">
@@ -393,11 +393,11 @@ export default function ANANDashboard() {
                       const weight = reputation.current_weights?.[agent] || 0;
                       return (
                         <div key={agent} className="flex items-center gap-3 text-xs" data-testid={`anan-rep-${agent}`}>
-                          <span className="text-slate-400 w-14 capitalize">{agent}</span>
+                          <span className="text-slate-600 w-14 capitalize">{agent}</span>
                           <div className="flex-1 h-1.5 bg-[#1a2540] rounded-full overflow-hidden">
                             <div className="h-full bg-violet-500 rounded-full" style={{ width: `${rep.all_time.accuracy}%` }} />
                           </div>
-                          <span className="text-white font-mono w-10 text-right">{rep.all_time.accuracy}%</span>
+                          <span className="text-navy-900 font-mono w-10 text-right">{rep.all_time.accuracy}%</span>
                           <span className="text-slate-600 text-[10px] w-16">wt: {(weight * 100).toFixed(0)}%</span>
                           <span className="text-slate-600 text-[10px]">({rep.all_time.total} samples)</span>
                         </div>
@@ -416,7 +416,7 @@ export default function ANANDashboard() {
                       <Shield className="w-5 h-5 text-red-400" />
                     </div>
                     <div>
-                      <h3 className="text-white font-bold text-sm">Fraud Intelligence</h3>
+                      <h3 className="text-navy-900 font-bold text-sm">Fraud Intelligence</h3>
                       <p className="text-slate-500 text-[10px]">
                         {stats ? `${stats.total_ceremonies > 0 ? 'Active' : 'Ready'} | 8 fraud patterns, 8 RON jurisdictions` : 'Manage threat patterns & RON rules'}
                       </p>
@@ -432,21 +432,21 @@ export default function ANANDashboard() {
           {showCreate && (
             <Card className="bg-[#0d1420] border-cyan-500/30 mb-6" data-testid="anan-create-form">
               <CardContent className="p-6">
-                <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-cyan-400" /> New ANAN Ceremony
+                <h2 className="text-navy-900 font-bold text-lg mb-4 flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-coral-600" /> New ANAN Ceremony
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="text-slate-400 text-xs block mb-1">Document Name *</label>
-                    <Input value={form.document_name} onChange={e => setForm(f => ({ ...f, document_name: e.target.value }))} placeholder="e.g. Affidavit of Identity" className="bg-[#060a12] border-[#1a2540] text-white" data-testid="anan-doc-name" />
+                    <label className="text-slate-600 text-xs block mb-1">Document Name *</label>
+                    <Input value={form.document_name} onChange={e => setForm(f => ({ ...f, document_name: e.target.value }))} placeholder="e.g. Affidavit of Identity" className="bg-[#060a12] border-[#1a2540] text-navy-900" data-testid="anan-doc-name" />
                   </div>
                   <div>
-                    <label className="text-slate-400 text-xs block mb-1">Signer Name *</label>
-                    <Input value={form.signer_name} onChange={e => setForm(f => ({ ...f, signer_name: e.target.value }))} placeholder="e.g. John Smith" className="bg-[#060a12] border-[#1a2540] text-white" data-testid="anan-signer-name" />
+                    <label className="text-slate-600 text-xs block mb-1">Signer Name *</label>
+                    <Input value={form.signer_name} onChange={e => setForm(f => ({ ...f, signer_name: e.target.value }))} placeholder="e.g. John Smith" className="bg-[#060a12] border-[#1a2540] text-navy-900" data-testid="anan-signer-name" />
                   </div>
                   <div>
-                    <label className="text-slate-400 text-xs block mb-1">Document Type</label>
-                    <select value={form.document_type} onChange={e => setForm(f => ({ ...f, document_type: e.target.value }))} className="w-full px-3 py-2 bg-[#060a12] border border-[#1a2540] text-white rounded-md text-sm" data-testid="anan-doc-type">
+                    <label className="text-slate-600 text-xs block mb-1">Document Type</label>
+                    <select value={form.document_type} onChange={e => setForm(f => ({ ...f, document_type: e.target.value }))} className="w-full px-3 py-2 bg-[#060a12] border border-[#1a2540] text-navy-900 rounded-md text-sm" data-testid="anan-doc-type">
                       <option value="affidavit">Affidavit</option>
                       <option value="power_of_attorney">Power of Attorney</option>
                       <option value="deed">Deed</option>
@@ -456,8 +456,8 @@ export default function ANANDashboard() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-slate-400 text-xs block mb-1">Jurisdiction</label>
-                    <select value={form.jurisdiction} onChange={e => setForm(f => ({ ...f, jurisdiction: e.target.value }))} className="w-full px-3 py-2 bg-[#060a12] border border-[#1a2540] text-white rounded-md text-sm" data-testid="anan-jurisdiction">
+                    <label className="text-slate-600 text-xs block mb-1">Jurisdiction</label>
+                    <select value={form.jurisdiction} onChange={e => setForm(f => ({ ...f, jurisdiction: e.target.value }))} className="w-full px-3 py-2 bg-[#060a12] border border-[#1a2540] text-navy-900 rounded-md text-sm" data-testid="anan-jurisdiction">
                       <option value="US-FL">Florida (FL)</option>
                       <option value="US-TX">Texas (TX)</option>
                       <option value="US-VA">Virginia (VA)</option>
@@ -474,7 +474,7 @@ export default function ANANDashboard() {
                     {actionLoading === 'create' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Zap className="w-4 h-4 mr-2" />}
                     Initialize ANAN Protocol
                   </Button>
-                  <Button variant="outline" onClick={() => setShowCreate(false)} className="border-[#1a2540] text-slate-400">Cancel</Button>
+                  <Button variant="outline" onClick={() => setShowCreate(false)} className="border-[#1a2540] text-slate-600">Cancel</Button>
                 </div>
               </CardContent>
             </Card>
@@ -483,7 +483,7 @@ export default function ANANDashboard() {
           {/* Escalation Queue */}
           {escalations.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-amber-400 font-bold text-sm mb-3 flex items-center gap-2">
+              <h3 className="text-coral-600 font-bold text-sm mb-3 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4" /> HITL Escalation Queue ({escalations.length})
               </h3>
               <div className="space-y-2" data-testid="anan-escalation-queue">
@@ -491,14 +491,14 @@ export default function ANANDashboard() {
                   <Card key={esc.escalation_id} className="bg-[#0d1420] border-amber-500/20">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-white text-sm font-medium">{esc.ceremony_context?.document_name || 'Unknown'}</p>
+                        <p className="text-navy-900 text-sm font-medium">{esc.ceremony_context?.document_name || 'Unknown'}</p>
                         <p className="text-slate-500 text-[10px]">Signer: {esc.ceremony_context?.signer_name} | Score: {esc.weighted_average?.toFixed(1)}</p>
-                        <p className="text-amber-400/70 text-[10px] mt-0.5">{esc.reason}</p>
+                        <p className="text-coral-600/70 text-[10px] mt-0.5">{esc.reason}</p>
                       </div>
                       <div className="flex gap-2">
                         <Button size="sm" onClick={() => handleResolve(esc.escalation_id, 'approve')}
                           disabled={actionLoading === `resolve-${esc.escalation_id}`}
-                          className="bg-emerald-600 hover:bg-emerald-700 text-xs" data-testid={`anan-approve-${esc.escalation_id}`}>
+                          className="bg-coral-500 hover:bg-emerald-700 text-xs" data-testid={`anan-approve-${esc.escalation_id}`}>
                           <CheckCircle className="w-3 h-3 mr-1" /> Approve
                         </Button>
                         <Button size="sm" onClick={() => handleResolve(esc.escalation_id, 'reject')}
@@ -516,12 +516,12 @@ export default function ANANDashboard() {
 
           {/* Ceremony List */}
           {loading ? (
-            <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 text-cyan-400 animate-spin" /></div>
+            <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 text-coral-600 animate-spin" /></div>
           ) : ceremonies.length === 0 ? (
             <Card className="bg-[#0d1420] border-[#1a2540]">
               <CardContent className="p-12 text-center">
                 <Brain className="w-14 h-14 text-slate-700 mx-auto mb-4" />
-                <h3 className="text-white font-bold text-lg mb-2">No ANAN Ceremonies Yet</h3>
+                <h3 className="text-navy-900 font-bold text-lg mb-2">No ANAN Ceremonies Yet</h3>
                 <p className="text-slate-500 text-sm mb-4">Launch your first autonomous notarization with the ANAN swarm.</p>
                 <Button onClick={() => setShowCreate(true)} className="bg-cyan-600 hover:bg-cyan-700">
                   <Zap className="w-4 h-4 mr-2" /> Create First ANAN Ceremony
@@ -536,16 +536,16 @@ export default function ANANDashboard() {
                   <CardContent className="p-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center">
-                        <Brain className="w-5 h-5 text-cyan-400" />
+                        <Brain className="w-5 h-5 text-coral-600" />
                       </div>
                       <div>
-                        <h3 className="text-white font-semibold text-sm">{c.document_name}</h3>
+                        <h3 className="text-navy-900 font-semibold text-sm">{c.document_name}</h3>
                         <p className="text-slate-500 text-[10px]">{c.signer_name} | {c.protocol}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
                       {c.consensus?.weighted_average != null && (
-                        <span className="text-white font-mono font-bold text-sm">{c.consensus.weighted_average.toFixed(1)}</span>
+                        <span className="text-navy-900 font-mono font-bold text-sm">{c.consensus.weighted_average.toFixed(1)}</span>
                       )}
                       <StatusBadge status={c.status} />
                       <ChevronRight className="w-4 h-4 text-slate-600" />
@@ -564,7 +564,7 @@ export default function ANANDashboard() {
   //  DETAIL VIEW
   // ═══════════════════════════════════════════════════════
   if (!current) {
-    return <div className="min-h-screen bg-[#060a12] flex items-center justify-center"><Loader2 className="w-8 h-8 text-cyan-400 animate-spin" /></div>;
+    return <div className="min-h-screen bg-[#060a12] flex items-center justify-center"><Loader2 className="w-8 h-8 text-coral-600 animate-spin" /></div>;
   }
 
   const c = current;
@@ -573,16 +573,16 @@ export default function ANANDashboard() {
   const canExecute = c.status === 'pending' || c.status === 'escalated';
 
   return (
-    <div className="min-h-screen bg-[#060a12] text-white">
+    <div className="min-h-screen bg-[#060a12] text-navy-900">
       {/* Header */}
       <div className="bg-[#0a0f1a] border-b border-[#1a2540] sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center">
-              <Brain className="w-5 h-5 text-white" />
+              <Brain className="w-5 h-5 text-navy-900" />
             </div>
             <div>
-              <h1 className="text-white font-bold text-lg tracking-tight">{c.document_name}</h1>
+              <h1 className="text-navy-900 font-bold text-lg tracking-tight">{c.document_name}</h1>
               <p className="text-slate-500 text-[10px] tracking-wider uppercase">{c.protocol} | {c.ceremony_id.slice(0, 8)}</p>
             </div>
           </div>
@@ -598,17 +598,17 @@ export default function ANANDashboard() {
           <Card className="bg-[#0d1420] border-cyan-500/20 mb-6" data-testid="anan-execute-panel">
             <CardContent className="p-4 flex items-center justify-between">
               <div>
-                <p className="text-white font-semibold text-sm">Ready to Execute Blind Scoring Protocol</p>
+                <p className="text-navy-900 font-semibold text-sm">Ready to Execute Blind Scoring Protocol</p>
                 <p className="text-slate-500 text-[10px]">3 GPT-5.2 agents will analyze concurrently in isolation</p>
               </div>
               <div className="flex gap-2">
                 <Button onClick={handleExecuteStream} disabled={streaming || actionLoading === 'execute'}
-                  className="bg-gradient-to-r from-cyan-500 to-violet-600 hover:from-cyan-600 hover:to-violet-700" data-testid="anan-execute-stream-btn">
+                  className="italic text-coral-600 hover:from-cyan-600 hover:to-violet-700" data-testid="anan-execute-stream-btn">
                   {streaming ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Play className="w-4 h-4 mr-2" />}
                   {streaming ? 'Scoring...' : 'Execute (Live Stream)'}
                 </Button>
                 <Button onClick={handleExecute} disabled={streaming || actionLoading === 'execute'} variant="outline"
-                  className="border-[#1a2540] text-slate-400 hover:text-white" data-testid="anan-execute-btn">
+                  className="border-[#1a2540] text-slate-600 hover:text-navy-900" data-testid="anan-execute-btn">
                   {actionLoading === 'execute' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Zap className="w-4 h-4 mr-2" />}
                   Execute (Instant)
                 </Button>
@@ -627,17 +627,17 @@ export default function ANANDashboard() {
 
         {/* Consensus Oracle */}
         {consensus.status === 'reached' && (
-          <Card className={`mb-6 ${consensus.result === 'APPROVED' ? 'bg-emerald-500/5 border-emerald-500/30' : consensus.result === 'REJECTED' ? 'bg-red-500/5 border-red-500/30' : 'bg-amber-500/5 border-amber-500/30'}`} data-testid="anan-consensus-oracle">
+          <Card className={`mb-6 ${consensus.result === 'APPROVED' ? 'bg-coral-500/5 border-coral-200' : consensus.result === 'REJECTED' ? 'bg-red-500/5 border-red-500/30' : 'bg-coral-500/5 border-gold-500/30'}`} data-testid="anan-consensus-oracle">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <Vote className="w-6 h-6 text-cyan-400" />
+                  <Vote className="w-6 h-6 text-coral-600" />
                   <div>
-                    <h3 className="text-white font-bold text-lg tracking-tight">Consensus Oracle</h3>
+                    <h3 className="text-navy-900 font-bold text-lg tracking-tight">Consensus Oracle</h3>
                     <p className="text-slate-500 text-[10px] tracking-wider uppercase">Weighted 2-of-3 Blind Protocol</p>
                   </div>
                 </div>
-                <div className={`text-2xl font-bold font-mono ${consensus.result === 'APPROVED' ? 'text-emerald-400' : consensus.result === 'REJECTED' ? 'text-red-400' : 'text-amber-400'}`} data-testid="anan-consensus-result">
+                <div className={`text-2xl font-bold font-mono ${consensus.result === 'APPROVED' ? 'text-coral-600' : consensus.result === 'REJECTED' ? 'text-red-400' : 'text-coral-600'}`} data-testid="anan-consensus-result">
                   {consensus.result}
                 </div>
               </div>
@@ -645,19 +645,19 @@ export default function ANANDashboard() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <p className="text-slate-500 text-[10px] uppercase">Weighted Average</p>
-                  <p className="text-white font-bold font-mono text-lg">{consensus.weighted_average?.toFixed(1)}</p>
+                  <p className="text-navy-900 font-bold font-mono text-lg">{consensus.weighted_average?.toFixed(1)}</p>
                 </div>
                 <div>
                   <p className="text-slate-500 text-[10px] uppercase">Pass Count</p>
-                  <p className="text-white font-bold font-mono text-lg">{consensus.pass_count}/3</p>
+                  <p className="text-navy-900 font-bold font-mono text-lg">{consensus.pass_count}/3</p>
                 </div>
                 <div>
                   <p className="text-slate-500 text-[10px] uppercase">Score Spread</p>
-                  <p className="text-white font-bold font-mono text-lg">{consensus.score_spread}</p>
+                  <p className="text-navy-900 font-bold font-mono text-lg">{consensus.score_spread}</p>
                 </div>
                 <div>
                   <p className="text-slate-500 text-[10px] uppercase">Consensus Hash</p>
-                  <code className="text-cyan-400 font-mono text-[10px]">{consensus.consensus_hash?.slice(0, 16)}...</code>
+                  <code className="text-coral-600 font-mono text-[10px]">{consensus.consensus_hash?.slice(0, 16)}...</code>
                 </div>
               </div>
 
@@ -665,14 +665,14 @@ export default function ANANDashboard() {
               <div className="mt-4 space-y-2">
                 {Object.entries(consensus.scores || {}).map(([agent, score]) => {
                   const w = (AGENT_CONFIG[agent]?.weight || 0.33) * 100;
-                  const colorCls = score >= 70 ? 'bg-emerald-500' : score >= 40 ? 'bg-amber-500' : 'bg-red-500';
+                  const colorCls = score >= 70 ? 'bg-coral-500' : score >= 40 ? 'bg-coral-500' : 'bg-red-500';
                   return (
                     <div key={agent} className="flex items-center gap-3 text-xs">
-                      <span className="text-slate-400 w-16 capitalize">{agent}</span>
+                      <span className="text-slate-600 w-16 capitalize">{agent}</span>
                       <div className="flex-1 h-2 bg-[#1a2540] rounded-full overflow-hidden">
                         <div className={`h-full ${colorCls} rounded-full transition-all duration-700`} style={{ width: `${score}%` }} />
                       </div>
-                      <span className="text-white font-mono w-8 text-right">{score}</span>
+                      <span className="text-navy-900 font-mono w-8 text-right">{score}</span>
                       <span className="text-slate-600 text-[10px] w-10">x{AGENT_CONFIG[agent]?.weight}</span>
                     </div>
                   );
@@ -687,10 +687,10 @@ export default function ANANDashboard() {
           <Card className="bg-[#0d1420] border-[#1a2540] mb-6" data-testid="anan-blockchain-seal">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-white font-bold text-sm flex items-center gap-2"><Blocks className="w-4 h-4 text-orange-400" /> Blockchain Seal</h3>
+                <h3 className="text-navy-900 font-bold text-sm flex items-center gap-2"><Blocks className="w-4 h-4 text-coral-600" /> Blockchain Seal</h3>
                 {c.status === 'sealed' && (
                   <Button size="sm" onClick={() => fetchBadge(c.ceremony_id)}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-[10px] h-7" data-testid="anan-get-badge-btn">
+                    className="bg-coral-500 hover:bg-emerald-700 text-[10px] h-7" data-testid="anan-get-badge-btn">
                     <Code className="w-3 h-3 mr-1" /> Get Embed Badge
                   </Button>
                 )}
@@ -701,7 +701,7 @@ export default function ANANDashboard() {
                 {c.blockchain_seal.transaction_id && <InfoRow label="TX ID" value={c.blockchain_seal.transaction_id} mono />}
                 {c.blockchain_seal.consensus_hash && <InfoRow label="Hash" value={c.blockchain_seal.consensus_hash.slice(0, 20) + '...'} mono />}
                 {c.blockchain_seal.explorer_url && (
-                  <a href={c.blockchain_seal.explorer_url} target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300 text-[10px] flex items-center gap-1 col-span-2">
+                  <a href={c.blockchain_seal.explorer_url} target="_blank" rel="noopener noreferrer" className="text-coral-600 hover:text-coral-700 text-[10px] flex items-center gap-1 col-span-2">
                     <Globe className="w-3 h-3" /> View on HashScan
                   </a>
                 )}
@@ -713,11 +713,11 @@ export default function ANANDashboard() {
         {/* Badge Embed Modal */}
         {showBadge && badgeData && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowBadge(false)}>
-            <Card className="bg-[#0d1420] border-emerald-500/30 max-w-2xl w-full max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()} data-testid="anan-badge-modal">
+            <Card className="bg-[#0d1420] border-coral-200 max-w-2xl w-full max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()} data-testid="anan-badge-modal">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-white font-bold text-lg flex items-center gap-2"><Shield className="w-5 h-5 text-emerald-400" /> Shareable Verification Badge</h3>
-                  <button onClick={() => setShowBadge(false)} className="text-slate-500 hover:text-white"><X className="w-5 h-5" /></button>
+                  <h3 className="text-navy-900 font-bold text-lg flex items-center gap-2"><Shield className="w-5 h-5 text-coral-600" /> Shareable Verification Badge</h3>
+                  <button onClick={() => setShowBadge(false)} className="text-slate-500 hover:text-navy-900"><X className="w-5 h-5" /></button>
                 </div>
 
                 {/* Preview */}
@@ -728,14 +728,14 @@ export default function ANANDashboard() {
                 {/* Static HTML */}
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-slate-400 text-xs font-bold">Static HTML (Works Everywhere)</label>
-                    <Button size="sm" variant="outline" className="border-[#1a2540] text-slate-400 text-[10px] h-6"
+                    <label className="text-slate-600 text-xs font-bold">Static HTML (Works Everywhere)</label>
+                    <Button size="sm" variant="outline" className="border-[#1a2540] text-slate-600 text-[10px] h-6"
                       onClick={() => { navigator.clipboard.writeText(badgeData.embed_html); toast({ title: 'Copied HTML!' }); }}
                       data-testid="badge-copy-html">
                       <Copy className="w-3 h-3 mr-1" /> Copy
                     </Button>
                   </div>
-                  <pre className="bg-[#060a12] border border-[#1a2540] rounded p-3 text-[10px] text-emerald-400 font-mono overflow-x-auto max-h-24 whitespace-pre-wrap">
+                  <pre className="bg-[#060a12] border border-[#1a2540] rounded p-3 text-[10px] text-coral-600 font-mono overflow-x-auto max-h-24 whitespace-pre-wrap">
                     {badgeData.embed_html}
                   </pre>
                 </div>
@@ -743,14 +743,14 @@ export default function ANANDashboard() {
                 {/* Dynamic JS */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-slate-400 text-xs font-bold">Dynamic JS Widget (Live Status Updates)</label>
-                    <Button size="sm" variant="outline" className="border-[#1a2540] text-slate-400 text-[10px] h-6"
+                    <label className="text-slate-600 text-xs font-bold">Dynamic JS Widget (Live Status Updates)</label>
+                    <Button size="sm" variant="outline" className="border-[#1a2540] text-slate-600 text-[10px] h-6"
                       onClick={() => { navigator.clipboard.writeText(badgeData.embed_js); toast({ title: 'Copied JS widget!' }); }}
                       data-testid="badge-copy-js">
                       <Copy className="w-3 h-3 mr-1" /> Copy
                     </Button>
                   </div>
-                  <pre className="bg-[#060a12] border border-[#1a2540] rounded p-3 text-[10px] text-cyan-400 font-mono overflow-x-auto max-h-24 whitespace-pre-wrap">
+                  <pre className="bg-[#060a12] border border-[#1a2540] rounded p-3 text-[10px] text-coral-600 font-mono overflow-x-auto max-h-24 whitespace-pre-wrap">
                     {badgeData.embed_js}
                   </pre>
                 </div>
@@ -761,14 +761,14 @@ export default function ANANDashboard() {
 
         {/* Escalation Info */}
         {c.escalation && (
-          <Card className="bg-amber-500/5 border-amber-500/20 mb-6" data-testid="anan-escalation-info">
+          <Card className="bg-coral-500/5 border-amber-500/20 mb-6" data-testid="anan-escalation-info">
             <CardContent className="p-4">
-              <h3 className="text-amber-400 font-bold text-sm mb-2 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> Human Escalation</h3>
-              <p className="text-slate-400 text-xs mb-2">{c.escalation.reason}</p>
+              <h3 className="text-coral-600 font-bold text-sm mb-2 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> Human Escalation</h3>
+              <p className="text-slate-600 text-xs mb-2">{c.escalation.reason}</p>
               {c.escalation.status === 'resolved' ? (
-                <p className="text-emerald-400 text-xs">Resolved: <span className="font-bold uppercase">{c.escalation.override_decision}</span> by {c.escalation.resolved_by}</p>
+                <p className="text-coral-600 text-xs">Resolved: <span className="font-bold uppercase">{c.escalation.override_decision}</span> by {c.escalation.resolved_by}</p>
               ) : (
-                <p className="text-amber-400 text-xs">Awaiting human review...</p>
+                <p className="text-coral-600 text-xs">Awaiting human review...</p>
               )}
             </CardContent>
           </Card>
@@ -778,12 +778,12 @@ export default function ANANDashboard() {
         {sseEvents.length > 0 && (
           <Card className="bg-[#0d1420] border-[#1a2540]" data-testid="anan-event-log">
             <CardContent className="p-4">
-              <h3 className="text-slate-400 font-bold text-sm mb-3 flex items-center gap-2"><Radio className="w-4 h-4" /> Live Event Stream</h3>
+              <h3 className="text-slate-600 font-bold text-sm mb-3 flex items-center gap-2"><Radio className="w-4 h-4" /> Live Event Stream</h3>
               <div className="space-y-1.5 max-h-60 overflow-y-auto font-mono text-[10px]">
                 {sseEvents.map((e, i) => (
                   <div key={i} className="flex gap-2">
                     <span className="text-slate-600 w-20 flex-shrink-0">{new Date(e.ts).toLocaleTimeString()}</span>
-                    <span className={`${e.type.includes('error') ? 'text-red-400' : e.type.includes('reveal') ? 'text-cyan-400' : e.type.includes('consensus') ? 'text-violet-400' : 'text-slate-400'}`}>
+                    <span className={`${e.type.includes('error') ? 'text-red-400' : e.type.includes('reveal') ? 'text-coral-600' : e.type.includes('consensus') ? 'text-coral-600' : 'text-slate-600'}`}>
                       [{e.type}] {e.data.message || e.data.agent || e.data.result || ''}
                       {e.data.score != null && ` → score: ${e.data.score}`}
                     </span>
@@ -797,7 +797,7 @@ export default function ANANDashboard() {
         {/* Ceremony Meta */}
         <Card className="bg-[#0d1420] border-[#1a2540] mt-6" data-testid="anan-ceremony-meta">
           <CardContent className="p-4">
-            <h3 className="text-slate-400 font-bold text-sm mb-3 flex items-center gap-2"><FileText className="w-4 h-4" /> Ceremony Details</h3>
+            <h3 className="text-slate-600 font-bold text-sm mb-3 flex items-center gap-2"><FileText className="w-4 h-4" /> Ceremony Details</h3>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <InfoRow label="Document" value={c.document_name} />
               <InfoRow label="Signer" value={c.signer_name} />
@@ -822,7 +822,7 @@ function AgentScoreCard({ agentKey, config, agent, streaming }) {
   const scoreColor = hasScore ? (agent.score >= 70 ? 'emerald' : agent.score >= 40 ? 'amber' : 'red') : config.color;
 
   return (
-    <Card className={`bg-[#0d1420] transition-all duration-500 ${isRunning ? 'border-blue-500/40 ring-1 ring-blue-500/20' : hasScore && agent.score >= 60 ? 'border-emerald-500/30' : hasScore ? 'border-red-500/30' : 'border-[#1a2540]'}`}
+    <Card className={`bg-[#0d1420] transition-all duration-500 ${isRunning ? 'border-blue-500/40 ring-1 ring-blue-500/20' : hasScore && agent.score >= 60 ? 'border-coral-200' : hasScore ? 'border-red-500/30' : 'border-[#1a2540]'}`}
       data-testid={`anan-agent-${agentKey}`}>
       <CardContent className="p-5">
         <div className="flex items-center justify-between mb-4">
@@ -831,7 +831,7 @@ function AgentScoreCard({ agentKey, config, agent, streaming }) {
               <Icon className={`w-5 h-5 text-${config.color}-400`} />
             </div>
             <div>
-              <h3 className="text-white font-semibold text-sm">{config.label} Agent</h3>
+              <h3 className="text-navy-900 font-semibold text-sm">{config.label} Agent</h3>
               <p className="text-slate-500 text-[10px] tracking-wider uppercase">{config.subtitle}</p>
             </div>
           </div>
@@ -852,19 +852,19 @@ function AgentScoreCard({ agentKey, config, agent, streaming }) {
         <div className="flex items-center gap-2 mb-3 text-[10px]">
           <span className="text-slate-500">Weight:</span>
           <span className={`text-${config.color}-400 font-bold`}>{(config.weight * 100).toFixed(0)}%</span>
-          {agent.ai_powered && <span className="bg-violet-500/20 text-violet-400 border border-violet-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold">GPT-5.2</span>}
+          {agent.ai_powered && <span className="bg-violet-500/20 text-coral-600 border border-violet-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold">GPT-5.2</span>}
         </div>
 
         {/* Reasoning */}
         {agent.reasoning && (
-          <p className="text-slate-400 text-[10px] leading-relaxed mb-2">{agent.reasoning}</p>
+          <p className="text-slate-600 text-[10px] leading-relaxed mb-2">{agent.reasoning}</p>
         )}
 
         {/* Risk Level */}
         {agent.risk_level && (
           <div className="flex items-center gap-2 text-[10px] mb-2">
             <span className="text-slate-500">Risk:</span>
-            <span className={`font-bold uppercase ${agent.risk_level === 'low' ? 'text-emerald-400' : agent.risk_level === 'medium' ? 'text-amber-400' : 'text-red-400'}`}>{agent.risk_level}</span>
+            <span className={`font-bold uppercase ${agent.risk_level === 'low' ? 'text-coral-600' : agent.risk_level === 'medium' ? 'text-coral-600' : 'text-red-400'}`}>{agent.risk_level}</span>
           </div>
         )}
 
@@ -876,7 +876,7 @@ function AgentScoreCard({ agentKey, config, agent, streaming }) {
               return (
                 <div key={key} className="flex items-center justify-between text-[10px]">
                   <span className="text-slate-500">{key.replace(/_/g, ' ')}</span>
-                  <span className={s === 'PASS' ? 'text-emerald-400' : s === 'WARN' ? 'text-amber-400' : 'text-red-400'}>{s}</span>
+                  <span className={s === 'PASS' ? 'text-coral-600' : s === 'WARN' ? 'text-coral-600' : 'text-red-400'}>{s}</span>
                 </div>
               );
             })}
@@ -902,7 +902,7 @@ function StatCard({ label, value, icon: Icon, color }) {
         </div>
         <div>
           <p className="text-slate-500 text-[10px]">{label}</p>
-          <p className="text-white font-bold text-sm">{value}</p>
+          <p className="text-navy-900 font-bold text-sm">{value}</p>
         </div>
       </CardContent>
     </Card>
@@ -913,7 +913,7 @@ function InfoRow({ label, value, mono }) {
   return (
     <div className="flex items-center justify-between">
       <span className="text-slate-500">{label}</span>
-      <span className={`text-white ${mono ? 'font-mono text-[10px]' : ''}`}>{String(value || 'N/A')}</span>
+      <span className={`text-navy-900 ${mono ? 'font-mono text-[10px]' : ''}`}>{String(value || 'N/A')}</span>
     </div>
   );
 }
