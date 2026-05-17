@@ -49,38 +49,38 @@ export default function TrustBadgeLanding() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white" data-testid="trust-badge-landing-page">
+    <div className="min-h-screen bg-cream-100 text-navy-900" data-testid="trust-badge-landing-page">
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-slate-800">
+      <section className="relative overflow-hidden border-b border-slate-200">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(14,165,233,0.15),_transparent_50%)]" />
         <div className="relative max-w-6xl mx-auto px-6 py-20 sm:py-28">
           <div className="flex items-center gap-2 mb-5">
-            <Award className="w-5 h-5 text-amber-400" />
-            <span className="text-amber-400 text-[11px] uppercase tracking-[0.3em] font-bold">Trust Badge — From $29/mo</span>
+            <Award className="w-5 h-5 text-coral-600" />
+            <span className="text-coral-600 text-[11px] uppercase tracking-[0.3em] font-bold">Trust Badge — From $29/mo</span>
           </div>
           <h1 className="text-5xl sm:text-7xl font-bold leading-tight mb-5 max-w-4xl">
-            The trust seal that <span className="bg-gradient-to-r from-sky-400 to-emerald-400 bg-clip-text text-transparent">never lies.</span>
+            The trust seal that <span className="italic text-coral-600">never lies.</span>
           </h1>
-          <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mb-8 leading-relaxed">
+          <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mb-8 leading-relaxed">
             One line of JavaScript. A blockchain-verified trust badge appears on your site, links to a public verification page sealed on Hedera mainnet, and lifts your conversion rate the same week you install it.
           </p>
           <div className="flex flex-wrap items-center gap-3 mb-8">
-            <Button onClick={() => checkout('trust_badge')} disabled={checkoutLoading === 'trust_badge'} size="lg" className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold h-12 px-6" data-testid="hero-pro-checkout-btn">
+            <Button onClick={() => checkout('trust_badge')} disabled={checkoutLoading === 'trust_badge'} size="lg" className="bg-coral-500 hover:bg-coral-600 text-slate-950 font-bold h-12 px-6" data-testid="hero-pro-checkout-btn">
               {checkoutLoading === 'trust_badge' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Award className="w-4 h-4 mr-2" />}
               Get Trust Badge — $29/mo
             </Button>
-            <a href="#how-it-works" className="text-slate-300 hover:text-white text-sm flex items-center gap-1">See how it works <ArrowRight className="w-4 h-4" /></a>
+            <a href="#how-it-works" className="text-navy-800 hover:text-navy-900 text-sm flex items-center gap-1">See how it works <ArrowRight className="w-4 h-4" /></a>
           </div>
           <div className="flex items-center gap-5 text-xs text-slate-500">
-            <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-400" /> No setup fees</span>
-            <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-400" /> Cancel anytime</span>
-            <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-400" /> Setup in 60 seconds</span>
+            <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-coral-600" /> No setup fees</span>
+            <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-coral-600" /> Cancel anytime</span>
+            <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-coral-600" /> Setup in 60 seconds</span>
           </div>
         </div>
       </section>
 
       {/* PROOF NUMBERS */}
-      <section className="border-b border-slate-800 bg-slate-900/40">
+      <section className="border-b border-slate-200 bg-white">
         <div className="max-w-5xl mx-auto px-6 py-10">
           <p className="text-center text-[10px] uppercase tracking-[0.3em] text-slate-500 mb-6">Trust seals work — the data</p>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
@@ -101,26 +101,26 @@ export default function TrustBadgeLanding() {
       </section>
 
       {/* INTERACTIVE BADGE PREVIEW */}
-      <section className="border-b border-slate-800" id="how-it-works">
+      <section className="border-b border-slate-200" id="how-it-works">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="text-center mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">Customize your badge in real-time</h2>
-            <p className="text-slate-400 max-w-2xl mx-auto">Pick a style. Type your business name. Copy the snippet. Done.</p>
+            <p className="text-slate-600 max-w-2xl mx-auto">Pick a style. Type your business name. Copy the snippet. Done.</p>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-            <Card className="bg-slate-900/60 border-slate-800">
+            <Card className="bg-white border-slate-200">
               <CardContent className="p-6 space-y-4">
                 <div>
                   <label className="text-[11px] uppercase tracking-wider text-slate-500">Business Name</label>
                   <Input value={previewBusiness} onChange={(e) => setPreviewBusiness(e.target.value)}
-                    className="bg-slate-800/60 border-slate-700 mt-1" data-testid="preview-business-input" />
+                    className="bg-cream-200 border-slate-300 mt-1" data-testid="preview-business-input" />
                 </div>
                 <div>
                   <label className="text-[11px] uppercase tracking-wider text-slate-500">Style</label>
                   <div className="grid grid-cols-4 gap-2 mt-1.5">
                     {Object.entries(STYLE_PALETTES).map(([k, p]) => (
                       <button key={k} onClick={() => setPreviewStyle(k)}
-                        className={`rounded p-2 text-xs font-medium border transition-all ${previewStyle === k ? 'border-sky-400' : 'border-slate-700 hover:border-slate-500'}`}
+                        className={`rounded p-2 text-xs font-medium border transition-all ${previewStyle === k ? 'border-sky-400' : 'border-slate-300 hover:border-slate-500'}`}
                         style={{ background: p.bg, color: p.text }}
                         data-testid={`preview-style-${k}`}>{k}</button>
                     ))}
@@ -128,7 +128,7 @@ export default function TrustBadgeLanding() {
                 </div>
                 <div className="flex items-center gap-3 pt-2">
                   <button onClick={() => setPreviewVerified(!previewVerified)}
-                    className={`text-xs px-3 py-1.5 rounded border ${previewVerified ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' : 'bg-amber-500/20 text-amber-400 border-amber-500/40'}`}
+                    className={`text-xs px-3 py-1.5 rounded border ${previewVerified ? 'bg-coral-500/20 text-coral-600 border-emerald-500/40' : 'bg-coral-500/20 text-coral-600 border-amber-500/40'}`}
                     data-testid="preview-toggle-verified">
                     {previewVerified ? '✓ Verified state' : '⚠ Pending state'}
                   </button>
@@ -137,15 +137,15 @@ export default function TrustBadgeLanding() {
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-900/60 border-slate-800">
+            <Card className="bg-white border-slate-200">
               <CardContent className="p-6">
                 <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-3 text-center">Live Preview</p>
                 <div className="flex justify-center mb-5">
                   <BadgePreview business={previewBusiness} style={previewStyle} verified={previewVerified} />
                 </div>
-                <div className="bg-slate-950 border border-slate-800 rounded p-3">
+                <div className="bg-cream-100 border border-slate-200 rounded p-3">
                   <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1">One-line install</p>
-                  <pre className="text-[10px] font-mono text-emerald-300 overflow-x-auto whitespace-pre-wrap break-all" data-testid="preview-snippet">
+                  <pre className="text-[10px] font-mono text-coral-700 overflow-x-auto whitespace-pre-wrap break-all" data-testid="preview-snippet">
 {`<script src="${API}/api/verify/widget.js" data-badge-id="YOUR_BADGE_ID"${previewStyle !== 'default' ? ` data-style="${previewStyle}"` : ''}></script>`}
                   </pre>
                 </div>
@@ -156,10 +156,10 @@ export default function TrustBadgeLanding() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="border-b border-slate-800 bg-slate-900/40">
+      <section className="border-b border-slate-200 bg-white">
         <div className="max-w-5xl mx-auto px-6 py-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-center mb-3">From signup to trust badge in 60 seconds</h2>
-          <p className="text-center text-slate-400 mb-10">No code review. No DNS specialist. Drop one line on your site.</p>
+          <p className="text-center text-slate-600 mb-10">No code review. No DNS specialist. Drop one line on your site.</p>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[
               { n: '1', icon: Award, t: 'Subscribe', d: 'Pick Trust Badge ($29/mo) and check out via Stripe.' },
@@ -167,14 +167,14 @@ export default function TrustBadgeLanding() {
               { n: '3', icon: Code, t: 'Paste the snippet', d: 'One <script> tag, or one <img> tag. Done.' },
               { n: '4', icon: Lock, t: 'Verify domain', d: 'Add a DNS TXT record to flip from "Pending" to "Verified".' },
             ].map(s => (
-              <Card key={s.n} className="bg-slate-900/60 border-slate-800">
+              <Card key={s.n} className="bg-white border-slate-200">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-amber-500/20 text-amber-400 text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">{s.n}</span>
-                    <s.icon className="w-4 h-4 text-amber-400" />
+                    <span className="bg-coral-500/20 text-coral-600 text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">{s.n}</span>
+                    <s.icon className="w-4 h-4 text-coral-600" />
                   </div>
-                  <p className="font-bold text-white mb-1">{s.t}</p>
-                  <p className="text-xs text-slate-400 leading-relaxed">{s.d}</p>
+                  <p className="font-bold text-navy-900 mb-1">{s.t}</p>
+                  <p className="text-xs text-slate-600 leading-relaxed">{s.d}</p>
                 </CardContent>
               </Card>
             ))}
@@ -183,7 +183,7 @@ export default function TrustBadgeLanding() {
       </section>
 
       {/* USE CASES */}
-      <section className="border-b border-slate-800">
+      <section className="border-b border-slate-200">
         <div className="max-w-5xl mx-auto px-6 py-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-center mb-10">Who uses NotaryChain Trust Badges?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -195,11 +195,11 @@ export default function TrustBadgeLanding() {
               { icon: Lock, t: 'Legal & Compliance Tools', d: 'Anything that signs, witnesses, or notarizes — provable on-chain.', accent: '#ec4899' },
               { icon: Award, t: 'Real Estate Brokerages', d: 'Pair with NotaryChain RON ceremonies for end-to-end trust.', accent: '#14b8a6' },
             ].map(u => (
-              <Card key={u.t} className="bg-slate-900/60 border-slate-800 hover:border-slate-700 transition-colors">
+              <Card key={u.t} className="bg-white border-slate-200 hover:border-slate-300 transition-colors">
                 <CardContent className="p-5">
                   <u.icon className="w-5 h-5 mb-2" style={{ color: u.accent }} />
-                  <p className="font-bold text-white mb-1">{u.t}</p>
-                  <p className="text-xs text-slate-400 leading-relaxed">{u.d}</p>
+                  <p className="font-bold text-navy-900 mb-1">{u.t}</p>
+                  <p className="text-xs text-slate-600 leading-relaxed">{u.d}</p>
                 </CardContent>
               </Card>
             ))}
@@ -208,15 +208,15 @@ export default function TrustBadgeLanding() {
       </section>
 
       {/* PRICING */}
-      <section className="border-b border-slate-800 bg-slate-900/40" id="pricing">
+      <section className="border-b border-slate-200 bg-white" id="pricing">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-center mb-3">Simple pricing</h2>
-          <p className="text-center text-slate-400 mb-10">Cancel anytime. Trust Badge from $29 · Professional from $99 · Enterprise from $199.</p>
+          <p className="text-center text-slate-600 mb-10">Cancel anytime. Trust Badge from $29 · Professional from $99 · Enterprise from $199.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {/* TRUST BADGE — featured */}
-            <Card className="bg-slate-900/60 border-amber-500/30 relative" data-testid="pricing-card-trust-badge">
-              <div className="absolute -top-3 left-6 bg-amber-500 text-slate-950 text-[10px] font-bold px-3 py-1 rounded">POPULAR</div>
+            <Card className="bg-white border-gold-500/30 relative" data-testid="pricing-card-trust-badge">
+              <div className="absolute -top-3 left-6 bg-coral-500 text-slate-950 text-[10px] font-bold px-3 py-1 rounded">POPULAR</div>
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold">Trust Badge</h3>
                 <div className="mt-2 mb-1">
@@ -234,9 +234,9 @@ export default function TrustBadgeLanding() {
                     'Public verifier landing for visitors',
                     'Hedera-sealed verification trail',
                     'Email support',
-                  ].map(f => <li key={f} className="flex items-start gap-2"><Check className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" /><span className="text-slate-300">{f}</span></li>)}
+                  ].map(f => <li key={f} className="flex items-start gap-2"><Check className="w-4 h-4 text-coral-600 flex-shrink-0 mt-0.5" /><span className="text-navy-800">{f}</span></li>)}
                 </ul>
-                <Button onClick={() => checkout('trust_badge')} disabled={checkoutLoading === 'trust_badge'} className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold h-11" data-testid="pricing-trust-badge-btn">
+                <Button onClick={() => checkout('trust_badge')} disabled={checkoutLoading === 'trust_badge'} className="w-full bg-coral-500 hover:bg-coral-600 text-slate-950 font-bold h-11" data-testid="pricing-trust-badge-btn">
                   {checkoutLoading === 'trust_badge' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Award className="w-4 h-4 mr-2" />}
                   Get Trust Badge — $29/mo
                 </Button>
@@ -244,7 +244,7 @@ export default function TrustBadgeLanding() {
             </Card>
 
             {/* PRO */}
-            <Card className="bg-slate-900/60 border-slate-800" data-testid="pricing-card-pro">
+            <Card className="bg-white border-slate-200" data-testid="pricing-card-pro">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold">Professional</h3>
                 <div className="mt-2 mb-1">
@@ -262,9 +262,9 @@ export default function TrustBadgeLanding() {
                     'Video notarization (RON)',
                     'Blockchain sealing on Hedera',
                     'Priority support',
-                  ].map(f => <li key={f} className="flex items-start gap-2"><Check className="w-4 h-4 text-sky-400 flex-shrink-0 mt-0.5" /><span className="text-slate-300">{f}</span></li>)}
+                  ].map(f => <li key={f} className="flex items-start gap-2"><Check className="w-4 h-4 text-sky-400 flex-shrink-0 mt-0.5" /><span className="text-navy-800">{f}</span></li>)}
                 </ul>
-                <Button onClick={() => checkout('pro')} disabled={checkoutLoading === 'pro'} variant="outline" className="w-full border-slate-700 hover:bg-slate-800 h-11" data-testid="pricing-pro-btn">
+                <Button onClick={() => checkout('pro')} disabled={checkoutLoading === 'pro'} variant="outline" className="w-full border-slate-300 hover:bg-cream-200 h-11" data-testid="pricing-pro-btn">
                   {checkoutLoading === 'pro' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
                   Upgrade to Professional
                 </Button>
@@ -272,7 +272,7 @@ export default function TrustBadgeLanding() {
             </Card>
 
             {/* ENTERPRISE */}
-            <Card className="bg-slate-900/60 border-slate-800" data-testid="pricing-card-enterprise">
+            <Card className="bg-white border-slate-200" data-testid="pricing-card-enterprise">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold">Enterprise</h3>
                 <div className="mt-2 mb-1">
@@ -290,9 +290,9 @@ export default function TrustBadgeLanding() {
                     'Dedicated account manager',
                     'Priority SLA + 24/7 phone',
                     'SOC2 / ISO compliance reports',
-                  ].map(f => <li key={f} className="flex items-start gap-2"><Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" /><span className="text-slate-300">{f}</span></li>)}
+                  ].map(f => <li key={f} className="flex items-start gap-2"><Check className="w-4 h-4 text-coral-600 flex-shrink-0 mt-0.5" /><span className="text-navy-800">{f}</span></li>)}
                 </ul>
-                <Button onClick={() => checkout('enterprise')} disabled={checkoutLoading === 'enterprise'} variant="outline" className="w-full border-slate-700 hover:bg-slate-800 h-11" data-testid="pricing-enterprise-btn">
+                <Button onClick={() => checkout('enterprise')} disabled={checkoutLoading === 'enterprise'} variant="outline" className="w-full border-slate-300 hover:bg-cream-200 h-11" data-testid="pricing-enterprise-btn">
                   {checkoutLoading === 'enterprise' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
                   Subscribe to Enterprise
                 </Button>
@@ -305,7 +305,7 @@ export default function TrustBadgeLanding() {
       </section>
 
       {/* FAQ */}
-      <section className="border-b border-slate-800">
+      <section className="border-b border-slate-200">
         <div className="max-w-3xl mx-auto px-6 py-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-center mb-10">Frequently asked</h2>
           <div className="space-y-3">
@@ -317,10 +317,10 @@ export default function TrustBadgeLanding() {
               { q: 'How is this different from a SiteSeal or McAfee SECURE?', a: 'Those badges verify the site has a paid certificate. NotaryChain verifies a real-world trust event — actual notarized documents, identity attestations, and on-chain seals. Visitors clicking through see Hedera transaction proofs, not marketing copy.' },
               { q: 'Does this affect my Core Web Vitals?', a: 'No. The widget loads asynchronously and is under 1 KB. The SVG renders without webfonts or external requests.' },
             ].map((f, i) => (
-              <Card key={i} className="bg-slate-900/40 border-slate-800">
+              <Card key={i} className="bg-white border-slate-200">
                 <CardContent className="p-5">
-                  <p className="font-bold text-white mb-2">{f.q}</p>
-                  <p className="text-sm text-slate-400 leading-relaxed">{f.a}</p>
+                  <p className="font-bold text-navy-900 mb-2">{f.q}</p>
+                  <p className="text-sm text-slate-600 leading-relaxed">{f.a}</p>
                 </CardContent>
               </Card>
             ))}
@@ -329,17 +329,17 @@ export default function TrustBadgeLanding() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="bg-gradient-to-b from-slate-900/40 to-slate-950">
+      <section className="bg-navy-900 text-white">
         <div className="max-w-3xl mx-auto px-6 py-16 text-center">
-          <Award className="w-12 h-12 mx-auto text-amber-400 mb-4" />
+          <Award className="w-12 h-12 mx-auto text-coral-600 mb-4" />
           <h2 className="text-3xl sm:text-4xl font-bold mb-3">Ready to lift your conversion rate?</h2>
-          <p className="text-slate-400 mb-8 max-w-xl mx-auto">Drop a NotaryChain Trust Badge on your site this afternoon. Cancel any time.</p>
-          <Button onClick={() => checkout('trust_badge')} disabled={checkoutLoading === 'trust_badge'} size="lg" className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold h-12 px-8" data-testid="final-cta-btn">
+          <p className="text-slate-600 mb-8 max-w-xl mx-auto">Drop a NotaryChain Trust Badge on your site this afternoon. Cancel any time.</p>
+          <Button onClick={() => checkout('trust_badge')} disabled={checkoutLoading === 'trust_badge'} size="lg" className="bg-coral-500 hover:bg-coral-600 text-slate-950 font-bold h-12 px-8" data-testid="final-cta-btn">
             {checkoutLoading === 'trust_badge' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ArrowRight className="w-4 h-4 mr-2" />}
             Get Your Trust Badge — $29/mo
           </Button>
           <p className="text-xs text-slate-500 mt-4">
-            <a href="/verify" className="hover:text-slate-300 inline-flex items-center gap-1">Try the free public verifier first <ExternalLink className="w-3 h-3" /></a>
+            <a href="/verify" className="hover:text-navy-800 inline-flex items-center gap-1">Try the free public verifier first <ExternalLink className="w-3 h-3" /></a>
           </p>
         </div>
       </section>

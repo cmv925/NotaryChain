@@ -13,6 +13,7 @@ import './i18n';
 
 // Eager-loaded (critical path)
 import HomePage from './pages/HomePage';
+import NotaryLanding from './pages/NotaryLanding';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 
@@ -127,7 +128,8 @@ function App() {
         <BrowserRouter>
           <Suspense fallback={<PageLoader />}>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<NotaryLanding />} />
+            <Route path="/old-home" element={<HomePage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/sso/login" element={<SSOLoginPage />} />

@@ -12,9 +12,31 @@ module.exports = {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
+  		fontFamily: {
+  			serif: ['"Playfair Display"', 'Georgia', 'serif'],
+  			sans: ['"IBM Plex Sans"', '"Inter"', 'system-ui', 'sans-serif']
+  		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
+  			navy: {
+  				50:  '#F1F5FB', 100: '#DCE5F0', 200: '#B6C5DA', 300: '#8AA2BE',
+  				400: '#5B7CA0', 500: '#345881', 600: '#1F406B', 700: '#142E54',
+  				800: '#0F2340', 900: '#0A192F'
+  			},
+  			cream: {
+  				50:  '#FFFDF8', 100: '#FDFCF8', 200: '#F8F4EA',
+  				300: '#EEE7D2', 400: '#E0D5B4'
+  			},
+  			coral: {
+  				50:  '#FDEFEC', 100: '#FAD9D2', 200: '#F4B3A6', 300: '#EE8C79',
+  				400: '#E76A52', 500: '#E15A46', 600: '#C94E3C', 700: '#A33E2F'
+  			},
+  			gold: {
+  				300: '#E5C66B', 400: '#D8B23E', 500: '#D4AF37',
+  				600: '#B8962A', 700: '#8F7220'
+  			},
+  			parchment: '#FAF6EC',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'

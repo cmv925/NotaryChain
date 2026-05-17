@@ -468,32 +468,55 @@ async def render_badge_svg(badge_id: str):
     verified = badge.get("verified", False)
     business = badge.get("business_name", badge.get("domain", "Verified"))
 
+    # Corporate Trust Notary palettes
     palettes = {
-        "default": {"bg": "#0f172a", "accent": "#0ea5e9", "text": "#f8fafc", "muted": "#94a3b8"},
-        "dark":    {"bg": "#020617", "accent": "#22c55e", "text": "#f1f5f9", "muted": "#64748b"},
-        "light":   {"bg": "#f8fafc", "accent": "#0284c7", "text": "#0f172a", "muted": "#475569"},
-        "minimal": {"bg": "#ffffff", "accent": "#1e293b", "text": "#0f172a", "muted": "#64748b"},
+        "default": {"bg": "#FDFCF8", "ring": "#0A192F", "accent": "#D4AF37", "text": "#0A192F", "muted": "#475569"},
+        "dark":    {"bg": "#0A192F", "ring": "#D4AF37", "accent": "#D4AF37", "text": "#FAF6EC", "muted": "#B6C5DA"},
+        "light":   {"bg": "#FFFFFF", "ring": "#0A192F", "accent": "#E15A46", "text": "#0A192F", "muted": "#475569"},
+        "minimal": {"bg": "#FAF6EC", "ring": "#0A192F", "accent": "#0A192F", "text": "#0A192F", "muted": "#64748B"},
     }
     p = palettes.get(style, palettes["default"])
-    status_text = "VERIFIED" if verified else "PENDING VERIFICATION"
-    status_color = p["accent"] if verified else "#f59e0b"
-    short_business = (business[:24] + "…") if len(business) > 25 else business
+    status_text = "VERIFIED NOTARY" if verified else "PENDING VERIFICATION"
+    short_business = (business[:22] + "…") if len(business) > 23 else business
 
+    # Round wax-seal style notary badge
     svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="200" height="68" viewBox="0 0 200 68" role="img" aria-label="Verified by NotaryChain">
   <defs>
-    <linearGradient id="g{badge_id[:6]}" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="{p['bg']}"/>
-      <stop offset="100%" stop-color="{p['bg']}" stop-opacity="0.9"/>
-    </linearGradient>
+    <clipPath id="cp{badge_id[:6]}"><rect width="200" height="68" rx="6"/></clipPath>
   </defs>
-  <rect width="200" height="68" rx="8" fill="url(#g{badge_id[:6]})" stroke="{p['accent']}" stroke-opacity="0.3"/>
-  <g transform="translate(12, 14)">
-    <path d="M20 0 L36 8 V20 C36 30 28 38 20 40 C12 38 4 30 4 20 V8 Z" fill="none" stroke="{p['accent']}" stroke-width="2"/>
-    <path d="M14 20 L18 24 L26 14" fill="none" stroke="{p['accent']}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g clip-path="url(#cp{badge_id[:6]})">
+    <rect width="200" height="68" fill="{p['bg']}"/>
+    <rect x="0.5" y="0.5" width="199" height="67" rx="6" fill="none" stroke="{p['ring']}" stroke-opacity="0.18"/>
+    <!-- Round notary seal on the left -->
+    <g transform="translate(34, 34)">
+      <circle r="26" fill="none" stroke="{p['ring']}" stroke-width="1.6"/>
+      <circle r="22" fill="none" stroke="{p['accent']}" stroke-width="0.7"/>
+      <circle r="14" fill="{p['ring']}" fill-opacity="0.06" stroke="{p['ring']}" stroke-width="0.6"/>
+      <!-- 12 serration ticks (gold) -->
+      <g stroke="{p['accent']}" stroke-width="1.2" stroke-linecap="round">
+        <line x1="0" y1="-24.5" x2="0" y2="-21"/>
+        <line x1="12.25" y1="-21.21" x2="10.5" y2="-18.19" transform="rotate(30)"/>
+        <line x1="0" y1="-24.5" x2="0" y2="-21" transform="rotate(60)"/>
+        <line x1="0" y1="-24.5" x2="0" y2="-21" transform="rotate(90)"/>
+        <line x1="0" y1="-24.5" x2="0" y2="-21" transform="rotate(120)"/>
+        <line x1="0" y1="-24.5" x2="0" y2="-21" transform="rotate(150)"/>
+        <line x1="0" y1="-24.5" x2="0" y2="-21" transform="rotate(180)"/>
+        <line x1="0" y1="-24.5" x2="0" y2="-21" transform="rotate(210)"/>
+        <line x1="0" y1="-24.5" x2="0" y2="-21" transform="rotate(240)"/>
+        <line x1="0" y1="-24.5" x2="0" y2="-21" transform="rotate(270)"/>
+        <line x1="0" y1="-24.5" x2="0" y2="-21" transform="rotate(300)"/>
+        <line x1="0" y1="-24.5" x2="0" y2="-21" transform="rotate(330)"/>
+      </g>
+      <!-- Fountain-pen nib -->
+      <path d="M 0 -8 L 4 6 L 0 9 L -4 6 Z" fill="{p['ring']}"/>
+      <path d="M 0 -8 L 0 6" stroke="{p['accent']}" stroke-width="0.8"/>
+      <circle cy="1" r="1.2" fill="{p['accent']}"/>
+    </g>
+    <!-- Wordmark -->
+    <text x="74" y="22" font-family="Playfair Display, Georgia, serif" font-size="14" font-weight="700" fill="{p['text']}" letter-spacing="0.2">NotaryChain</text>
+    <text x="74" y="38" font-family="IBM Plex Sans, system-ui, sans-serif" font-size="8" font-weight="700" letter-spacing="1.4" fill="{p['accent']}">{status_text}</text>
+    <text x="74" y="54" font-family="IBM Plex Sans, system-ui, sans-serif" font-size="9" font-weight="500" fill="{p['muted']}">{short_business}</text>
   </g>
-  <text x="56" y="22" font-family="-apple-system,Segoe UI,sans-serif" font-size="9" font-weight="700" letter-spacing="1.2" fill="{status_color}">{status_text}</text>
-  <text x="56" y="40" font-family="-apple-system,Segoe UI,sans-serif" font-size="13" font-weight="700" fill="{p['text']}">NotaryChain</text>
-  <text x="56" y="56" font-family="-apple-system,Segoe UI,sans-serif" font-size="9" fill="{p['muted']}">{short_business}</text>
 </svg>'''
     return Response(content=svg, media_type="image/svg+xml", headers={
         "Cache-Control": "public, max-age=300",
