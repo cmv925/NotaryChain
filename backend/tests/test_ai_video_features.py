@@ -9,7 +9,7 @@ import os
 import uuid
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://notary-fl-m3.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://notary-chain-preview-1.preview.emergentagent.com').rstrip('/')
 
 # Test credentials
 DEMO_USER = {"email": "demo@test.com", "password": "Demo123!"}

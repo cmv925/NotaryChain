@@ -25,7 +25,7 @@ function BentoAction({ icon: Icon, label, desc, onClick, accent, ...props }) {
       onClick={onClick}
       className={`flex items-center gap-3 w-full p-3 text-sm rounded-md transition-all duration-200 text-left border ${
         accent
-          ? 'bg-sky-500/10 text-navy-900 border-sky-500/30 hover:bg-sky-500/20 hover:border-sky-500/50'
+          ? 'bg-coral-50 text-navy-900 border-coral-200 hover:bg-coral-100 hover:border-sky-500/50'
           : 'text-navy-800 border-transparent hover:text-navy-900 hover:bg-cream-200/50 hover:border-slate-300'
       }`}
       {...props}
@@ -98,21 +98,21 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center">
         <div className="text-navy-900 text-xl">Loading dashboard...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       {/* Glassmorphism Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#0f1825]/80 border-b border-slate-200 px-6 py-4" data-testid="dashboard-header">
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/95 border-b border-slate-200 px-6 py-4" data-testid="dashboard-header">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-            <Shield className="w-7 h-7 text-sky-500" />
+            <Shield className="w-7 h-7 text-coral-600" />
             <span className="text-lg font-bold text-navy-900 tracking-tight">
-              Notary<span className="text-sky-500">Chain</span>
+              Notary<span className="text-coral-600">Chain</span>
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -123,21 +123,21 @@ const Dashboard = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-cream-200/50 transition-all" data-testid="user-menu-trigger">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-500 to-violet-600 flex items-center justify-center text-navy-900 text-xs font-bold">
+                  <div className="w-8 h-8 rounded-full bg-navy-900 flex items-center justify-center text-navy-900 text-xs font-bold">
                     {user?.full_name?.[0] || 'U'}
                   </div>
                   <div className="text-left hidden sm:block">
                     <div className="text-navy-900 text-sm font-medium leading-none">{user?.full_name}</div>
                     <div className="text-slate-500 text-[10px] mt-0.5 flex items-center gap-1.5">
                       {user?.email}
-                      {isAdmin && <span className="bg-sky-500/20 text-coral-600 border border-sky-500/30 px-1 py-px rounded text-[8px] font-bold">ADMIN</span>}
-                      {isNotary && <span className="bg-violet-500/20 text-coral-600 border border-violet-500/30 px-1 py-px rounded text-[8px] font-bold">NOTARY</span>}
+                      {isAdmin && <span className="bg-coral-100 text-coral-600 border border-coral-200 px-1 py-px rounded text-[8px] font-bold">ADMIN</span>}
+                      {isNotary && <span className="bg-cream-200 text-coral-600 border border-slate-300 px-1 py-px rounded text-[8px] font-bold">NOTARY</span>}
                     </div>
                   </div>
                   <ChevronDown className="w-3.5 h-3.5 text-slate-500 hidden sm:block" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-[#162032] border-slate-200 text-navy-800">
+              <DropdownMenuContent align="end" className="w-48 bg-white border-slate-200 text-navy-800">
                 <DropdownMenuItem onClick={() => navigate('/subscription')} className="hover:bg-cream-200/50 cursor-pointer" data-testid="menu-plan">
                   <CreditCard className="w-4 h-4 mr-2" /> Plan
                 </DropdownMenuItem>
@@ -192,7 +192,7 @@ const Dashboard = () => {
         {/* Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
           {/* Core Actions — spans 2 cols */}
-          <div className="col-span-1 md:col-span-2 bg-[#162032] border border-slate-200 p-6 rounded-lg relative overflow-hidden" data-testid="core-actions">
+          <div className="col-span-1 md:col-span-2 bg-white border border-slate-200 p-6 rounded-lg relative overflow-hidden" data-testid="core-actions">
             <div className="absolute inset-0 opacity-[0.04] bg-cover bg-center mix-blend-overlay" style={{ backgroundImage: "url('https://images.pexels.com/photos/3612932/pexels-photo-3612932.jpeg?auto=compress&cs=tinysrgb&dpr=1&h=400&w=600')" }} />
             <div className="relative z-10">
               <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-5">Core Actions</h3>
@@ -205,7 +205,7 @@ const Dashboard = () => {
           </div>
 
           {/* AI Intelligence */}
-          <div className="border border-slate-200 p-6 rounded-lg bg-[#0f1825]" data-testid="ai-section">
+          <div className="border border-slate-200 p-6 rounded-lg bg-cream-100" data-testid="ai-section">
             <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-5">AI Intelligence</h3>
             <div className="space-y-2">
               <BentoAction icon={Brain} label="AI Intelligence Hub" desc="Risk, Match, Voice" onClick={() => navigate('/ai-intelligence')} accent data-testid="ai-hub-btn" />
@@ -217,7 +217,7 @@ const Dashboard = () => {
           </div>
 
           {/* Security & Identity */}
-          <div className="border border-slate-200 p-6 rounded-lg bg-[#0f1825]" data-testid="security-section">
+          <div className="border border-slate-200 p-6 rounded-lg bg-cream-100" data-testid="security-section">
             <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-5">Security & Identity</h3>
             <div className="space-y-2">
               <BentoAction icon={Network} label="Trust Hub" desc="Identity + TrustLayer + Vault" onClick={() => navigate('/trust-hub')} accent data-testid="trust-hub-btn" />
@@ -269,9 +269,9 @@ const Dashboard = () => {
 
         {/* Notary Requests */}
         {notaryRequests.length > 0 && (
-          <div className="mt-8 border border-slate-200 rounded-lg overflow-hidden bg-[#0f1825]" data-testid="notary-requests">
-            <div className="bg-white/50 border-b border-slate-200 px-6 py-4 flex items-center gap-2">
-              <FileText className="w-4 h-4 text-sky-500" />
+          <div className="mt-8 border border-slate-200 rounded-lg overflow-hidden bg-cream-100" data-testid="notary-requests">
+            <div className="bg-cream-200 border-b border-slate-200 px-6 py-4 flex items-center gap-2">
+              <FileText className="w-4 h-4 text-coral-600" />
               <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600">My Notarization Requests</h2>
             </div>
             <div className="divide-y divide-slate-800/50">
@@ -283,7 +283,7 @@ const Dashboard = () => {
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
                           request.status === 'pending' ? 'bg-coral-500/10' :
                           request.status === 'in_session' ? 'bg-coral-500/10' :
-                          request.status === 'completed' ? 'bg-sky-500/10' : 'bg-cream-200'
+                          request.status === 'completed' ? 'bg-coral-50' : 'bg-cream-200'
                         }`}>
                           {request.status === 'in_session' ? (
                             <Video className="w-4 h-4 text-coral-600" />
@@ -304,7 +304,7 @@ const Dashboard = () => {
                         <span className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
                           request.status === 'pending' ? 'bg-coral-500/10 text-coral-600 border border-amber-500/20' :
                           request.status === 'in_session' ? 'bg-coral-500/10 text-coral-600 border border-coral-200' :
-                          request.status === 'assigned' ? 'bg-sky-500/10 text-coral-600 border border-sky-500/20' :
+                          request.status === 'assigned' ? 'bg-coral-50 text-coral-600 border border-sky-500/20' :
                           request.status === 'completed' ? 'bg-slate-500/10 text-slate-600 border border-slate-500/20' :
                           'bg-slate-500/10 text-slate-600 border border-slate-500/20'
                         }`}>
@@ -320,7 +320,7 @@ const Dashboard = () => {
                         )}
                         {(request.status === 'pending' || request.status === 'assigned' || request.status === 'in_session') && (
                           <Button onClick={() => navigate(`/session/${request.id}`)} size="sm"
-                            className={`h-7 text-[10px] ${request.status === 'in_session' ? 'bg-coral-500 hover:bg-emerald-700' : 'bg-sky-600 hover:bg-sky-700'}`}>
+                            className={`h-7 text-[10px] ${request.status === 'in_session' ? 'bg-coral-500 hover:bg-emerald-700' : 'bg-coral-500 hover:bg-coral-600 text-white'}`}>
                             {request.status === 'in_session' ? <><Play className="w-3 h-3 mr-1" /> Join</> : <><Video className="w-3 h-3 mr-1" /> Start</>}
                           </Button>
                         )}
@@ -340,8 +340,8 @@ const Dashboard = () => {
         )}
 
         {/* Recent Document Seals */}
-        <div className="mt-8 mb-8 border border-slate-200 rounded-lg overflow-hidden bg-[#0f1825]" data-testid="recent-seals-section">
-          <div className="bg-white/50 border-b border-slate-200 px-6 py-4">
+        <div className="mt-8 mb-8 border border-slate-200 rounded-lg overflow-hidden bg-cream-100" data-testid="recent-seals-section">
+          <div className="bg-cream-200 border-b border-slate-200 px-6 py-4">
             <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600">Recent Document Seals</h2>
           </div>
 
@@ -349,7 +349,7 @@ const Dashboard = () => {
             <div className="text-center py-16">
               <FileText className="w-12 h-12 text-slate-700 mx-auto mb-4" />
               <p className="text-slate-600 text-sm mb-4">No documents sealed yet</p>
-              <Button onClick={() => navigate('/demo')} className="bg-sky-600 hover:bg-sky-700 text-navy-900 text-sm">
+              <Button onClick={() => navigate('/demo')} className="bg-coral-500 hover:bg-coral-600 text-white text-sm">
                 Seal Your First Document
               </Button>
             </div>
@@ -360,7 +360,7 @@ const Dashboard = () => {
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-4 flex-1">
                       <div className="w-10 h-10 bg-sky-500/5 rounded-lg flex items-center justify-center flex-shrink-0 border border-slate-200">
-                        <FileText className="w-5 h-5 text-sky-500" />
+                        <FileText className="w-5 h-5 text-coral-600" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="text-navy-900 font-medium text-sm mb-0.5">{doc.file_name}</h3>
@@ -369,14 +369,14 @@ const Dashboard = () => {
                           <div>
                             <label className="text-slate-600 text-[10px] block mb-0.5">SHA-256</label>
                             <div className="flex items-center gap-2">
-                              <code className="text-coral-600/80 text-[10px] font-mono bg-[#162032] px-2 py-1 rounded flex-1 overflow-hidden text-ellipsis">{doc.sha256_hash}</code>
+                              <code className="text-navy-900 text-[10px] font-mono bg-cream-50 px-2 py-1 rounded flex-1 overflow-hidden text-ellipsis">{doc.sha256_hash}</code>
                               <button onClick={() => copyHash(doc.sha256_hash)} className="text-slate-600 hover:text-navy-900 p-1 transition-colors"><Copy className="w-3.5 h-3.5" /></button>
                             </div>
                           </div>
                           <div>
                             <label className="text-slate-600 text-[10px] block mb-0.5">Transaction ID</label>
                             <div className="flex items-center gap-2">
-                              <code className="text-coral-600/80 text-[10px] font-mono bg-[#162032] px-2 py-1 rounded">{doc.transaction_id}</code>
+                              <code className="text-navy-900 text-[10px] font-mono bg-cream-50 px-2 py-1 rounded">{doc.transaction_id}</code>
                               <a href={`https://hashscan.io/mainnet/transaction/${doc.transaction_id}`} target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-navy-900 p-1 transition-colors">
                                 <ExternalLink className="w-3.5 h-3.5" />
                               </a>
