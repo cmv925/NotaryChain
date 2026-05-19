@@ -14,7 +14,7 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # Import route modules
-from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes, notary_professional_routes, gdpr_routes, infra_routes, ws_routes, api_key_routes, public_api_routes, ron_compliance_routes, webhook_routes, template_routes, organization_routes, draft_routes, vault_routes, expiry_routes, draft_collab_routes, bulk_routes, marketplace_routes, embed_routes, booking_routes, copilot_routes, ai_generator_routes, summarizer_routes, witness_routes, remediation_routes, biometric_passport_routes, conductor_routes, evidence_package_routes, timeline_routes, reminder_routes, approval_routes, doc_compare_routes, branding_routes, rbac_routes, sso_routes, auth0_routes, okta_routes, org_activity_routes, org_webhook_routes, scheduled_reports_routes, investor_deck_routes, ops_dashboard_routes, alert_settings_routes, security_compliance_routes, soc2_export_routes, incident_routes, ceremony_routes, escrow_routes, anan_routes, fraud_intelligence_routes, ai_intelligence_routes, platform_features_routes, hts_routes, threat_learning_routes, ghl_routes, living_identity_routes, verify_routes, trustlayer_routes, salv_routes, fl_compliance_routes, kba_routes, fl_ceremony_routes, fl_journal_routes, fl_launch_routes, field_scanner_routes, sdk_routes
+from routes import auth_routes, document_routes, notary_routes, ai_routes, blockchain_routes, payment_routes, video_routes, crypto_routes, audit_routes, admin_routes, package_routes, email_routes, transaction_routes, twofa_routes, jobs_routes, notification_routes, subscription_routes, notary_professional_routes, gdpr_routes, infra_routes, ws_routes, api_key_routes, public_api_routes, ron_compliance_routes, webhook_routes, template_routes, organization_routes, draft_routes, vault_routes, expiry_routes, draft_collab_routes, bulk_routes, marketplace_routes, embed_routes, booking_routes, copilot_routes, ai_generator_routes, summarizer_routes, witness_routes, remediation_routes, biometric_passport_routes, conductor_routes, evidence_package_routes, timeline_routes, reminder_routes, approval_routes, doc_compare_routes, branding_routes, rbac_routes, sso_routes, auth0_routes, okta_routes, org_activity_routes, org_webhook_routes, scheduled_reports_routes, investor_deck_routes, ops_dashboard_routes, alert_settings_routes, security_compliance_routes, soc2_export_routes, incident_routes, ceremony_routes, escrow_routes, anan_routes, fraud_intelligence_routes, ai_intelligence_routes, platform_features_routes, hts_routes, threat_learning_routes, ghl_routes, living_identity_routes, verify_routes, trustlayer_routes, salv_routes, fl_compliance_routes, kba_routes, fl_ceremony_routes, fl_journal_routes, fl_launch_routes, field_scanner_routes, sdk_routes, compliance_states_routes
 from middleware.security import setup_security, health_check, limiter
 from services.notification_service import set_db as set_notification_db, set_ws_manager
 from services.ws_manager import ws_manager
@@ -107,6 +107,7 @@ fl_journal_routes.set_db(db)
 fl_launch_routes.set_db(db)
 field_scanner_routes.set_db(db)
 sdk_routes.set_db(db)
+compliance_states_routes.set_db(db)
 
 # Feature gate middleware needs db
 from middleware.feature_gate import set_db as set_gate_db
@@ -247,6 +248,7 @@ app.include_router(fl_journal_routes.router)
 app.include_router(fl_launch_routes.router)
 app.include_router(field_scanner_routes.router)
 app.include_router(sdk_routes.router)
+app.include_router(compliance_states_routes.router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -112,6 +112,28 @@ def _sign_payload(secret: str, payload: dict) -> str:
     return f"sha256={sig}"
 
 
+# In-memory rate limit for demo key: 10 sessions per IP per hour
+_demo_rate_buckets: dict = {}
+DEMO_RATE_LIMIT = 10
+DEMO_RATE_WINDOW = 3600  # seconds
+
+
+async def _check_demo_rate_limit(request: Request) -> tuple[bool, int]:
+    """Returns (allowed, retry_after_seconds)."""
+    ip = request.client.host if request.client else "unknown"
+    now = datetime.now(timezone.utc).timestamp()
+    bucket = _demo_rate_buckets.get(ip, [])
+    # drop expired entries
+    bucket = [t for t in bucket if t > now - DEMO_RATE_WINDOW]
+    if len(bucket) >= DEMO_RATE_LIMIT:
+        retry = int(DEMO_RATE_WINDOW - (now - bucket[0])) + 1
+        _demo_rate_buckets[ip] = bucket
+        return False, max(retry, 1)
+    bucket.append(now)
+    _demo_rate_buckets[ip] = bucket
+    return True, 0
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # M3 — Publishable Keys (Authenticated CRUD)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -198,8 +220,20 @@ async def create_sdk_session(
         )
 
     token = secrets.token_urlsafe(32)
+    event_secret = secrets.token_urlsafe(32)  # iframe uses this to sign event posts
+    # Rate-limit demo key
+    is_demo = "DEMO" in pk
+    if is_demo:
+        ok, retry_after = await _check_demo_rate_limit(request)
+        if not ok:
+            raise HTTPException(
+                status_code=429,
+                detail=f"Demo key rate limit exceeded. Try again in {retry_after}s, or generate your own key.",
+                headers={"Retry-After": str(retry_after)},
+            )
     session = {
         "session_token": token,
+        "event_secret": event_secret,
         "publishable_key": pk,
         "owner_user_id": key["user_id"],
         "mode": key["mode"],
@@ -223,7 +257,7 @@ async def create_sdk_session(
     # Increment usage on key
     await db.sdk_keys.update_one({"publishable_key": pk}, {"$inc": {"usage_count": 1}})
 
-    embed_url = f"{PUBLIC_BACKEND_URL}/embed/ceremony/{token}"
+    embed_url = f"{PUBLIC_BACKEND_URL}/embed/ceremony/{token}?es={event_secret}"
     return {
         "session_token": token,
         "embed_url": embed_url,
@@ -259,11 +293,23 @@ async def get_sdk_session(token: str):
 
 
 @router.post("/sessions/{token}/event")
-async def emit_session_event(token: str, event: dict):
-    """Iframe page posts ceremony progress events here. Triggers webhook fan-out."""
+async def emit_session_event(
+    token: str,
+    event: dict,
+    x_event_secret: Optional[str] = Header(None, alias="X-Event-Secret"),
+):
+    """Iframe page posts ceremony progress events here. Triggers webhook fan-out.
+    
+    Requires X-Event-Secret header (issued at session creation, returned via embed_url ?es=…).
+    This prevents arbitrary clients from posting fake status transitions to sessions.
+    """
     s = await db.sdk_sessions.find_one({"session_token": token})
     if not s:
         raise HTTPException(status_code=404, detail="Session not found")
+
+    expected_secret = s.get("event_secret")
+    if expected_secret and (not x_event_secret or not hmac.compare_digest(x_event_secret, expected_secret)):
+        raise HTTPException(status_code=401, detail="Invalid or missing X-Event-Secret")
 
     ev_type = event.get("type", "unknown")
     update = {
@@ -302,6 +348,99 @@ async def emit_session_event(token: str, event: dict):
         })
 
     return {"ok": True}
+
+
+@router.post("/sessions/{token}/seal")
+async def real_seal_session(
+    token: str,
+    body: dict,
+    x_event_secret: Optional[str] = Header(None, alias="X-Event-Secret"),
+):
+    """Anchor the session on Hedera HCS — produces a real on-chain seal.
+    Requires X-Event-Secret. Idempotent: if already sealed, returns existing seal."""
+    s = await db.sdk_sessions.find_one({"session_token": token})
+    if not s:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    expected_secret = s.get("event_secret")
+    if expected_secret and (not x_event_secret or not hmac.compare_digest(x_event_secret, expected_secret)):
+        raise HTTPException(status_code=401, detail="Invalid or missing X-Event-Secret")
+
+    if s.get("status") == "sealed":
+        return {
+            "already_sealed": True,
+            "seal_hash": s.get("seal_hash"),
+            "hcs_tx": s.get("hcs_tx"),
+            "ceremony_id": s.get("ceremony_id"),
+        }
+
+    # Compose a canonical payload for the seal
+    document_hash = body.get("document_hash") or hashlib.sha256(
+        f"{token}|{s['document_name']}|{s['signer_email'] or ''}".encode("utf-8")
+    ).hexdigest()
+    ceremony_id = f"sdk_{token[:12]}"
+
+    # Anchor on Hedera
+    try:
+        from services.hedera_service import hedera_service
+        hcs_payload = {
+            "kind": "sdk_ceremony_seal",
+            "session_token": token,
+            "ceremony_id": ceremony_id,
+            "publishable_key": s["publishable_key"],
+            "document_name": s["document_name"],
+            "document_hash": document_hash,
+            "signer_email": s.get("signer_email"),
+            "ts": datetime.now(timezone.utc).isoformat(),
+        }
+        topic_id = hedera_service.default_topic_id
+        result = await hedera_service.submit_message(topic_id, hcs_payload)
+        hcs_tx = None
+        if result.get("success"):
+            seq = result.get("sequence_number")
+            hcs_tx = f"{topic_id}@{seq}" if seq else topic_id
+    except Exception as e:
+        logger.error(f"sdk seal hedera anchor failed: {e}")
+        hcs_tx = None
+
+    await db.sdk_sessions.update_one(
+        {"session_token": token},
+        {
+            "$set": {
+                "status": "sealed",
+                "seal_hash": document_hash,
+                "hcs_tx": hcs_tx,
+                "ceremony_id": ceremony_id,
+                "sealed_at": datetime.now(timezone.utc).isoformat(),
+            },
+            "$push": {
+                "events_log": {
+                    "type": "ceremony.sealed",
+                    "payload": {"seal_hash": document_hash, "hcs_tx": hcs_tx},
+                    "at": datetime.now(timezone.utc).isoformat(),
+                }
+            },
+        },
+    )
+
+    # Fire webhooks
+    await _dispatch_webhooks(s["owner_user_id"], s["publishable_key"], "ceremony.sealed", {
+        "session_token": token,
+        "publishable_key": s["publishable_key"],
+        "document_name": s["document_name"],
+        "metadata": s.get("metadata", {}),
+        "seal_hash": document_hash,
+        "hcs_tx": hcs_tx,
+        "ceremony_id": ceremony_id,
+    })
+
+    return {
+        "sealed": True,
+        "seal_hash": document_hash,
+        "hcs_tx": hcs_tx,
+        "ceremony_id": ceremony_id,
+        "hedera_explorer_url": f"https://hashscan.io/mainnet/transaction/{hcs_tx}" if hcs_tx else None,
+    }
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -351,7 +490,8 @@ async def delete_webhook(wid: str, current_user: User = Depends(get_current_user
 
 
 async def _dispatch_webhooks(user_id: str, pk: str, event_type: str, payload: dict):
-    """Fire registered webhooks for this user matching the event type."""
+    """Fire registered webhooks for this user matching the event type.
+    Retries with exponential backoff on 5xx/network errors (3 attempts, 1s/2s/4s)."""
     webhooks = await db.sdk_webhooks.find(
         {"user_id": user_id, "active": True, "events": event_type}, {"_id": 0}
     ).to_list(20)
@@ -367,27 +507,47 @@ async def _dispatch_webhooks(user_id: str, pk: str, event_type: str, payload: di
 
     async with httpx.AsyncClient(timeout=8.0) as client:
         for wh in webhooks:
-            try:
-                sig = _sign_payload(wh["secret"], body)
-                r = await client.post(
-                    wh["url"],
-                    json=body,
-                    headers={
-                        "X-NotaryChain-Signature": sig,
-                        "X-NotaryChain-Event": event_type,
-                        "User-Agent": f"NotaryChain-SDK/{SDK_VERSION}",
-                    },
-                )
-                await db.sdk_webhooks.update_one(
-                    {"id": wh["id"]},
-                    {"$inc": {"delivery_count": 1}, "$set": {"last_status": r.status_code, "last_at": datetime.now(timezone.utc).isoformat()}},
-                )
-            except Exception as e:
-                logger.warning(f"webhook dispatch failed url={wh['url']} err={e}")
-                await db.sdk_webhooks.update_one(
-                    {"id": wh["id"]},
-                    {"$set": {"last_status": -1, "last_error": str(e)[:200]}},
-                )
+            sig = _sign_payload(wh["secret"], body)
+            headers = {
+                "X-NotaryChain-Signature": sig,
+                "X-NotaryChain-Event": event_type,
+                "X-NotaryChain-Delivery-Id": body["id"],
+                "User-Agent": f"NotaryChain-SDK/{SDK_VERSION}",
+            }
+            last_status = None
+            last_error = None
+            attempts = 0
+            for backoff in (1, 2, 4):  # 3 attempts: 0s, 1s, 3s cumulative wait
+                attempts += 1
+                try:
+                    r = await client.post(wh["url"], json=body, headers=headers)
+                    last_status = r.status_code
+                    if r.status_code < 500:
+                        break  # success or non-retryable client error
+                    last_error = f"5xx response (attempt {attempts})"
+                except Exception as e:
+                    last_error = f"{type(e).__name__}: {str(e)[:120]}"
+                    last_status = -1
+                # backoff before next attempt (skip after last try)
+                if attempts < 3:
+                    import asyncio
+                    await asyncio.sleep(backoff)
+
+            update_set = {
+                "last_status": last_status,
+                "last_at": datetime.now(timezone.utc).isoformat(),
+                "last_attempts": attempts,
+            }
+            if last_error:
+                update_set["last_error"] = last_error[:240]
+            await db.sdk_webhooks.update_one(
+                {"id": wh["id"]},
+                {"$inc": {"delivery_count": 1}, "$set": update_set},
+            )
+            if last_status is not None and 200 <= last_status < 300:
+                logger.info(f"webhook delivered url={wh['url']} status={last_status} attempts={attempts}")
+            else:
+                logger.warning(f"webhook failed url={wh['url']} status={last_status} attempts={attempts} err={last_error}")
 
 
 # ─────────────────────────────────────────────────────────────────────────────

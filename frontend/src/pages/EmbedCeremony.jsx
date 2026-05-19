@@ -6,7 +6,7 @@
  * Bridges progress events to the parent window via postMessage.
  */
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { Shield, FileText, Loader2, CheckCircle2, AlertCircle, Camera, KeyRound, Pen, Lock } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -31,6 +31,10 @@ const STEPS = [
 
 export default function EmbedCeremony() {
   const { token } = useParams();
+  const [searchParams] = useSearchParams();
+  const eventSecret = searchParams.get('es') || '';
+  const eventHeaders = eventSecret ? { 'X-Event-Secret': eventSecret } : {};
+
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null);
   const [step, setStep] = useState(0);
@@ -60,34 +64,28 @@ export default function EmbedCeremony() {
   const sealNow = async () => {
     setSealing(true);
     try {
-      // Simulated ceremony progress event (in production, this triggers actual ceremony pipeline)
+      // Mark ceremony started
       await axios.post(`${API}/sdk/sessions/${token}/event`, {
         type: 'ceremony.started',
         payload: { ceremony_id: `cer_${token.slice(0, 12)}` },
-      });
+      }, { headers: eventHeaders });
       postToParent('signed', { token });
 
-      // Simulate seal (in production, calls /api/ceremony/seal-fl etc.)
-      const fakeHash = '0x' + Math.random().toString(16).slice(2).padEnd(64, '0').slice(0, 64);
-      const fakeTx = `0.0.${Math.floor(Math.random() * 9000000) + 1000000}@${Date.now()}.${Math.floor(Math.random() * 1e9)}`;
+      // Real Hedera anchor via /sessions/{token}/seal
+      const sealResp = await axios.post(
+        `${API}/sdk/sessions/${token}/seal`,
+        { document_hash: null },
+        { headers: eventHeaders }
+      );
+      const { seal_hash, hcs_tx, ceremony_id } = sealResp.data;
 
-      await new Promise(r => setTimeout(r, 1600));
-      await axios.post(`${API}/sdk/sessions/${token}/event`, {
-        type: 'ceremony.completed',
-        payload: { token, seal_hash: fakeHash },
-      });
-
-      await axios.post(`${API}/sdk/sessions/${token}/event`, {
-        type: 'ceremony.sealed',
-        payload: { seal_hash: fakeHash, hcs_tx: fakeTx },
-      });
-
-      setDone({ seal_hash: fakeHash, hcs_tx: fakeTx });
-      postToParent('completed', { seal_hash: fakeHash });
-      postToParent('sealed', { seal_hash: fakeHash, hcs_tx: fakeTx });
+      setDone({ seal_hash, hcs_tx });
+      postToParent('completed', { seal_hash, ceremony_id });
+      postToParent('sealed', { seal_hash, hcs_tx, ceremony_id });
     } catch (e) {
-      setError(e.response?.data?.detail || 'Ceremony failed');
-      postToParent('error', { error: 'ceremony_failed' });
+      const detail = e.response?.data?.detail || 'Ceremony failed';
+      setError(detail);
+      postToParent('error', { error: detail });
     } finally {
       setSealing(false);
     }
