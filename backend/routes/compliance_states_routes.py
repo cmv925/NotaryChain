@@ -52,7 +52,7 @@ async def public_list_states():
 async def public_state_comparison():
     """Side-by-side gate matrix for the public comparison page."""
     return {
-        "states": [{"code": s["code"], "name": s["name"], "ron_status": s["ron_status"], "platform_status": s["platform_status"]} for s in list_states()],
+        "states": [{"code": s["code"], "name": s["name"], "ron_status": s["ron_status"], "platform_status": s["platform_status"], "effective_date": s["effective_date"]} for s in list_states()],
         "matrix": comparison_matrix(),
     }
 

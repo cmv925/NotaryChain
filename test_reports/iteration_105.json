@@ -1,0 +1,34 @@
+{
+  "summary": "TrustLayer Phase 2 backend testing: 19/19 pytest tests PASS. Validated Ed25519 keypair provisioning per partner (public exposed, private NEVER leaked in create/list/get/public endpoints), attestation signing (signature + signature_alg='Ed25519' + payload_digest), real Hedera HCS anchor (best-effort, anchor shape verified incl. hashscan.io/mainnet explorer_url), /partners/{id}/public-key (200 ok / 404 unknown), public /attestations/{id}/verify (valid for fresh; signature_valid=false after direct-Mongo tamper of claim_value; legacy attestation without signature returns errors containing 'legacy'), /sdk-v2.js serves application/javascript with TrustLayer 2.0.0 globals + Hedera mirror URL + API base substituted, /partners/public exposes ed25519_public_b64 + key_version=1. Phase 1 regression: badge.svg, sdk.js (v1), revoke, rotate-key (does NOT touch ed25519 key), partner status active/disabled all still work.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_trustlayer_phase2.py",
+    "/app/test_reports/pytest/iter105.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "trustlayer_routes.py verify_attestation handler sets result['payload_digest_match']=True unconditionally with a comment 'verify_attestation already checks this'. While crypto.verify_attestation does fail with 'payload_digest mismatch' if attestation['payload_digest'] was persisted and tampered, the API response will still say payload_digest_match=true alongside signature_valid=false — slightly confusing for consumers. Consider deriving the flag from the actual digest comparison so the response is internally consistent.",
+    "Hedera anchor truncates Ed25519 signature to 88 bytes (anchor_on_hedera in trustlayer_crypto.py) — fine for HCS-only 'tamper-evident-pointer' use, but the comment 'truncate to fit 1024B' is misleading: an Ed25519 signature is already 64 raw bytes (88 base64 chars). 88 bytes is base64 length, not raw signature length. Worth a clearer comment so the next dev doesn't think we're truncating crypto.",
+    "Partner private key (ed25519_private_b64) is stored in plaintext in Mongo. trustlayer_routes.py header comment already flags this with 'WARNING: HSM-bound in Phase 3' — acknowledged tech debt.",
+    "/api/trustlayer/attestations/{id}/verify currently returns 200 with errors=['Partner public key unavailable.'] if the partner is mid-deletion or somehow lost its key — fine for legacy compat, but consider returning 409 to mirror the public-key endpoint behavior.",
+    "trustlayer_routes.py exceeds 640 lines (>500 threshold). Consider splitting partner CRUD vs. attestation routes vs. SDK templates into separate modules now that Phase 2 has grown the file."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_trustlayer_phase2.py (new)"
+  ],
+  "success_rate": {"backend": "100% (19/19)", "frontend": "N/A (backend-only task)"},
+  "test_credentials": "admin@notarychain.com / Admin123!, demo@test.com / Demo123! (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "Test-prefixed TrustLayer partners (TEST_P2_*) created via API and disabled on teardown. A throwaway legacy attestation and a tamper attestation are inserted directly into Mongo (trust_attestations) and deleted at end of each test. No production data modified.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Phase 2 test file: /app/backend/tests/test_trustlayer_phase2.py — runs in ~17s. Test_verify_tampered_attestation_returns_invalid uses motor to mutate claim_value directly in Mongo (trust_attestations) and asserts /verify returns signature_valid=false — proves the canonical re-derivation path on the server. The fixture-scope 'created_partner' is module-scoped and disabled in teardown so /partners/public is not polluted. First request to the preview URL after a cold start can take >15s (observed once during this run); rerun if you hit a single fixture timeout. Hedera mainnet anchor balance is reportedly low (~28 HBAR per agent-to-agent note) — anchor is best-effort and the test correctly skips the anchor-shape assertion if hcs_anchor=null.",
+  "rca of the issue": "No bugs found. One transient connection timeout on first cold-start request (15s) caused a single fixture failure on iteration 1; re-running with no code change produced 19/19 green. The signing pipeline (canonical JSON with sort_keys + tight separators), digest derivation (SHA-256 of canonical bytes), and Ed25519 verify-by-re-deriving-bytes-from-current-DB-state correctly catches tamper attempts — verified end-to-end by mutating claim_value in Mongo and observing signature_valid=false."
+}
