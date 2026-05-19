@@ -157,6 +157,24 @@ export default function AdminCeremonyAnalytics() {
           </div>
         </div>
 
+        {/* Evaluator-errors alert (fail-closed signal) */}
+        {overview && overview.evaluator_errors_24h > 0 && (
+          <div className="bg-coral-50 border border-coral-300 rounded-lg px-5 py-4 mb-6 flex items-start gap-3" data-testid="evaluator-errors-alert">
+            <AlertTriangle className="w-5 h-5 text-coral-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-coral-700 font-semibold text-sm" data-testid="evaluator-errors-alert-title">
+                {overview.evaluator_errors_24h} multi-state evaluator error{overview.evaluator_errors_24h === 1 ? '' : 's'} in the last 24 hours
+              </p>
+              <p className="text-slate-600 text-[12px] mt-1">
+                Ceremonies in TX/NY/CA/VA were blocked from sealing because the pre-seal evaluator failed to run. This is the
+                fail-closed safeguard — investigate the affected requests (status ends in <code className="font-mono">_evaluator_error</code>) and
+                check backend logs for the underlying cause (DB outage, code regression, missing collection, etc).
+                <span className="ml-2 text-slate-500">Total since launch: {overview.evaluator_errors_total}</span>
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* KPI strip */}
         {overview && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" data-testid="kpi-strip">

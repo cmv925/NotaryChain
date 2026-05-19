@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Compass, ChevronRight, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Compass, ChevronRight, AlertTriangle, CheckCircle2, Share2, Copy, Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
+import { toast } from '../hooks/use-toast';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -18,6 +19,8 @@ export default function StatePickabilityWidget({ token }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sharing, setSharing] = useState(false);
+  const [shareLink, setShareLink] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -35,6 +38,35 @@ export default function StatePickabilityWidget({ token }) {
     })();
     return () => { cancelled = true; };
   }, [token]);
+
+  const handleShare = async () => {
+    setSharing(true);
+    try {
+      const res = await axios.post(
+        `${API}/compliance/snapshots/share?ttl_days=7`,
+        null,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      const url = res.data.share_url;
+      setShareLink(url);
+      try {
+        await navigator.clipboard.writeText(url);
+        toast({ title: 'Snapshot link copied', description: 'Public read-only report URL is in your clipboard. Expires in 7 days.' });
+      } catch (_e) {
+        toast({ title: 'Snapshot created', description: 'Share link generated. Copy it from the banner below.' });
+      }
+    } catch (e) {
+      toast({ title: 'Could not create snapshot', description: e?.response?.data?.detail || 'Try again in a moment', variant: 'destructive' });
+    } finally {
+      setSharing(false);
+    }
+  };
+
+  const copyShareLink = () => {
+    if (!shareLink) return;
+    navigator.clipboard.writeText(shareLink);
+    toast({ title: 'Copied to clipboard' });
+  };
 
   if (loading) {
     return (
@@ -69,18 +101,44 @@ export default function StatePickabilityWidget({ token }) {
   return (
     <div className="border border-slate-200 rounded-lg overflow-hidden bg-cream-100" data-testid="pickability-widget">
       {/* Header */}
-      <div className="bg-cream-200 border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+      <div className="bg-cream-200 border-b border-slate-200 px-6 py-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Compass className="w-4 h-4 text-coral-600" />
           <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600">State Pickability Index</h2>
         </div>
         <div className="flex items-center gap-3">
+          <Button
+            onClick={handleShare}
+            size="sm"
+            variant="outline"
+            disabled={sharing}
+            className="border-slate-300 text-navy-900 hover:bg-cream-100 h-8 text-[10px] uppercase tracking-wider"
+            data-testid="pickability-share-btn"
+          >
+            {sharing ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Share2 className="w-3 h-3 mr-1" />}
+            Share snapshot
+          </Button>
           <div className="text-right">
             <div className={`text-2xl font-light tracking-tight ${overall.text}`} data-testid="pickability-overall-score">{data.overall_score}<span className="text-sm text-slate-500">%</span></div>
             <div className="text-[10px] text-slate-500 uppercase tracking-wider">{data.total_ready} of {data.total_open} ready to seal</div>
           </div>
         </div>
       </div>
+
+      {/* Share link banner */}
+      {shareLink && (
+        <div className="bg-emerald-50 border-b border-emerald-200 px-6 py-3 flex items-center gap-3" data-testid="pickability-share-link-banner">
+          <Share2 className="w-4 h-4 text-emerald-700 flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] uppercase tracking-wider text-emerald-700 font-semibold mb-0.5">Public snapshot · expires in 7 days</p>
+            <code className="text-[11px] text-navy-900 font-mono truncate block" data-testid="pickability-share-link">{shareLink}</code>
+          </div>
+          <Button size="sm" variant="ghost" onClick={copyShareLink} className="h-7 text-[10px] text-emerald-700 hover:bg-emerald-100" data-testid="pickability-copy-link-btn">
+            <Copy className="w-3 h-3 mr-1" /> Copy
+          </Button>
+        </div>
+      )}
+
 
       <div className="grid grid-cols-1 lg:grid-cols-5 divide-y lg:divide-y-0 lg:divide-x divide-slate-200">
         {/* Per-state breakdown */}

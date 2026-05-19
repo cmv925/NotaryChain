@@ -14,6 +14,7 @@ Endpoints:
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 import logging
+import secrets
 
 from fastapi import APIRouter, HTTPException, Request, Depends, Query
 from motor.motor_asyncio import AsyncIOMotorDatabase
@@ -86,6 +87,18 @@ async def analytics_overview(current_user: User = Depends(get_current_user)):
     pending = await db.notarization_requests.count_documents({"status": "pending"})
     fl_blocked = await db.notarization_requests.count_documents({"status": "fl_blocked"})
 
+    # Evaluator health: count ceremonies that hit a non-FL evaluator error in the last 24h.
+    # This is the fail-closed signal added in iteration 110 — non-zero values indicate
+    # an infra/code regression that's blocking sealing.
+    last_24h = (now - timedelta(hours=24)).isoformat()
+    evaluator_errors_24h = await db.notarization_requests.count_documents({
+        "status": {"$regex": "_evaluator_error$"},
+        "blocked_at": {"$gte": last_24h},
+    })
+    evaluator_errors_total = await db.notarization_requests.count_documents({
+        "status": {"$regex": "_evaluator_error$"},
+    })
+
     # Avg time-to-seal: completed_at - created_at for sealed ceremonies
     pipeline_tts = [
         {"$match": {"status": {"$in": ["completed", "sealed"]}, "completed_at": {"$exists": True, "$ne": None}}},
@@ -118,6 +131,8 @@ async def analytics_overview(current_user: User = Depends(get_current_user)):
         "in_session": in_session,
         "pending": pending,
         "fl_blocked": fl_blocked,
+        "evaluator_errors_24h": evaluator_errors_24h,
+        "evaluator_errors_total": evaluator_errors_total,
         "completion_rate_pct": round(completion_rate, 1),
         "avg_time_to_seal_secs": avg_tts_secs,
         "revenue_30d_usd": revenue_30d,
@@ -460,6 +475,137 @@ async def my_state_pickability(current_user: User = Depends(get_current_user)):
         "nudges": nudges_sorted,
         "as_of": datetime.now(timezone.utc).isoformat(),
     }
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Compliance Snapshot — shareable public read-only pickability reports
+# ─────────────────────────────────────────────────────────────────────────────
+
+SNAPSHOT_DEFAULT_TTL_DAYS = 7
+SNAPSHOT_MAX_TTL_DAYS = 30
+
+
+def _mask_email(email: str) -> str:
+    """Mask 'jdoe@firm.com' → 'j***@firm.com' for snapshot attribution."""
+    if not email or "@" not in email:
+        return "shared"
+    local, _, domain = email.partition("@")
+    if len(local) <= 1:
+        return f"{local}***@{domain}"
+    return f"{local[0]}***@{domain}"
+
+
+@router.post("/compliance/snapshots/share")
+async def create_compliance_snapshot(
+    request: Request,
+    ttl_days: int = Query(SNAPSHOT_DEFAULT_TTL_DAYS, ge=1, le=SNAPSHOT_MAX_TTL_DAYS),
+    note: Optional[str] = Query(None, max_length=300),
+    current_user: User = Depends(get_current_user),
+):
+    """Freeze the caller's State Pickability Index as a public, read-only snapshot.
+    Useful for sending mortgage brokers / title agents / counterparties a link like
+    "your CA deed ceremony is 67% ready, missing thumbprint + journal".
+
+    Snapshots are scrubbed of identifiers (no ceremony_id, no user_id, no document_name)
+    — they only carry aggregate scores + gate-level nudges suitable for partner sharing.
+    """
+    # Reuse the same logic as /pickability/me so the snapshot is byte-for-byte identical
+    pickability = await my_state_pickability(current_user=current_user)
+
+    # Scrub PII from the snapshot — partners see compliance gaps, not document names or IDs
+    scrubbed_states = []
+    for s in pickability["states"]:
+        scrubbed_states.append({
+            "state_code": s["state_code"],
+            "open_count": s["open_count"],
+            "ready_count": s["ready_count"],
+            "score": s["score"],
+            "ceremonies": [
+                {
+                    "ready": c["ready"],
+                    "document_type": c.get("document_type"),
+                    "failing_gates": c.get("failing_gates", []),
+                }
+                for c in s.get("ceremonies", [])
+            ],
+        })
+    scrubbed_nudges = [
+        {
+            "state_code": n["state_code"],
+            "document_type": n.get("document_type"),
+            "gate_id": n.get("gate_id"),
+            "title": n["title"],
+            "description": n["description"],
+        }
+        for n in pickability["nudges"]
+    ]
+
+    token = secrets.token_urlsafe(16)
+    now = datetime.now(timezone.utc)
+    expires_at = now + timedelta(days=ttl_days)
+    doc = {
+        "token": token,
+        "owner_user_id": current_user.id,
+        "owner_email_masked": _mask_email(current_user.email),
+        "note": (note or "").strip()[:300] or None,
+        "overall_score": pickability["overall_score"],
+        "total_open": pickability["total_open"],
+        "total_ready": pickability["total_ready"],
+        "states": scrubbed_states,
+        "nudges": scrubbed_nudges,
+        "created_at": now.isoformat(),
+        "expires_at": expires_at.isoformat(),
+        "view_count": 0,
+    }
+    await db.compliance_snapshots.insert_one(doc)
+
+    # Build a share URL that points at the public-facing host. Behind ingress,
+    # `request.base_url` resolves to the internal cluster host — prefer the
+    # X-Forwarded-* headers or the Origin sent by the calling frontend so the
+    # link works when copy-pasted into email/Slack/etc.
+    fwd_proto = request.headers.get("x-forwarded-proto")
+    fwd_host = request.headers.get("x-forwarded-host")
+    origin = request.headers.get("origin")
+    if fwd_proto and fwd_host:
+        public_base = f"{fwd_proto}://{fwd_host}"
+    elif origin:
+        public_base = origin.rstrip("/")
+    else:
+        public_base = str(request.base_url).rstrip("/")
+    return {
+        "token": token,
+        "share_url": f"{public_base}/compliance/snapshot/{token}",
+        "expires_at": doc["expires_at"],
+        "overall_score": doc["overall_score"],
+    }
+
+
+@router.get("/compliance/snapshots/{token}")
+async def get_compliance_snapshot(token: str):
+    """Public read-only snapshot fetch. No auth — intended to be shared with
+    counterparties. Increments view_count on each fetch."""
+    doc = await db.compliance_snapshots.find_one({"token": token}, {"_id": 0, "owner_user_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Snapshot not found")
+
+    # Expiry check
+    try:
+        exp = datetime.fromisoformat(doc["expires_at"].replace("Z", "+00:00"))
+        if exp < datetime.now(timezone.utc):
+            raise HTTPException(status_code=410, detail="Snapshot has expired")
+    except HTTPException:
+        raise
+    except Exception:
+        pass
+
+    # Best-effort view counter (don't block response on it)
+    try:
+        await db.compliance_snapshots.update_one({"token": token}, {"$inc": {"view_count": 1}})
+    except Exception as e:
+        logger.debug(f"snapshot view increment failed: {e}")
+
+    return doc
+
+
 
 
 @router.post("/admin/compliance/backfill-state-codes")

@@ -62,6 +62,7 @@ const SDKKeys = lazy(() => import('./pages/SDKKeys'));
 const MyDocuments = lazy(() => import('./pages/MyDocuments'));
 const StateComparison = lazy(() => import('./pages/StateComparison'));
 const StateDetail = lazy(() => import('./pages/StateDetail'));
+const CompliancePublicSnapshot = lazy(() => import('./pages/CompliancePublicSnapshot'));
 const AdminCeremonyAnalytics = lazy(() => import('./pages/AdminCeremonyAnalytics'));
 const TrustBadges = lazy(() => import('./pages/TrustBadges'));
 const TrustBadgeLanding = lazy(() => import('./pages/TrustBadgeLanding'));
@@ -263,6 +264,7 @@ function App() {
             />
             <Route path="/compliance/states" element={<StateComparison />} />
             <Route path="/compliance/states/:code" element={<StateDetail />} />
+            <Route path="/compliance/snapshot/:token" element={<CompliancePublicSnapshot />} />
             <Route
               path="/admin/analytics"
               element={
