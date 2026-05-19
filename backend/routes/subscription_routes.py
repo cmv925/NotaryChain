@@ -201,6 +201,8 @@ FEATURE_PLAN_MAP = {
     # Trust Badge (NEW - revenue stream) — accessible from $29 Trust Badge plan or higher
     "trust_badge": "trust_badge",
     "trust_badge_white_label": "enterprise",
+    # Embeddable Notarize SDK (M1-M5) — Pro+ tier
+    "sdk_embed": "pro",
 }
 
 PLAN_HIERARCHY = {"free": 0, "trust_badge": 1, "pro": 2, "enterprise": 3}

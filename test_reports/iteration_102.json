@@ -1,0 +1,56 @@
+{
+  "summary": "Tested Embeddable Notarize SDK Phase 1 (M1-M5). 18/18 backend pytest cases pass. Full e2e UI flow (admin login → create key → create session → /embed/ceremony/:token → walk 5 steps → seal) works end-to-end; backend session correctly transitions to status='sealed' with seal_hash and hcs_tx persisted. Developer SDK landing page renders cleanly with all sections (hero, 4 code blocks, event reference table, CTAs). Subscription gate enforced server-side (free user 403 with upgrade_required). One minor frontend UX gap discovered: dedicated upgrade-gate UI does not render for free users on SDKKeys page (toast appears instead).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "SDKKeys.jsx",
+        "issue": "Free user sees the full 'Create publishable key' form on /developers/sdk-keys instead of the dedicated upgrade-gate UI (data-testid=sdk-upgrade-gate). The gateError state is only set inside fetchAll() catch, but GET /api/sdk/keys, /webhooks, /usage are NOT subscription-gated (they just return empty arrays for free users). The 403 only fires on POST /api/sdk/keys via createKey(), and that catch handler at line 74-78 only shows a toast — it never calls setGateError(e.response.data.detail). Result: the upgrade gate full-page UI is unreachable for free users. Fix: mirror the fetchAll catch block inside createKey() to setGateError when detail.error==='upgrade_required'.",
+        "selector": "[data-testid=\"sdk-upgrade-gate\"]",
+        "priority": "MEDIUM"
+      },
+      {
+        "component": "Dashboard",
+        "issue": "React console warning: 'Each child in a list should have a unique key prop' in Dashboard render. Unrelated to SDK feature but observed during testing.",
+        "selector": "Dashboard list",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_sdk_phase1.py",
+    "/app/test_reports/pytest/iter102_sdk_phase1.xml"
+  ],
+  "action_items": [
+    "(MEDIUM) SDKKeys.jsx createKey() catch handler should setGateError(e.response.data.detail) when status===403 && detail.error==='upgrade_required', so the dedicated upgrade-gate full-page UI renders instead of (or in addition to) the toast. Currently only the toast informs the free user — the data-testid='sdk-upgrade-gate' UI block is dead code for the create-key path.",
+    "(LOW) Investigate React 'unique key prop' warning on /dashboard render (unrelated to SDK Phase 1, found incidentally)."
+  ],
+  "critical_code_review_comments": [
+    "sdk_routes.py L226: embed_url = `{PUBLIC_BACKEND_URL}/embed/ceremony/{token}` — PUBLIC_BACKEND_URL is correctly populated from .env (https://notary-chain-preview-1.preview.emergentagent.com), so embed URLs work. Good defensive fallback chain (PUBLIC_BACKEND_URL → REACT_APP_BACKEND_URL → '').",
+    "sdk_routes.py emit_session_event (L261-304): event endpoint is fully public and unauthenticated. Anyone with a session_token can post arbitrary status transitions (e.g. mark sealed with fake hashes). For Phase 1 this is acceptable since simulation is the goal, but production must require a signed origin or pk validation. Tag as M2/M3 follow-up.",
+    "sdk_routes.py L264: lookup uses find_one but full doc loaded just to get owner_user_id/publishable_key — fine at current scale, consider projection for hot path.",
+    "Webhook dispatcher (_dispatch_webhooks): does not retry on 5xx/timeout. Fine for MVP but worth a retry-with-backoff for production reliability. Also no per-event delivery log doc — only counters on the webhook doc — making debugging harder.",
+    "EmbedCeremony.jsx sealNow(): SIMULATED seal_hash/hcs_tx (acknowledged mocked by main agent in Phase 1 scope). Steps fire ceremony.completed and ceremony.sealed back-to-back with no real ceremony pipeline — acceptable per M2 spec.",
+    "Origin check (_check_origin): permissive when allowed_origins=[], strict otherwise with hostname + subdomain match. Verified working — evil.com correctly rejected when allowed=[allowed.com]. (Note: Kubernetes ingress rewrites the Origin header to the cluster URL, so positive-path origin tests cannot be exercised through the public proxy; this is an infra quirk, not a bug.)",
+    "Demo key endpoint (/api/sdk/demo-key): idempotent and unrestricted — fine. Note it has no rate limit, despite the displayed name 'Public Demo Key (rate-limited)'. Consider adding actual rate limiting.",
+    "SDKKeys.jsx: the gateError code path is mostly dead because the GET endpoints used in fetchAll are not gated. See action items."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_sdk_phase1.py"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "95%"
+  },
+  "seed_data_creation": "Several TEST_-prefixed sdk_keys created during pytest run; one was revoked at end of test. A few TEST_ keys remain in DB (test_admin_key, test_e2e_admin) — owned by admin@notarychain.com.",
+  "test_credentials": "admin@notarychain.com / Admin123!, demo@test.com / Demo123! (both verified valid)",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "SDK Phase 1 backend is solid — 18/18 tests pass in /app/backend/tests/test_sdk_phase1.py with junit at /app/test_reports/pytest/iter102_sdk_phase1.xml. E2E flow verified through real browser: /developers/sdk renders, /embed/ceremony/:token walks through all 5 steps and seals, GET /api/sdk/sessions/{token} returns status='sealed'. Origin allowlist positive-path test is intentionally omitted because Kube ingress rewrites the Origin header — only the negative path (evil.com blocked) can be tested through the public proxy. One frontend UX gap: free users hitting /developers/sdk-keys see the full create form + a denial toast on click instead of the dedicated upgrade-gate UI.",
+  "rca of the issue": "Frontend SDKKeys upgrade-gate: createKey() at line 74-78 only invokes toast() on 403; the gateError state setter is only inside fetchAll's catch block. Since the GET endpoints used by fetchAll (keys/webhooks/usage) are not gated and return empty arrays for free users, fetchAll never sees a 403, so gateError stays null, and the upgrade-gate UI (rendered at line 137 conditional on gateError) never displays. Fix: add `if (e.response?.status === 403 && e.response?.data?.detail?.error === 'upgrade_required') setGateError(e.response.data.detail)` to the createKey catch handler before the toast call."
+}

@@ -56,6 +56,9 @@ const AdminFLRecruitment = lazy(() => import('./pages/AdminFLRecruitment'));
 const AdminFLRonsp = lazy(() => import('./pages/AdminFLRonsp'));
 const FieldScanner = lazy(() => import('./pages/FieldScanner'));
 const PublicScannerDemo = lazy(() => import('./pages/PublicScannerDemo'));
+const EmbedCeremony = lazy(() => import('./pages/EmbedCeremony'));
+const DeveloperSDK = lazy(() => import('./pages/DeveloperSDK'));
+const SDKKeys = lazy(() => import('./pages/SDKKeys'));
 const TrustBadges = lazy(() => import('./pages/TrustBadges'));
 const TrustBadgeLanding = lazy(() => import('./pages/TrustBadgeLanding'));
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
@@ -236,6 +239,16 @@ function App() {
               }
             />
             <Route path="/scanner/demo" element={<PublicScannerDemo />} />
+            <Route path="/embed/ceremony/:token" element={<EmbedCeremony />} />
+            <Route path="/developers/sdk" element={<DeveloperSDK />} />
+            <Route
+              path="/developers/sdk-keys"
+              element={
+                <ProtectedRoute>
+                  <SDKKeys />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/trust-hub"
               element={
