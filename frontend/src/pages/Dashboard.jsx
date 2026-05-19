@@ -25,7 +25,7 @@ function BentoAction({ icon: Icon, label, desc, onClick, accent, ...props }) {
       onClick={onClick}
       className={`flex items-center gap-3 w-full p-3 text-sm rounded-md transition-all duration-200 text-left border ${
         accent
-          ? 'bg-coral-50 text-navy-900 border-coral-200 hover:bg-coral-100 hover:border-sky-500/50'
+          ? 'bg-coral-50 text-navy-900 border-coral-200 hover:bg-coral-100 hover:border-coral-300'
           : 'text-navy-800 border-transparent hover:text-navy-900 hover:bg-cream-200/50 hover:border-slate-300'
       }`}
       {...props}
@@ -123,7 +123,7 @@ const Dashboard = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-cream-200/50 transition-all" data-testid="user-menu-trigger">
-                  <div className="w-8 h-8 rounded-full bg-navy-900 flex items-center justify-center text-navy-900 text-xs font-bold">
+                  <div className="w-8 h-8 rounded-full bg-navy-900 flex items-center justify-center text-cream-100 text-xs font-bold">
                     {user?.full_name?.[0] || 'U'}
                   </div>
                   <div className="text-left hidden sm:block">
@@ -161,7 +161,7 @@ const Dashboard = () => {
                   <Save className="w-4 h-4 mr-2" /> My Drafts
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-cream-200" />
-                <DropdownMenuItem onClick={handleLogout} className="hover:bg-red-500/10 text-red-400 cursor-pointer" data-testid="menu-logout">
+                <DropdownMenuItem onClick={handleLogout} className="hover:bg-red-50 text-red-600 cursor-pointer" data-testid="menu-logout">
                   <LogOut className="w-4 h-4 mr-2" /> {t('nav.logout')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -274,23 +274,23 @@ const Dashboard = () => {
               <FileText className="w-4 h-4 text-coral-600" />
               <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600">My Notarization Requests</h2>
             </div>
-            <div className="divide-y divide-slate-800/50">
+            <div className="divide-y divide-slate-200">
               {notaryRequests.slice(0, 5).map((request) => (
                 <div key={request.id}>
                   <div className="px-6 py-4 hover:bg-cream-200/20 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                          request.status === 'pending' ? 'bg-coral-500/10' :
-                          request.status === 'in_session' ? 'bg-coral-500/10' :
-                          request.status === 'completed' ? 'bg-coral-50' : 'bg-cream-200'
+                          request.status === 'pending' ? 'bg-amber-50' :
+                          request.status === 'in_session' ? 'bg-emerald-50' :
+                          request.status === 'completed' ? 'bg-slate-100' : 'bg-cream-200'
                         }`}>
                           {request.status === 'in_session' ? (
-                            <Video className="w-4 h-4 text-coral-600" />
+                            <Video className="w-4 h-4 text-emerald-600" />
                           ) : (
                             <FileText className={`w-4 h-4 ${
-                              request.status === 'pending' ? 'text-coral-600' :
-                              request.status === 'completed' ? 'text-coral-600' : 'text-slate-500'
+                              request.status === 'pending' ? 'text-amber-600' :
+                              request.status === 'completed' ? 'text-slate-600' : 'text-coral-600'
                             }`} />
                           )}
                         </div>
@@ -302,17 +302,17 @@ const Dashboard = () => {
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0 ml-2">
                         <span className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
-                          request.status === 'pending' ? 'bg-coral-500/10 text-coral-600 border border-amber-500/20' :
-                          request.status === 'in_session' ? 'bg-coral-500/10 text-coral-600 border border-coral-200' :
-                          request.status === 'assigned' ? 'bg-coral-50 text-coral-600 border border-sky-500/20' :
-                          request.status === 'completed' ? 'bg-slate-500/10 text-slate-600 border border-slate-500/20' :
-                          'bg-slate-500/10 text-slate-600 border border-slate-500/20'
+                          request.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                          request.status === 'in_session' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+                          request.status === 'assigned' ? 'bg-sky-50 text-sky-700 border border-sky-200' :
+                          request.status === 'completed' ? 'bg-slate-100 text-slate-700 border border-slate-200' :
+                          'bg-slate-100 text-slate-700 border border-slate-200'
                         }`}>
                           {request.status?.replace('_', ' ')}
                         </span>
                         {request.hcs_topic_id && (
                           <Button onClick={() => setExpandedRequest(expandedRequest === request.id ? null : request.id)}
-                            size="sm" variant="outline" className="border-slate-300 text-slate-600 hover:text-navy-900 hover:border-sky-500/50 h-7 text-[10px]"
+                            size="sm" variant="outline" className="border-slate-300 text-slate-600 hover:text-navy-900 hover:border-navy-900 h-7 text-[10px]"
                             data-testid={`audit-trail-btn-${request.id}`}>
                             <Shield className="w-3 h-3 mr-1" /> Audit
                             {expandedRequest === request.id ? <ChevronUp className="w-3 h-3 ml-1" /> : <ChevronDown className="w-3 h-3 ml-1" />}
@@ -320,7 +320,7 @@ const Dashboard = () => {
                         )}
                         {(request.status === 'pending' || request.status === 'assigned' || request.status === 'in_session') && (
                           <Button onClick={() => navigate(`/session/${request.id}`)} size="sm"
-                            className={`h-7 text-[10px] ${request.status === 'in_session' ? 'bg-coral-500 hover:bg-emerald-700' : 'bg-coral-500 hover:bg-coral-600 text-white'}`}>
+                            className={`h-7 text-[10px] ${request.status === 'in_session' ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-coral-500 hover:bg-coral-600 text-white'}`}>
                             {request.status === 'in_session' ? <><Play className="w-3 h-3 mr-1" /> Join</> : <><Video className="w-3 h-3 mr-1" /> Start</>}
                           </Button>
                         )}
@@ -354,12 +354,12 @@ const Dashboard = () => {
               </Button>
             </div>
           ) : (
-            <div className="divide-y divide-slate-800/50">
+            <div className="divide-y divide-slate-200">
               {documents.map((doc) => (
                 <div key={doc.id} className="px-6 py-5 hover:bg-cream-200/20 transition-colors">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-4 flex-1">
-                      <div className="w-10 h-10 bg-sky-500/5 rounded-lg flex items-center justify-center flex-shrink-0 border border-slate-200">
+                      <div className="w-10 h-10 bg-cream-200 rounded-lg flex items-center justify-center flex-shrink-0 border border-slate-200">
                         <FileText className="w-5 h-5 text-coral-600" />
                       </div>
                       <div className="flex-1 min-w-0">
