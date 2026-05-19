@@ -72,7 +72,11 @@ export default function SDKKeys() {
       setRevealed(prev => ({ ...prev, [r.data.id]: true }));
       fetchAll();
     } catch (e) {
-      toast({ title: 'Failed', description: e.response?.data?.detail?.message || e.response?.data?.detail || 'Error', variant: 'destructive' });
+      if (e.response?.status === 403 && e.response?.data?.detail?.error === 'upgrade_required') {
+        setGateError(e.response.data.detail);
+      } else {
+        toast({ title: 'Failed', description: e.response?.data?.detail?.message || e.response?.data?.detail || 'Error', variant: 'destructive' });
+      }
     } finally {
       setCreatingKey(false);
     }
@@ -102,7 +106,11 @@ export default function SDKKeys() {
       toast({ title: 'Webhook created' });
       fetchAll();
     } catch (e) {
-      toast({ title: 'Failed', description: e.response?.data?.detail?.message || e.response?.data?.detail, variant: 'destructive' });
+      if (e.response?.status === 403 && e.response?.data?.detail?.error === 'upgrade_required') {
+        setGateError(e.response.data.detail);
+      } else {
+        toast({ title: 'Failed', description: e.response?.data?.detail?.message || e.response?.data?.detail, variant: 'destructive' });
+      }
     } finally {
       setCreatingWh(false);
     }

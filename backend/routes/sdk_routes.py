@@ -597,7 +597,8 @@ async def serve_sdk_js():
 
 
 @router.get("/usage")
-async def get_usage(current_user: User = Depends(get_current_user)):
+async def get_usage(request: Request, current_user: User = Depends(get_current_user)):
+    await enforce_feature_gate(request, "sdk_embed")
     keys = await db.sdk_keys.find(
         {"user_id": current_user.id}, {"_id": 0, "id": 1, "name": 1, "publishable_key": 1, "mode": 1, "usage_count": 1, "active": 1}
     ).to_list(50)
