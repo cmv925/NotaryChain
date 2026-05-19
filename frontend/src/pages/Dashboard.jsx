@@ -10,6 +10,7 @@ import { toast } from '../hooks/use-toast';
 import { NotificationBell } from '../components/NotificationBell';
 import { ExpiryWidget, ExpiryBadge, SetExpiryButton } from '../components/ExpiryTracker';
 import BlockchainAuditTrail from '../components/BlockchainAuditTrail';
+import StatePickabilityWidget from '../components/StatePickabilityWidget';
 import { OnboardingTour } from '../components/OnboardingTour';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
@@ -261,6 +262,11 @@ const Dashboard = () => {
               )}
             </div>
           </div>
+        </div>
+
+        {/* State Pickability Index */}
+        <div className="mt-8" data-testid="pickability-section">
+          <StatePickabilityWidget token={token} />
         </div>
 
         {/* Document Expiry Tracker */}

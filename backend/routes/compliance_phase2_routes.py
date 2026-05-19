@@ -243,6 +243,225 @@ async def analytics_gate_failures(current_user: User = Depends(get_current_user)
 
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# State Pickability Index — per-user actionable readiness nudges
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Human-friendly nudge metadata keyed by gate_id returned by the evaluator.
+# Kept inline (one place) — these are pure presentation strings.
+_NUDGE_LIBRARY = {
+    "audio_video": {
+        "title": "Capture session A/V quality report",
+        "description": "Submit an audio/video quality report (≥30s of clean signal) before sealing.",
+        "action_label": "Open ceremony",
+    },
+    "kba": {
+        "title": "Pass Knowledge-Based Authentication",
+        "description": "Principal must complete a passing KBA quiz within the last hour.",
+        "action_label": "Start KBA",
+    },
+    "id_check": {
+        "title": "Approve government ID verification",
+        "description": "Principal's government-issued ID must be analyzed and approved.",
+        "action_label": "Verify ID",
+    },
+    "retention": {
+        "title": "Set the retention tag",
+        "description": "Tag this ceremony with the state-required retention period (5y for TX/CA/VA, 10y for NY).",
+        "action_label": "Set retention",
+    },
+    "journal": {
+        "title": "Add a journal entry",
+        "description": "Record a notary journal entry (date, principal, document, fee) for this ceremony.",
+        "action_label": "Open journal",
+    },
+    "tamper_evident": {
+        "title": "Complete tamper-evident prerequisites",
+        "description": "TX/VA require KBA + ID-check before the PKI-backed tamper-evident seal.",
+        "action_label": "Open ceremony",
+    },
+    "identity_proofing": {
+        "title": "Complete NY multi-factor proofing",
+        "description": "New York requires BOTH KBA AND credential analysis to pass.",
+        "action_label": "Open ceremony",
+    },
+    "thumbprint": {
+        "title": "Capture biometric thumbprint",
+        "description": "California requires a thumbprint capture for real-property, POA, mortgage, and lien-release ceremonies.",
+        "action_label": "Capture thumbprint",
+    },
+    "principal_location": {
+        "title": "Capture principal GPS location",
+        "description": "New York requires the principal's GPS location to be logged at signing.",
+        "action_label": "Capture location",
+    },
+    "document_type_allowed": {
+        "title": "Document type not RON-eligible",
+        "description": "This document type cannot be notarized online in this state. Use in-person notarization or switch states.",
+        "action_label": "Edit request",
+    },
+}
+
+
+def _build_nudge(state_code: str, ceremony: dict, gate_id: str, gate: dict) -> dict:
+    """Compose a single actionable nudge from a failing gate."""
+    meta = _NUDGE_LIBRARY.get(gate_id, {
+        "title": f"Resolve {gate_id}",
+        "description": gate.get("detail") or "Gate not satisfied",
+        "action_label": "Open ceremony",
+    })
+    return {
+        "state_code": state_code,
+        "ceremony_id": ceremony.get("id"),
+        "document_name": ceremony.get("document_name") or ceremony.get("document_type") or "Ceremony",
+        "document_type": ceremony.get("document_type"),
+        "gate_id": gate_id,
+        "title": meta["title"],
+        "description": meta["description"],
+        "action_label": meta["action_label"],
+        "action_link": f"/session/{ceremony.get('id')}",
+        "evaluator_detail": gate.get("detail"),
+    }
+
+
+@router.get("/compliance/pickability/me")
+async def my_state_pickability(current_user: User = Depends(get_current_user)):
+    """Per-user "State Pickability Index": for each of the caller's OPEN ceremonies
+    (status in pending/assigned/in_session and not yet sealed), run the multi-state
+    evaluator and return:
+      - per-state score (% of open ceremonies that are seal-ready right now)
+      - top actionable nudges across all open ceremonies
+      - overall index across all states the user operates in
+
+    FL ceremonies are counted but not deeply evaluated (FL has its own dedicated
+    readiness route at /api/fl/ron/readiness/{id}). They are surfaced as a generic
+    nudge if the ceremony status is `fl_blocked`.
+    """
+    open_statuses = ["pending", "assigned", "in_session"]
+    cursor = db.notarization_requests.find(
+        {"user_id": current_user.id, "status": {"$in": open_statuses + ["fl_blocked", "tx_blocked", "ny_blocked", "ca_blocked", "va_blocked"]}},
+        {"_id": 0, "id": 1, "document_name": 1, "document_type": 1, "state_code": 1, "status": 1, "fl_blocked_reasons": 1, "blocked_reasons": 1}
+    )
+    ceremonies = await cursor.to_list(200)
+
+    # Group by state
+    by_state: dict = {}
+    nudges: list = []
+    wired = set(supported_state_codes())
+
+    for c in ceremonies:
+        code = (c.get("state_code") or "FL").upper()
+        bucket = by_state.setdefault(code, {"state_code": code, "open_count": 0, "ready_count": 0, "ceremonies": []})
+        bucket["open_count"] += 1
+
+        if code == "FL":
+            # Treat FL legacy as ready unless explicitly fl_blocked
+            is_blocked = c.get("status") == "fl_blocked"
+            if not is_blocked:
+                bucket["ready_count"] += 1
+            bucket["ceremonies"].append({
+                "ceremony_id": c["id"],
+                "document_name": c.get("document_name"),
+                "document_type": c.get("document_type"),
+                "ready": not is_blocked,
+                "failing_gates": [r.split(":")[0].strip() for r in (c.get("fl_blocked_reasons") or [])],
+            })
+            if is_blocked:
+                for r in (c.get("fl_blocked_reasons") or [])[:1]:
+                    gate_id = (r or "").split(":")[0].strip() or "unknown"
+                    nudges.append(_build_nudge("FL", c, gate_id, {"passed": False, "detail": r}))
+            continue
+
+        if code not in wired:
+            # Abstract published but evaluator not yet wired — count as not-ready, surface generic nudge
+            bucket["ceremonies"].append({
+                "ceremony_id": c["id"],
+                "document_name": c.get("document_name"),
+                "document_type": c.get("document_type"),
+                "ready": False,
+                "failing_gates": ["evaluator_not_wired"],
+            })
+            nudges.append({
+                "state_code": code,
+                "ceremony_id": c["id"],
+                "document_name": c.get("document_name"),
+                "document_type": c.get("document_type"),
+                "gate_id": "evaluator_not_wired",
+                "title": f"{code} pre-seal evaluator coming soon",
+                "description": f"We have the {code} compliance abstract but the gate evaluator isn't wired yet. Ceremony can't be auto-sealed.",
+                "action_label": "Open ceremony",
+                "action_link": f"/session/{c['id']}",
+            })
+            continue
+
+        try:
+            ev = await evaluate_preseal(
+                state_code=code,
+                ceremony_id=c["id"],
+                user_id=current_user.id,
+                db=db,
+                document_type=c.get("document_type", "general"),
+            )
+        except Exception as e:
+            logger.warning(f"pickability evaluator error for {c['id']} ({code}): {e}")
+            ev = {"ready": False, "gates": {}, "blocked_reasons": [f"evaluator_error: {e}"]}
+
+        ready = bool(ev.get("ready"))
+        failing = []
+        for gate_id, gate in (ev.get("gates") or {}).items():
+            if not gate.get("passed"):
+                failing.append(gate_id)
+                nudges.append(_build_nudge(code, c, gate_id, gate))
+
+        if ready:
+            bucket["ready_count"] += 1
+        bucket["ceremonies"].append({
+            "ceremony_id": c["id"],
+            "document_name": c.get("document_name"),
+            "document_type": c.get("document_type"),
+            "ready": ready,
+            "failing_gates": failing,
+        })
+
+    # Compose per-state scores
+    states_out = []
+    total_open = 0
+    total_ready = 0
+    for s in by_state.values():
+        s["score"] = round(s["ready_count"] / s["open_count"] * 100) if s["open_count"] else 100
+        states_out.append(s)
+        total_open += s["open_count"]
+        total_ready += s["ready_count"]
+    states_out.sort(key=lambda s: (-s["open_count"], s["state_code"]))
+
+    overall_score = round(total_ready / total_open * 100) if total_open else 100
+
+    # Diversify nudges: show at most 1 nudge per ceremony in the first pass so the
+    # widget surfaces variety instead of stacking 6 gates of the same ceremony.
+    # Order by the state's open-ceremony count (worst-impact states first).
+    state_open_counts = {s["state_code"]: s["open_count"] for s in states_out}
+    nudges.sort(key=lambda n: (-state_open_counts.get(n["state_code"], 0), n["state_code"], n["ceremony_id"]))
+    seen_ceremonies: set = set()
+    top_per_ceremony = []
+    leftovers = []
+    for n in nudges:
+        if n["ceremony_id"] not in seen_ceremonies:
+            seen_ceremonies.add(n["ceremony_id"])
+            top_per_ceremony.append(n)
+        else:
+            leftovers.append(n)
+    nudges_sorted = (top_per_ceremony + leftovers)[:8]
+
+    return {
+        "overall_score": overall_score,
+        "total_open": total_open,
+        "total_ready": total_ready,
+        "states": states_out,
+        "nudges": nudges_sorted,
+        "as_of": datetime.now(timezone.utc).isoformat(),
+    }
+
+
 @router.post("/admin/compliance/backfill-state-codes")
 async def backfill_state_codes(
     default_state: str = Query("FL", description="State code to assign to ceremonies missing one"),
