@@ -641,3 +641,145 @@ async def trustlayer_sdk_v2(request: Request):
             "Access-Control-Allow-Origin": "*",
         },
     )
+
+
+
+# ════════════════════════════════════════════════════════
+#  PHASE 2 — Auto-verify <trust-badge> Web Component
+# ════════════════════════════════════════════════════════
+
+BADGE_V2_TEMPLATE = """/*! TrustLayer Auto-Verify Badge — drop-in web component
+ * Usage:  <script src="__API_BASE__/api/trustlayer/badge-v2.js" defer></script>
+ *         <trust-badge attestation-id="abc123..."></trust-badge>
+ *
+ * Runs full Ed25519 + Hedera HCS verification in the visitor's browser,
+ * renders a live verified pill with explorer link. Industry-first.
+ */
+(function() {
+  'use strict';
+  if (customElements.get('trust-badge')) return;
+
+  var API = '__API_BASE__';
+  var SDK_URL = API + '/api/trustlayer/sdk-v2.js';
+  var sdkPromise = null;
+
+  function loadSDK() {
+    if (window.TrustLayer && window.TrustLayer.verify) return Promise.resolve(window.TrustLayer);
+    if (sdkPromise) return sdkPromise;
+    sdkPromise = new Promise(function(resolve, reject) {
+      var s = document.createElement('script');
+      s.src = SDK_URL;
+      s.async = true;
+      s.onload = function() {
+        if (window.TrustLayer && window.TrustLayer.verify) resolve(window.TrustLayer);
+        else reject(new Error('TrustLayer SDK loaded but verify() missing'));
+      };
+      s.onerror = function() { reject(new Error('Failed to load TrustLayer SDK from ' + SDK_URL)); };
+      document.head.appendChild(s);
+    });
+    return sdkPromise;
+  }
+
+  var STYLES = '\\n    :host { display: inline-block; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }\\n    .wrap { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 8px; border-radius: 999px; border: 1px solid; transition: all 0.2s; text-decoration: none; color: inherit; line-height: 1.2; }\\n    .wrap.verified { background: #ecfdf5; border-color: #6ee7b7; color: #065f46; }\\n    .wrap.verified:hover { background: #d1fae5; border-color: #34d399; }\\n    .wrap.failed { background: #fef2f2; border-color: #fca5a5; color: #991b1b; }\\n    .wrap.loading { background: #f8fafc; border-color: #cbd5e1; color: #475569; }\\n    .icon { display: inline-flex; width: 18px; height: 18px; border-radius: 50%; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px; flex-shrink: 0; }\\n    .icon.ok { background: #10b981; }\\n    .icon.bad { background: #ef4444; }\\n    .icon.loading { background: #94a3b8; }\\n    .label { font-size: 12px; font-weight: 600; }\\n    .sub { font-size: 10px; opacity: 0.8; font-weight: 500; }\\n    .col { display: flex; flex-direction: column; }\\n    .spin { animation: spin 1s linear infinite; }\\n    @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }\\n  ';
+
+  function renderLoading(shadow) {
+    shadow.innerHTML = '<style>' + STYLES + '</style>' +
+      '<span class="wrap loading">' +
+      '<span class="icon loading spin">⟳</span>' +
+      '<span class="col">' +
+        '<span class="label">Verifying…</span>' +
+        '<span class="sub">Checking signature & Hedera anchor</span>' +
+      '</span></span>';
+  }
+
+  function renderVerified(shadow, result) {
+    var explorer = result.anchor && result.anchor.explorer_url;
+    var partnerName = (result.partner && result.partner.name) || 'Unknown partner';
+    var html =
+      '<style>' + STYLES + '</style>' +
+      (explorer ? '<a class="wrap verified" href="' + explorer + '" target="_blank" rel="noopener">' : '<span class="wrap verified">') +
+      '<span class="icon ok">✓</span>' +
+      '<span class="col">' +
+        '<span class="label">Cryptographically verified</span>' +
+        '<span class="sub">' + (result.anchor && result.anchor.anchored ? 'Hedera-anchored · ' : '') + escapeHTML(partnerName) + '</span>' +
+      '</span>' +
+      (explorer ? '</a>' : '</span>');
+    shadow.innerHTML = html;
+  }
+
+  function renderFailed(shadow, reason) {
+    shadow.innerHTML = '<style>' + STYLES + '</style>' +
+      '<span class="wrap failed" title="' + escapeHTML(reason) + '">' +
+      '<span class="icon bad">!</span>' +
+      '<span class="col">' +
+        '<span class="label">Unable to verify</span>' +
+        '<span class="sub">' + escapeHTML(reason.slice(0, 64)) + '</span>' +
+      '</span></span>';
+  }
+
+  function escapeHTML(s) {
+    return String(s || '').replace(/[&<>"']/g, function(c) {
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+    });
+  }
+
+  class TrustBadge extends HTMLElement {
+    static get observedAttributes() { return ['attestation-id']; }
+
+    connectedCallback() {
+      this._shadow = this.attachShadow({ mode: 'open' });
+      this._render();
+    }
+
+    attributeChangedCallback() {
+      if (this._shadow) this._render();
+    }
+
+    async _render() {
+      var id = this.getAttribute('attestation-id');
+      if (!id) {
+        renderFailed(this._shadow, 'Missing attestation-id attribute');
+        return;
+      }
+      renderLoading(this._shadow);
+      try {
+        var sdk = await loadSDK();
+        var result = await sdk.verify(id);
+        if (result.valid && result.signature_valid) {
+          renderVerified(this._shadow, result);
+          this.dispatchEvent(new CustomEvent('verified', { detail: result, bubbles: true }));
+        } else {
+          var reason = result.reason || (result.revoked ? 'attestation revoked' : 'signature invalid');
+          renderFailed(this._shadow, reason);
+          this.dispatchEvent(new CustomEvent('verification-failed', { detail: { reason: reason, result: result }, bubbles: true }));
+        }
+      } catch (e) {
+        renderFailed(this._shadow, e.message || 'Network error');
+      }
+    }
+  }
+
+  customElements.define('trust-badge', TrustBadge);
+})();
+"""
+
+
+@router.get("/badge-v2.js", response_class=PlainTextResponse)
+async def trustlayer_badge_v2(request: Request):
+    """Auto-verify Trust Badge web component. Drop-in <trust-badge> element with
+    live Ed25519 + Hedera HCS verification in the visitor's browser."""
+    import os as _os
+    public_base = (
+        _os.environ.get("PUBLIC_BACKEND_URL")
+        or _os.environ.get("REACT_APP_BACKEND_URL")
+        or str(request.base_url).rstrip("/")
+    ).rstrip("/")
+    js = BADGE_V2_TEMPLATE.replace("__API_BASE__", public_base)
+    return Response(
+        content=js,
+        media_type="application/javascript",
+        headers={
+            "Cache-Control": "public, max-age=300",
+            "Access-Control-Allow-Origin": "*",
+        },
+    )

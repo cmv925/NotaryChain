@@ -369,17 +369,13 @@ function AssetDetailPanel({ asset, beneficiaries, onVerify, onDelete, onTriggerH
           ) : (
             <div className="space-y-2">
               {beneficiaries.map(b => (
-                <div key={b.beneficiary_id} className="flex items-center gap-2 bg-cream-200/40 rounded p-2.5 text-xs" data-testid={`beneficiary-${b.beneficiary_id}`}>
-                  <Heart className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-navy-900 truncate font-medium">{b.name}</p>
-                    <p className="text-[10px] text-slate-500 truncate">{b.email} {b.relationship ? `· ${b.relationship}` : ''}</p>
-                  </div>
-                  <span className="text-coral-600 font-bold">{b.share_percent.toFixed(0)}%</span>
-                  <button onClick={() => removeBenef(b.beneficiary_id)} className="text-slate-500 hover:text-red-400" data-testid={`remove-beneficiary-${b.beneficiary_id}`}>
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                </div>
+                <BeneficiaryRow
+                  key={b.beneficiary_id}
+                  benef={b}
+                  onRemove={removeBenef}
+                  authHeaders={authHeaders}
+                  onReleased={onAddBeneficiary}
+                />
               ))}
             </div>
           )}
@@ -602,3 +598,130 @@ function daysUntil(iso) {
     return Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
   } catch { return null; }
 }
+
+
+function BeneficiaryRow({ benef, onRemove, authHeaders, onReleased }) {
+  const [showRelease, setShowRelease] = React.useState(false);
+  const [percent, setPercent] = React.useState(25);
+  const [note, setNote] = React.useState('');
+  const [submitting, setSubmitting] = React.useState(false);
+
+  const sharePct = Number(benef.share_percent || 0);
+  const releasedPct = Number(benef.released_percent || 0);
+  const remainingPct = Math.max(0, sharePct - releasedPct);
+  const fullyReleased = remainingPct <= 0;
+
+  const release = async () => {
+    const p = Number(percent);
+    if (!(p > 0 && p <= 100)) return toast.error('Pick a percent between 0 and 100');
+    setSubmitting(true);
+    try {
+      const r = await fetch(`${API}/api/salv/beneficiaries/${benef.beneficiary_id}/release-partial`, {
+        method: 'POST',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ percent: p, note: note.trim() || null }),
+      });
+      const body = await r.json();
+      if (!r.ok) throw new Error(body.detail || 'Release failed');
+      toast.success(`Released ${body.percent_released_now.toFixed(0)}% to ${benef.name}${body.hcs_anchor?.tx_id ? ' · sealed on Hedera' : ''}`);
+      setShowRelease(false);
+      setNote('');
+      onReleased?.();
+    } catch (e) {
+      toast.error(e.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="bg-cream-200/40 rounded p-2.5 text-xs" data-testid={`beneficiary-${benef.beneficiary_id}`}>
+      <div className="flex items-center gap-2">
+        <Heart className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
+        <div className="flex-1 min-w-0">
+          <p className="text-navy-900 truncate font-medium">{benef.name}</p>
+          <p className="text-[10px] text-slate-500 truncate">{benef.email}{benef.relationship ? ` · ${benef.relationship}` : ''}</p>
+        </div>
+        <div className="text-right">
+          <span className="text-coral-600 font-bold block leading-tight">{sharePct.toFixed(0)}%</span>
+          {releasedPct > 0 && (
+            <span className="text-[9px] text-emerald-700 uppercase tracking-wider font-bold" data-testid={`released-pill-${benef.beneficiary_id}`}>
+              {releasedPct.toFixed(0)}% released
+            </span>
+          )}
+        </div>
+        {!fullyReleased && (
+          <button
+            onClick={() => setShowRelease(true)}
+            className="text-coral-600 hover:text-coral-700 text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded hover:bg-coral-50 border border-coral-200"
+            data-testid={`release-partial-btn-${benef.beneficiary_id}`}
+            title="Release a portion of this share now"
+          >
+            Release
+          </button>
+        )}
+        <button onClick={() => onRemove(benef.beneficiary_id)} className="text-slate-500 hover:text-red-500" data-testid={`remove-beneficiary-${benef.beneficiary_id}`}>
+          <Trash2 className="w-3 h-3" />
+        </button>
+      </div>
+
+      {releasedPct > 0 && (
+        <div className="mt-2 h-1.5 bg-cream-100 rounded-full overflow-hidden" data-testid={`release-progress-${benef.beneficiary_id}`}>
+          <div
+            className="h-full bg-emerald-500 transition-all"
+            style={{ width: `${Math.min(100, (releasedPct / sharePct) * 100)}%` }}
+          />
+        </div>
+      )}
+
+      {showRelease && (
+        <div className="mt-3 pt-3 border-t border-slate-300 space-y-2" data-testid={`release-modal-${benef.beneficiary_id}`}>
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-slate-500">
+            <span>Release amount</span>
+            <span className="text-navy-900 font-bold normal-case">{Number(percent).toFixed(0)}% of {sharePct.toFixed(0)}%</span>
+          </div>
+          <input
+            type="range"
+            min="1"
+            max={remainingPct}
+            step="1"
+            value={percent}
+            onChange={e => setPercent(e.target.value)}
+            className="w-full accent-coral-500"
+            data-testid={`release-slider-${benef.beneficiary_id}`}
+          />
+          <input
+            type="text"
+            value={note}
+            onChange={e => setNote(e.target.value)}
+            placeholder="Note (optional) — e.g. Initial advance distribution"
+            className="w-full bg-white border border-slate-300 rounded px-2 py-1.5 text-xs"
+            data-testid={`release-note-input-${benef.beneficiary_id}`}
+          />
+          <div className="flex gap-2">
+            <button
+              onClick={release}
+              disabled={submitting}
+              className="flex-1 bg-coral-500 hover:bg-coral-600 text-white text-[11px] font-semibold py-1.5 rounded inline-flex items-center justify-center gap-1.5 disabled:opacity-60"
+              data-testid={`confirm-release-btn-${benef.beneficiary_id}`}
+            >
+              {submitting ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
+              Release {Number(percent).toFixed(0)}% now
+            </button>
+            <button
+              onClick={() => setShowRelease(false)}
+              className="px-3 py-1.5 text-slate-600 hover:text-navy-900 text-[11px]"
+              data-testid={`cancel-release-btn-${benef.beneficiary_id}`}
+            >
+              Cancel
+            </button>
+          </div>
+          <p className="text-[10px] text-slate-500 leading-snug">
+            Hedera-anchored receipt issued · {benef.name} receives a one-click claim link by email
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+

@@ -778,5 +778,89 @@ async def handoff_signup(token: str, body: HandoffSignupBody, request: Request):
         {"beneficiary_id": rec["beneficiary_id"], "new_user_email": clean_email}
     )
 
+    # Pick #4: Notify the asset owner — celebration in-app + email
+    await _notify_owner_of_viral_signup(
+        benef.get("asset_id"),
+        beneficiary_name=full_name,
+        beneficiary_email=clean_email,
+    )
+
     jwt_token = create_access_token(data={"sub": clean_email})
     return {"access_token": jwt_token, "token_type": "bearer", "is_existing": False}
+
+
+async def _notify_owner_of_viral_signup(asset_id: Optional[str], beneficiary_name: str, beneficiary_email: str):
+    """Send the asset owner a celebration email + dashboard notification when a
+    beneficiary signs up via their handoff. Best-effort, non-blocking."""
+    if not asset_id:
+        return
+    asset = await db.salv_assets.find_one({"asset_id": asset_id}, {"_id": 0, "owner_id": 1, "title": 1})
+    if not asset:
+        return
+    owner = await db.users.find_one({"id": asset["owner_id"]}, {"_id": 0, "id": 1, "email": 1, "full_name": 1})
+    if not owner:
+        return
+
+    # In-app notification
+    try:
+        await db.notifications.insert_one({
+            "notification_id": uuid.uuid4().hex[:16],
+            "user_id": owner["id"],
+            "type": "salv_viral_signup",
+            "title": f"{beneficiary_name} just joined NotaryChain through your handoff",
+            "body": f"Your beneficiary on '{asset.get('title','your asset')}' created an account to protect their own legacy.",
+            "icon": "sparkles",
+            "link": "/asset-vault",
+            "data": {
+                "asset_id": asset_id,
+                "asset_title": asset.get("title"),
+                "beneficiary_name": beneficiary_name,
+                "beneficiary_email": beneficiary_email,
+            },
+            "read": False,
+            "created_at": _iso(_now()),
+        })
+    except Exception as e:
+        logger.warning(f"viral_signup notification insert failed: {e}")
+
+    # Email (best-effort)
+    try:
+        from services import email_service as _email_svc
+        subject = f"🎉 {beneficiary_name} just protected their own legacy"
+        plain = (
+            f"Hi {owner.get('full_name') or 'there'},\n\n"
+            f"Great news — {beneficiary_name} ({beneficiary_email}), one of the beneficiaries you "
+            f"named on '{asset.get('title','your asset')}', just created their own NotaryChain account.\n\n"
+            f"Your handoff is doing exactly what it should: turning into a chain of protected legacies. "
+            f"Want to add more beneficiaries or seal more assets? You can do that any time from your "
+            f"Asset Vault.\n\n"
+            f"— The NotaryChain team\n"
+        )
+        html = f"""
+        <div style="font-family: -apple-system, Segoe UI, sans-serif; max-width: 560px; margin: 0 auto; padding: 32px; background: #FDF8F0; border-radius: 16px;">
+          <h2 style="font-family: Playfair Display, serif; color: #0F1E3D; font-size: 28px; margin-bottom: 8px;">A new legacy was just protected.</h2>
+          <p style="color: #4a5568; font-size: 14px; line-height: 1.6;">
+            <strong>{beneficiary_name}</strong> ({beneficiary_email}), one of your named beneficiaries on
+            <em>{asset.get('title','your asset')}</em>, just created their own NotaryChain account.
+          </p>
+          <p style="color: #4a5568; font-size: 14px; line-height: 1.6;">
+            Your handoff is doing exactly what it should — turning into a chain of protected legacies. ❤️
+          </p>
+          <div style="margin-top: 24px; padding: 16px; background: white; border: 1px solid #E5E7EB; border-radius: 8px;">
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #6B7280; font-weight: 700;">Next step</div>
+            <p style="color: #0F1E3D; font-size: 14px; margin: 6px 0 0;">Add more beneficiaries or seal additional assets from your Asset Vault.</p>
+          </div>
+        </div>
+        """
+        # Try to use the email service; fallback to direct send_email if available
+        if hasattr(_email_svc, 'email_service'):
+            await _email_svc.email_service.send_email(
+                to_email=owner["email"],
+                subject=subject,
+                body=plain,
+                html_body=html,
+            )
+        elif hasattr(_email_svc, 'send_email'):
+            await _email_svc.send_email(owner["email"], subject, plain, html)
+    except Exception as e:
+        logger.warning(f"viral_signup email failed: {e}")
