@@ -44,6 +44,7 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 | Field Document Scanner Phase 1 (mobile-first multi-page camera capture + base64 upload, canonical SHA256 doc hash, Hedera prior-seal lookup, GPT-5.2 Vision forgery analysis via EMERGENT_LLM_KEY, optional Hedera anchoring) + FL hard pre-seal gate in ceremony pipeline (blocks Hedera seal of FL ceremonies when KBA/AV/witnesses gates fail, sets status='fl_blocked' + fl_blocked_reasons) | Iteration 101 | May 12, 2026 |
 | Dashboard Corporate Trust rebrand (final cleanup: avatar contrast, slate dividers, status pill palette, removed sky/emerald leftovers) | Screenshot smoke test | May 19, 2026 |
 | Embeddable Notarize SDK Phase 1 — M1-M5 (loader JS at `/api/sdk/v1/notarychain.js`, publishable key CRUD with origin allowlist, public session creation, iframe ceremony page at `/embed/ceremony/:token` with postMessage bridge, HMAC-SHA256 signed webhooks, developer portal at `/developers/sdk`, keys management at `/developers/sdk-keys`, sdk_embed feature gate on Pro $99+ tier, demo key auto-creation) | Iteration 102 (18/18 backend pass, 100% backend / 95% frontend) | May 19, 2026 |
+| Beneficiary Viral Loop (post-accept signup funnel on /handoff/:token with /api/salv/handoff/:token/signup endpoint, viral stats endpoint, idempotent upsert attribution to salv_handoff_conversions, acquisition_source tracking on users) + Client Portal /my-documents (unified hub aggregating sealed docs + notarizations + vault assets + received handoffs with search/filter/CSV export) | Iteration 103 (12/12 backend pass, 100% backend / 100% frontend after fix) | May 19, 2026 |
 
 ### Trust Badge Marketing Landing Page — COMPLETE (Apr 26, 2026)
 **Conversion funnel for the Trust Badge revenue stream**
@@ -191,3 +192,4 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 | Notary | notarytest@test.com | Test123! |
 | Notary2 | notary2@test.com | Notary123! |
 | Investor Deck | N/A | NotaryChain2026! |
+| Viral signup test (beneficiary→user) | alice@example.com | Viral123! |

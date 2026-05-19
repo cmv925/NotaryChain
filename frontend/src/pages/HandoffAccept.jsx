@@ -63,8 +63,6 @@ export default function HandoffAccept() {
       if (!r.ok) throw new Error(body.detail || 'Accept failed');
       setAccepted(body);
       toast.success(`Share of ${body.share_percent}% accepted & sealed on Hedera`);
-      // Auto-open the viral signup card after accept
-      setTimeout(() => setShowSignup(true), 600);
     } catch (e) { toast.error(e.message); }
     setSubmitting(false);
   };
