@@ -108,7 +108,7 @@ const OrgWebhooks = ({ orgId, token }) => {
     }
   };
 
-  if (loading) return <div className="py-8 text-center"><Loader2 className="w-5 h-5 animate-spin mx-auto text-gray-500" /></div>;
+  if (loading) return <div className="py-8 text-center"><Loader2 className="w-5 h-5 animate-spin mx-auto text-slate-500" /></div>;
 
   return (
     <div data-testid="org-webhooks">
@@ -117,7 +117,7 @@ const OrgWebhooks = ({ orgId, token }) => {
           <h3 className="text-white font-semibold flex items-center gap-2">
             <Webhook className="w-4 h-4 text-orange-400" /> Webhooks ({webhooks.length}/10)
           </h3>
-          <p className="text-gray-500 text-xs mt-0.5">Receive real-time notifications for organization events</p>
+          <p className="text-slate-500 text-xs mt-0.5">Receive real-time notifications for organization events</p>
         </div>
         <Button size="sm" onClick={() => setShowCreate(true)} className="bg-orange-600 hover:bg-orange-700 text-white" data-testid="create-webhook-btn">
           <Plus className="w-3.5 h-3.5 mr-1" /> New Webhook
@@ -125,23 +125,23 @@ const OrgWebhooks = ({ orgId, token }) => {
       </div>
 
       {webhooks.length === 0 ? (
-        <div className="text-center py-10 text-gray-600 text-sm" data-testid="no-webhooks">
+        <div className="text-center py-10 text-slate-600 text-sm" data-testid="no-webhooks">
           <Webhook className="w-8 h-8 mx-auto mb-2 opacity-30" />
           No webhooks configured yet.
         </div>
       ) : (
         <div className="space-y-2">
           {webhooks.map((wh) => (
-            <div key={wh.id} className="bg-[#0a0f1a] rounded-lg border border-gray-800 overflow-hidden" data-testid={`webhook-${wh.id}`}>
+            <div key={wh.id} className="bg-cream-100 rounded-lg border border-slate-200 overflow-hidden" data-testid={`webhook-${wh.id}`}>
               {/* Header row */}
-              <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-[#111827] transition-colors" onClick={() => handleExpand(wh.id)}>
+              <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-cream-100 transition-colors" onClick={() => handleExpand(wh.id)}>
                 <div className="flex items-center gap-3 min-w-0">
                   <div className={`w-2 h-2 rounded-full shrink-0 ${wh.is_active ? 'bg-emerald-400' : 'bg-gray-600'}`} />
                   <div className="min-w-0">
                     <p className="text-white text-sm font-mono truncate">{wh.url}</p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-gray-500 text-xs">{wh.events?.length || 0} events</span>
-                      {wh.description && <span className="text-gray-600 text-xs">— {wh.description}</span>}
+                      <span className="text-slate-500 text-xs">{wh.events?.length || 0} events</span>
+                      {wh.description && <span className="text-slate-600 text-xs">— {wh.description}</span>}
                       {wh.last_delivery_status && (
                         <span className={`text-[10px] px-1.5 py-0.5 rounded ${STATUS_STYLES[wh.last_delivery_status] || ''}`}>
                           {wh.last_delivery_status}
@@ -151,16 +151,16 @@ const OrgWebhooks = ({ orgId, token }) => {
                   </div>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                  {expandedWebhook === wh.id ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
+                  {expandedWebhook === wh.id ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
                 </div>
               </div>
 
               {/* Expanded details */}
               {expandedWebhook === wh.id && (
-                <div className="border-t border-gray-800 p-3 space-y-3">
+                <div className="border-t border-slate-200 p-3 space-y-3">
                   {/* Event tags */}
                   <div>
-                    <p className="text-gray-400 text-xs font-medium mb-1.5">SUBSCRIBED EVENTS</p>
+                    <p className="text-slate-500 text-xs font-medium mb-1.5">SUBSCRIBED EVENTS</p>
                     <div className="flex flex-wrap gap-1">
                       {wh.events?.map(e => (
                         <span key={e} className="text-[11px] px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20">{e}</span>
@@ -169,23 +169,23 @@ const OrgWebhooks = ({ orgId, token }) => {
                   </div>
 
                   {/* Secret & meta */}
-                  <div className="flex items-center gap-4 text-xs text-gray-500">
-                    <span>Secret: <code className="text-gray-400">{wh.secret}</code></span>
+                  <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <span>Secret: <code className="text-slate-500">{wh.secret}</code></span>
                     <span>Created: {new Date(wh.created_at).toLocaleDateString()}</span>
                   </div>
 
                   {/* Actions */}
-                  <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-800">
-                    <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleTest(wh.id); }} className="border-gray-700 text-gray-300 text-xs" data-testid={`test-webhook-${wh.id}`}>
+                  <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-200">
+                    <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleTest(wh.id); }} className="border-slate-200 text-slate-500 text-xs" data-testid={`test-webhook-${wh.id}`}>
                       <Send className="w-3 h-3 mr-1" /> Test
                     </Button>
-                    <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); setEditingWebhook(wh); }} className="border-gray-700 text-gray-300 text-xs" data-testid={`edit-webhook-${wh.id}`}>
+                    <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); setEditingWebhook(wh); }} className="border-slate-200 text-slate-500 text-xs" data-testid={`edit-webhook-${wh.id}`}>
                       <Pencil className="w-3 h-3 mr-1" /> Edit
                     </Button>
-                    <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleToggle(wh); }} className="border-gray-700 text-gray-300 text-xs" data-testid={`toggle-webhook-${wh.id}`}>
+                    <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleToggle(wh); }} className="border-slate-200 text-slate-500 text-xs" data-testid={`toggle-webhook-${wh.id}`}>
                       <Power className="w-3 h-3 mr-1" /> {wh.is_active ? 'Disable' : 'Enable'}
                     </Button>
-                    <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleRotateSecret(wh.id); }} className="border-gray-700 text-gray-300 text-xs" data-testid={`rotate-secret-${wh.id}`}>
+                    <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleRotateSecret(wh.id); }} className="border-slate-200 text-slate-500 text-xs" data-testid={`rotate-secret-${wh.id}`}>
                       <RotateCw className="w-3 h-3 mr-1" /> Rotate Secret
                     </Button>
                     <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleDelete(wh.id, wh.url); }} className="border-red-500/50 text-red-400 hover:bg-red-500/10 text-xs" data-testid={`delete-webhook-${wh.id}`}>
@@ -195,23 +195,23 @@ const OrgWebhooks = ({ orgId, token }) => {
 
                   {/* Delivery log */}
                   <div>
-                    <p className="text-gray-400 text-xs font-medium mb-1.5">RECENT DELIVERIES</p>
+                    <p className="text-slate-500 text-xs font-medium mb-1.5">RECENT DELIVERIES</p>
                     {loadingDeliveries[wh.id] ? (
-                      <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
+                      <Loader2 className="w-4 h-4 animate-spin text-slate-500" />
                     ) : (deliveries[wh.id] || []).length === 0 ? (
-                      <p className="text-gray-600 text-xs">No deliveries yet.</p>
+                      <p className="text-slate-600 text-xs">No deliveries yet.</p>
                     ) : (
                       <div className="space-y-1 max-h-48 overflow-y-auto">
                         {(deliveries[wh.id] || []).map(d => (
-                          <div key={d.id} className="flex items-center gap-2 py-1.5 px-2 rounded bg-[#1a2332] text-xs" data-testid={`delivery-${d.id}`}>
+                          <div key={d.id} className="flex items-center gap-2 py-1.5 px-2 rounded bg-white text-xs" data-testid={`delivery-${d.id}`}>
                             {d.status === 'delivered' ? (
                               <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                             ) : (
                               <XCircle className="w-3.5 h-3.5 text-red-400 shrink-0" />
                             )}
                             <span className="text-orange-400 font-mono">{d.event}</span>
-                            <span className="text-gray-500">{d.response_status ? `HTTP ${d.response_status}` : d.error?.slice(0, 40)}</span>
-                            <span className="text-gray-600 ml-auto flex items-center gap-1">
+                            <span className="text-slate-500">{d.response_status ? `HTTP ${d.response_status}` : d.error?.slice(0, 40)}</span>
+                            <span className="text-slate-600 ml-auto flex items-center gap-1">
                               <Clock className="w-2.5 h-2.5" />
                               {d.attempts} attempt{d.attempts !== 1 ? 's' : ''}
                             </span>
@@ -295,39 +295,39 @@ const WebhookEditor = ({ orgId, token, webhook, allEvents, onClose, onSaved }) =
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" data-testid="webhook-editor-modal">
-      <div className="bg-[#1a2332] border border-gray-700 rounded-xl max-w-lg w-full p-6 max-h-[85vh] overflow-y-auto">
+      <div className="bg-white border border-slate-200 rounded-xl max-w-lg w-full p-6 max-h-[85vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-white font-bold text-lg">{isEdit ? 'Edit Webhook' : 'Create Webhook'}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="text-slate-500 hover:text-white"><X className="w-5 h-5" /></button>
         </div>
 
         <div className="space-y-4">
           <div>
-            <Label className="text-gray-200 text-sm">Endpoint URL *</Label>
-            <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://your-app.com/webhooks/notarychain" className="bg-[#0a0f1a] border-gray-700 text-white mt-1 font-mono text-sm" data-testid="webhook-url-input" />
+            <Label className="text-slate-500 text-sm">Endpoint URL *</Label>
+            <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://your-app.com/webhooks/notarychain" className="bg-cream-100 border-slate-200 text-white mt-1 font-mono text-sm" data-testid="webhook-url-input" />
           </div>
           <div>
-            <Label className="text-gray-200 text-sm">Description</Label>
-            <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="e.g. Slack notification bot" className="bg-[#0a0f1a] border-gray-700 text-white mt-1" data-testid="webhook-desc-input" />
+            <Label className="text-slate-500 text-sm">Description</Label>
+            <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="e.g. Slack notification bot" className="bg-cream-100 border-slate-200 text-white mt-1" data-testid="webhook-desc-input" />
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <Label className="text-gray-200 text-sm">Events ({selectedEvents.size} selected) *</Label>
+              <Label className="text-slate-500 text-sm">Events ({selectedEvents.size} selected) *</Label>
               <button onClick={selectAll} className="text-orange-400 text-xs hover:text-orange-300">{selectedEvents.size === allEvents.length ? 'Deselect all' : 'Select all'}</button>
             </div>
             <div className="space-y-2">
               {Object.entries(categories).map(([cat, evts]) => (
-                <div key={cat} className="bg-[#0a0f1a] rounded-lg border border-gray-800 p-2.5">
-                  <p className="text-gray-500 text-[10px] uppercase tracking-wider mb-1.5">{cat}</p>
+                <div key={cat} className="bg-cream-100 rounded-lg border border-slate-200 p-2.5">
+                  <p className="text-slate-500 text-[10px] uppercase tracking-wider mb-1.5">{cat}</p>
                   <div className="grid grid-cols-2 gap-1">
                     {evts.map(e => (
-                      <label key={e.key} className="flex items-center gap-1.5 cursor-pointer text-xs text-gray-400 hover:text-gray-200 py-0.5">
+                      <label key={e.key} className="flex items-center gap-1.5 cursor-pointer text-xs text-slate-500 hover:text-slate-500 py-0.5">
                         <input
                           type="checkbox"
                           checked={selectedEvents.has(e.key)}
                           onChange={() => toggleEvent(e.key)}
-                          className="rounded border-gray-600 text-orange-500 focus:ring-orange-500 w-3 h-3"
+                          className="rounded border-slate-200 text-orange-500 focus:ring-orange-500 w-3 h-3"
                         />
                         {e.label}
                       </label>

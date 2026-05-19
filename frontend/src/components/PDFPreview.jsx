@@ -28,12 +28,12 @@ export function PDFPreview({ fileUrl, fileName, onClose }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/80 flex flex-col" data-testid="pdf-preview-modal">
       {/* Toolbar */}
-      <div className="bg-[#1a1a2e] border-b border-[#333] px-4 py-2 flex items-center justify-between flex-shrink-0">
+      <div className="bg-white border-b border-slate-200 px-4 py-2 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
           <FileText className="h-5 w-5 text-blue-400" />
           <span className="text-white font-medium text-sm truncate max-w-[300px]">{fileName || 'Document'}</span>
           {numPages && (
-            <span className="text-gray-400 text-sm">
+            <span className="text-slate-500 text-sm">
               Page {pageNumber} of {numPages}
             </span>
           )}
@@ -45,7 +45,7 @@ export function PDFPreview({ fileUrl, fileName, onClose }) {
             variant="ghost" size="sm"
             onClick={() => setPageNumber(p => Math.max(1, p - 1))}
             disabled={pageNumber <= 1}
-            className="text-gray-400 hover:text-white h-8 w-8 p-0"
+            className="text-slate-500 hover:text-white h-8 w-8 p-0"
             data-testid="pdf-prev-page"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -54,39 +54,39 @@ export function PDFPreview({ fileUrl, fileName, onClose }) {
             variant="ghost" size="sm"
             onClick={() => setPageNumber(p => Math.min(numPages || 1, p + 1))}
             disabled={pageNumber >= (numPages || 1)}
-            className="text-gray-400 hover:text-white h-8 w-8 p-0"
+            className="text-slate-500 hover:text-white h-8 w-8 p-0"
             data-testid="pdf-next-page"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
 
-          <div className="w-px h-5 bg-[#333] mx-1" />
+          <div className="w-px h-5 bg-slate-200 mx-1" />
 
           {/* Zoom */}
           <Button
             variant="ghost" size="sm"
             onClick={() => setScale(s => Math.max(0.5, s - 0.25))}
-            className="text-gray-400 hover:text-white h-8 w-8 p-0"
+            className="text-slate-500 hover:text-white h-8 w-8 p-0"
             data-testid="pdf-zoom-out"
           >
             <ZoomOut className="h-4 w-4" />
           </Button>
-          <span className="text-gray-400 text-xs w-12 text-center">{Math.round(scale * 100)}%</span>
+          <span className="text-slate-500 text-xs w-12 text-center">{Math.round(scale * 100)}%</span>
           <Button
             variant="ghost" size="sm"
             onClick={() => setScale(s => Math.min(3, s + 0.25))}
-            className="text-gray-400 hover:text-white h-8 w-8 p-0"
+            className="text-slate-500 hover:text-white h-8 w-8 p-0"
             data-testid="pdf-zoom-in"
           >
             <ZoomIn className="h-4 w-4" />
           </Button>
 
-          <div className="w-px h-5 bg-[#333] mx-1" />
+          <div className="w-px h-5 bg-slate-200 mx-1" />
 
           {/* Download */}
           {fileUrl && (
             <a href={fileUrl} download={fileName} target="_blank" rel="noopener noreferrer">
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white h-8 w-8 p-0" data-testid="pdf-download">
+              <Button variant="ghost" size="sm" className="text-slate-500 hover:text-white h-8 w-8 p-0" data-testid="pdf-download">
                 <Download className="h-4 w-4" />
               </Button>
             </a>
@@ -96,7 +96,7 @@ export function PDFPreview({ fileUrl, fileName, onClose }) {
           <Button
             variant="ghost" size="sm"
             onClick={onClose}
-            className="text-gray-400 hover:text-white h-8 w-8 p-0"
+            className="text-slate-500 hover:text-white h-8 w-8 p-0"
             data-testid="pdf-close"
           >
             <X className="h-4 w-4" />
@@ -107,7 +107,7 @@ export function PDFPreview({ fileUrl, fileName, onClose }) {
       {/* Document Area */}
       <div className="flex-1 overflow-auto flex items-start justify-center p-4">
         {error ? (
-          <div className="text-center text-gray-400 mt-20">
+          <div className="text-center text-slate-500 mt-20">
             <FileText className="h-16 w-16 mx-auto mb-4 opacity-40" />
             <p>{error}</p>
           </div>
@@ -117,7 +117,7 @@ export function PDFPreview({ fileUrl, fileName, onClose }) {
             onLoadSuccess={onDocumentLoadSuccess}
             onLoadError={onDocumentLoadError}
             loading={
-              <div className="text-center text-gray-400 mt-20">
+              <div className="text-center text-slate-500 mt-20">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4" />
                 <p>Loading document...</p>
               </div>

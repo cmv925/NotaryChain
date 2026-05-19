@@ -53,7 +53,7 @@ export function ExpiryWidget({ token }) {
   const urgentCount = summary.expired + summary.critical;
 
   return (
-    <Card className="bg-[#1a2332] border-gray-800 mb-6 sm:mb-8" data-testid="expiry-widget">
+    <Card className="bg-white border-slate-200 mb-6 sm:mb-8" data-testid="expiry-widget">
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-base sm:text-lg font-semibold text-white flex items-center gap-2">
@@ -105,7 +105,7 @@ export function ExpiryWidget({ token }) {
                 <Icon className={`w-4 h-4 flex-shrink-0 ${cfg.color}`} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-white font-medium truncate">{doc.document_name}</p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-slate-500">
                     {doc.document_type} &middot; {doc.status}
                   </p>
                 </div>
@@ -138,7 +138,7 @@ export function ExpiryWidget({ token }) {
         </div>
 
         {documents.length > 5 && (
-          <p className="text-xs text-gray-500 mt-3 text-center">
+          <p className="text-xs text-slate-500 mt-3 text-center">
             +{documents.length - 5} more documents with expiry dates
           </p>
         )}
@@ -237,13 +237,13 @@ export function SetExpiryButton({ requestId, currentExpiry, token, onUpdate }) {
   }
 
   return (
-    <div className="flex items-center gap-2 bg-[#0d1520] p-2 rounded-lg border border-gray-700" data-testid={`expiry-form-${requestId}`}>
+    <div className="flex items-center gap-2 bg-cream-100 p-2 rounded-lg border border-slate-200" data-testid={`expiry-form-${requestId}`}>
       <input
         type="date"
         value={date}
         onChange={(e) => setDate(e.target.value)}
         min={new Date().toISOString().split('T')[0]}
-        className="bg-[#1a2332] text-white text-xs px-2 py-1.5 rounded border border-gray-600 focus:border-amber-500 outline-none"
+        className="bg-white text-white text-xs px-2 py-1.5 rounded border border-slate-200 focus:border-amber-500 outline-none"
         data-testid={`expiry-date-input-${requestId}`}
       />
       <Button
@@ -271,7 +271,7 @@ export function SetExpiryButton({ requestId, currentExpiry, token, onUpdate }) {
         onClick={() => setShow(false)}
         size="sm"
         variant="ghost"
-        className="text-gray-400 hover:text-white text-xs px-2"
+        className="text-slate-500 hover:text-white text-xs px-2"
       >
         Cancel
       </Button>

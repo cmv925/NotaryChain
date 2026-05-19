@@ -53,11 +53,11 @@ function ConfidenceBar({ value, status }) {
 /* ── Single Agent Card ──────────────────────────── */
 function AgentCard({ name, icon: Icon, agent, accent }) {
   const isRunning = agent.status === 'running';
-  const borderCls = isRunning ? 'border-blue-500/60 ring-1 ring-blue-500/30' : agent.status === 'passed' ? 'border-emerald-500/40' : agent.status === 'failed' ? 'border-red-500/40' : 'border-[#334155]';
+  const borderCls = isRunning ? 'border-blue-500/60 ring-1 ring-blue-500/30' : agent.status === 'passed' ? 'border-emerald-500/40' : agent.status === 'failed' ? 'border-red-500/40' : 'border-slate-200';
   const checks = agent.details?.checks || agent.details?.evidence || agent.details?.compliance;
 
   return (
-    <Card className={`bg-[#1a2332] ${borderCls} transition-all duration-500 rounded-sm`} data-testid={`agent-card-${name.toLowerCase()}`}>
+    <Card className={`bg-white ${borderCls} transition-all duration-500 rounded-sm`} data-testid={`agent-card-${name.toLowerCase()}`}>
       <CardContent className="p-5">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -146,7 +146,7 @@ function AgentCard({ name, icon: Icon, agent, accent }) {
 function ConsensusOracle({ consensus, blockchainSeal }) {
   if (!consensus || consensus.status === 'pending') {
     return (
-      <Card className="bg-[#1a2332] border-[#334155] rounded-sm" data-testid="consensus-oracle">
+      <Card className="bg-white border-slate-200 rounded-sm" data-testid="consensus-oracle">
         <CardContent className="p-6 text-center">
           <Vote className="w-10 h-10 text-slate-600 mx-auto mb-3" />
           <h3 className="text-navy-900 font-semibold text-lg tracking-tight mb-1">Consensus Oracle</h3>
@@ -168,7 +168,7 @@ function ConsensusOracle({ consensus, blockchainSeal }) {
   const borderCls = isApproved ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : 'border-red-500/50 ring-1 ring-red-500/20';
 
   return (
-    <Card className={`bg-[#1a2332] ${borderCls} rounded-sm`} data-testid="consensus-oracle">
+    <Card className={`bg-white ${borderCls} rounded-sm`} data-testid="consensus-oracle">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -205,7 +205,7 @@ function ConsensusOracle({ consensus, blockchainSeal }) {
 
         {/* Blockchain Seal */}
         {blockchainSeal && (
-          <div className="mt-4 pt-4 border-t border-[#334155]">
+          <div className="mt-4 pt-4 border-t border-slate-200">
             <div className="flex items-center gap-2 mb-3">
               <Blocks className="w-4 h-4 text-blue-400" />
               <span className="text-navy-900 font-semibold text-sm">Blockchain Seal</span>
@@ -434,9 +434,9 @@ const CeremonyDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       {/* Header */}
-      <header className="bg-[#1a2332]/70 backdrop-blur-xl border-b border-[#334155] sticky top-0 z-30">
+      <header className="bg-white/70 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -471,7 +471,7 @@ const CeremonyDashboard = () => {
                 <button
                   key={c.ceremony_id}
                   onClick={() => { fetchCeremony(c.ceremony_id); setShowNew(false); }}
-                  className={`w-full text-left p-3 rounded-sm border transition-all ${ceremony?.ceremony_id === c.ceremony_id ? 'bg-[#1a2332] border-blue-500/40' : 'bg-[#1a2332]/50 border-[#334155] hover:border-slate-500'}`}
+                  className={`w-full text-left p-3 rounded-sm border transition-all ${ceremony?.ceremony_id === c.ceremony_id ? 'bg-white border-blue-500/40' : 'bg-white/50 border-slate-200 hover:border-slate-500'}`}
                   data-testid={`ceremony-item-${c.ceremony_id}`}
                 >
                   <div className="flex items-center justify-between">
@@ -493,7 +493,7 @@ const CeremonyDashboard = () => {
           <div className="lg:col-span-9">
             {showNew ? (
               /* ── New Ceremony Form ──── */
-              <Card className="bg-[#1a2332] border-[#334155] rounded-sm" data-testid="new-ceremony-form">
+              <Card className="bg-white border-slate-200 rounded-sm" data-testid="new-ceremony-form">
                 <CardContent className="p-8">
                   <div className="max-w-lg mx-auto">
                     <div className="text-center mb-8">
@@ -510,7 +510,7 @@ const CeremonyDashboard = () => {
                           value={form.document_name}
                           onChange={e => setForm(f => ({ ...f, document_name: e.target.value }))}
                           placeholder="e.g., Power of Attorney - Smith Estate"
-                          className="bg-[#0f1825] border-[#334155] text-navy-900 rounded-sm"
+                          className="bg-cream-100 border-slate-200 text-navy-900 rounded-sm"
                           data-testid="ceremony-doc-name"
                         />
                       </div>
@@ -520,13 +520,13 @@ const CeremonyDashboard = () => {
                           value={form.signer_name}
                           onChange={e => setForm(f => ({ ...f, signer_name: e.target.value }))}
                           placeholder="e.g., John Smith"
-                          className="bg-[#0f1825] border-[#334155] text-navy-900 rounded-sm"
+                          className="bg-cream-100 border-slate-200 text-navy-900 rounded-sm"
                           data-testid="ceremony-signer-name"
                         />
                       </div>
 
                       {/* Biometric Verification Images */}
-                      <div className="pt-2 border-t border-[#334155]">
+                      <div className="pt-2 border-t border-slate-200">
                         <div className="flex items-center gap-2 mb-3">
                           <ScanFace className="w-4 h-4 text-purple-400" />
                           <span className="text-navy-900 text-sm font-medium">AI Biometric Verification</span>
@@ -552,7 +552,7 @@ const CeremonyDashboard = () => {
                               />
                             ) : (
                               <label
-                                className={`flex flex-col items-center justify-center h-28 border-2 border-dashed rounded-sm cursor-pointer transition-all ${form.id_image_base64 ? 'border-purple-500/50 bg-purple-500/10' : 'border-[#334155] bg-[#0f1825] hover:border-slate-500'}`}
+                                className={`flex flex-col items-center justify-center h-28 border-2 border-dashed rounded-sm cursor-pointer transition-all ${form.id_image_base64 ? 'border-purple-500/50 bg-purple-500/10' : 'border-slate-200 bg-cream-100 hover:border-slate-500'}`}
                                 data-testid="upload-id-image"
                               >
                                 {form.id_image_base64 ? (
@@ -599,7 +599,7 @@ const CeremonyDashboard = () => {
                               />
                             ) : (
                               <label
-                                className={`flex flex-col items-center justify-center h-28 border-2 border-dashed rounded-sm cursor-pointer transition-all ${form.selfie_base64 ? 'border-blue-500/50 bg-blue-500/10' : 'border-[#334155] bg-[#0f1825] hover:border-slate-500'}`}
+                                className={`flex flex-col items-center justify-center h-28 border-2 border-dashed rounded-sm cursor-pointer transition-all ${form.selfie_base64 ? 'border-blue-500/50 bg-blue-500/10' : 'border-slate-200 bg-cream-100 hover:border-slate-500'}`}
                                 data-testid="upload-selfie"
                               >
                                 {form.selfie_base64 ? (
@@ -710,7 +710,7 @@ const CeremonyDashboard = () => {
 
                 {/* Live Stream Log */}
                 {streamLog.length > 0 && (
-                  <Card className="bg-[#0f1825] border-[#334155] rounded-sm" data-testid="ceremony-stream-log">
+                  <Card className="bg-cream-100 border-slate-200 rounded-sm" data-testid="ceremony-stream-log">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-2 mb-3">
                         <div className={`w-2 h-2 rounded-full ${executing ? 'bg-blue-500 animate-pulse' : 'bg-coral-500'}`} />

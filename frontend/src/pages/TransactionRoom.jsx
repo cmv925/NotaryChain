@@ -229,10 +229,10 @@ export default function TransactionRoom() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00d4aa] mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading Transaction Room...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500 mx-auto mb-4"></div>
+          <p className="text-slate-500">Loading Transaction Room...</p>
         </div>
       </div>
     );
@@ -240,12 +240,12 @@ export default function TransactionRoom() {
 
   if (!roomData) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <Card className="bg-[#1a1a2e] border-red-500/30">
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center">
+        <Card className="bg-white border-red-500/30">
           <CardContent className="p-6 text-center">
             <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
             <h2 className="text-xl text-navy-900 mb-2">Transaction Not Found</h2>
-            <p className="text-gray-400 mb-4">You may not have access to this transaction.</p>
+            <p className="text-slate-500 mb-4">You may not have access to this transaction.</p>
             <Button onClick={() => navigate('/transactions')} variant="outline">
               Back to Transactions
             </Button>
@@ -262,9 +262,9 @@ export default function TransactionRoom() {
   const blockedTasks = tasks.filter(t => t.status === 'blocked').length;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-navy-900">
+    <div className="min-h-screen bg-cream-100 text-navy-900">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#1a1a2e] to-[#16213e] border-b border-[#333] px-4 sm:px-6 py-4">
+      <div className="bg-gradient-to-r from-white to-cream-200 border-b border-slate-200 px-4 sm:px-6 py-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 sm:gap-4 min-w-0">
@@ -272,7 +272,7 @@ export default function TransactionRoom() {
                 variant="ghost" 
                 size="sm" 
                 onClick={() => navigate('/transactions')}
-                className="text-gray-400 hover:text-navy-900 flex-shrink-0"
+                className="text-slate-500 hover:text-navy-900 flex-shrink-0"
               >
                 <ArrowLeft className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Back</span>
@@ -283,7 +283,7 @@ export default function TransactionRoom() {
                   <Badge className={`${statusColors[transaction.status]} text-navy-900 text-xs`}>
                     {transaction.status.replace(/_/g, ' ').toUpperCase()}
                   </Badge>
-                  <span className="text-gray-400 text-xs sm:text-sm hidden sm:inline">
+                  <span className="text-slate-500 text-xs sm:text-sm hidden sm:inline">
                     {transaction.transaction_type.replace(/_/g, ' ')}
                   </span>
                 </div>
@@ -295,7 +295,7 @@ export default function TransactionRoom() {
                 variant="outline"
                 size="sm"
                 onClick={fetchRoomData}
-                className="border-[#333]"
+                className="border-slate-200"
               >
                 <RefreshCw className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Refresh</span>
@@ -319,14 +319,14 @@ export default function TransactionRoom() {
                   {(roomData?.online_users || onlineUsers).slice(0, 5).map((_, i) => (
                     <Circle key={i} className="h-2.5 w-2.5 text-green-400 fill-green-400" />
                   ))}
-                  <span className="text-xs text-gray-400 ml-1">
+                  <span className="text-xs text-slate-500 ml-1">
                     {(roomData?.online_users || onlineUsers).length} online
                   </span>
                 </div>
               )}
               
               {isOwner && transaction.status === 'draft' && (
-                <Button onClick={startTransaction} className="bg-[#00d4aa] text-black hover:bg-[#00b894]">
+                <Button onClick={startTransaction} className="bg-coral-500 text-black hover:bg-coral-600">
                   <Play className="h-4 w-4 mr-2" />
                   Start Transaction
                 </Button>
@@ -336,7 +336,7 @@ export default function TransactionRoom() {
                 <Button 
                   onClick={settleTransaction}
                   disabled={settling}
-                  className="bg-gradient-to-r from-[#00d4aa] to-[#00b894] text-black"
+                  className="bg-gradient-to-r from-coral-500 to-coral-600 text-black"
                 >
                   {settling ? (
                     <>
@@ -390,16 +390,16 @@ export default function TransactionRoom() {
           {/* Progress Bar */}
           <div className="mt-4">
             <div className="flex items-center justify-between text-sm mb-2">
-              <span className="text-gray-400">Progress</span>
-              <span className="text-[#00d4aa] font-semibold">{transaction.progress_percentage}%</span>
+              <span className="text-slate-500">Progress</span>
+              <span className="text-coral-600 font-semibold">{transaction.progress_percentage}%</span>
             </div>
-            <Progress value={transaction.progress_percentage} className="h-2 bg-[#333]" />
+            <Progress value={transaction.progress_percentage} className="h-2 bg-slate-200" />
           </div>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-[#1a1a2e] border-b border-[#333] px-4 sm:px-6 overflow-x-auto">
+      <div className="bg-white border-b border-slate-200 px-4 sm:px-6 overflow-x-auto">
         <div className="max-w-7xl mx-auto flex gap-1 min-w-max">
           {['overview', 'tasks', 'participants', 'messages', 'documents', 'ai'].map((tab) => (
             <button
@@ -407,13 +407,13 @@ export default function TransactionRoom() {
               onClick={() => setActiveTab(tab)}
               className={`px-3 sm:px-4 py-3 text-xs sm:text-sm font-medium transition-colors relative whitespace-nowrap ${
                 activeTab === tab 
-                  ? 'text-[#00d4aa]' 
-                  : 'text-gray-400 hover:text-navy-900'
+                  ? 'text-coral-600' 
+                  : 'text-slate-500 hover:text-navy-900'
               }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
               {activeTab === tab && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00d4aa]" />
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-coral-500" />
               )}
             </button>
           ))}
@@ -425,11 +425,11 @@ export default function TransactionRoom() {
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Stats Cards */}
-            <Card className="bg-[#1a1a2e] border-[#333]">
+            <Card className="bg-white border-slate-200">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 text-sm">Total Tasks</p>
+                    <p className="text-slate-500 text-sm">Total Tasks</p>
                     <p className="text-3xl font-bold text-navy-900">{tasks.length}</p>
                   </div>
                   <div className="h-12 w-12 rounded-full bg-blue-500/20 flex items-center justify-center">
@@ -446,11 +446,11 @@ export default function TransactionRoom() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[#1a1a2e] border-[#333]">
+            <Card className="bg-white border-slate-200">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 text-sm">Participants</p>
+                    <p className="text-slate-500 text-sm">Participants</p>
                     <p className="text-3xl font-bold text-navy-900">{participants.length}</p>
                   </div>
                   <div className="h-12 w-12 rounded-full bg-purple-500/20 flex items-center justify-center">
@@ -472,37 +472,37 @@ export default function TransactionRoom() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[#1a1a2e] border-[#333]">
+            <Card className="bg-white border-slate-200">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 text-sm">Messages</p>
+                    <p className="text-slate-500 text-sm">Messages</p>
                     <p className="text-3xl font-bold text-navy-900">{messages.length}</p>
                   </div>
-                  <div className="h-12 w-12 rounded-full bg-[#00d4aa]/20 flex items-center justify-center">
-                    <MessageSquare className="h-6 w-6 text-[#00d4aa]" />
+                  <div className="h-12 w-12 rounded-full bg-coral-500/20 flex items-center justify-center">
+                    <MessageSquare className="h-6 w-6 text-coral-600" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Transaction Details */}
-            <Card className="bg-[#1a1a2e] border-[#333] lg:col-span-2">
+            <Card className="bg-white border-slate-200 lg:col-span-2">
               <CardHeader>
                 <CardTitle className="text-navy-900">Transaction Details</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-gray-400 text-sm">Type</p>
+                    <p className="text-slate-500 text-sm">Type</p>
                     <p className="text-navy-900">{transaction.transaction_type.replace(/_/g, ' ')}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm">Blueprint</p>
+                    <p className="text-slate-500 text-sm">Blueprint</p>
                     <p className="text-navy-900">{transaction.blueprint_name || 'Custom'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm">Target Date</p>
+                    <p className="text-slate-500 text-sm">Target Date</p>
                     <p className="text-navy-900">
                       {transaction.target_completion_date 
                         ? new Date(transaction.target_completion_date).toLocaleDateString()
@@ -510,18 +510,18 @@ export default function TransactionRoom() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm">Created</p>
+                    <p className="text-slate-500 text-sm">Created</p>
                     <p className="text-navy-900">{new Date(transaction.created_at).toLocaleDateString()}</p>
                   </div>
                 </div>
                 
                 {transaction.hcs_topic_id && (
-                  <div className="mt-4 p-4 bg-[#0d1b2a] rounded-lg">
+                  <div className="mt-4 p-4 bg-cream-100 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
-                      <Shield className="h-4 w-4 text-[#00d4aa]" />
-                      <p className="text-[#00d4aa] font-medium">Blockchain Audit Trail</p>
+                      <Shield className="h-4 w-4 text-coral-600" />
+                      <p className="text-coral-600 font-medium">Blockchain Audit Trail</p>
                     </div>
-                    <p className="text-gray-400 text-sm">HCS Topic: {transaction.hcs_topic_id}</p>
+                    <p className="text-slate-500 text-sm">HCS Topic: {transaction.hcs_topic_id}</p>
                     {transaction.hcs_explorer_url && (
                       <a 
                         href={transaction.hcs_explorer_url}
@@ -538,14 +538,14 @@ export default function TransactionRoom() {
             </Card>
 
             {/* Quick Actions */}
-            <Card className="bg-[#1a1a2e] border-[#333]">
+            <Card className="bg-white border-slate-200">
               <CardHeader>
                 <CardTitle className="text-navy-900">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start border-[#333]"
+                  className="w-full justify-start border-slate-200"
                   onClick={() => setActiveTab('tasks')}
                 >
                   <CheckCircle2 className="h-4 w-4 mr-2" />
@@ -553,7 +553,7 @@ export default function TransactionRoom() {
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start border-[#333]"
+                  className="w-full justify-start border-slate-200"
                   onClick={() => setActiveTab('messages')}
                 >
                   <MessageSquare className="h-4 w-4 mr-2" />
@@ -561,7 +561,7 @@ export default function TransactionRoom() {
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start border-[#333]"
+                  className="w-full justify-start border-slate-200"
                   onClick={() => { setActiveTab('ai'); fetchAiRecommendations(); }}
                 >
                   <Sparkles className="h-4 w-4 mr-2" />
@@ -576,10 +576,10 @@ export default function TransactionRoom() {
           <div className="space-y-4">
             <h2 className="text-xl font-bold">Tasks ({tasks.length})</h2>
             {tasks.length === 0 ? (
-              <Card className="bg-[#1a1a2e] border-[#333]">
+              <Card className="bg-white border-slate-200">
                 <CardContent className="p-8 text-center">
-                  <FileText className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-                  <p className="text-gray-400">No tasks yet. Tasks will appear when the transaction starts.</p>
+                  <FileText className="h-12 w-12 text-slate-500 mx-auto mb-4" />
+                  <p className="text-slate-500">No tasks yet. Tasks will appear when the transaction starts.</p>
                 </CardContent>
               </Card>
             ) : (
@@ -587,13 +587,13 @@ export default function TransactionRoom() {
                 {tasks.map((task, index) => (
                   <Card 
                     key={task.id} 
-                    className={`bg-[#1a1a2e] border-[#333] ${task.status === 'blocked' ? 'opacity-60' : ''}`}
+                    className={`bg-white border-slate-200 ${task.status === 'blocked' ? 'opacity-60' : ''}`}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-4">
                           <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                            task.status === 'completed' ? 'bg-green-500 text-navy-900' : 'bg-[#333] text-gray-400'
+                            task.status === 'completed' ? 'bg-green-500 text-navy-900' : 'bg-slate-200 text-slate-500'
                           }`}>
                             {task.status === 'completed' ? '✓' : index + 1}
                           </div>
@@ -604,9 +604,9 @@ export default function TransactionRoom() {
                                 {task.status.replace(/_/g, ' ')}
                               </Badge>
                             </div>
-                            <p className="text-gray-400 text-sm mt-1">{task.description}</p>
+                            <p className="text-slate-500 text-sm mt-1">{task.description}</p>
                             
-                            <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                            <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
                               {task.assigned_roles?.length > 0 && (
                                 <span>Roles: {task.assigned_roles.join(', ')}</span>
                               )}
@@ -635,7 +635,7 @@ export default function TransactionRoom() {
                           <Button
                             size="sm"
                             onClick={() => completeTask(task.id)}
-                            className="bg-[#00d4aa] text-black hover:bg-[#00b894]"
+                            className="bg-coral-500 text-black hover:bg-coral-600"
                           >
                             Complete
                           </Button>
@@ -656,28 +656,28 @@ export default function TransactionRoom() {
               {participants.map((participant) => {
                 const isOnline = (roomData?.online_users || onlineUsers).includes(participant.user_id);
                 return (
-                  <Card key={participant.id} className="bg-[#1a1a2e] border-[#333]">
+                  <Card key={participant.id} className="bg-white border-slate-200">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
                         <div className="relative">
-                          <div className="h-12 w-12 rounded-full bg-[#333] flex items-center justify-center text-2xl">
+                          <div className="h-12 w-12 rounded-full bg-slate-200 flex items-center justify-center text-2xl">
                             {roleIcons[participant.role] || '\u{1F464}'}
                           </div>
                           {isOnline && (
-                            <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-[#1a1a2e]" data-testid={`online-dot-${participant.id}`} />
+                            <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-slate-200" data-testid={`online-dot-${participant.id}`} />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-semibold text-navy-900 truncate">{participant.name}</h3>
-                          <p className="text-gray-400 text-sm truncate">{participant.email}</p>
+                          <p className="text-slate-500 text-sm truncate">{participant.email}</p>
                           <div className="flex items-center gap-2 mt-1">
-                            <Badge className="bg-[#333] text-gray-300 text-xs">
+                            <Badge className="bg-slate-200 text-slate-500 text-xs">
                               {participant.role}
                             </Badge>
                             <Badge className={`${
                               participant.status === 'joined' ? 'bg-green-500/20 text-green-400' :
                               participant.status === 'invited' ? 'bg-yellow-500/20 text-yellow-400' :
-                              'bg-gray-500/20 text-gray-400'
+                              'bg-gray-500/20 text-slate-500'
                             } text-xs`}>
                               {participant.status}
                             </Badge>
@@ -697,11 +697,11 @@ export default function TransactionRoom() {
             <h2 className="text-xl font-bold mb-4">Transaction Room Chat</h2>
             
             {/* Messages Area */}
-            <Card className="bg-[#1a1a2e] border-[#333] flex-1 flex flex-col">
+            <Card className="bg-white border-slate-200 flex-1 flex flex-col">
               <CardContent className="p-4 flex-1 overflow-y-auto space-y-4">
                 {messages.length === 0 ? (
                   <div className="flex items-center justify-center h-full">
-                    <div className="text-center text-gray-400">
+                    <div className="text-center text-slate-500">
                       <MessageSquare className="h-12 w-12 mx-auto mb-2 opacity-50" />
                       <p>No messages yet. Start the conversation!</p>
                     </div>
@@ -714,17 +714,17 @@ export default function TransactionRoom() {
                     >
                       <div className={`max-w-[70%] ${
                         msg.sender_id === current_participant?.id 
-                          ? 'bg-[#00d4aa] text-black' 
-                          : 'bg-[#333] text-navy-900'
+                          ? 'bg-coral-500 text-black' 
+                          : 'bg-slate-200 text-navy-900'
                       } rounded-lg px-4 py-2`}>
                         <p className={`text-xs mb-1 ${
-                          msg.sender_id === current_participant?.id ? 'text-black/60' : 'text-gray-400'
+                          msg.sender_id === current_participant?.id ? 'text-black/60' : 'text-slate-500'
                         }`}>
                           {msg.sender_name}
                         </p>
                         <p>{msg.content}</p>
                         <p className={`text-xs mt-1 ${
-                          msg.sender_id === current_participant?.id ? 'text-black/40' : 'text-gray-500'
+                          msg.sender_id === current_participant?.id ? 'text-black/40' : 'text-slate-500'
                         }`}>
                           {new Date(msg.created_at).toLocaleTimeString()}
                         </p>
@@ -736,9 +736,9 @@ export default function TransactionRoom() {
               </CardContent>
               
               {/* Message Input */}
-              <div className="p-4 border-t border-[#333]">
+              <div className="p-4 border-t border-slate-200">
                 {typingUsers.length > 0 && (
-                  <div className="text-xs text-gray-500 mb-2 italic" data-testid="typing-indicator">
+                  <div className="text-xs text-slate-500 mb-2 italic" data-testid="typing-indicator">
                     {typingUsers.join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
                   </div>
                 )}
@@ -747,13 +747,13 @@ export default function TransactionRoom() {
                     value={newMessage}
                     onChange={(e) => { setNewMessage(e.target.value); sendTyping(); }}
                     placeholder="Type a message..."
-                    className="flex-1 bg-[#0d1b2a] border-[#333] text-navy-900"
+                    className="flex-1 bg-cream-100 border-slate-200 text-navy-900"
                     disabled={!current_participant?.can_send_messages}
                   />
                   <Button 
                     type="submit" 
                     disabled={sendingMessage || !newMessage.trim()}
-                    className="bg-[#00d4aa] text-black hover:bg-[#00b894]"
+                    className="bg-coral-500 text-black hover:bg-coral-600"
                   >
                     <Send className="h-4 w-4" />
                   </Button>
@@ -767,24 +767,24 @@ export default function TransactionRoom() {
           <div className="space-y-4">
             <h2 className="text-xl font-bold">Documents ({documents.length})</h2>
             {documents.length === 0 ? (
-              <Card className="bg-[#1a1a2e] border-[#333]">
+              <Card className="bg-white border-slate-200">
                 <CardContent className="p-8 text-center">
-                  <FileText className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-                  <p className="text-gray-400">No documents uploaded yet.</p>
+                  <FileText className="h-12 w-12 text-slate-500 mx-auto mb-4" />
+                  <p className="text-slate-500">No documents uploaded yet.</p>
                 </CardContent>
               </Card>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {documents.map((doc) => (
-                  <Card key={doc.id} className="bg-[#1a1a2e] border-[#333]">
+                  <Card key={doc.id} className="bg-white border-slate-200">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded bg-[#333] flex items-center justify-center">
-                          <FileText className="h-5 w-5 text-gray-400" />
+                        <div className="h-10 w-10 rounded bg-slate-200 flex items-center justify-center">
+                          <FileText className="h-5 w-5 text-slate-500" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-medium text-navy-900 truncate">{doc.name}</h3>
-                          <p className="text-gray-400 text-sm">
+                          <p className="text-slate-500 text-sm">
                             {doc.file_type} • {(doc.file_size / 1024).toFixed(1)} KB
                           </p>
                         </div>
@@ -804,13 +804,13 @@ export default function TransactionRoom() {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold flex items-center gap-2">
-                <Sparkles className="h-6 w-6 text-[#00d4aa]" />
+                <Sparkles className="h-6 w-6 text-coral-600" />
                 AI Transaction Analysis
               </h2>
               <Button
                 onClick={fetchAiRecommendations}
                 disabled={loadingAi}
-                className="bg-[#00d4aa] text-black hover:bg-[#00b894]"
+                className="bg-coral-500 text-black hover:bg-coral-600"
               >
                 {loadingAi ? (
                   <>
@@ -829,9 +829,9 @@ export default function TransactionRoom() {
             {aiRecommendations ? (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Risk Score */}
-                <Card className="bg-[#1a1a2e] border-[#333]">
+                <Card className="bg-white border-slate-200">
                   <CardContent className="p-6 text-center">
-                    <p className="text-gray-400 text-sm mb-2">Risk Score</p>
+                    <p className="text-slate-500 text-sm mb-2">Risk Score</p>
                     <div className={`text-5xl font-bold ${
                       aiRecommendations.risk_score < 30 ? 'text-green-500' :
                       aiRecommendations.risk_score < 60 ? 'text-yellow-500' :
@@ -850,13 +850,13 @@ export default function TransactionRoom() {
                 </Card>
 
                 {/* Recommendations */}
-                <Card className="bg-[#1a1a2e] border-[#333] lg:col-span-2">
+                <Card className="bg-white border-slate-200 lg:col-span-2">
                   <CardHeader>
                     <CardTitle className="text-navy-900">AI Recommendations</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {aiRecommendations.recommendations.length === 0 ? (
-                      <p className="text-gray-400">No immediate recommendations. Transaction is on track!</p>
+                      <p className="text-slate-500">No immediate recommendations. Transaction is on track!</p>
                     ) : (
                       aiRecommendations.recommendations.map((rec, idx) => (
                         <div 
@@ -881,7 +881,7 @@ export default function TransactionRoom() {
                           </div>
                           <p className="text-navy-900">{rec.message}</p>
                           {rec.action && (
-                            <p className="text-gray-400 text-sm mt-1">Action: {rec.action}</p>
+                            <p className="text-slate-500 text-sm mt-1">Action: {rec.action}</p>
                           )}
                         </div>
                       ))
@@ -890,10 +890,10 @@ export default function TransactionRoom() {
                 </Card>
               </div>
             ) : (
-              <Card className="bg-[#1a1a2e] border-[#333]">
+              <Card className="bg-white border-slate-200">
                 <CardContent className="p-8 text-center">
-                  <Sparkles className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-                  <p className="text-gray-400">Click "Run Analysis" to get AI-powered insights</p>
+                  <Sparkles className="h-12 w-12 text-slate-500 mx-auto mb-4" />
+                  <p className="text-slate-500">Click "Run Analysis" to get AI-powered insights</p>
                 </CardContent>
               </Card>
             )}

@@ -216,7 +216,7 @@ const NotaryOnboarding = () => {
           <Icon className={`w-6 h-6 text-${config.color}-400`} />
           <div>
             <h3 className={`font-semibold text-${config.color}-400`}>{config.text}</h3>
-            <p className="text-gray-400 text-sm">{existingProfile.message}</p>
+            <p className="text-slate-500 text-sm">{existingProfile.message}</p>
             {existingProfile.rejection_reason && (
               <p className="text-red-400 text-sm mt-1">Reason: {existingProfile.rejection_reason}</p>
             )}
@@ -228,7 +228,7 @@ const NotaryOnboarding = () => {
 
   if (checkingStatus) {
     return (
-      <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center">
         <div className="text-navy-900 text-xl">Loading...</div>
       </div>
     );
@@ -237,11 +237,11 @@ const NotaryOnboarding = () => {
   // If approved, redirect to dashboard
   if (existingProfile?.status === 'approved') {
     return (
-      <div className="min-h-screen bg-[#0f1825] py-12">
+      <div className="min-h-screen bg-cream-100 py-12">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
           <h1 className="text-4xl font-bold text-navy-900 mb-4">You're Approved!</h1>
-          <p className="text-gray-400 text-lg mb-8">
+          <p className="text-slate-500 text-lg mb-8">
             Congratulations! Your notary application has been approved.
           </p>
           <Button
@@ -257,7 +257,7 @@ const NotaryOnboarding = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1825] py-12">
+    <div className="min-h-screen bg-cream-100 py-12">
       <div className="max-w-4xl mx-auto px-6">
         {/* Header */}
         <div className="text-center mb-8">
@@ -265,7 +265,7 @@ const NotaryOnboarding = () => {
             <Shield className="w-10 h-10 text-blue-500" />
           </div>
           <h1 className="text-4xl font-bold text-navy-900 mb-4">Become a NotaryChain Notary</h1>
-          <p className="text-gray-400 text-lg">
+          <p className="text-slate-500 text-lg">
             Join our network of certified notaries and start earning
           </p>
         </div>
@@ -287,7 +287,7 @@ const NotaryOnboarding = () => {
                     ? 'bg-blue-600 text-navy-900' 
                     : step > s.num || (existingProfile?.has_profile && s.num <= 2)
                     ? 'bg-green-600/20 text-green-400 border border-green-500/30'
-                    : 'bg-gray-800 text-gray-400'
+                    : 'bg-gray-800 text-slate-500'
                 }`}
                 disabled={!existingProfile?.has_profile && step < s.num}
               >
@@ -300,7 +300,7 @@ const NotaryOnboarding = () => {
           ))}
         </div>
 
-        <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800">
+        <Card className="bg-gradient-to-br from-white to-cream-100 border border-slate-200">
           <CardContent className="p-8">
             {/* Step 1: Personal Information */}
             {step === 1 && (
@@ -321,7 +321,7 @@ const NotaryOnboarding = () => {
                       required
                       value={formData.full_legal_name}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
+                      className="bg-cream-100 border-slate-200 text-navy-900"
                       placeholder="John Doe"
                     />
                   </div>
@@ -336,7 +336,7 @@ const NotaryOnboarding = () => {
                       required
                       value={formData.phone_number}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
+                      className="bg-cream-100 border-slate-200 text-navy-900"
                       placeholder="(555) 123-4567"
                     />
                   </div>
@@ -352,7 +352,7 @@ const NotaryOnboarding = () => {
                     required
                     value={formData.address}
                     onChange={handleChange}
-                    className="bg-[#0a0f1a] border-gray-700 text-navy-900"
+                    className="bg-cream-100 border-slate-200 text-navy-900"
                     placeholder="123 Main St, Suite 100"
                   />
                 </div>
@@ -368,7 +368,7 @@ const NotaryOnboarding = () => {
                       required
                       value={formData.city}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
+                      className="bg-cream-100 border-slate-200 text-navy-900"
                       placeholder="Los Angeles"
                     />
                   </div>
@@ -382,7 +382,7 @@ const NotaryOnboarding = () => {
                       required
                       value={formData.zip_code}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
+                      className="bg-cream-100 border-slate-200 text-navy-900"
                       placeholder="90001"
                     />
                   </div>
@@ -416,7 +416,7 @@ const NotaryOnboarding = () => {
                       required
                       value={formData.license_number}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
+                      className="bg-cream-100 border-slate-200 text-navy-900"
                     />
                   </div>
                   <div>
@@ -429,7 +429,7 @@ const NotaryOnboarding = () => {
                       required
                       value={formData.license_state}
                       onChange={handleChange}
-                      className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-navy-900"
+                      className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900"
                     >
                       <option value="">Select State</option>
                       {US_STATES.map(state => (
@@ -451,7 +451,7 @@ const NotaryOnboarding = () => {
                       required
                       value={formData.commission_expiry}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
+                      className="bg-cream-100 border-slate-200 text-navy-900"
                     />
                   </div>
                   <div>
@@ -465,7 +465,7 @@ const NotaryOnboarding = () => {
                       min="0"
                       value={formData.years_experience}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
+                      className="bg-cream-100 border-slate-200 text-navy-900"
                     />
                   </div>
                 </div>
@@ -482,12 +482,12 @@ const NotaryOnboarding = () => {
                       step="0.01"
                       value={formData.hourly_rate}
                       onChange={handleChange}
-                      className="bg-[#0a0f1a] border-gray-700 text-navy-900"
+                      className="bg-cream-100 border-slate-200 text-navy-900"
                       placeholder="50.00"
                     />
                   </div>
                   <div className="flex items-end">
-                    <label className="flex items-center gap-2 p-3 bg-[#0a0f1a] rounded-lg border border-gray-700 w-full">
+                    <label className="flex items-center gap-2 p-3 bg-cream-100 rounded-lg border border-slate-200 w-full">
                       <input
                         type="checkbox"
                         name="ron_certified"
@@ -511,7 +511,7 @@ const NotaryOnboarding = () => {
                         className={`px-4 py-2 rounded-lg border text-sm transition-all ${
                           formData.specializations.includes(spec)
                             ? 'bg-blue-600 border-blue-500 text-navy-900'
-                            : 'bg-[#0a0f1a] border-gray-700 text-gray-300 hover:border-blue-500'
+                            : 'bg-cream-100 border-slate-200 text-slate-500 hover:border-blue-500'
                         }`}
                       >
                         {spec}
@@ -530,7 +530,7 @@ const NotaryOnboarding = () => {
                     value={formData.bio}
                     onChange={handleChange}
                     rows={4}
-                    className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-navy-900 focus:border-blue-500 focus:outline-none"
+                    className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 focus:border-blue-500 focus:outline-none"
                     placeholder="Tell us about your experience and why you'd be a great addition to our network..."
                   />
                 </div>
@@ -540,7 +540,7 @@ const NotaryOnboarding = () => {
                     type="button" 
                     onClick={() => setStep(1)}
                     variant="outline"
-                    className="border-gray-700 text-gray-300"
+                    className="border-slate-200 text-slate-500"
                   >
                     <ArrowLeft className="mr-2 w-5 h-5" />
                     Back
@@ -565,7 +565,7 @@ const NotaryOnboarding = () => {
                   Upload Credentials
                 </h2>
                 
-                <p className="text-gray-400">
+                <p className="text-slate-500">
                   Please upload the required documents to complete your application. 
                   Documents marked with * are required.
                 </p>
@@ -580,7 +580,7 @@ const NotaryOnboarding = () => {
                         className={`p-4 rounded-lg border ${
                           isUploaded 
                             ? 'bg-green-500/10 border-green-500/30' 
-                            : 'bg-[#0a0f1a] border-gray-700'
+                            : 'bg-cream-100 border-slate-200'
                         }`}
                       >
                         <div className="flex items-center justify-between">
@@ -588,13 +588,13 @@ const NotaryOnboarding = () => {
                             {isUploaded ? (
                               <CheckCircle className="w-6 h-6 text-green-500" />
                             ) : (
-                              <FileText className="w-6 h-6 text-gray-400" />
+                              <FileText className="w-6 h-6 text-slate-500" />
                             )}
                             <div>
                               <h4 className="text-navy-900 font-medium">
                                 {cred.label} {cred.required && <span className="text-red-400">*</span>}
                               </h4>
-                              <p className="text-gray-400 text-sm">{cred.description}</p>
+                              <p className="text-slate-500 text-sm">{cred.description}</p>
                             </div>
                           </div>
                           <div>
@@ -624,7 +624,7 @@ const NotaryOnboarding = () => {
 
                 <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
                   <h4 className="text-blue-400 font-medium mb-2">What happens next?</h4>
-                  <ul className="text-gray-400 text-sm space-y-1">
+                  <ul className="text-slate-500 text-sm space-y-1">
                     <li>• Your application will be reviewed by our team (1-3 business days)</li>
                     <li>• We may contact you if additional information is needed</li>
                     <li>• You'll receive an email notification once approved</li>
@@ -637,7 +637,7 @@ const NotaryOnboarding = () => {
                     type="button" 
                     onClick={() => setStep(2)}
                     variant="outline"
-                    className="border-gray-700 text-gray-300"
+                    className="border-slate-200 text-slate-500"
                   >
                     <ArrowLeft className="mr-2 w-5 h-5" />
                     Back to Profile

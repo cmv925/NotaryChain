@@ -59,8 +59,8 @@ const SubscriptionSuccess = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1825] flex items-center justify-center px-4">
-      <Card className="w-full max-w-md bg-[#1a2332] border-gray-800" data-testid="subscription-success-card">
+    <div className="min-h-screen bg-cream-100 flex items-center justify-center px-4">
+      <Card className="w-full max-w-md bg-white border-slate-200" data-testid="subscription-success-card">
         <CardContent className="p-8 text-center">
           {status === 'polling' && (
             <>
@@ -68,7 +68,7 @@ const SubscriptionSuccess = () => {
                 <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
               </div>
               <h2 className="text-xl font-bold text-navy-900 mb-2">Processing Payment</h2>
-              <p className="text-gray-400 text-sm">Please wait while we confirm your subscription...</p>
+              <p className="text-slate-500 text-sm">Please wait while we confirm your subscription...</p>
             </>
           )}
 
@@ -78,14 +78,14 @@ const SubscriptionSuccess = () => {
                 <CheckCircle className="w-8 h-8 text-green-400" />
               </div>
               <h2 className="text-xl font-bold text-navy-900 mb-2">Subscription Activated!</h2>
-              <p className="text-gray-400 text-sm mb-6">
+              <p className="text-slate-500 text-sm mb-6">
                 Your <span className="text-navy-900 font-semibold capitalize">{planId}</span> plan is now active. Enjoy your new features!
               </p>
               <div className="flex flex-col gap-3">
                 <Button onClick={() => navigate('/subscription')} className="bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="go-to-subscription">
                   View Subscription <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
-                <Button variant="ghost" onClick={() => navigate('/dashboard')} className="text-gray-400" data-testid="go-to-dashboard">
+                <Button variant="ghost" onClick={() => navigate('/dashboard')} className="text-slate-500" data-testid="go-to-dashboard">
                   Go to Dashboard
                 </Button>
               </div>
@@ -98,14 +98,14 @@ const SubscriptionSuccess = () => {
                 <XCircle className="w-8 h-8 text-red-400" />
               </div>
               <h2 className="text-xl font-bold text-navy-900 mb-2">Payment Issue</h2>
-              <p className="text-gray-400 text-sm mb-6">
+              <p className="text-slate-500 text-sm mb-6">
                 We couldn't confirm your payment. If you were charged, your subscription will activate automatically.
               </p>
               <div className="flex flex-col gap-3">
                 <Button onClick={() => navigate('/pricing')} className="bg-blue-600 hover:bg-blue-700 text-navy-900">
                   Try Again
                 </Button>
-                <Button variant="ghost" onClick={() => navigate('/dashboard')} className="text-gray-400">
+                <Button variant="ghost" onClick={() => navigate('/dashboard')} className="text-slate-500">
                   Go to Dashboard
                 </Button>
               </div>

@@ -85,9 +85,9 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
 
   if (!topicId) {
     return (
-      <Card className="bg-[#1a2332] border-gray-800">
+      <Card className="bg-white border-slate-200">
         <CardContent className="p-6">
-          <div className="text-center text-gray-400">
+          <div className="text-center text-slate-500">
             <Shield className="w-12 h-12 mx-auto mb-3 opacity-50" />
             <p>No blockchain audit trail available for this request.</p>
           </div>
@@ -97,11 +97,11 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
   }
 
   return (
-    <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800" data-testid="audit-trail-card">
+    <Card className="bg-gradient-to-br from-white to-cream-100 border border-slate-200" data-testid="audit-trail-card">
       <CardContent className="p-0">
         {/* Header */}
         <div 
-          className="p-4 border-b border-gray-800 cursor-pointer hover:bg-gray-800/30 transition-colors"
+          className="p-4 border-b border-slate-200 cursor-pointer hover:bg-gray-800/30 transition-colors"
           onClick={() => setExpanded(!expanded)}
         >
           <div className="flex items-center justify-between">
@@ -111,7 +111,7 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
               </div>
               <div>
                 <h3 className="text-white font-semibold">{title}</h3>
-                <p className="text-gray-400 text-sm">
+                <p className="text-slate-500 text-sm">
                   Topic: {topicId} • {messages.length} events
                 </p>
               </div>
@@ -121,7 +121,7 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
                 size="sm"
                 variant="ghost"
                 onClick={(e) => { e.stopPropagation(); fetchTopicData(); }}
-                className="text-gray-400 hover:text-white"
+                className="text-slate-500 hover:text-white"
                 disabled={refreshing}
               >
                 <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
@@ -136,9 +136,9 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
                 <ExternalLink className="w-4 h-4" />
               </a>
               {expanded ? (
-                <ChevronUp className="w-5 h-5 text-gray-400" />
+                <ChevronUp className="w-5 h-5 text-slate-500" />
               ) : (
-                <ChevronDown className="w-5 h-5 text-gray-400" />
+                <ChevronDown className="w-5 h-5 text-slate-500" />
               )}
             </div>
           </div>
@@ -150,7 +150,7 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
             {loading ? (
               <div className="text-center py-8">
                 <RefreshCw className="w-8 h-8 text-blue-500 animate-spin mx-auto mb-3" />
-                <p className="text-gray-400">Loading audit trail...</p>
+                <p className="text-slate-500">Loading audit trail...</p>
               </div>
             ) : error ? (
               <div className="text-center py-8">
@@ -159,13 +159,13 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
                   onClick={fetchTopicData} 
                   variant="outline" 
                   size="sm" 
-                  className="mt-3 border-gray-700"
+                  className="mt-3 border-slate-200"
                 >
                   Retry
                 </Button>
               </div>
             ) : messages.length === 0 ? (
-              <div className="text-center py-8 text-gray-400">
+              <div className="text-center py-8 text-slate-500">
                 <Clock className="w-8 h-8 mx-auto mb-3 opacity-50" />
                 <p>No events recorded yet</p>
               </div>
@@ -189,50 +189,50 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
                         </div>
                         
                         {/* Event card */}
-                        <div className="bg-[#0a0f1a] rounded-lg p-4 border border-gray-800 hover:border-gray-700 transition-colors">
+                        <div className="bg-cream-100 rounded-lg p-4 border border-slate-200 hover:border-slate-200 transition-colors">
                           <div className="flex items-start justify-between mb-2">
                             <div>
                               <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium bg-${config.color}-500/20 text-${config.color}-400`}>
                                 {msg.eventType.replace(/_/g, ' ')}
                               </span>
-                              <span className="text-gray-500 text-xs ml-2">
+                              <span className="text-slate-500 text-xs ml-2">
                                 Seq #{msg.sequence_number}
                               </span>
                             </div>
-                            <span className="text-gray-500 text-xs">
+                            <span className="text-slate-500 text-xs">
                               {formatTimestamp(msg.timestamp)}
                             </span>
                           </div>
                           
                           {/* Event details */}
-                          <div className="text-sm text-gray-400 space-y-1">
+                          <div className="text-sm text-slate-500 space-y-1">
                             {decoded.document_hash && (
                               <p>
-                                <span className="text-gray-500">Document Hash:</span>{' '}
+                                <span className="text-slate-500">Document Hash:</span>{' '}
                                 <code className="text-blue-400 text-xs">{decoded.document_hash.substring(0, 16)}...</code>
                               </p>
                             )}
                             {decoded.document_name && (
                               <p>
-                                <span className="text-gray-500">Document:</span>{' '}
+                                <span className="text-slate-500">Document:</span>{' '}
                                 <span className="text-white">{decoded.document_name}</span>
                               </p>
                             )}
                             {decoded.notary_id && (
                               <p>
-                                <span className="text-gray-500">Notary ID:</span>{' '}
+                                <span className="text-slate-500">Notary ID:</span>{' '}
                                 <span className="text-purple-400">{decoded.notary_id.substring(0, 12)}...</span>
                               </p>
                             )}
                             {decoded.session_id && (
                               <p>
-                                <span className="text-gray-500">Session:</span>{' '}
+                                <span className="text-slate-500">Session:</span>{' '}
                                 <span className="text-green-400">{decoded.session_id.substring(0, 12)}...</span>
                               </p>
                             )}
                             {decoded.request_id && (
                               <p>
-                                <span className="text-gray-500">Request:</span>{' '}
+                                <span className="text-slate-500">Request:</span>{' '}
                                 <span className="text-cyan-400">{decoded.request_id.substring(0, 12)}...</span>
                               </p>
                             )}
@@ -247,7 +247,7 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
 
             {/* Footer info */}
             {!loading && !error && (
-              <div className="mt-4 pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-500">
+              <div className="mt-4 pt-4 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
                 <span>
                   Network: <span className="text-blue-400">Hedera Testnet</span>
                 </span>

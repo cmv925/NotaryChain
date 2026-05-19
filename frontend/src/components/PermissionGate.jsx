@@ -39,7 +39,7 @@ const PermissionGate = ({
   if (showLock) {
     return (
       <div
-        className="flex items-center gap-1.5 px-2 py-1 rounded bg-gray-800/50 border border-gray-700/50 text-gray-600 text-xs cursor-not-allowed"
+        className="flex items-center gap-1.5 px-2 py-1 rounded bg-gray-800/50 border border-slate-200/50 text-slate-600 text-xs cursor-not-allowed"
         title="You don't have permission for this action"
         data-testid="permission-locked"
       >

@@ -56,19 +56,19 @@ const Auth0Callback = () => {
   }, [searchParams, navigate, loginWithToken]);
 
   return (
-    <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
+    <div className="min-h-screen bg-cream-100 flex items-center justify-center">
       <div className="text-center" data-testid="auth0-callback-page">
         {error ? (
           <div>
             <p className="text-red-400 text-lg mb-2">Authentication Error</p>
-            <p className="text-gray-400 text-sm">{error}</p>
-            <p className="text-gray-500 text-xs mt-4">Redirecting to login...</p>
+            <p className="text-slate-500 text-sm">{error}</p>
+            <p className="text-slate-500 text-xs mt-4">Redirecting to login...</p>
           </div>
         ) : (
           <div>
             <RefreshCw className="w-10 h-10 text-cyan-500 animate-spin mx-auto mb-4" />
             <p className="text-navy-900 text-lg">Completing sign in...</p>
-            <p className="text-gray-400 text-sm mt-2">Verifying your identity with Auth0</p>
+            <p className="text-slate-500 text-sm mt-2">Verifying your identity with Auth0</p>
           </div>
         )}
       </div>

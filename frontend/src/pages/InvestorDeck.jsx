@@ -186,14 +186,14 @@ function PasswordGate({ onVerified }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#080c14] flex items-center justify-center p-6" data-testid="password-gate">
+    <div className="min-h-screen bg-cream-100 flex items-center justify-center p-6" data-testid="password-gate">
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600/10 border border-blue-500/20 mb-6">
             <Lock className="w-7 h-7 text-blue-400" />
           </div>
           <h1 className="text-3xl font-bold text-navy-900 tracking-tight">NotaryChain</h1>
-          <p className="text-gray-500 mt-2 text-sm tracking-widest uppercase">Investor Preview</p>
+          <p className="text-slate-500 mt-2 text-sm tracking-widest uppercase">Investor Preview</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -203,7 +203,7 @@ function PasswordGate({ onVerified }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter access code"
-            className="w-full px-4 py-3.5 bg-[#0f1520] border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 transition-all text-center tracking-[0.3em] text-lg"
+            className="w-full px-4 py-3.5 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 transition-all text-center tracking-[0.3em] text-lg"
           />
           {error && <p data-testid="password-error" className="text-red-400 text-sm text-center">{error}</p>}
           <button data-testid="password-submit" type="submit" disabled={loading || !password} className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-navy-900 font-medium rounded-xl transition-all flex items-center justify-center gap-2">
@@ -225,14 +225,14 @@ function HeroSlide({ visible }) {
         <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-navy-900 text-navy-900 leading-tight mb-6">
           The Future of <span className="italic text-coral-600">Trust</span> is Here
         </h1>
-        <p className="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed mb-10">
+        <p className="text-slate-500 text-lg max-w-2xl mx-auto leading-relaxed mb-10">
           NotaryChain fuses autonomous AI agent swarms, biometric identity, oracle-verified escrow, and blockchain immutability into a single platform that transforms how documents are authenticated and value is exchanged.
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-2xl mx-auto">
           {PLATFORM_STATS.map((s) => (
             <div key={s.label} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4">
               <div className="text-2xl font-bold text-navy-900">{s.value}</div>
-              <div className="text-gray-500 text-xs mt-1">{s.label}</div>
+              <div className="text-slate-500 text-xs mt-1">{s.label}</div>
             </div>
           ))}
         </div>
@@ -250,7 +250,7 @@ function IPSlide({ visible }) {
         <div className="text-center mb-10">
           <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">Intellectual Property</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 mb-2">11 Trademarkable Innovations</h2>
-          <p className="text-gray-500 text-sm max-w-xl mx-auto">Proprietary workflow innovations that form a defensible technology moat.</p>
+          <p className="text-slate-500 text-sm max-w-xl mx-auto">Proprietary workflow innovations that form a defensible technology moat.</p>
         </div>
         <div className="grid sm:grid-cols-2 gap-3">
           {TRADEMARKS.map((t) => (
@@ -259,8 +259,8 @@ function IPSlide({ visible }) {
                 <Award className="w-4 h-4 text-coral-600 shrink-0" />
                 <span className="text-navy-900 font-semibold text-sm">{t.name}<sup className="text-coral-600 text-[9px] ml-0.5">TM</sup></span>
               </div>
-              <p className="text-gray-500 text-xs leading-relaxed mb-1">{t.feature}</p>
-              <p className="text-gray-600 text-[11px] italic">{t.reason}</p>
+              <p className="text-slate-500 text-xs leading-relaxed mb-1">{t.feature}</p>
+              <p className="text-slate-600 text-[11px] italic">{t.reason}</p>
             </div>
           ))}
         </div>
@@ -283,7 +283,7 @@ function TrustGapsSlide({ visible }) {
         <div className="text-center mb-10">
           <p className="text-coral-600 tracking-[0.25em] uppercase text-xs font-medium mb-4">Core Innovation</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 mb-2">3 Trust Gaps We Solve</h2>
-          <p className="text-gray-500 text-sm max-w-2xl mx-auto">Traditional escrow is slow, expensive, and reliant on human intermediaries. We augment trust with cryptographic verification and AI-driven automation.</p>
+          <p className="text-slate-500 text-sm max-w-2xl mx-auto">Traditional escrow is slow, expensive, and reliant on human intermediaries. We augment trust with cryptographic verification and AI-driven automation.</p>
         </div>
         <div className="space-y-4">
           {gaps.map((g) => {
@@ -298,8 +298,8 @@ function TrustGapsSlide({ visible }) {
                     <span className="text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full" style={{ color: g.color, background: `${g.color}15`, border: `1px solid ${g.color}30` }}>GAP {g.num}</span>
                     <h3 className="text-navy-900 font-semibold text-lg">{g.title}</h3>
                   </div>
-                  <p className="text-gray-600 text-xs italic mb-2">{g.subtitle}</p>
-                  <p className="text-gray-400 text-sm leading-relaxed">{g.desc}</p>
+                  <p className="text-slate-600 text-xs italic mb-2">{g.subtitle}</p>
+                  <p className="text-slate-500 text-sm leading-relaxed">{g.desc}</p>
                 </div>
               </div>
             );
@@ -331,10 +331,10 @@ function FeatureSlide({ feature, visible, index }) {
             <h2 className="text-2xl sm:text-3xl font-bold text-navy-900">{feature.title}</h2>
             {feature.trademark && <span className="text-[10px] tracking-widest uppercase px-2 py-0.5 rounded-full border border-gold-500/30 text-coral-600">TM</span>}
           </div>
-          <p className="text-gray-400 leading-relaxed mb-6">{feature.description}</p>
+          <p className="text-slate-500 leading-relaxed mb-6">{feature.description}</p>
           <div className="flex flex-wrap gap-3">
             {feature.stats.map((s) => (
-              <span key={s} className="inline-flex items-center gap-1.5 text-xs text-gray-300 bg-white/[0.04] border border-white/[0.06] rounded-lg px-3 py-1.5">
+              <span key={s} className="inline-flex items-center gap-1.5 text-xs text-slate-500 bg-white/[0.04] border border-white/[0.06] rounded-lg px-3 py-1.5">
                 <CheckCircle className="w-3 h-3" style={{ color: feature.color }} />
                 {s}
               </span>
@@ -355,14 +355,14 @@ function AIPipelineSlide({ visible }) {
         <div className="text-center mb-10">
           <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">Core Innovation</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 mb-2">6-Phase AI Orchestration Pipeline</h2>
-          <p className="text-gray-500 text-sm max-w-xl mx-auto">End-to-end autonomous transaction execution powered by GPT-5.2.</p>
+          <p className="text-slate-500 text-sm max-w-xl mx-auto">End-to-end autonomous transaction execution powered by GPT-5.2.</p>
         </div>
         <div className="relative">
           <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-blue-500/50 via-purple-500/50 via-cyan-500/50 to-emerald-500/50 hidden sm:block" />
           <div className="space-y-6">
             {AI_PIPELINE.map((p, i) => (
               <div key={p.phase} className="flex items-start gap-6 relative">
-                <div className="relative z-10 w-16 h-16 rounded-2xl border border-white/[0.08] bg-[#0c1018] flex items-center justify-center shrink-0">
+                <div className="relative z-10 w-16 h-16 rounded-2xl border border-white/[0.08] bg-cream-100 flex items-center justify-center shrink-0">
                   <span className="text-lg font-bold" style={{ color: p.color }}>{p.phase}</span>
                 </div>
                 <div className="flex-1 bg-white/[0.02] border border-white/[0.06] rounded-xl p-5 hover:border-white/[0.12] transition-colors">
@@ -370,7 +370,7 @@ function AIPipelineSlide({ visible }) {
                     <h3 className="text-navy-900 font-semibold">{p.name}</h3>
                     {p.trademark && <sup className="text-coral-600 text-[9px]">TM</sup>}
                   </div>
-                  <p className="text-gray-500 text-sm leading-relaxed">{p.desc}</p>
+                  <p className="text-slate-500 text-sm leading-relaxed">{p.desc}</p>
                 </div>
                 {i < AI_PIPELINE.length - 1 && (
                   <div className="absolute left-8 top-16 w-px h-6 hidden sm:block" style={{ background: `linear-gradient(${p.color}, ${AI_PIPELINE[i+1].color})` }} />
@@ -402,7 +402,7 @@ function FeatureBreakdownSlide({ visible }) {
               <div key={c.name} className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-4 hover:border-white/[0.12] transition-colors">
                 <CIcon className="w-5 h-5 mb-3" style={{ color: c.color }} />
                 <div className="text-xl font-bold text-navy-900">{c.count}</div>
-                <div className="text-gray-500 text-xs mt-1 leading-snug">{c.name}</div>
+                <div className="text-slate-500 text-xs mt-1 leading-snug">{c.name}</div>
               </div>
             );
           })}
@@ -434,11 +434,11 @@ function ArchitectureSlide({ visible }) {
             </div>
             <div className="flex flex-wrap gap-2">
               {['Bento Dashboard', 'ANAN Monitor', 'Escrow Intelligence', 'Fraud Intelligence', 'Biometric Gate', 'Notary Portal', 'Admin Panel', 'AI Tools', 'Role-Based Onboarding'].map(m => (
-                <span key={m} className="text-[11px] text-gray-400 bg-blue-500/5 border border-blue-500/10 rounded-md px-2.5 py-1">{m}</span>
+                <span key={m} className="text-[11px] text-slate-500 bg-blue-500/5 border border-blue-500/10 rounded-md px-2.5 py-1">{m}</span>
               ))}
             </div>
           </div>
-          <div className="flex justify-center text-gray-700 text-xs">HTTPS / WebSocket (Real-Time Events)</div>
+          <div className="flex justify-center text-slate-700 text-xs">HTTPS / WebSocket (Real-Time Events)</div>
           <div className="bg-white/[0.02] border border-purple-500/20 rounded-xl p-5">
             <div className="flex items-center gap-3 mb-3">
               <Server className="w-5 h-5 text-purple-400" />
@@ -446,7 +446,7 @@ function ArchitectureSlide({ visible }) {
             </div>
             <div className="flex flex-wrap gap-2">
               {['JWT Auth + 2FA', 'RBAC Middleware', 'Rate Limiting', 'SSO (Auth0/Okta)', 'WebSocket Manager'].map(m => (
-                <span key={m} className="text-[11px] text-gray-400 bg-purple-500/5 border border-purple-500/10 rounded-md px-2.5 py-1">{m}</span>
+                <span key={m} className="text-[11px] text-slate-500 bg-purple-500/5 border border-purple-500/10 rounded-md px-2.5 py-1">{m}</span>
               ))}
             </div>
           </div>
@@ -457,7 +457,7 @@ function ArchitectureSlide({ visible }) {
             </div>
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
               {['ANAN Swarm (GPT-5.2)', 'Escrow Oracle', 'Fraud Intelligence', 'AI Engine', 'Biometric Vision', 'Hedera HCS + Bond', 'Payment (Stripe)', 'Agent Reputation', 'Document Pipeline', 'Email (Resend)', 'Notification WS', 'Webhook Delivery', 'S3 Storage', 'HBAR Alerts', 'Scheduled Reports'].map(m => (
-                <span key={m} className="text-[11px] text-center text-gray-400 bg-cyan-500/5 border border-cyan-500/10 rounded-md px-2 py-1.5">{m}</span>
+                <span key={m} className="text-[11px] text-center text-slate-500 bg-cyan-500/5 border border-cyan-500/10 rounded-md px-2 py-1.5">{m}</span>
               ))}
             </div>
           </div>
@@ -469,7 +469,7 @@ function ArchitectureSlide({ visible }) {
               </div>
               <div className="flex flex-wrap gap-2">
                 {['Doc Expiry', 'Smart Reminders', 'Report Gen', 'HBAR Monitor', 'Service Health'].map(m => (
-                  <span key={m} className="text-[11px] text-gray-400 bg-coral-500/5 border border-amber-500/10 rounded-md px-2.5 py-1">{m}</span>
+                  <span key={m} className="text-[11px] text-slate-500 bg-coral-500/5 border border-amber-500/10 rounded-md px-2.5 py-1">{m}</span>
                 ))}
               </div>
             </div>
@@ -480,7 +480,7 @@ function ArchitectureSlide({ visible }) {
               </div>
               <div className="flex flex-wrap gap-2">
                 {['Users', 'Documents', 'ANAN Ceremonies', 'Escrow Agreements', 'Fraud Patterns', 'Bond Ledger', 'Orgs', 'RBAC Roles'].map(m => (
-                  <span key={m} className="text-[11px] text-gray-400 bg-coral-500/5 border border-emerald-500/10 rounded-md px-2.5 py-1">{m}</span>
+                  <span key={m} className="text-[11px] text-slate-500 bg-coral-500/5 border border-emerald-500/10 rounded-md px-2.5 py-1">{m}</span>
                 ))}
               </div>
             </div>
@@ -514,7 +514,7 @@ function TechSlide({ visible }) {
                 <h3 className="text-navy-900 font-semibold mb-3 text-sm">{l.label}</h3>
                 <ul className="space-y-1.5">
                   {l.items.map((item) => (
-                    <li key={item} className="text-gray-500 text-xs flex items-center gap-2">
+                    <li key={item} className="text-slate-500 text-xs flex items-center gap-2">
                       <span className="w-1 h-1 rounded-full shrink-0" style={{ background: l.color }} />
                       {item}
                     </li>
@@ -552,7 +552,7 @@ function InfraSlide({ visible }) {
               <div key={it.label} className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 hover:border-white/[0.12] transition-colors">
                 <IIcon className="w-8 h-8 mb-4" style={{ color: it.color }} />
                 <h3 className="text-navy-900 font-semibold mb-2">{it.label}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{it.desc}</p>
+                <p className="text-slate-500 text-sm leading-relaxed">{it.desc}</p>
               </div>
             );
           })}
@@ -576,7 +576,7 @@ function MetricsSlide({ visible }) {
           {DEEP_METRICS.map((m) => (
             <div key={m.label} className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 text-center hover:border-white/[0.12] transition-colors">
               <div className="text-3xl font-bold text-navy-900 mb-1">{m.value}</div>
-              <div className="text-gray-500 text-xs">{m.label}</div>
+              <div className="text-slate-500 text-xs">{m.label}</div>
             </div>
           ))}
         </div>
@@ -597,23 +597,23 @@ function MarketSlide({ visible }) {
           <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6">
             <BarChart3 className="w-7 h-7 text-blue-400 mx-auto mb-3" />
             <div className="text-3xl font-bold text-navy-900 mb-1">$18.6B</div>
-            <p className="text-gray-500 text-xs">Global e-notarization market by 2030 (est. CAGR 19.2%)*</p>
+            <p className="text-slate-500 text-xs">Global e-notarization market by 2030 (est. CAGR 19.2%)*</p>
           </div>
           <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6">
             <Globe className="w-7 h-7 text-coral-600 mx-auto mb-3" />
             <div className="text-3xl font-bold text-navy-900 mb-1">$5.4T</div>
-            <p className="text-gray-500 text-xs">Total addressable escrow market (management estimate)*</p>
+            <p className="text-slate-500 text-xs">Total addressable escrow market (management estimate)*</p>
           </div>
           <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6">
             <Zap className="w-7 h-7 text-coral-600 mx-auto mb-3" />
             <div className="text-3xl font-bold text-navy-900 mb-1">90+</div>
-            <p className="text-gray-500 text-xs">Enterprise features shipped and tested</p>
+            <p className="text-slate-500 text-xs">Enterprise features shipped and tested</p>
           </div>
         </div>
-        <p className="text-gray-400 leading-relaxed max-w-2xl mx-auto text-sm">
+        <p className="text-slate-500 leading-relaxed max-w-2xl mx-auto text-sm">
           The regulatory landscape is rapidly evolving in favor of digital notarization and AI-verified escrow. NotaryChain is building toward one of the most feature-complete platforms in this space, with autonomous AI agent swarms, oracle-verified smart escrow, and <span className="text-navy-900 font-medium">11 trademarkable innovations</span> that create a defensible technological moat.
         </p>
-        <p className="text-gray-600 text-[9px] mt-6 max-w-xl mx-auto">
+        <p className="text-slate-600 text-[9px] mt-6 max-w-xl mx-auto">
           *Market estimates based on third-party research reports and management projections. Actual market sizes may vary. This presentation does not constitute an offer to sell securities. Forward-looking statements involve risks and uncertainties. Past performance of internal test suites does not guarantee commercial outcomes.
         </p>
       </div>
@@ -648,22 +648,22 @@ function ContactSlide({ visible }) {
         <div className="text-center mb-10">
           <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">Get in Touch</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-navy-900">Interested in NotaryChain?</h2>
-          <p className="text-gray-500 mt-2 text-sm">Let's discuss how we can work together.</p>
+          <p className="text-slate-500 mt-2 text-sm">Let's discuss how we can work together.</p>
         </div>
         {status === 'sent' ? (
           <div data-testid="contact-success" className="text-center py-12 bg-white/[0.02] border border-coral-200 rounded-2xl">
             <CheckCircle className="w-12 h-12 text-coral-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-navy-900 mb-2">Message Sent</h3>
-            <p className="text-gray-400">Thank you for your interest. We'll be in touch shortly.</p>
+            <p className="text-slate-500">Thank you for your interest. We'll be in touch shortly.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4" data-testid="contact-form">
             <div className="grid sm:grid-cols-2 gap-4">
-              <input data-testid="contact-name" required value={form.name} onChange={set('name')} placeholder="Your name" className="w-full px-4 py-3 bg-[#0f1520] border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all text-sm" />
-              <input data-testid="contact-email" required type="email" value={form.email} onChange={set('email')} placeholder="Email" className="w-full px-4 py-3 bg-[#0f1520] border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all text-sm" />
+              <input data-testid="contact-name" required value={form.name} onChange={set('name')} placeholder="Your name" className="w-full px-4 py-3 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all text-sm" />
+              <input data-testid="contact-email" required type="email" value={form.email} onChange={set('email')} placeholder="Email" className="w-full px-4 py-3 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all text-sm" />
             </div>
-            <input data-testid="contact-company" required value={form.company} onChange={set('company')} placeholder="Company / Fund" className="w-full px-4 py-3 bg-[#0f1520] border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all text-sm" />
-            <textarea data-testid="contact-message" required value={form.message} onChange={set('message')} rows={4} placeholder="Tell us about your interest..." className="w-full px-4 py-3 bg-[#0f1520] border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all text-sm resize-none" />
+            <input data-testid="contact-company" required value={form.company} onChange={set('company')} placeholder="Company / Fund" className="w-full px-4 py-3 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all text-sm" />
+            <textarea data-testid="contact-message" required value={form.message} onChange={set('message')} rows={4} placeholder="Tell us about your interest..." className="w-full px-4 py-3 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all text-sm resize-none" />
             <button data-testid="contact-submit" type="submit" disabled={status === 'sending'} className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-navy-900 font-medium rounded-xl transition-all flex items-center justify-center gap-2">
               {status === 'sending' ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Send className="w-4 h-4" /><span>Send Message</span></>}
             </button>
@@ -671,7 +671,7 @@ function ContactSlide({ visible }) {
           </form>
         )}
         <div className="mt-10 text-center">
-          <p className="text-gray-700 text-[8px] leading-relaxed max-w-md mx-auto">
+          <p className="text-slate-700 text-[8px] leading-relaxed max-w-md mx-auto">
             CONFIDENTIAL — This presentation is for informational purposes only and does not constitute an offer to sell or solicitation of an offer to buy any securities. Forward-looking statements involve risks and uncertainties. NotaryChain is a technology platform and does not itself provide notary, legal, or financial services. All performance claims reflect internal test environments unless otherwise noted. Biometric data is processed in accordance with applicable privacy laws. Consult your own legal and financial advisors before making investment decisions.
           </p>
         </div>
@@ -797,7 +797,7 @@ function DemoWalkthroughSlide({ visible }) {
         <div className="text-center mb-6">
           <p className="text-coral-600 tracking-[0.25em] uppercase text-xs font-medium mb-3">Interactive Demo</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 mb-1">Escrow Lifecycle Walkthrough</h2>
-          <p className="text-gray-500 text-sm max-w-xl mx-auto">Watch how a $350K real estate transaction flows through all 3 Trust Gaps.</p>
+          <p className="text-slate-500 text-sm max-w-xl mx-auto">Watch how a $350K real estate transaction flows through all 3 Trust Gaps.</p>
         </div>
 
         {/* Step Timeline Bar */}
@@ -809,7 +809,7 @@ function DemoWalkthroughSlide({ visible }) {
             return (
               <React.Fragment key={i}>
                 <button onClick={() => goStep(i)} data-testid={`demo-step-${i + 1}`}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all text-xs font-medium border ${isActive ? 'border-white/20 bg-white/[0.06] text-navy-900 scale-105' : isPast ? 'border-coral-200 bg-coral-500/5 text-coral-600' : 'border-white/[0.06] bg-white/[0.02] text-gray-600 hover:text-gray-400 hover:border-white/10'}`}>
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all text-xs font-medium border ${isActive ? 'border-white/20 bg-white/[0.06] text-navy-900 scale-105' : isPast ? 'border-coral-200 bg-coral-500/5 text-coral-600' : 'border-white/[0.06] bg-white/[0.02] text-slate-600 hover:text-slate-500 hover:border-white/10'}`}>
                   <SIcon className="w-3.5 h-3.5" style={{ color: isActive ? s.color : isPast ? '#10b981' : undefined }} />
                   <span className="hidden sm:inline">{s.label}</span>
                   <span className="sm:hidden">{s.phase}</span>
@@ -837,18 +837,18 @@ function DemoWalkthroughSlide({ visible }) {
                     <h3 className="text-navy-900 font-bold text-lg mt-1">{step.title}</h3>
                   </div>
                 </div>
-                <p className="text-gray-400 text-sm leading-relaxed">{step.desc}</p>
+                <p className="text-slate-500 text-sm leading-relaxed">{step.desc}</p>
               </div>
               {/* Progress */}
               <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-600 text-[10px] uppercase tracking-wider">Trust Score</span>
+                  <span className="text-slate-600 text-[10px] uppercase tracking-wider">Trust Score</span>
                   <span className="text-navy-900 font-bold text-sm">{Math.round(((activeStep + 1) / DEMO_STEPS.length) * 100)}%</span>
                 </div>
                 <div className="w-32 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
                   <div className="h-full rounded-full transition-all duration-700" style={{ width: `${((activeStep + 1) / DEMO_STEPS.length) * 100}%`, background: `linear-gradient(90deg, ${step.color}, ${step.color}cc)` }} />
                 </div>
-                <button onClick={() => { setAutoDemo(d => !d); if (!autoDemo) setActiveStep(0); }} className="text-[10px] px-2.5 py-1 rounded-md border border-white/[0.08] text-gray-400 hover:text-navy-900 transition-colors" data-testid="demo-autoplay">
+                <button onClick={() => { setAutoDemo(d => !d); if (!autoDemo) setActiveStep(0); }} className="text-[10px] px-2.5 py-1 rounded-md border border-white/[0.08] text-slate-500 hover:text-navy-900 transition-colors" data-testid="demo-autoplay">
                   {autoDemo ? 'Stop' : 'Auto-Play'}
                 </button>
               </div>
@@ -879,7 +879,7 @@ function DemoUpload({ step }) {
         <div className="w-14 h-16 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center"><FileText className="w-7 h-7 text-blue-400" /></div>
         <div className="text-left">
           <p className="text-navy-900 font-semibold text-sm">{step.detail}</p>
-          <p className="text-gray-500 text-xs">{step.detailSub}</p>
+          <p className="text-slate-500 text-xs">{step.detailSub}</p>
         </div>
         <CheckCircle className="w-5 h-5 text-coral-600 animate-[fadeIn_1s_ease-out_0.4s_both]" />
       </div>
@@ -891,7 +891,7 @@ function DemoUpload({ step }) {
       <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto animate-[fadeIn_0.8s_ease-out_1s_both]">
         {['Clauses Found: 42', 'Parties: 2', 'Conditions: 6'].map(t => (
           <div key={t} className="bg-white/[0.03] border border-white/[0.06] rounded-lg px-2 py-1.5 text-center">
-            <span className="text-gray-400 text-[10px]">{t}</span>
+            <span className="text-slate-500 text-[10px]">{t}</span>
           </div>
         ))}
       </div>
@@ -902,14 +902,14 @@ function DemoUpload({ step }) {
 function DemoTriggers({ step }) {
   return (
     <div className="space-y-2">
-      <p className="text-gray-500 text-[10px] uppercase tracking-wider mb-3 flex items-center gap-2">
+      <p className="text-slate-500 text-[10px] uppercase tracking-wider mb-3 flex items-center gap-2">
         <Brain className="w-3 h-3 text-purple-400" /> AI-Extracted Performance Triggers
       </p>
       {step.triggers.map((t, i) => (
         <div key={i} className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] rounded-lg px-4 py-2.5 opacity-0 animate-[fadeSlideUp_0.4s_ease-out_both]" style={{ animationDelay: `${i * 120}ms` }}>
           <span className="w-5 h-5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[9px] font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
           <span className="text-navy-900 text-sm flex-1">{t.name}</span>
-          <span className={`text-[10px] px-2 py-0.5 rounded-full border ${t.method === 'Oracle' ? 'text-coral-600 border-cyan-500/20 bg-cyan-500/10' : t.method === 'Biometric' ? 'text-purple-400 border-purple-500/20 bg-purple-500/10' : t.method === 'AI Photo' ? 'text-coral-600 border-amber-500/20 bg-coral-500/10' : 'text-gray-400 border-gray-600 bg-gray-800'}`}>{t.method}</span>
+          <span className={`text-[10px] px-2 py-0.5 rounded-full border ${t.method === 'Oracle' ? 'text-coral-600 border-cyan-500/20 bg-cyan-500/10' : t.method === 'Biometric' ? 'text-purple-400 border-purple-500/20 bg-purple-500/10' : t.method === 'AI Photo' ? 'text-coral-600 border-amber-500/20 bg-coral-500/10' : 'text-slate-500 border-slate-200 bg-gray-800'}`}>{t.method}</span>
           {t.pct > 0 && <span className="text-coral-600 text-[10px] font-bold">{t.pct}%</span>}
         </div>
       ))}
@@ -929,11 +929,11 @@ function DemoVault({ step }) {
         <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-coral-500 animate-ping" />
       </div>
       <div className="flex items-center justify-center gap-6 animate-[fadeIn_0.6s_ease-out_0.5s_both]">
-        <div className="text-center"><p className="text-[10px] text-gray-600">Stripe PI</p><p className="text-navy-900 font-mono text-xs">pi_escrow_8f2a...</p></div>
+        <div className="text-center"><p className="text-[10px] text-slate-600">Stripe PI</p><p className="text-navy-900 font-mono text-xs">pi_escrow_8f2a...</p></div>
         <div className="w-px h-8 bg-white/[0.06]" />
-        <div className="text-center"><p className="text-[10px] text-gray-600">HTS Token</p><p className="text-navy-900 font-mono text-xs">{step.vault.token}</p></div>
+        <div className="text-center"><p className="text-[10px] text-slate-600">HTS Token</p><p className="text-navy-900 font-mono text-xs">{step.vault.token}</p></div>
       </div>
-      <p className="text-gray-500 text-xs max-w-sm mx-auto animate-[fadeIn_0.6s_ease-out_0.8s_both]">Funds are tokenized on Hedera and cryptographically locked. Neither party can access until all conditions are met.</p>
+      <p className="text-slate-500 text-xs max-w-sm mx-auto animate-[fadeIn_0.6s_ease-out_0.8s_both]">Funds are tokenized on Hedera and cryptographically locked. Neither party can access until all conditions are met.</p>
     </div>
   );
 }
@@ -941,7 +941,7 @@ function DemoVault({ step }) {
 function DemoOracles({ step }) {
   return (
     <div className="space-y-3">
-      <p className="text-gray-500 text-[10px] uppercase tracking-wider mb-2 flex items-center gap-2">
+      <p className="text-slate-500 text-[10px] uppercase tracking-wider mb-2 flex items-center gap-2">
         <Globe className="w-3 h-3 text-coral-600 animate-spin" style={{ animationDuration: '4s' }} /> Querying External Oracles...
       </p>
       {step.oracles.map((o, i) => (
@@ -950,7 +950,7 @@ function DemoOracles({ step }) {
             <span className="text-navy-900 font-medium text-sm">{o.name}</span>
             <span className="flex items-center gap-1 text-coral-600 text-[10px] font-bold"><CheckCircle className="w-3 h-3" /> VERIFIED</span>
           </div>
-          <p className="text-gray-500 text-xs">{o.result}</p>
+          <p className="text-slate-500 text-xs">{o.result}</p>
           <div className="flex items-center gap-2 mt-2">
             <div className="flex-1 h-1 bg-white/[0.06] rounded-full overflow-hidden">
               <div className="h-full bg-coral-500 rounded-full animate-[growWidth_1s_ease-out_both]" style={{ animationDelay: `${i * 400 + 300}ms`, width: `${o.conf}%` }} />
@@ -974,7 +974,7 @@ function DemoBiometric({ step }) {
               <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-coral-500 flex items-center justify-center"><CheckCircle className="w-3 h-3 text-navy-900" /></div>
             </div>
             <p className="text-navy-900 font-semibold text-sm mb-0.5">{data.name}</p>
-            <p className="text-gray-600 text-[10px] uppercase tracking-wider mb-2">{role}</p>
+            <p className="text-slate-600 text-[10px] uppercase tracking-wider mb-2">{role}</p>
             <div className="flex items-center justify-center gap-3">
               <span className="text-coral-600 text-[10px] flex items-center gap-1"><Eye className="w-3 h-3" /> Liveness</span>
               <span className="text-purple-400 text-[10px] font-bold">{data.conf}%</span>
@@ -1004,9 +1004,9 @@ function DemoSettlement({ step }) {
         <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-coral-500 animate-ping" />
       </div>
       <div className="space-y-1.5 max-w-sm mx-auto animate-[fadeIn_0.6s_ease-out_0.5s_both]">
-        <div className="flex items-center justify-between text-xs"><span className="text-gray-500">Settlement Hash</span><span className="text-navy-900 font-mono">{step.settlement.hash}</span></div>
-        <div className="flex items-center justify-between text-xs"><span className="text-gray-500">HCS Topic</span><span className="text-navy-900 font-mono">{step.settlement.topic}</span></div>
-        <div className="flex items-center justify-between text-xs"><span className="text-gray-500">Network</span><span className="text-coral-600 font-bold">{step.settlement.network}</span></div>
+        <div className="flex items-center justify-between text-xs"><span className="text-slate-500">Settlement Hash</span><span className="text-navy-900 font-mono">{step.settlement.hash}</span></div>
+        <div className="flex items-center justify-between text-xs"><span className="text-slate-500">HCS Topic</span><span className="text-navy-900 font-mono">{step.settlement.topic}</span></div>
+        <div className="flex items-center justify-between text-xs"><span className="text-slate-500">Network</span><span className="text-coral-600 font-bold">{step.settlement.network}</span></div>
       </div>
       <div className="animate-[fadeIn_0.6s_ease-out_1s_both]">
         <div className="inline-flex items-center gap-2 bg-coral-500/10 border border-amber-500/20 rounded-full px-5 py-2">
@@ -1139,10 +1139,10 @@ function TaskGraph({ steps, color }) {
               <span className="text-navy-900 text-[11px] font-medium truncate">{s.name}</span>
               {s.crit && <span className="text-[8px] px-1 py-0.5 rounded bg-red-500/15 text-red-400 border border-red-500/20 font-bold">CRIT</span>}
             </div>
-            <p className="text-gray-600 text-[9px] truncate">{s.owner}</p>
+            <p className="text-slate-600 text-[9px] truncate">{s.owner}</p>
           </div>
           {s.deps.length > 0 && (
-            <span className="text-[8px] text-gray-600 font-mono flex-shrink-0">↖ {s.deps.join(',')}</span>
+            <span className="text-[8px] text-slate-600 font-mono flex-shrink-0">↖ {s.deps.join(',')}</span>
           )}
         </div>
       ))}
@@ -1164,7 +1164,7 @@ function TransactionOrchestratorDeepDiveSlide({ visible }) {
         <div className="text-center mb-5">
           <p className="text-coral-600 tracking-[0.25em] uppercase text-xs font-medium mb-2.5">Deep Dive · Trademarkable IP</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 mb-1">Transaction Orchestrator</h2>
-          <p className="text-gray-500 text-sm max-w-2xl mx-auto">Full lifecycle engine for complex multi-party transactions — blueprint-driven, AI risk-scored, Hedera-sealed.</p>
+          <p className="text-slate-500 text-sm max-w-2xl mx-auto">Full lifecycle engine for complex multi-party transactions — blueprint-driven, AI risk-scored, Hedera-sealed.</p>
         </div>
 
         {/* Top capability strip */}
@@ -1175,7 +1175,7 @@ function TransactionOrchestratorDeepDiveSlide({ visible }) {
               <div key={c.label} className="bg-white/[0.02] border border-white/[0.06] rounded-lg p-2.5 text-center opacity-0 animate-[fadeSlideUp_0.4s_ease-out_both]" style={{ animationDelay: `${i * 60}ms` }} data-testid={`orchestrator-cap-${i}`}>
                 <Icon className="w-4 h-4 mx-auto mb-1.5" style={{ color: c.color }} />
                 <p className="text-navy-900 text-[10px] font-semibold leading-tight">{c.label}</p>
-                <p className="text-gray-600 text-[8.5px] mt-0.5 leading-tight">{c.desc}</p>
+                <p className="text-slate-600 text-[8.5px] mt-0.5 leading-tight">{c.desc}</p>
               </div>
             );
           })}
@@ -1187,7 +1187,7 @@ function TransactionOrchestratorDeepDiveSlide({ visible }) {
             <button key={bp.id}
               onClick={() => setActiveIdx(i)}
               data-testid={`orchestrator-blueprint-${bp.id}`}
-              className={`px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all border ${activeIdx === i ? 'text-navy-900' : 'text-gray-500 hover:text-gray-300'}`}
+              className={`px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all border ${activeIdx === i ? 'text-navy-900' : 'text-slate-500 hover:text-slate-500'}`}
               style={{
                 background: activeIdx === i ? `${bp.color}20` : 'rgba(255,255,255,0.02)',
                 borderColor: activeIdx === i ? `${bp.color}66` : 'rgba(255,255,255,0.06)',
@@ -1202,10 +1202,10 @@ function TransactionOrchestratorDeepDiveSlide({ visible }) {
           {/* LEFT: Task Graph */}
           <div className="lg:col-span-5 bg-white/[0.02] border border-white/[0.06] rounded-xl p-3" key={`graph-${activeIdx}`}>
             <div className="flex items-center justify-between mb-2.5">
-              <p className="text-gray-500 text-[10px] uppercase tracking-wider flex items-center gap-1.5">
+              <p className="text-slate-500 text-[10px] uppercase tracking-wider flex items-center gap-1.5">
                 <GitBranch className="w-3 h-3" style={{ color: active.color }} /> Dependency Graph
               </p>
-              <span className="text-[9px] text-gray-500">{active.steps.length} steps · ~{active.estDays}d</span>
+              <span className="text-[9px] text-slate-500">{active.steps.length} steps · ~{active.estDays}d</span>
             </div>
             <TaskGraph steps={active.steps} color={active.color} />
           </div>
@@ -1214,7 +1214,7 @@ function TransactionOrchestratorDeepDiveSlide({ visible }) {
           <div className="lg:col-span-4 space-y-3">
             {/* AI Risk */}
             <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-3 text-center" key={`risk-${activeIdx}`}>
-              <p className="text-gray-500 text-[10px] uppercase tracking-wider mb-2 flex items-center justify-center gap-1.5">
+              <p className="text-slate-500 text-[10px] uppercase tracking-wider mb-2 flex items-center justify-center gap-1.5">
                 <Brain className="w-3 h-3 text-red-400" /> AI Risk Engine
               </p>
               <RiskMeter score={active.risk} color={active.color} />
@@ -1225,7 +1225,7 @@ function TransactionOrchestratorDeepDiveSlide({ visible }) {
                       <span className="text-navy-900 text-[10px] font-medium truncate pr-1">{r.factor}</span>
                       <span className={`text-[8px] font-bold uppercase px-1 rounded flex-shrink-0 ${r.prob === 'high' ? 'text-red-400 bg-red-500/10' : r.prob === 'medium' ? 'text-coral-600 bg-coral-500/10' : 'text-coral-600 bg-coral-500/10'}`}>{r.prob}</span>
                     </div>
-                    <p className="text-gray-600 text-[8.5px] mt-0.5 leading-tight">{r.mitigation}</p>
+                    <p className="text-slate-600 text-[8.5px] mt-0.5 leading-tight">{r.mitigation}</p>
                   </div>
                 ))}
               </div>
@@ -1233,7 +1233,7 @@ function TransactionOrchestratorDeepDiveSlide({ visible }) {
 
             {/* Participant Roles */}
             <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-3">
-              <p className="text-gray-500 text-[10px] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <p className="text-slate-500 text-[10px] uppercase tracking-wider mb-2 flex items-center gap-1.5">
                 <Users className="w-3 h-3" style={{ color: active.color }} /> Participant Roles
               </p>
               <div className="flex flex-wrap gap-1">
@@ -1263,11 +1263,11 @@ function TransactionOrchestratorDeepDiveSlide({ visible }) {
               <p className="text-coral-600 text-[10px] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                 <Blocks className="w-3 h-3" /> Hedera HCS Audit
               </p>
-              <div className="space-y-1 font-mono text-[9px] text-gray-400">
-                <div className="flex justify-between"><span className="text-gray-600">Topic</span><span className="text-coral-600">0.0.10373605</span></div>
-                <div className="flex justify-between"><span className="text-gray-600">Network</span><span className="text-navy-900">mainnet</span></div>
-                <div className="flex justify-between"><span className="text-gray-600">Events</span><span className="text-navy-900">{active.steps.length + 3}</span></div>
-                <div className="flex justify-between"><span className="text-gray-600">Sealed</span><span className="text-coral-600">✓ immutable</span></div>
+              <div className="space-y-1 font-mono text-[9px] text-slate-500">
+                <div className="flex justify-between"><span className="text-slate-600">Topic</span><span className="text-coral-600">0.0.10373605</span></div>
+                <div className="flex justify-between"><span className="text-slate-600">Network</span><span className="text-navy-900">mainnet</span></div>
+                <div className="flex justify-between"><span className="text-slate-600">Events</span><span className="text-navy-900">{active.steps.length + 3}</span></div>
+                <div className="flex justify-between"><span className="text-slate-600">Sealed</span><span className="text-coral-600">✓ immutable</span></div>
               </div>
               <div className="mt-2 text-center">
                 <div className="inline-flex items-center gap-1 text-[8px] text-coral-600 uppercase tracking-wider font-bold">
@@ -1277,16 +1277,16 @@ function TransactionOrchestratorDeepDiveSlide({ visible }) {
             </div>
 
             <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-3 text-center">
-              <p className="text-[9px] text-gray-600 uppercase tracking-wider">TAM Unlock</p>
+              <p className="text-[9px] text-slate-600 uppercase tracking-wider">TAM Unlock</p>
               <p className="text-lg font-bold text-navy-900 mt-0.5">$58B</p>
-              <p className="text-[8.5px] text-gray-500 leading-tight">Multi-party transaction mgmt market</p>
+              <p className="text-[8.5px] text-slate-500 leading-tight">Multi-party transaction mgmt market</p>
             </div>
           </div>
         </div>
 
         {/* Bottom insight */}
         <div className="mt-4 text-center">
-          <p className="text-gray-500 text-[11px]">
+          <p className="text-slate-500 text-[11px]">
             Transforms NotaryChain from a notary tool into a <span className="text-coral-600 font-semibold">full transaction management platform</span> — pulling in escrow, signing, messaging, AI risk, and on-chain audit under one engine.
           </p>
         </div>
@@ -1355,7 +1355,7 @@ function CompetitiveSlide({ visible }) {
         <div className="text-center mb-6">
           <p className="text-red-400 tracking-[0.25em] uppercase text-xs font-medium mb-3">Competitive Landscape</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 mb-1">NotaryChain vs The Market</h2>
-          <p className="text-gray-500 text-sm max-w-xl mx-auto">22 critical capabilities across AI, escrow, security, and enterprise. Only one platform has them all.</p>
+          <p className="text-slate-500 text-sm max-w-xl mx-auto">22 critical capabilities across AI, escrow, security, and enterprise. Only one platform has them all.</p>
         </div>
 
         {/* Scoreboard */}
@@ -1367,8 +1367,8 @@ function CompetitiveSlide({ visible }) {
             const isUs = c.type === 'us';
             return (
               <div key={c.name} className={`rounded-xl p-4 text-center border ${isUs ? 'bg-coral-500/5 border-amber-500/25' : 'bg-white/[0.02] border-white/[0.06]'}`} data-testid={`competitor-${c.name.toLowerCase().replace(/\s/g, '-')}`}>
-                <p className={`text-xs font-semibold mb-1 ${isUs ? 'text-coral-600' : 'text-gray-400'}`}>{c.name}</p>
-                <p className={`text-2xl font-bold ${isUs ? 'text-coral-600' : 'text-navy-900'}`}>{score}<span className="text-gray-600 text-sm font-normal">/{total}</span></p>
+                <p className={`text-xs font-semibold mb-1 ${isUs ? 'text-coral-600' : 'text-slate-500'}`}>{c.name}</p>
+                <p className={`text-2xl font-bold ${isUs ? 'text-coral-600' : 'text-navy-900'}`}>{score}<span className="text-slate-600 text-sm font-normal">/{total}</span></p>
                 <div className="w-full h-1.5 bg-white/[0.06] rounded-full mt-2 overflow-hidden">
                   <div className="h-full rounded-full transition-all duration-700" style={{ width: `${pct}%`, background: c.color }} />
                 </div>
@@ -1381,11 +1381,11 @@ function CompetitiveSlide({ visible }) {
         <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl overflow-hidden">
           {/* Header */}
           <div className="grid grid-cols-[1fr,1fr,80px,80px,80px,80px] gap-0 border-b border-white/[0.06] bg-white/[0.02]">
-            <div className="px-4 py-2.5"><span className="text-gray-600 text-[10px] uppercase tracking-wider">Category</span></div>
-            <div className="px-4 py-2.5"><span className="text-gray-600 text-[10px] uppercase tracking-wider">Capability</span></div>
+            <div className="px-4 py-2.5"><span className="text-slate-600 text-[10px] uppercase tracking-wider">Category</span></div>
+            <div className="px-4 py-2.5"><span className="text-slate-600 text-[10px] uppercase tracking-wider">Capability</span></div>
             {COMPETITORS.map(c => (
               <div key={c.name} className="px-2 py-2.5 text-center">
-                <span className={`text-[10px] font-bold ${c.type === 'us' ? 'text-coral-600' : 'text-gray-500'}`}>
+                <span className={`text-[10px] font-bold ${c.type === 'us' ? 'text-coral-600' : 'text-slate-500'}`}>
                   {c.name === 'Traditional Notary' ? 'Trad.' : c.name === 'NotaryChain' ? 'NC' : c.name}
                 </span>
               </div>
@@ -1399,10 +1399,10 @@ function CompetitiveSlide({ visible }) {
                 <div key={f.name} className={`grid grid-cols-[1fr,1fr,80px,80px,80px,80px] gap-0 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors ${fi === 0 ? 'border-t border-white/[0.06]' : ''}`}>
                   {fi === 0 ? (
                     <div className="px-4 py-2 flex items-center" style={{ gridRow: `span ${cat.features.length}` }}>
-                      <span className="text-gray-400 text-xs font-medium">{cat.category}</span>
+                      <span className="text-slate-500 text-xs font-medium">{cat.category}</span>
                     </div>
                   ) : <div />}
-                  <div className="px-4 py-2 flex items-center"><span className="text-gray-300 text-xs">{f.name}</span></div>
+                  <div className="px-4 py-2 flex items-center"><span className="text-slate-500 text-xs">{f.name}</span></div>
                   <div className="px-2 py-2 flex items-center justify-center"><CellBadge val={f.trad} /></div>
                   <div className="px-2 py-2 flex items-center justify-center"><CellBadge val={f.docu} /></div>
                   <div className="px-2 py-2 flex items-center justify-center"><CellBadge val={f.nota} /></div>
@@ -1415,7 +1415,7 @@ function CompetitiveSlide({ visible }) {
 
         {/* Bottom Insight */}
         <div className="mt-4 text-center">
-          <p className="text-gray-500 text-xs">
+          <p className="text-slate-500 text-xs">
             NotaryChain delivers <span className="text-coral-600 font-bold">{totalNc}x the capability</span> of traditional notary services and <span className="text-coral-600 font-bold">{Math.round(totalNc / Math.max(totalDocu, 1))}x more features</span> than the closest digital competitor.
           </p>
         </div>
@@ -1451,7 +1451,7 @@ function NavDots({ current, total, onGo }) {
     <div className="fixed right-3 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col items-end gap-2">
       {Array.from({ length: total }).map((_, i) => (
         <button key={i} onClick={() => onGo(i)} className="group flex items-center gap-2" aria-label={SLIDE_LABELS[i]}>
-          <span className={`text-[9px] tracking-wider uppercase transition-opacity whitespace-nowrap ${current === i ? 'opacity-100 text-navy-900' : 'opacity-0 group-hover:opacity-70 text-gray-400'}`}>
+          <span className={`text-[9px] tracking-wider uppercase transition-opacity whitespace-nowrap ${current === i ? 'opacity-100 text-navy-900' : 'opacity-0 group-hover:opacity-70 text-slate-500'}`}>
             {SLIDE_LABELS[i]}
           </span>
           <span className={`block rounded-full transition-all ${current === i ? 'w-2.5 h-2.5 bg-blue-500' : 'w-1.5 h-1.5 bg-white/20 group-hover:bg-white/40'}`} />
@@ -1577,28 +1577,28 @@ function DeckPresentation() {
   ];
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-[#080c14] overflow-hidden" data-testid="investor-deck">
+    <div ref={containerRef} className="min-h-screen bg-cream-100 overflow-hidden" data-testid="investor-deck">
       <ProgressBar current={current} total={totalSlides} />
       <NavDots current={current} total={totalSlides} onGo={goTo} />
 
-      <button data-testid="autoplay-toggle" onClick={() => setAutoPlay((p) => !p)} className="fixed bottom-6 right-6 z-50 text-xs text-gray-500 hover:text-gray-300 transition-colors bg-white/[0.04] border border-white/[0.08] rounded-full px-4 py-2 backdrop-blur-sm">
+      <button data-testid="autoplay-toggle" onClick={() => setAutoPlay((p) => !p)} className="fixed bottom-6 right-6 z-50 text-xs text-slate-500 hover:text-slate-500 transition-colors bg-white/[0.04] border border-white/[0.08] rounded-full px-4 py-2 backdrop-blur-sm">
         {autoPlay ? 'Pause' : 'Play'}
       </button>
 
       <button data-testid="download-pdf-btn" onClick={exportToPDF} disabled={exporting}
-        className="fixed top-6 right-6 z-50 flex items-center gap-2 text-xs text-gray-400 hover:text-navy-900 transition-colors bg-white/[0.04] border border-white/[0.08] rounded-full px-4 py-2 backdrop-blur-sm disabled:opacity-50">
+        className="fixed top-6 right-6 z-50 flex items-center gap-2 text-xs text-slate-500 hover:text-navy-900 transition-colors bg-white/[0.04] border border-white/[0.08] rounded-full px-4 py-2 backdrop-blur-sm disabled:opacity-50">
         {exporting ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Exporting...</> : <><Download className="w-3.5 h-3.5" /> Download PDF</>}
       </button>
 
-      <div className="fixed bottom-6 left-6 z-50 text-xs text-gray-600 font-mono">
+      <div className="fixed bottom-6 left-6 z-50 text-xs text-slate-600 font-mono">
         {String(current + 1).padStart(2, '0')} / {String(totalSlides).padStart(2, '0')}
       </div>
 
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4">
-        <button onClick={() => { setAutoPlay(false); setCurrent((c) => Math.max(c - 1, 0)); }} disabled={current === 0} className="text-gray-500 hover:text-navy-900 disabled:opacity-20 transition-all rotate-180">
+        <button onClick={() => { setAutoPlay(false); setCurrent((c) => Math.max(c - 1, 0)); }} disabled={current === 0} className="text-slate-500 hover:text-navy-900 disabled:opacity-20 transition-all rotate-180">
           <ArrowRight className="w-5 h-5" />
         </button>
-        <button onClick={() => { setAutoPlay(false); setCurrent((c) => Math.min(c + 1, totalSlides - 1)); }} disabled={current === totalSlides - 1} className="text-gray-500 hover:text-navy-900 disabled:opacity-20 transition-all">
+        <button onClick={() => { setAutoPlay(false); setCurrent((c) => Math.min(c + 1, totalSlides - 1)); }} disabled={current === totalSlides - 1} className="text-slate-500 hover:text-navy-900 disabled:opacity-20 transition-all">
           <ArrowRight className="w-5 h-5" />
         </button>
       </div>

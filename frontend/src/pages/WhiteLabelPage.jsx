@@ -92,7 +92,7 @@ const WhiteLabelPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       <div className="pt-24 pb-16">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
@@ -103,7 +103,7 @@ const WhiteLabelPage = () => {
                 <Code className="w-7 h-7 text-coral-600" />
                 White-Label Embed
               </h1>
-              <p className="text-gray-400 text-sm mt-1">Embed NotaryChain notarization in your own website</p>
+              <p className="text-slate-500 text-sm mt-1">Embed NotaryChain notarization in your own website</p>
             </div>
             <div className="flex gap-2">
               <Button onClick={() => setShowCreate(true)} className="bg-coral-500 hover:bg-emerald-700" data-testid="create-embed-btn">
@@ -113,41 +113,41 @@ const WhiteLabelPage = () => {
           </div>
 
           {showCreate && (
-            <Card className="bg-[#1a2332] border-gray-800 mb-6" data-testid="embed-create-form">
+            <Card className="bg-white border-slate-200 mb-6" data-testid="embed-create-form">
               <CardContent className="p-6">
                 <h2 className="text-lg font-semibold text-navy-900 mb-4">Create Embed Configuration</h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm text-gray-300 block mb-1">Configuration Name *</label>
-                    <Input value={formName} onChange={e => setFormName(e.target.value)} placeholder="e.g., My Law Firm Widget" className="bg-[#0a0f1a] border-gray-700 text-navy-900" data-testid="embed-name-input" />
+                    <label className="text-sm text-slate-500 block mb-1">Configuration Name *</label>
+                    <Input value={formName} onChange={e => setFormName(e.target.value)} placeholder="e.g., My Law Firm Widget" className="bg-cream-100 border-slate-200 text-navy-900" data-testid="embed-name-input" />
                   </div>
                   <div>
-                    <label className="text-sm text-gray-300 block mb-1">Allowed Origins (comma-separated)</label>
-                    <Input value={formOrigins} onChange={e => setFormOrigins(e.target.value)} placeholder="https://mysite.com, https://app.mysite.com" className="bg-[#0a0f1a] border-gray-700 text-navy-900" data-testid="embed-origins-input" />
+                    <label className="text-sm text-slate-500 block mb-1">Allowed Origins (comma-separated)</label>
+                    <Input value={formOrigins} onChange={e => setFormOrigins(e.target.value)} placeholder="https://mysite.com, https://app.mysite.com" className="bg-cream-100 border-slate-200 text-navy-900" data-testid="embed-origins-input" />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm text-gray-300 block mb-1">Company Name</label>
-                      <Input value={formCompany} onChange={e => setFormCompany(e.target.value)} placeholder="Your Company" className="bg-[#0a0f1a] border-gray-700 text-navy-900" data-testid="embed-company-input" />
+                      <label className="text-sm text-slate-500 block mb-1">Company Name</label>
+                      <Input value={formCompany} onChange={e => setFormCompany(e.target.value)} placeholder="Your Company" className="bg-cream-100 border-slate-200 text-navy-900" data-testid="embed-company-input" />
                     </div>
                     <div>
-                      <label className="text-sm text-gray-300 block mb-1">Primary Color</label>
+                      <label className="text-sm text-slate-500 block mb-1">Primary Color</label>
                       <div className="flex items-center gap-2">
                         <input type="color" value={formColor} onChange={e => setFormColor(e.target.value)} className="w-10 h-10 rounded cursor-pointer bg-transparent" data-testid="embed-color-input" />
-                        <Input value={formColor} onChange={e => setFormColor(e.target.value)} className="bg-[#0a0f1a] border-gray-700 text-navy-900 flex-1" />
+                        <Input value={formColor} onChange={e => setFormColor(e.target.value)} className="bg-cream-100 border-slate-200 text-navy-900 flex-1" />
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <input type="checkbox" checked={formBranding} onChange={e => setFormBranding(e.target.checked)} className="rounded" data-testid="embed-branding-checkbox" />
-                    <label className="text-sm text-gray-400">Show "Powered by NotaryChain" branding</label>
+                    <label className="text-sm text-slate-500">Show "Powered by NotaryChain" branding</label>
                   </div>
                   <div className="flex gap-2">
                     <Button onClick={handleCreate} disabled={creating} className="bg-coral-500 hover:bg-emerald-700" data-testid="embed-create-submit">
                       {creating ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <CheckCircle className="w-4 h-4 mr-1" />}
                       Create
                     </Button>
-                    <Button onClick={() => setShowCreate(false)} variant="ghost" className="text-gray-400">Cancel</Button>
+                    <Button onClick={() => setShowCreate(false)} variant="ghost" className="text-slate-500">Cancel</Button>
                   </div>
                 </div>
               </CardContent>
@@ -157,10 +157,10 @@ const WhiteLabelPage = () => {
           {loading ? (
             <div className="text-center py-12"><Loader2 className="w-8 h-8 text-emerald-500 animate-spin mx-auto" /></div>
           ) : configs.length === 0 && !showCreate ? (
-            <Card className="bg-[#1a2332] border-gray-800">
+            <Card className="bg-white border-slate-200">
               <CardContent className="p-12 text-center">
-                <Code className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-400 mb-4">No embed configurations yet. Create one to get started.</p>
+                <Code className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                <p className="text-slate-500 mb-4">No embed configurations yet. Create one to get started.</p>
                 <Button onClick={() => setShowCreate(true)} className="bg-coral-500 hover:bg-emerald-700">
                   <Plus className="w-4 h-4 mr-1" /> Create Configuration
                 </Button>
@@ -169,18 +169,18 @@ const WhiteLabelPage = () => {
           ) : (
             <div className="space-y-4" data-testid="embed-config-list">
               {configs.map(config => (
-                <Card key={config.id} className="bg-[#1a2332] border-gray-800" data-testid={`embed-config-${config.id}`}>
+                <Card key={config.id} className="bg-white border-slate-200" data-testid={`embed-config-${config.id}`}>
                   <CardContent className="p-5">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: config.primary_color }} />
                         <div>
                           <h3 className="text-navy-900 font-semibold">{config.name}</h3>
-                          <p className="text-gray-500 text-xs">{config.company_name} &middot; Key: {config.embed_key}</p>
+                          <p className="text-slate-500 text-xs">{config.company_name} &middot; Key: {config.embed_key}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button onClick={() => toggleActive(config)} size="sm" variant="outline" className={config.active ? 'border-green-500/50 text-green-400' : 'border-gray-600 text-gray-400'} data-testid={`toggle-embed-${config.id}`}>
+                        <Button onClick={() => toggleActive(config)} size="sm" variant="outline" className={config.active ? 'border-green-500/50 text-green-400' : 'border-slate-200 text-slate-500'} data-testid={`toggle-embed-${config.id}`}>
                           {config.active ? <Eye className="w-3.5 h-3.5 mr-1" /> : <EyeOff className="w-3.5 h-3.5 mr-1" />}
                           {config.active ? 'Active' : 'Disabled'}
                         </Button>
@@ -196,14 +196,14 @@ const WhiteLabelPage = () => {
                           <Globe className="w-2.5 h-2.5" /> {o}
                         </span>
                       ))}
-                      <span className="px-2 py-0.5 bg-gray-700/50 text-gray-400 text-xs rounded">
+                      <span className="px-2 py-0.5 bg-gray-700/50 text-slate-500 text-xs rounded">
                         {config.usage_count} embed loads
                       </span>
                     </div>
 
                     {/* Embed snippet */}
-                    <div className="bg-[#0a0f1a] rounded-lg p-3 border border-gray-800 relative">
-                      <pre className="text-xs text-gray-300 overflow-x-auto whitespace-pre-wrap">
+                    <div className="bg-cream-100 rounded-lg p-3 border border-slate-200 relative">
+                      <pre className="text-xs text-slate-500 overflow-x-auto whitespace-pre-wrap">
                         {config.embed_snippet}
                       </pre>
                       <Button onClick={() => copySnippet(config.embed_snippet)} size="sm" className="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 h-7 px-2" data-testid={`copy-snippet-${config.id}`}>

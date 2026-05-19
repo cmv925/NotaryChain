@@ -181,35 +181,35 @@ export function OnboardingTour({ userRole }) {
       <div className="fixed inset-0 bg-black/60 z-[10000]" onClick={close} data-testid="onboarding-overlay" />
 
       <div
-        className="fixed z-[10002] w-[300px] bg-[#1a2332] border border-gray-700 rounded-xl shadow-2xl p-4"
+        className="fixed z-[10002] w-[300px] bg-white border border-slate-200 rounded-xl shadow-2xl p-4"
         style={{ top: pos.top, left: pos.left }}
         data-testid="onboarding-tooltip"
       >
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-gray-500">{step + 1} of {steps.length}</span>
+            <span className="text-[10px] text-slate-500">{step + 1} of {steps.length}</span>
             <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold" data-testid="onboarding-role-badge">{roleLabel} Tour</span>
           </div>
-          <button onClick={close} className="text-gray-500 hover:text-white" data-testid="onboarding-close-btn"><X className="w-4 h-4" /></button>
+          <button onClick={close} className="text-slate-500 hover:text-white" data-testid="onboarding-close-btn"><X className="w-4 h-4" /></button>
         </div>
         <h3 className="text-white font-semibold text-sm mb-1">{steps[step]?.title}</h3>
-        <p className="text-gray-400 text-xs mb-3">{steps[step]?.content}</p>
+        <p className="text-slate-500 text-xs mb-3">{steps[step]?.content}</p>
         <div className="flex items-center justify-between">
-          <button onClick={close} className="text-gray-500 text-xs hover:text-white" data-testid="onboarding-skip-btn">Skip tour</button>
+          <button onClick={close} className="text-slate-500 text-xs hover:text-white" data-testid="onboarding-skip-btn">Skip tour</button>
           <div className="flex gap-2">
             {step > 0 && (
-              <Button size="sm" variant="ghost" onClick={prev} className="text-gray-400 h-7 px-2" data-testid="onboarding-prev-btn">
+              <Button size="sm" variant="ghost" onClick={prev} className="text-slate-500 h-7 px-2" data-testid="onboarding-prev-btn">
                 <ChevronLeft className="w-3 h-3 mr-1" /> Back
               </Button>
             )}
-            <Button size="sm" onClick={next} className="bg-[#00d4aa] hover:bg-[#00b894] text-black h-7 px-3" data-testid="onboarding-next-btn">
+            <Button size="sm" onClick={next} className="bg-coral-500 hover:bg-coral-600 text-black h-7 px-3" data-testid="onboarding-next-btn">
               {step < steps.length - 1 ? <>Next <ChevronRight className="w-3 h-3 ml-1" /></> : 'Done'}
             </Button>
           </div>
         </div>
         <div className="flex justify-center gap-1 mt-3">
           {steps.map((_, i) => (
-            <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === step ? 'bg-[#00d4aa]' : 'bg-gray-700'}`} />
+            <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === step ? 'bg-coral-500' : 'bg-gray-700'}`} />
           ))}
         </div>
       </div>

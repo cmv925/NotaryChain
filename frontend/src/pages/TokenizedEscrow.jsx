@@ -29,7 +29,7 @@ const OP_ICONS = {
 };
 
 function StatusBadge({ status }) {
-  const c = STATUS_COLORS[status] || 'text-gray-400 bg-gray-500/15 border-gray-500/25';
+  const c = STATUS_COLORS[status] || 'text-slate-500 bg-gray-500/15 border-slate-300/25';
   return (
     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold border ${c}`} data-testid={`token-status-${status}`}>
       {status?.toUpperCase()}
@@ -199,16 +199,16 @@ export default function TokenizedEscrow() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center">
         <Loader2 className="w-6 h-6 text-sky-500 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1825] text-navy-900" data-testid="tokenized-escrow-page">
+    <div className="min-h-screen bg-cream-100 text-navy-900" data-testid="tokenized-escrow-page">
       {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#0f1825]/80 border-b border-slate-200 px-6 py-4">
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-cream-100/80 border-b border-slate-200 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Coins className="w-6 h-6 text-amber-500" />
@@ -235,7 +235,7 @@ export default function TokenizedEscrow() {
         {/* Tokenize Modal */}
         {showTokenize && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" data-testid="tokenize-modal">
-            <Card className="w-full max-w-lg bg-[#162032] border-slate-300 text-navy-900">
+            <Card className="w-full max-w-lg bg-cream-100 border-slate-300 text-navy-900">
               <CardContent className="p-6 space-y-4">
                 <h2 className="text-lg font-bold flex items-center gap-2">
                   <Coins className="w-5 h-5 text-amber-500" /> Tokenize Escrow
@@ -289,7 +289,7 @@ export default function TokenizedEscrow() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Token List */}
           <div className="lg:col-span-1">
-            <div className="border border-slate-200 rounded-lg bg-[#162032] overflow-hidden" data-testid="token-list">
+            <div className="border border-slate-200 rounded-lg bg-cream-100 overflow-hidden" data-testid="token-list">
               <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
                 <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600">HTS Tokens</h3>
                 <span className="text-xs text-slate-500">{tokens.length} total</span>
@@ -336,7 +336,7 @@ export default function TokenizedEscrow() {
           {/* Token Detail */}
           <div className="lg:col-span-2">
             {!selectedToken ? (
-              <div className="border border-slate-200 rounded-lg bg-[#0f1825] p-12 text-center" data-testid="no-token-selected">
+              <div className="border border-slate-200 rounded-lg bg-cream-100 p-12 text-center" data-testid="no-token-selected">
                 <Coins className="w-14 h-14 text-slate-800 mx-auto mb-4" />
                 <h3 className="text-slate-600 font-medium mb-1">Select a Token</h3>
                 <p className="text-slate-600 text-sm">Choose a token from the list to view details and manage operations.</p>
@@ -344,7 +344,7 @@ export default function TokenizedEscrow() {
             ) : (
               <div className="space-y-4" data-testid="token-detail">
                 {/* Token Header Card */}
-                <Card className="bg-[#162032] border-slate-200 text-navy-900">
+                <Card className="bg-cream-100 border-slate-200 text-navy-900">
                   <CardContent className="p-5">
                     <div className="flex items-start justify-between mb-4">
                       <div>
@@ -430,7 +430,7 @@ export default function TokenizedEscrow() {
 
                 {/* Transfer Modal */}
                 {showTransfer && (
-                  <Card className="bg-[#1a2740] border-sky-500/20 text-navy-900" data-testid="transfer-modal">
+                  <Card className="bg-white border-sky-500/20 text-navy-900" data-testid="transfer-modal">
                     <CardContent className="p-5 space-y-3">
                       <h3 className="text-sm font-bold flex items-center gap-2">
                         <ArrowRightLeft className="w-4 h-4 text-coral-600" /> Transfer Tokens
@@ -508,7 +508,7 @@ export default function TokenizedEscrow() {
                 )}
 
                 {/* Operations History */}
-                <Card className="bg-[#162032] border-slate-200 text-navy-900" data-testid="operations-history">
+                <Card className="bg-cream-100 border-slate-200 text-navy-900" data-testid="operations-history">
                   <CardContent className="p-0">
                     <div className="px-5 py-4 border-b border-slate-200 flex items-center gap-2">
                       <Activity className="w-4 h-4 text-slate-500" />
@@ -552,7 +552,7 @@ export default function TokenizedEscrow() {
 
                 {/* Live Events Feed */}
                 {liveEvents.length > 0 && (
-                  <Card className="bg-[#162032] border-slate-200 text-navy-900" data-testid="live-events-feed">
+                  <Card className="bg-cream-100 border-slate-200 text-navy-900" data-testid="live-events-feed">
                     <CardContent className="p-0">
                       <div className="px-5 py-4 border-b border-slate-200 flex items-center gap-2">
                         <Radio className="w-4 h-4 text-emerald-500 animate-pulse" />

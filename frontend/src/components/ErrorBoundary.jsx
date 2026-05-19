@@ -31,20 +31,20 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-[#0f1825] flex items-center justify-center p-6">
+        <div className="min-h-screen bg-cream-100 flex items-center justify-center p-6">
           <div className="text-center max-w-md">
             <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Shield className="w-8 h-8 text-red-400" />
             </div>
             <h2 className="text-white text-xl font-semibold mb-2">Something went wrong</h2>
-            <p className="text-gray-400 text-sm mb-6">
+            <p className="text-slate-500 text-sm mb-6">
               An unexpected error occurred. Please try refreshing the page.
             </p>
             <div className="flex gap-3 justify-center">
-              <Button onClick={this.handleReset} className="bg-[#00d4aa] text-black hover:bg-[#00b894]">
+              <Button onClick={this.handleReset} className="bg-coral-500 text-black hover:bg-coral-600">
                 <RefreshCw className="w-4 h-4 mr-2" /> Try Again
               </Button>
-              <Button onClick={() => window.location.href = '/'} variant="outline" className="border-gray-700 text-gray-300">
+              <Button onClick={() => window.location.href = '/'} variant="outline" className="border-slate-200 text-slate-500">
                 Go Home
               </Button>
             </div>

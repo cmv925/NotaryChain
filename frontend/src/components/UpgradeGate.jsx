@@ -24,7 +24,7 @@ export function UpgradeGate({ feature, children, title, description }) {
 
   return (
     <div className="min-h-[400px] flex items-center justify-center p-6" data-testid={`upgrade-gate-${feature}`}>
-      <Card className="max-w-md w-full bg-[#162032] border-slate-700/50 text-white overflow-hidden">
+      <Card className="max-w-md w-full bg-cream-100 border-slate-700/50 text-white overflow-hidden">
         <div className={`h-1.5 bg-gradient-to-r ${meta.accent}`} />
         <CardContent className="p-8 text-center">
           <div className="w-16 h-16 rounded-2xl bg-violet-500/15 flex items-center justify-center mx-auto mb-5">

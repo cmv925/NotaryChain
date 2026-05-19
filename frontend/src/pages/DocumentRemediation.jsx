@@ -79,7 +79,7 @@ export default function DocumentRemediation() {
   const toggle = (key) => setExpanded((p) => ({ ...p, [key]: !p[key] }));
 
   return (
-    <div className="min-h-screen bg-[#030712] text-navy-900">
+    <div className="min-h-screen bg-cream-100 text-navy-900">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
@@ -91,14 +91,14 @@ export default function DocumentRemediation() {
               <Sparkles className="w-6 h-6 text-coral-600" />
               AI Document Remediation
             </h1>
-            <p className="text-gray-400 text-sm">Analyze documents & auto-insert missing legal clauses</p>
+            <p className="text-slate-500 text-sm">Analyze documents & auto-insert missing legal clauses</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left: Input */}
           <div className="space-y-4">
-            <Card className="bg-[#0d1b2a] border-gray-800">
+            <Card className="bg-cream-100 border-slate-200">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base text-navy-900">Document Text</CardTitle>
               </CardHeader>
@@ -106,7 +106,7 @@ export default function DocumentRemediation() {
                 <select
                   value={docType}
                   onChange={(e) => setDocType(e.target.value)}
-                  className="w-full bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-sm text-navy-900"
+                  className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-sm text-navy-900"
                   data-testid="doc-type-select"
                 >
                   {['general','real_estate','contract','will','lease','nda','affidavit','deed'].map((t) => (
@@ -118,7 +118,7 @@ export default function DocumentRemediation() {
                   onChange={(e) => setDocText(e.target.value)}
                   rows={14}
                   placeholder="Paste your document text here for AI analysis..."
-                  className="w-full bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-sm text-gray-300 resize-none"
+                  className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-sm text-slate-500 resize-none"
                   data-testid="doc-text-input"
                 />
                 <Button
@@ -135,14 +135,14 @@ export default function DocumentRemediation() {
 
             {/* Remediated Output */}
             {remediatedText && (
-              <Card className="bg-[#0d1b2a] border-green-500/30" data-testid="remediated-output">
+              <Card className="bg-cream-100 border-green-500/30" data-testid="remediated-output">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base text-green-400 flex items-center gap-2">
                     <CheckCircle className="w-4 h-4" /> Remediated Document
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <pre className="whitespace-pre-wrap text-xs text-gray-300 bg-[#1a2332] rounded-md p-4 max-h-80 overflow-y-auto">
+                  <pre className="whitespace-pre-wrap text-xs text-slate-500 bg-white rounded-md p-4 max-h-80 overflow-y-auto">
                     {remediatedText}
                   </pre>
                 </CardContent>
@@ -153,7 +153,7 @@ export default function DocumentRemediation() {
           {/* Right: Results */}
           <div className="space-y-4">
             {analyzing && (
-              <div className="flex flex-col items-center py-16 text-gray-400">
+              <div className="flex flex-col items-center py-16 text-slate-500">
                 <Loader2 className="w-8 h-8 animate-spin mb-3 text-coral-600" />
                 <p className="text-sm">AI is analyzing your document...</p>
               </div>
@@ -162,7 +162,7 @@ export default function DocumentRemediation() {
             {result && !analyzing && (
               <>
                 {/* Overview */}
-                <Card className="bg-[#0d1b2a] border-gray-800">
+                <Card className="bg-cream-100 border-slate-200">
                   <CardContent className="pt-5">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
@@ -175,20 +175,20 @@ export default function DocumentRemediation() {
                         </div>
                         <div>
                           <p className="text-navy-900 font-semibold text-sm">Risk Score</p>
-                          <p className="text-gray-500 text-xs">{result.document_type_detected}</p>
+                          <p className="text-slate-500 text-xs">{result.document_type_detected}</p>
                         </div>
                       </div>
                       <Badge className={result.overall_risk_score > 60 ? 'bg-red-500/15 text-red-400' : result.overall_risk_score > 30 ? 'bg-coral-500/15 text-coral-600' : 'bg-green-500/15 text-green-400'}>
                         {result.overall_risk_score > 60 ? 'High Risk' : result.overall_risk_score > 30 ? 'Medium Risk' : 'Low Risk'}
                       </Badge>
                     </div>
-                    <p className="text-gray-400 text-xs">{result.overall_assessment}</p>
+                    <p className="text-slate-500 text-xs">{result.overall_assessment}</p>
                   </CardContent>
                 </Card>
 
                 {/* Missing Clauses */}
                 {result.missing_clauses?.length > 0 && (
-                  <Card className="bg-[#0d1b2a] border-gray-800" data-testid="missing-clauses-card">
+                  <Card className="bg-cream-100 border-slate-200" data-testid="missing-clauses-card">
                     <CardHeader className="pb-2">
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-sm text-navy-900 flex items-center gap-2">
@@ -214,7 +214,7 @@ export default function DocumentRemediation() {
                           className={`rounded-lg border p-3 cursor-pointer transition-all ${
                             selectedClauses.includes(i)
                               ? 'border-green-500/50 bg-green-500/5'
-                              : 'border-gray-700/50 hover:border-gray-600'
+                              : 'border-slate-200/50 hover:border-slate-200'
                           }`}
                           onClick={() => toggleClause(i)}
                           data-testid={`clause-${i}`}
@@ -233,12 +233,12 @@ export default function DocumentRemediation() {
                               {c.severity}
                             </Badge>
                           </div>
-                          <p className="text-gray-500 text-[11px] mt-1 ml-6">{c.reason}</p>
+                          <p className="text-slate-500 text-[11px] mt-1 ml-6">{c.reason}</p>
                           <button onClick={(e) => { e.stopPropagation(); toggle(`clause_${i}`); }} className="text-blue-400 text-[10px] ml-6 mt-1 hover:underline">
                             {expanded[`clause_${i}`] ? 'Hide suggested text' : 'Show suggested text'}
                           </button>
                           {expanded[`clause_${i}`] && (
-                            <pre className="text-[10px] text-gray-400 bg-[#1a2332] rounded p-2 mt-1 ml-6 whitespace-pre-wrap">
+                            <pre className="text-[10px] text-slate-500 bg-white rounded p-2 mt-1 ml-6 whitespace-pre-wrap">
                               {c.suggested_text}
                             </pre>
                           )}
@@ -250,7 +250,7 @@ export default function DocumentRemediation() {
 
                 {/* Weak Language */}
                 {result.weak_language?.length > 0 && (
-                  <Card className="bg-[#0d1b2a] border-gray-800">
+                  <Card className="bg-cream-100 border-slate-200">
                     <CardHeader className="pb-2 cursor-pointer" onClick={() => toggle('weak')}>
                       <CardTitle className="text-sm text-navy-900 flex items-center justify-between">
                         <span className="flex items-center gap-2">
@@ -263,12 +263,12 @@ export default function DocumentRemediation() {
                     {expanded.weak && (
                       <CardContent className="space-y-2">
                         {result.weak_language.map((w, i) => (
-                          <div key={i} className="border border-gray-700/50 rounded-lg p-3">
+                          <div key={i} className="border border-slate-200/50 rounded-lg p-3">
                             <div className="flex justify-between items-center mb-1">
                               <span className="text-red-400 text-xs line-through">{w.original_text?.substring(0, 60)}</span>
                               <Badge className={`text-[10px] ${severityColor[w.severity] || ''}`}>{w.severity}</Badge>
                             </div>
-                            <p className="text-gray-500 text-[11px]">{w.issue}</p>
+                            <p className="text-slate-500 text-[11px]">{w.issue}</p>
                             <p className="text-green-400 text-xs mt-1">{w.suggested_replacement}</p>
                           </div>
                         ))}
@@ -279,7 +279,7 @@ export default function DocumentRemediation() {
 
                 {/* Risk Areas */}
                 {result.risk_areas?.length > 0 && (
-                  <Card className="bg-[#0d1b2a] border-gray-800">
+                  <Card className="bg-cream-100 border-slate-200">
                     <CardHeader className="pb-2 cursor-pointer" onClick={() => toggle('risk')}>
                       <CardTitle className="text-sm text-navy-900 flex items-center justify-between">
                         <span className="flex items-center gap-2">
@@ -292,12 +292,12 @@ export default function DocumentRemediation() {
                     {expanded.risk && (
                       <CardContent className="space-y-2">
                         {result.risk_areas.map((r, i) => (
-                          <div key={i} className="border border-gray-700/50 rounded-lg p-3">
+                          <div key={i} className="border border-slate-200/50 rounded-lg p-3">
                             <div className="flex justify-between mb-1">
                               <span className="text-navy-900 text-xs">{r.area}</span>
                               <Badge className={`text-[10px] ${severityColor[r.risk_level] || ''}`}>{r.risk_level}</Badge>
                             </div>
-                            <p className="text-gray-500 text-[11px]">{r.recommendation}</p>
+                            <p className="text-slate-500 text-[11px]">{r.recommendation}</p>
                           </div>
                         ))}
                       </CardContent>

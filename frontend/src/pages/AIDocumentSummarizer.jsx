@@ -76,7 +76,7 @@ const AIDocumentSummarizer = () => {
   const complexityColors = { simple: 'text-green-400 bg-green-500/15', moderate: 'text-coral-600 bg-coral-500/15', complex: 'text-red-400 bg-red-500/15' };
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       <div className="pt-24 pb-16">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
@@ -87,24 +87,24 @@ const AIDocumentSummarizer = () => {
                 <FileSearch className="w-7 h-7 text-teal-400" />
                 AI Document Summarizer
               </h1>
-              <p className="text-gray-400 text-sm mt-1">Upload any document for instant AI summary and key terms</p>
+              <p className="text-slate-500 text-sm mt-1">Upload any document for instant AI summary and key terms</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Upload Panel */}
             <div>
-              <Card className="bg-[#1a2332] border-gray-800 mb-4" data-testid="upload-panel">
+              <Card className="bg-white border-slate-200 mb-4" data-testid="upload-panel">
                 <CardContent className="p-5">
                   <h3 className="text-sm font-semibold text-navy-900 mb-3">Upload Document</h3>
                   <div
                     onClick={() => fileRef.current?.click()}
-                    className="border-2 border-dashed border-gray-700 rounded-lg p-6 text-center cursor-pointer hover:border-teal-500/50 transition-colors"
+                    className="border-2 border-dashed border-slate-200 rounded-lg p-6 text-center cursor-pointer hover:border-teal-500/50 transition-colors"
                     data-testid="upload-dropzone"
                   >
-                    <Upload className="w-8 h-8 text-gray-500 mx-auto mb-2" />
-                    <p className="text-gray-400 text-sm">{file ? file.name : 'Click to upload'}</p>
-                    <p className="text-gray-600 text-xs mt-1">PDF, Images, DOC, TXT</p>
+                    <Upload className="w-8 h-8 text-slate-500 mx-auto mb-2" />
+                    <p className="text-slate-500 text-sm">{file ? file.name : 'Click to upload'}</p>
+                    <p className="text-slate-600 text-xs mt-1">PDF, Images, DOC, TXT</p>
                     <input
                       ref={fileRef}
                       type="file"
@@ -116,7 +116,7 @@ const AIDocumentSummarizer = () => {
                   </div>
 
                   <div className="mt-4">
-                    <label className="text-xs text-gray-400 block mb-1.5">Detail Level</label>
+                    <label className="text-xs text-slate-500 block mb-1.5">Detail Level</label>
                     <div className="flex gap-2">
                       {DETAIL_LEVELS.map(level => (
                         <button
@@ -125,12 +125,12 @@ const AIDocumentSummarizer = () => {
                           className={`flex-1 p-2 rounded-lg text-xs border transition-colors ${
                             detailLevel === level.id
                               ? 'bg-teal-600/20 border-teal-500/50 text-teal-400'
-                              : 'bg-[#0d1520] border-gray-800 text-gray-400 hover:border-gray-700'
+                              : 'bg-cream-100 border-slate-200 text-slate-500 hover:border-slate-200'
                           }`}
                           data-testid={`detail-${level.id}`}
                         >
                           <div className="font-medium">{level.label}</div>
-                          <div className="text-[10px] text-gray-500">{level.desc}</div>
+                          <div className="text-[10px] text-slate-500">{level.desc}</div>
                         </button>
                       ))}
                     </div>
@@ -144,21 +144,21 @@ const AIDocumentSummarizer = () => {
               </Card>
 
               {/* History */}
-              <Card className="bg-[#1a2332] border-gray-800">
+              <Card className="bg-white border-slate-200">
                 <CardContent className="p-4">
-                  <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">History</h3>
+                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">History</h3>
                   {history.length === 0 ? (
-                    <p className="text-gray-500 text-xs text-center py-3">No summaries yet</p>
+                    <p className="text-slate-500 text-xs text-center py-3">No summaries yet</p>
                   ) : (
                     <div className="space-y-1.5" data-testid="summary-history">
                       {history.slice(0, 10).map(s => (
                         <button
                           key={s.id}
                           onClick={() => loadSummary(s.id)}
-                          className="w-full text-left p-2 bg-[#0d1520] rounded border border-gray-800 hover:border-teal-500/30 transition-colors"
+                          className="w-full text-left p-2 bg-cream-100 rounded border border-slate-200 hover:border-teal-500/30 transition-colors"
                         >
                           <p className="text-navy-900 text-xs truncate">{s.file_name}</p>
-                          <p className="text-gray-500 text-[10px]">{s.result?.document_type_detected} &middot; {new Date(s.created_at).toLocaleDateString()}</p>
+                          <p className="text-slate-500 text-[10px]">{s.result?.document_type_detected} &middot; {new Date(s.created_at).toLocaleDateString()}</p>
                         </button>
                       ))}
                     </div>
@@ -170,10 +170,10 @@ const AIDocumentSummarizer = () => {
             {/* Results Panel */}
             <div className="lg:col-span-2">
               {summarizing && (
-                <Card className="bg-[#1a2332] border-gray-800">
+                <Card className="bg-white border-slate-200">
                   <CardContent className="p-12 text-center">
                     <Loader2 className="w-10 h-10 text-teal-400 animate-spin mx-auto mb-3" />
-                    <p className="text-gray-400">Analyzing your document...</p>
+                    <p className="text-slate-500">Analyzing your document...</p>
                   </CardContent>
                 </Card>
               )}
@@ -181,13 +181,13 @@ const AIDocumentSummarizer = () => {
               {result && !summarizing && (
                 <div className="space-y-4" data-testid="summary-results">
                   {/* Summary */}
-                  <Card className="bg-[#1a2332] border-gray-800">
+                  <Card className="bg-white border-slate-200">
                     <CardContent className="p-5">
                       <div className="flex items-center justify-between mb-3">
                         <h3 className="text-navy-900 font-semibold flex items-center gap-2">
                           <BookOpen className="w-4 h-4 text-teal-400" />
                           Summary
-                          {result.file_name && <span className="text-gray-500 text-xs font-normal">— {result.file_name}</span>}
+                          {result.file_name && <span className="text-slate-500 text-xs font-normal">— {result.file_name}</span>}
                         </h3>
                         <div className="flex gap-1.5">
                           {result.result?.document_type_detected && (
@@ -200,22 +200,22 @@ const AIDocumentSummarizer = () => {
                           )}
                         </div>
                       </div>
-                      <p className="text-gray-300 text-sm leading-relaxed">{result.result?.summary}</p>
+                      <p className="text-slate-500 text-sm leading-relaxed">{result.result?.summary}</p>
                     </CardContent>
                   </Card>
 
                   {/* Key Terms */}
                   {result.result?.key_terms?.length > 0 && (
-                    <Card className="bg-[#1a2332] border-gray-800">
+                    <Card className="bg-white border-slate-200">
                       <CardContent className="p-4">
                         <button onClick={() => toggleSection('terms')} className="w-full flex items-center justify-between">
                           <h3 className="text-navy-900 font-semibold text-sm flex items-center gap-2"><Tag className="w-4 h-4 text-purple-400" /> Key Terms ({result.result.key_terms.length})</h3>
-                          {expandedSections.terms ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
+                          {expandedSections.terms ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
                         </button>
                         {expandedSections.terms !== false && (
                           <div className="mt-3 space-y-2">
                             {result.result.key_terms.map((t, i) => (
-                              <div key={i} className="flex gap-2 text-sm"><span className="text-teal-400 font-medium flex-shrink-0">{t.term}:</span><span className="text-gray-400">{t.definition}</span></div>
+                              <div key={i} className="flex gap-2 text-sm"><span className="text-teal-400 font-medium flex-shrink-0">{t.term}:</span><span className="text-slate-500">{t.definition}</span></div>
                             ))}
                           </div>
                         )}
@@ -225,7 +225,7 @@ const AIDocumentSummarizer = () => {
 
                   {/* Parties */}
                   {result.result?.parties?.length > 0 && (
-                    <Card className="bg-[#1a2332] border-gray-800">
+                    <Card className="bg-white border-slate-200">
                       <CardContent className="p-4">
                         <h3 className="text-navy-900 font-semibold text-sm flex items-center gap-2 mb-2"><Users className="w-4 h-4 text-blue-400" /> Parties</h3>
                         <div className="flex flex-wrap gap-2">
@@ -242,21 +242,21 @@ const AIDocumentSummarizer = () => {
                   {/* Dates + Obligations */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {result.result?.important_dates?.length > 0 && (
-                      <Card className="bg-[#1a2332] border-gray-800">
+                      <Card className="bg-white border-slate-200">
                         <CardContent className="p-4">
                           <h3 className="text-navy-900 font-semibold text-sm flex items-center gap-2 mb-2"><Calendar className="w-4 h-4 text-coral-600" /> Dates</h3>
                           {result.result.important_dates.map((d, i) => (
-                            <div key={i} className="text-xs mb-1"><span className="text-coral-600">{d.date}</span> <span className="text-gray-500">— {d.context}</span></div>
+                            <div key={i} className="text-xs mb-1"><span className="text-coral-600">{d.date}</span> <span className="text-slate-500">— {d.context}</span></div>
                           ))}
                         </CardContent>
                       </Card>
                     )}
                     {result.result?.key_obligations?.length > 0 && (
-                      <Card className="bg-[#1a2332] border-gray-800">
+                      <Card className="bg-white border-slate-200">
                         <CardContent className="p-4">
                           <h3 className="text-navy-900 font-semibold text-sm flex items-center gap-2 mb-2"><Scale className="w-4 h-4 text-green-400" /> Obligations</h3>
                           {result.result.key_obligations.map((o, i) => (
-                            <p key={i} className="text-gray-400 text-xs mb-1 flex gap-1">
+                            <p key={i} className="text-slate-500 text-xs mb-1 flex gap-1">
                               <span className="text-green-400">&#8226;</span> {o}
                             </p>
                           ))}
@@ -268,10 +268,10 @@ const AIDocumentSummarizer = () => {
               )}
 
               {!result && !summarizing && (
-                <Card className="bg-[#1a2332] border-gray-800">
+                <Card className="bg-white border-slate-200">
                   <CardContent className="p-12 text-center">
-                    <FileSearch className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                    <p className="text-gray-400">Upload a document to get an AI-generated summary with key terms and analysis</p>
+                    <FileSearch className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                    <p className="text-slate-500">Upload a document to get an AI-generated summary with key terms and analysis</p>
                   </CardContent>
                 </Card>
               )}

@@ -7,7 +7,7 @@ const OrchestratorSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-24 bg-[#0a0f1a]">
+    <section className="py-24 bg-cream-100">
       <div className="max-w-5xl mx-auto px-6">
         <div className="bg-gradient-to-br from-blue-600/10 to-purple-600/10 border border-blue-500/30 rounded-2xl p-12 text-center relative overflow-hidden">
           {/* Background decoration */}
@@ -27,7 +27,7 @@ const OrchestratorSection = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Introducing the AI Transaction Orchestrator™
             </h2>
-            <p className="text-gray-300 text-lg leading-relaxed mb-8 max-w-3xl mx-auto">
+            <p className="text-slate-500 text-lg leading-relaxed mb-8 max-w-3xl mx-auto">
               NotaryChain™ is evolving beyond document notarization to become a platform that
               manages entire complex transactions. Define rules, dependencies, and parties, and
               let our AI conductor orchestrate the whole process—from initial drafting and

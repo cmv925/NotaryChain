@@ -140,7 +140,7 @@ const OrgReports = ({ orgId, token }) => {
     catch { return ts; }
   };
 
-  if (loading) return <div className="py-8 text-center"><Loader2 className="w-5 h-5 animate-spin mx-auto text-gray-500" /></div>;
+  if (loading) return <div className="py-8 text-center"><Loader2 className="w-5 h-5 animate-spin mx-auto text-slate-500" /></div>;
 
   return (
     <div data-testid="org-reports">
@@ -150,14 +150,14 @@ const OrgReports = ({ orgId, token }) => {
           <h3 className="text-white font-semibold flex items-center gap-2">
             <FileBarChart className="w-4 h-4 text-violet-400" /> Scheduled Reports
           </h3>
-          <p className="text-gray-500 text-xs mt-0.5">
+          <p className="text-slate-500 text-xs mt-0.5">
             {config?.configured
               ? <span>Generating <span className="text-violet-400">{config.frequency}</span> reports with {config.sections?.length} sections {config.is_active ? '(active)' : '(paused)'}</span>
               : 'Configure automatic report generation'}
           </p>
         </div>
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" onClick={() => setShowConfig(!showConfig)} className="border-gray-700 text-gray-300 text-xs" data-testid="configure-reports-btn">
+          <Button size="sm" variant="outline" onClick={() => setShowConfig(!showConfig)} className="border-slate-200 text-slate-500 text-xs" data-testid="configure-reports-btn">
             <Settings className="w-3.5 h-3.5 mr-1" /> Configure
           </Button>
           <Button size="sm" onClick={handleGenerate} disabled={generating} className="bg-violet-600 hover:bg-violet-700 text-white" data-testid="generate-report-btn">
@@ -169,16 +169,16 @@ const OrgReports = ({ orgId, token }) => {
 
       {/* Config Panel */}
       {showConfig && (
-        <div className="mb-4 p-4 bg-[#0a0f1a] rounded-lg border border-violet-500/20" data-testid="report-config-panel">
+        <div className="mb-4 p-4 bg-cream-100 rounded-lg border border-violet-500/20" data-testid="report-config-panel">
           <h4 className="text-white text-sm font-medium mb-3">Report Schedule</h4>
           <div className="space-y-3">
             <div className="flex items-center gap-4">
               <div>
-                <label className="text-gray-400 text-xs block mb-1">Frequency</label>
+                <label className="text-slate-500 text-xs block mb-1">Frequency</label>
                 <div className="flex gap-2">
                   {['weekly', 'monthly'].map(f => (
                     <button key={f} onClick={() => setCfgFrequency(f)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${cfgFrequency === f ? 'bg-violet-600 text-white' : 'bg-[#1a2332] text-gray-400 border border-gray-700 hover:border-gray-600'}`}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${cfgFrequency === f ? 'bg-violet-600 text-white' : 'bg-white text-slate-500 border border-slate-200 hover:border-slate-200'}`}
                       data-testid={`freq-${f}`}
                     >
                       <Calendar className="w-3 h-3 inline mr-1" /> {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -187,9 +187,9 @@ const OrgReports = ({ orgId, token }) => {
                 </div>
               </div>
               <div>
-                <label className="text-gray-400 text-xs block mb-1">Status</label>
+                <label className="text-slate-500 text-xs block mb-1">Status</label>
                 <button onClick={() => setCfgActive(!cfgActive)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium ${cfgActive ? 'bg-emerald-600 text-white' : 'bg-gray-700 text-gray-400'}`}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium ${cfgActive ? 'bg-emerald-600 text-white' : 'bg-gray-700 text-slate-500'}`}
                   data-testid="toggle-report-active"
                 >
                   {cfgActive ? 'Active' : 'Paused'}
@@ -197,13 +197,13 @@ const OrgReports = ({ orgId, token }) => {
               </div>
             </div>
             <div>
-              <label className="text-gray-400 text-xs block mb-1.5">Report Sections</label>
+              <label className="text-slate-500 text-xs block mb-1.5">Report Sections</label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {sections.map(s => {
                   const Icon = SECTION_ICONS[s.key] || FileBarChart;
                   return (
-                    <label key={s.key} className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer border transition-all text-xs ${cfgSections.has(s.key) ? 'bg-violet-500/10 border-violet-500/30 text-white' : 'bg-[#1a2332] border-gray-800 text-gray-500 hover:border-gray-700'}`}>
-                      <input type="checkbox" checked={cfgSections.has(s.key)} onChange={() => toggleSection(s.key)} className="rounded border-gray-600 text-violet-500 w-3 h-3" />
+                    <label key={s.key} className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer border transition-all text-xs ${cfgSections.has(s.key) ? 'bg-violet-500/10 border-violet-500/30 text-white' : 'bg-white border-slate-200 text-slate-500 hover:border-slate-200'}`}>
+                      <input type="checkbox" checked={cfgSections.has(s.key)} onChange={() => toggleSection(s.key)} className="rounded border-slate-200 text-violet-500 w-3 h-3" />
                       <Icon className="w-3.5 h-3.5 shrink-0" />
                       <span>{s.label}</span>
                     </label>
@@ -221,7 +221,7 @@ const OrgReports = ({ orgId, token }) => {
 
       {/* Reports List */}
       {reports.length === 0 ? (
-        <div className="text-center py-10 text-gray-600 text-sm" data-testid="no-reports">
+        <div className="text-center py-10 text-slate-600 text-sm" data-testid="no-reports">
           <FileBarChart className="w-8 h-8 mx-auto mb-2 opacity-30" />
           No reports generated yet. Click "Generate Now" to create your first report.
         </div>
@@ -230,15 +230,15 @@ const OrgReports = ({ orgId, token }) => {
           {reports.map(r => {
             const detail = reportDetail[r.id];
             return (
-              <div key={r.id} className="bg-[#0a0f1a] rounded-lg border border-gray-800 overflow-hidden" data-testid={`report-${r.id}`}>
-                <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-[#111827] transition-colors" onClick={() => handleExpand(r.id)}>
+              <div key={r.id} className="bg-cream-100 rounded-lg border border-slate-200 overflow-hidden" data-testid={`report-${r.id}`}>
+                <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-cream-100 transition-colors" onClick={() => handleExpand(r.id)}>
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-violet-500/15 flex items-center justify-center">
                       <FileBarChart className="w-4 h-4 text-violet-400" />
                     </div>
                     <div>
                       <p className="text-white text-sm font-medium">{r.period_days}-Day Report</p>
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
                         <Clock className="w-3 h-3" /> {formatDate(r.generated_at)}
                         <span>&bull; {r.sections?.length} sections</span>
                         {r.generated_by === 'system' && <span className="text-violet-400">(auto)</span>}
@@ -246,54 +246,54 @@ const OrgReports = ({ orgId, token }) => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleDownload(r.id, r.filename); }} className="border-gray-700 text-gray-300 text-xs h-7" data-testid={`download-report-${r.id}`}>
+                    <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleDownload(r.id, r.filename); }} className="border-slate-200 text-slate-500 text-xs h-7" data-testid={`download-report-${r.id}`}>
                       <Download className="w-3 h-3 mr-1" /> PDF
                     </Button>
                     <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleDelete(r.id); }} className="border-red-500/50 text-red-400 hover:bg-red-500/10 text-xs h-7 w-7 p-0" data-testid={`delete-report-${r.id}`}>
                       <Trash2 className="w-3 h-3" />
                     </Button>
-                    {expandedReport === r.id ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
+                    {expandedReport === r.id ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
                   </div>
                 </div>
 
                 {/* Expanded Preview */}
                 {expandedReport === r.id && detail && (
-                  <div className="border-t border-gray-800 p-3 space-y-3">
-                    <p className="text-gray-400 text-xs font-medium">REPORT PREVIEW</p>
+                  <div className="border-t border-slate-200 p-3 space-y-3">
+                    <p className="text-slate-500 text-xs font-medium">REPORT PREVIEW</p>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {detail.data_snapshot?.activity && (
-                        <div className="bg-[#1a2332] rounded-lg p-3 border border-gray-800">
-                          <p className="text-gray-500 text-[10px] uppercase">Activity</p>
+                        <div className="bg-white rounded-lg p-3 border border-slate-200">
+                          <p className="text-slate-500 text-[10px] uppercase">Activity</p>
                           <p className="text-white text-lg font-bold">{detail.data_snapshot.activity.total_events}</p>
-                          <p className="text-gray-600 text-[10px]">events</p>
+                          <p className="text-slate-600 text-[10px]">events</p>
                         </div>
                       )}
                       {detail.data_snapshot?.notarizations && (
-                        <div className="bg-[#1a2332] rounded-lg p-3 border border-gray-800">
-                          <p className="text-gray-500 text-[10px] uppercase">Notarizations</p>
+                        <div className="bg-white rounded-lg p-3 border border-slate-200">
+                          <p className="text-slate-500 text-[10px] uppercase">Notarizations</p>
                           <p className="text-white text-lg font-bold">{detail.data_snapshot.notarizations.total_documents}</p>
-                          <p className="text-gray-600 text-[10px]">documents</p>
+                          <p className="text-slate-600 text-[10px]">documents</p>
                         </div>
                       )}
                       {detail.data_snapshot?.members && (
-                        <div className="bg-[#1a2332] rounded-lg p-3 border border-gray-800">
-                          <p className="text-gray-500 text-[10px] uppercase">Members</p>
+                        <div className="bg-white rounded-lg p-3 border border-slate-200">
+                          <p className="text-slate-500 text-[10px] uppercase">Members</p>
                           <p className="text-white text-lg font-bold">{detail.data_snapshot.members.total_active}</p>
-                          <p className="text-gray-600 text-[10px]">active</p>
+                          <p className="text-slate-600 text-[10px]">active</p>
                         </div>
                       )}
                       {detail.data_snapshot?.webhooks && (
-                        <div className="bg-[#1a2332] rounded-lg p-3 border border-gray-800">
-                          <p className="text-gray-500 text-[10px] uppercase">Webhooks</p>
+                        <div className="bg-white rounded-lg p-3 border border-slate-200">
+                          <p className="text-slate-500 text-[10px] uppercase">Webhooks</p>
                           <p className="text-white text-lg font-bold">{detail.data_snapshot.webhooks.success_rate}%</p>
-                          <p className="text-gray-600 text-[10px]">delivery rate</p>
+                          <p className="text-slate-600 text-[10px]">delivery rate</p>
                         </div>
                       )}
                       {detail.data_snapshot?.billing && (
-                        <div className="bg-[#1a2332] rounded-lg p-3 border border-gray-800">
-                          <p className="text-gray-500 text-[10px] uppercase">Revenue</p>
+                        <div className="bg-white rounded-lg p-3 border border-slate-200">
+                          <p className="text-slate-500 text-[10px] uppercase">Revenue</p>
                           <p className="text-white text-lg font-bold">${detail.data_snapshot.billing.total_revenue}</p>
-                          <p className="text-gray-600 text-[10px]">in period</p>
+                          <p className="text-slate-600 text-[10px]">in period</p>
                         </div>
                       )}
                     </div>

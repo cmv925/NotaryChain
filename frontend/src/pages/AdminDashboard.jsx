@@ -331,16 +331,16 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center">
         <RefreshCw className="w-12 h-12 text-blue-500 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       {/* Header */}
-      <header className="bg-[#1a2332] border-b border-gray-800">
+      <header className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
@@ -350,7 +350,7 @@ const AdminDashboard = () => {
                   Notary<span className="text-blue-500">Chain</span>
                 </span>
               </div>
-              <span className="text-gray-400 hidden sm:inline">|</span>
+              <span className="text-slate-500 hidden sm:inline">|</span>
               <span className="text-red-400 font-semibold hidden sm:inline">Admin Dashboard</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
@@ -377,7 +377,7 @@ const AdminDashboard = () => {
                 onClick={fetchDashboardData}
                 variant="ghost"
                 size="sm"
-                className="text-gray-400 hover:text-navy-900"
+                className="text-slate-500 hover:text-navy-900"
               >
                 <RefreshCw className="w-4 h-4" />
               </Button>
@@ -386,7 +386,7 @@ const AdminDashboard = () => {
                 onClick={handleLogout}
                 variant="outline"
                 size="sm"
-                className="border-gray-700 text-gray-300 hover:text-navy-900"
+                className="border-slate-200 text-slate-500 hover:text-navy-900"
               >
                 <LogOut className="w-4 h-4 sm:mr-2" />
                 <span className="hidden sm:inline">Logout</span>
@@ -404,7 +404,7 @@ const AdminDashboard = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 text-xs">Total Users</p>
+                    <p className="text-slate-500 text-xs">Total Users</p>
                     <p className="text-2xl font-bold text-navy-900">{stats.total_users}</p>
                   </div>
                   <Users className="w-8 h-8 text-blue-400" />
@@ -416,7 +416,7 @@ const AdminDashboard = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 text-xs">Active Notaries</p>
+                    <p className="text-slate-500 text-xs">Active Notaries</p>
                     <p className="text-2xl font-bold text-navy-900">{stats.total_notaries}</p>
                   </div>
                   <UserCheck className="w-8 h-8 text-green-400" />
@@ -428,7 +428,7 @@ const AdminDashboard = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 text-xs">Notarizations</p>
+                    <p className="text-slate-500 text-xs">Notarizations</p>
                     <p className="text-2xl font-bold text-navy-900">{stats.total_notarizations}</p>
                   </div>
                   <FileText className="w-8 h-8 text-purple-400" />
@@ -440,7 +440,7 @@ const AdminDashboard = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 text-xs">Revenue (USD)</p>
+                    <p className="text-slate-500 text-xs">Revenue (USD)</p>
                     <p className="text-2xl font-bold text-navy-900">${stats.total_revenue_usd}</p>
                   </div>
                   <DollarSign className="w-8 h-8 text-coral-600" />
@@ -452,7 +452,7 @@ const AdminDashboard = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 text-xs">Pending Apps</p>
+                    <p className="text-slate-500 text-xs">Pending Apps</p>
                     <p className="text-2xl font-bold text-navy-900">{stats.pending_notary_applications}</p>
                   </div>
                   <Clock className="w-8 h-8 text-yellow-400" />
@@ -467,7 +467,7 @@ const AdminDashboard = () => {
 
         {/* Tabs */}
         <div className="mb-6">
-          <div className="flex gap-2 border-b border-gray-800 overflow-x-auto">
+          <div className="flex gap-2 border-b border-slate-200 overflow-x-auto">
             {[
               { id: 'overview', label: 'Overview', icon: BarChart3 },
               { id: 'operations', label: 'Operations', icon: Server },
@@ -494,7 +494,7 @@ const AdminDashboard = () => {
                 className={`flex items-center gap-2 px-4 py-3 font-medium transition-all whitespace-nowrap ${
                   activeTab === tab.id
                     ? 'text-blue-500 border-b-2 border-blue-500'
-                    : 'text-gray-400 hover:text-navy-900'
+                    : 'text-slate-500 hover:text-navy-900'
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
@@ -508,22 +508,22 @@ const AdminDashboard = () => {
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Pending Applications */}
-            <Card className="bg-[#1a2332] border-gray-800">
+            <Card className="bg-white border-slate-200">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5 text-yellow-500" />
                   Pending Notary Applications ({pendingApplications.length})
                 </h3>
                 {pendingApplications.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">No pending applications</p>
+                  <p className="text-slate-500 text-center py-8">No pending applications</p>
                 ) : (
                   <div className="space-y-3">
                     {pendingApplications.slice(0, 5).map((app) => (
-                      <div key={app.id} className="bg-[#0a0f1a] rounded-lg p-4 flex items-center justify-between">
+                      <div key={app.id} className="bg-cream-100 rounded-lg p-4 flex items-center justify-between">
                         <div>
                           <p className="text-navy-900 font-medium">{app.user_full_name || 'Unknown'}</p>
-                          <p className="text-gray-500 text-sm">{app.user_email}</p>
-                          <p className="text-gray-400 text-xs mt-1">
+                          <p className="text-slate-500 text-sm">{app.user_email}</p>
+                          <p className="text-slate-500 text-xs mt-1">
                             Commission: {app.commission_number || 'N/A'} | State: {app.state || 'N/A'}
                           </p>
                         </div>
@@ -554,7 +554,7 @@ const AdminDashboard = () => {
             </Card>
 
             {/* Recent Activity */}
-            <Card className="bg-[#1a2332] border-gray-800">
+            <Card className="bg-white border-slate-200">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
                   <Activity className="w-5 h-5 text-blue-500" />
@@ -562,19 +562,19 @@ const AdminDashboard = () => {
                 </h3>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Active Users (30d)</span>
+                    <span className="text-slate-500">Active Users (30d)</span>
                     <span className="text-navy-900 font-bold">{stats?.active_users_30d || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Completed Notarizations</span>
+                    <span className="text-slate-500">Completed Notarizations</span>
                     <span className="text-green-400 font-bold">{stats?.completed_notarizations || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Documents Sealed</span>
+                    <span className="text-slate-500">Documents Sealed</span>
                     <span className="text-purple-400 font-bold">{stats?.documents_sealed || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Crypto Payments</span>
+                    <span className="text-slate-500">Crypto Payments</span>
                     <span className="text-coral-600 font-bold">{stats?.crypto_payments_count || 0}</span>
                   </div>
                 </div>
@@ -583,7 +583,7 @@ const AdminDashboard = () => {
 
             {/* Revenue Chart */}
             {revenueData && (
-              <Card className="bg-[#1a2332] border-gray-800 lg:col-span-2">
+              <Card className="bg-white border-slate-200 lg:col-span-2">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-green-500" />
@@ -607,7 +607,7 @@ const AdminDashboard = () => {
                       );
                     })}
                   </div>
-                  <div className="flex justify-between mt-2 text-xs text-gray-500">
+                  <div className="flex justify-between mt-2 text-xs text-slate-500">
                     <span>30 days ago</span>
                     <span>Today</span>
                   </div>
@@ -628,7 +628,7 @@ const AdminDashboard = () => {
                 onClick={fetchOpsMetrics}
                 disabled={loadingOps}
                 variant="outline"
-                className="border-gray-700"
+                className="border-slate-200"
                 data-testid="ops-refresh-btn"
               >
                 <RefreshCw className={`w-4 h-4 ${loadingOps ? 'animate-spin' : ''}`} />
@@ -648,7 +648,7 @@ const AdminDashboard = () => {
                       status === 'live' || status === 'healthy' || status === 's3'
                         ? 'bg-coral-500/10 border-coral-200'
                         : status === 'degraded' ? 'bg-yellow-500/10 border-yellow-500/30'
-                        : 'bg-gray-500/10 border-gray-700'
+                        : 'bg-gray-500/10 border-slate-200'
                     }`}>
                       <div className={`w-2.5 h-2.5 rounded-full ${
                         status === 'live' || status === 'healthy' || status === 's3'
@@ -656,14 +656,14 @@ const AdminDashboard = () => {
                       }`} />
                       <div>
                         <p className="text-navy-900 text-sm font-medium capitalize">{service}</p>
-                        <p className="text-gray-400 text-xs capitalize">{status}</p>
+                        <p className="text-slate-500 text-xs capitalize">{status}</p>
                       </div>
                     </div>
                   ))}
                 </div>
 
                 {/* Hedera Blockchain Section */}
-                <Card className="bg-[#1a2332] border-gray-800">
+                <Card className="bg-white border-slate-200">
                   <CardContent className="p-6">
                     <h3 className="text-lg font-bold text-navy-900 mb-5 flex items-center gap-2">
                       <Zap className="w-5 h-5 text-coral-600" />
@@ -675,34 +675,34 @@ const AdminDashboard = () => {
                       </span>
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                      <div className="bg-[#0a0f1a] rounded-lg p-4" data-testid="ops-hbar-balance">
-                        <p className="text-gray-400 text-xs mb-1">HBAR Balance</p>
+                      <div className="bg-cream-100 rounded-lg p-4" data-testid="ops-hbar-balance">
+                        <p className="text-slate-500 text-xs mb-1">HBAR Balance</p>
                         <p className="text-2xl font-bold text-coral-600">
                           {opsData.hedera.balance_hbar != null ? opsData.hedera.balance_hbar.toFixed(2) : '--'}
                         </p>
-                        <p className="text-gray-500 text-xs mt-1">{opsData.hedera.account_id}</p>
+                        <p className="text-slate-500 text-xs mt-1">{opsData.hedera.account_id}</p>
                       </div>
-                      <div className="bg-[#0a0f1a] rounded-lg p-4" data-testid="ops-total-seals">
-                        <p className="text-gray-400 text-xs mb-1">Total Seals</p>
+                      <div className="bg-cream-100 rounded-lg p-4" data-testid="ops-total-seals">
+                        <p className="text-slate-500 text-xs mb-1">Total Seals</p>
                         <p className="text-2xl font-bold text-navy-900">{opsData.hedera.total_seals}</p>
-                        <p className="text-gray-500 text-xs mt-1">{opsData.hedera.hcs_submitted} on-chain</p>
+                        <p className="text-slate-500 text-xs mt-1">{opsData.hedera.hcs_submitted} on-chain</p>
                       </div>
-                      <div className="bg-[#0a0f1a] rounded-lg p-4">
-                        <p className="text-gray-400 text-xs mb-1">Seals (30d)</p>
+                      <div className="bg-cream-100 rounded-lg p-4">
+                        <p className="text-slate-500 text-xs mb-1">Seals (30d)</p>
                         <p className="text-2xl font-bold text-navy-900">{opsData.hedera.seals_30d}</p>
-                        <p className="text-gray-500 text-xs mt-1">{opsData.hedera.seals_7d} last 7d</p>
+                        <p className="text-slate-500 text-xs mt-1">{opsData.hedera.seals_7d} last 7d</p>
                       </div>
-                      <div className="bg-[#0a0f1a] rounded-lg p-4">
-                        <p className="text-gray-400 text-xs mb-1">Est. Cost (30d)</p>
+                      <div className="bg-cream-100 rounded-lg p-4">
+                        <p className="text-slate-500 text-xs mb-1">Est. Cost (30d)</p>
                         <p className="text-2xl font-bold text-coral-600">${opsData.hedera.estimated_cost_30d}</p>
-                        <p className="text-gray-500 text-xs mt-1">{opsData.hedera.total_topics} topics</p>
+                        <p className="text-slate-500 text-xs mt-1">{opsData.hedera.total_topics} topics</p>
                       </div>
                     </div>
 
                     {/* Seal Trend Chart */}
                     {opsData.hedera.seal_trend.length > 0 && (
                       <div>
-                        <p className="text-gray-400 text-sm mb-3">Seal Activity (30 days)</p>
+                        <p className="text-slate-500 text-sm mb-3">Seal Activity (30 days)</p>
                         <div className="h-24 flex items-end gap-1">
                           {opsData.hedera.seal_trend.map((day, idx) => {
                             const max = Math.max(...opsData.hedera.seal_trend.map(d => d.count)) || 1;
@@ -726,7 +726,7 @@ const AdminDashboard = () => {
                 {/* S3 Storage + Payments side by side */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* S3 Storage */}
-                  <Card className="bg-[#1a2332] border-gray-800">
+                  <Card className="bg-white border-slate-200">
                     <CardContent className="p-6">
                       <h3 className="text-lg font-bold text-navy-900 mb-5 flex items-center gap-2">
                         <HardDrive className="w-5 h-5 text-coral-600" />
@@ -736,42 +736,42 @@ const AdminDashboard = () => {
                         </span>
                       </h3>
                       <div className="grid grid-cols-2 gap-4 mb-5">
-                        <div className="bg-[#0a0f1a] rounded-lg p-4" data-testid="ops-s3-files">
-                          <p className="text-gray-400 text-xs mb-1">Total Files</p>
+                        <div className="bg-cream-100 rounded-lg p-4" data-testid="ops-s3-files">
+                          <p className="text-slate-500 text-xs mb-1">Total Files</p>
                           <p className="text-2xl font-bold text-coral-600">{opsData.storage.total_files}</p>
                         </div>
-                        <div className="bg-[#0a0f1a] rounded-lg p-4" data-testid="ops-s3-size">
-                          <p className="text-gray-400 text-xs mb-1">Total Size</p>
+                        <div className="bg-cream-100 rounded-lg p-4" data-testid="ops-s3-size">
+                          <p className="text-slate-500 text-xs mb-1">Total Size</p>
                           <p className="text-2xl font-bold text-navy-900">{opsData.storage.total_size_mb || 0} MB</p>
                         </div>
                       </div>
 
                       {/* Category breakdown */}
-                      <p className="text-gray-400 text-sm mb-3">Storage by Category</p>
+                      <p className="text-slate-500 text-sm mb-3">Storage by Category</p>
                       {Object.keys(opsData.storage.categories).length > 0 ? (
                         <div className="space-y-2">
                           {Object.entries(opsData.storage.categories).map(([cat, info]) => {
                             const maxFiles = Math.max(...Object.values(opsData.storage.categories).map(c => c.count)) || 1;
                             return (
                               <div key={cat} className="flex items-center gap-3">
-                                <span className="text-gray-300 text-sm w-24 truncate">{cat}</span>
+                                <span className="text-slate-500 text-sm w-24 truncate">{cat}</span>
                                 <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
                                   <div className="h-full bg-coral-500 rounded-full" style={{ width: `${(info.count / maxFiles) * 100}%` }} />
                                 </div>
-                                <span className="text-gray-400 text-xs w-20 text-right">{info.count} files</span>
-                                <span className="text-gray-500 text-xs w-16 text-right">{info.size_mb} MB</span>
+                                <span className="text-slate-500 text-xs w-20 text-right">{info.count} files</span>
+                                <span className="text-slate-500 text-xs w-16 text-right">{info.size_mb} MB</span>
                               </div>
                             );
                           })}
                         </div>
                       ) : (
-                        <p className="text-gray-500 text-sm text-center py-4">No files stored yet</p>
+                        <p className="text-slate-500 text-sm text-center py-4">No files stored yet</p>
                       )}
                     </CardContent>
                   </Card>
 
                   {/* Stripe Payments */}
-                  <Card className="bg-[#1a2332] border-gray-800">
+                  <Card className="bg-white border-slate-200">
                     <CardContent className="p-6">
                       <h3 className="text-lg font-bold text-navy-900 mb-5 flex items-center gap-2">
                         <DollarSign className="w-5 h-5 text-green-400" />
@@ -781,21 +781,21 @@ const AdminDashboard = () => {
                         </span>
                       </h3>
                       <div className="grid grid-cols-2 gap-4 mb-5">
-                        <div className="bg-[#0a0f1a] rounded-lg p-4" data-testid="ops-stripe-revenue">
-                          <p className="text-gray-400 text-xs mb-1">Total Revenue</p>
+                        <div className="bg-cream-100 rounded-lg p-4" data-testid="ops-stripe-revenue">
+                          <p className="text-slate-500 text-xs mb-1">Total Revenue</p>
                           <p className="text-2xl font-bold text-green-400">${opsData.payments.total_revenue_usd}</p>
                         </div>
-                        <div className="bg-[#0a0f1a] rounded-lg p-4">
-                          <p className="text-gray-400 text-xs mb-1">Revenue (30d)</p>
+                        <div className="bg-cream-100 rounded-lg p-4">
+                          <p className="text-slate-500 text-xs mb-1">Revenue (30d)</p>
                           <p className="text-2xl font-bold text-navy-900">${opsData.payments.revenue_30d_usd}</p>
                         </div>
-                        <div className="bg-[#0a0f1a] rounded-lg p-4">
-                          <p className="text-gray-400 text-xs mb-1">Total Payments</p>
+                        <div className="bg-cream-100 rounded-lg p-4">
+                          <p className="text-slate-500 text-xs mb-1">Total Payments</p>
                           <p className="text-2xl font-bold text-navy-900">{opsData.payments.total_payments}</p>
-                          <p className="text-gray-500 text-xs mt-1">{opsData.payments.payments_30d} last 30d</p>
+                          <p className="text-slate-500 text-xs mt-1">{opsData.payments.payments_30d} last 30d</p>
                         </div>
-                        <div className="bg-[#0a0f1a] rounded-lg p-4">
-                          <p className="text-gray-400 text-xs mb-1">Active Subs</p>
+                        <div className="bg-cream-100 rounded-lg p-4">
+                          <p className="text-slate-500 text-xs mb-1">Active Subs</p>
                           <p className="text-2xl font-bold text-navy-900">{opsData.payments.active_subscriptions}</p>
                         </div>
                       </div>
@@ -803,7 +803,7 @@ const AdminDashboard = () => {
                       {/* Revenue trend */}
                       {opsData.payments.revenue_trend.length > 0 ? (
                         <div>
-                          <p className="text-gray-400 text-sm mb-3">Revenue Trend (30d)</p>
+                          <p className="text-slate-500 text-sm mb-3">Revenue Trend (30d)</p>
                           <div className="h-24 flex items-end gap-1">
                             {opsData.payments.revenue_trend.map((day, idx) => {
                               const max = Math.max(...opsData.payments.revenue_trend.map(d => d.amount_usd)) || 1;
@@ -821,7 +821,7 @@ const AdminDashboard = () => {
                           </div>
                         </div>
                       ) : (
-                        <p className="text-gray-500 text-sm text-center py-4">No payment data yet</p>
+                        <p className="text-slate-500 text-sm text-center py-4">No payment data yet</p>
                       )}
                     </CardContent>
                   </Card>
@@ -843,7 +843,7 @@ const AdminDashboard = () => {
 
                 {/* HBAR Alert History */}
                 {opsData.hbar_alerts && opsData.hbar_alerts.length > 0 && (
-                  <Card className="bg-[#1a2332] border-gray-800">
+                  <Card className="bg-white border-slate-200">
                     <CardContent className="p-6">
                       <h3 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
                         <AlertCircle className="w-5 h-5 text-yellow-400" />
@@ -862,10 +862,10 @@ const AdminDashboard = () => {
                                 alert.level === 'critical' ? 'bg-coral-500/20 text-coral-600' :
                                 'bg-yellow-500/20 text-yellow-400'
                               }`}>{alert.level.toUpperCase()}</span>
-                              <span className="text-gray-300 text-sm">{alert.balance_hbar.toFixed(2)} HBAR</span>
-                              <span className="text-gray-500 text-xs">threshold: {alert.threshold_hbar}</span>
+                              <span className="text-slate-500 text-sm">{alert.balance_hbar.toFixed(2)} HBAR</span>
+                              <span className="text-slate-500 text-xs">threshold: {alert.threshold_hbar}</span>
                             </div>
-                            <span className="text-gray-500 text-xs">{new Date(alert.alerted_at).toLocaleString()}</span>
+                            <span className="text-slate-500 text-xs">{new Date(alert.alerted_at).toLocaleString()}</span>
                           </div>
                         ))}
                       </div>
@@ -874,14 +874,14 @@ const AdminDashboard = () => {
                 )}
 
                 {/* Service Health Monitor */}
-                <Card className="bg-[#1a2332] border-gray-800" data-testid="service-health-panel">
+                <Card className="bg-white border-slate-200" data-testid="service-health-panel">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-5">
                       <h3 className="text-lg font-bold text-navy-900 flex items-center gap-2">
                         <Activity className="w-5 h-5 text-coral-600" />
                         Service Health
                       </h3>
-                      <Button size="sm" variant="outline" className="border-gray-700" onClick={fetchServiceHealth} disabled={loadingHealth} data-testid="health-refresh-btn">
+                      <Button size="sm" variant="outline" className="border-slate-200" onClick={fetchServiceHealth} disabled={loadingHealth} data-testid="health-refresh-btn">
                         <RefreshCw className={`w-4 h-4 ${loadingHealth ? 'animate-spin' : ''}`} />
                       </Button>
                     </div>
@@ -893,48 +893,48 @@ const AdminDashboard = () => {
                             const isHealthy = svc.status === 'healthy';
                             const isDegraded = svc.status === 'degraded';
                             return (
-                              <div key={i} className={`rounded-xl p-4 border transition-all ${isHealthy ? 'bg-coral-500/5 border-coral-200' : isDegraded ? 'bg-red-500/5 border-red-500/20' : 'bg-gray-800/30 border-gray-700'}`} data-testid={`health-${svc.service.toLowerCase().replace(' ', '-')}`}>
+                              <div key={i} className={`rounded-xl p-4 border transition-all ${isHealthy ? 'bg-coral-500/5 border-coral-200' : isDegraded ? 'bg-red-500/5 border-red-500/20' : 'bg-gray-800/30 border-slate-200'}`} data-testid={`health-${svc.service.toLowerCase().replace(' ', '-')}`}>
                                 <div className="flex items-center justify-between mb-2">
                                   <span className="text-navy-900 text-sm font-medium">{svc.service}</span>
                                   <div className={`w-2.5 h-2.5 rounded-full ${isHealthy ? 'bg-emerald-400' : isDegraded ? 'bg-red-400 animate-pulse' : 'bg-gray-500'}`} />
                                 </div>
-                                <p className={`text-xs ${isHealthy ? 'text-coral-600' : isDegraded ? 'text-red-400' : 'text-gray-500'}`}>
+                                <p className={`text-xs ${isHealthy ? 'text-coral-600' : isDegraded ? 'text-red-400' : 'text-slate-500'}`}>
                                   {svc.status === 'healthy' ? 'Operational' : svc.status === 'degraded' ? 'Degraded' : 'Not Configured'}
                                 </p>
-                                <p className="text-gray-600 text-xs mt-1 truncate">{svc.detail}</p>
+                                <p className="text-slate-600 text-xs mt-1 truncate">{svc.detail}</p>
                               </div>
                             );
                           })}
                         </div>
 
                         {serviceHealth.recent_alerts?.length > 0 && (
-                          <div className="bg-[#0a0f1a] rounded-xl p-4 border border-gray-800">
+                          <div className="bg-cream-100 rounded-xl p-4 border border-slate-200">
                             <h4 className="text-sm font-semibold text-navy-900 mb-2">Recent Alerts (24h)</h4>
                             <div className="space-y-1.5 max-h-32 overflow-y-auto">
                               {serviceHealth.recent_alerts.map((alert, i) => (
                                 <div key={i} className="flex items-center gap-2 text-xs">
                                   <div className={`w-1.5 h-1.5 rounded-full ${alert.status === 'recovered' ? 'bg-emerald-400' : 'bg-red-400'}`} />
-                                  <span className="text-gray-500">{new Date(alert.timestamp).toLocaleTimeString()}</span>
+                                  <span className="text-slate-500">{new Date(alert.timestamp).toLocaleTimeString()}</span>
                                   <span className={alert.status === 'recovered' ? 'text-coral-600' : 'text-red-400'}>{alert.service}</span>
-                                  <span className="text-gray-600">{alert.detail}</span>
+                                  <span className="text-slate-600">{alert.detail}</span>
                                 </div>
                               ))}
                             </div>
                           </div>
                         )}
 
-                        <p className="text-gray-600 text-xs">Last checked: {new Date(serviceHealth.checked_at).toLocaleString()}</p>
+                        <p className="text-slate-600 text-xs">Last checked: {new Date(serviceHealth.checked_at).toLocaleString()}</p>
                       </div>
                     ) : (
                       <div className="flex items-center justify-center py-6">
-                        <p className="text-gray-500 text-sm">Click refresh to check service health</p>
+                        <p className="text-slate-500 text-sm">Click refresh to check service health</p>
                       </div>
                     )}
                   </CardContent>
                 </Card>
 
                 {/* Incident Timeline */}
-                <Card className="bg-[#1a2332] border-gray-800" data-testid="incidents-panel">
+                <Card className="bg-white border-slate-200" data-testid="incidents-panel">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-5">
                       <h3 className="text-lg font-bold text-navy-900 flex items-center gap-2">
@@ -942,7 +942,7 @@ const AdminDashboard = () => {
                         Incidents (7 Days)
                       </h3>
                       <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline" className="border-gray-700" onClick={fetchIncidents} disabled={loadingIncidents}>
+                        <Button size="sm" variant="outline" className="border-slate-200" onClick={fetchIncidents} disabled={loadingIncidents}>
                           <RefreshCw className={`w-4 h-4 ${loadingIncidents ? 'animate-spin' : ''}`} />
                         </Button>
                         <Button size="sm" className="bg-blue-600 hover:bg-blue-500" onClick={exportIncidentPdf} disabled={exportingIncidents} data-testid="export-incident-pdf-btn">
@@ -955,7 +955,7 @@ const AdminDashboard = () => {
                       <div className="space-y-4">
                         {/* Summary badges */}
                         <div className="flex items-center gap-3">
-                          <span className="text-gray-400 text-sm">{incidents.summary?.total_incidents || 0} incidents</span>
+                          <span className="text-slate-500 text-sm">{incidents.summary?.total_incidents || 0} incidents</span>
                           {incidents.summary?.resolved > 0 && (
                             <span className="text-xs px-2 py-0.5 rounded-full bg-coral-500/15 text-coral-600">
                               {incidents.summary.resolved} resolved
@@ -971,7 +971,7 @@ const AdminDashboard = () => {
                         {incidents.incidents?.length > 0 ? (
                           <div className="space-y-2">
                             {incidents.incidents.map((inc, i) => (
-                              <div key={i} className={`rounded-xl p-4 border ${inc.status === 'resolved' ? 'bg-[#0a0f1a] border-gray-800' : 'bg-red-500/5 border-red-500/20'}`} data-testid={`incident-${i}`}>
+                              <div key={i} className={`rounded-xl p-4 border ${inc.status === 'resolved' ? 'bg-cream-100 border-slate-200' : 'bg-red-500/5 border-red-500/20'}`} data-testid={`incident-${i}`}>
                                 <div className="flex items-center justify-between mb-2">
                                   <div className="flex items-center gap-2">
                                     <div className={`w-2 h-2 rounded-full ${inc.status === 'resolved' ? 'bg-emerald-400' : 'bg-red-400 animate-pulse'}`} />
@@ -980,22 +980,22 @@ const AdminDashboard = () => {
                                       {inc.status}
                                     </span>
                                   </div>
-                                  <span className="text-gray-500 text-xs">
+                                  <span className="text-slate-500 text-xs">
                                     {inc.duration_minutes != null ? `${inc.duration_minutes} min` : 'ongoing'}
                                   </span>
                                 </div>
-                                <div className="flex items-center gap-4 text-xs text-gray-500">
+                                <div className="flex items-center gap-4 text-xs text-slate-500">
                                   <span>Started: {new Date(inc.started_at).toLocaleString()}</span>
                                   {inc.ended_at && <span>Ended: {new Date(inc.ended_at).toLocaleString()}</span>}
                                 </div>
                                 {inc.events?.length > 0 && (
-                                  <div className="mt-2 pl-3 border-l-2 border-gray-800 space-y-1">
+                                  <div className="mt-2 pl-3 border-l-2 border-slate-200 space-y-1">
                                     {inc.events.slice(0, 3).map((evt, j) => (
                                       <div key={j} className="flex items-center gap-2 text-xs">
                                         <div className={`w-1.5 h-1.5 rounded-full ${evt.status === 'recovered' ? 'bg-emerald-400' : 'bg-red-400'}`} />
-                                        <span className="text-gray-600">{new Date(evt.timestamp).toLocaleTimeString()}</span>
+                                        <span className="text-slate-600">{new Date(evt.timestamp).toLocaleTimeString()}</span>
                                         <span className={evt.status === 'recovered' ? 'text-coral-600' : 'text-red-400'}>{evt.status}</span>
-                                        <span className="text-gray-600 truncate">{evt.detail?.slice(0, 60)}</span>
+                                        <span className="text-slate-600 truncate">{evt.detail?.slice(0, 60)}</span>
                                       </div>
                                     ))}
                                   </div>
@@ -1004,30 +1004,30 @@ const AdminDashboard = () => {
                             ))}
                           </div>
                         ) : (
-                          <div className="text-center py-6 bg-[#0a0f1a] rounded-xl border border-gray-800">
+                          <div className="text-center py-6 bg-cream-100 rounded-xl border border-slate-200">
                             <CheckCircle className="w-8 h-8 text-coral-600 mx-auto mb-2" />
                             <p className="text-coral-600 text-sm font-medium">All Clear</p>
-                            <p className="text-gray-500 text-xs mt-1">No incidents in the last 7 days</p>
+                            <p className="text-slate-500 text-xs mt-1">No incidents in the last 7 days</p>
                           </div>
                         )}
                       </div>
                     ) : (
                       <div className="flex items-center justify-center py-6">
-                        <p className="text-gray-500 text-sm">Click refresh to load incident history</p>
+                        <p className="text-slate-500 text-sm">Click refresh to load incident history</p>
                       </div>
                     )}
                   </CardContent>
                 </Card>
 
                 {/* S3 Storage Analytics */}
-                <Card className="bg-[#1a2332] border-gray-800" data-testid="storage-analytics-panel">
+                <Card className="bg-white border-slate-200" data-testid="storage-analytics-panel">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-5">
                       <h3 className="text-lg font-bold text-navy-900 flex items-center gap-2">
                         <HardDrive className="w-5 h-5 text-coral-600" />
                         Storage Analytics
                       </h3>
-                      <Button size="sm" variant="outline" className="border-gray-700" onClick={fetchStorageAnalytics} disabled={loadingStorageAnalytics} data-testid="storage-refresh-btn">
+                      <Button size="sm" variant="outline" className="border-slate-200" onClick={fetchStorageAnalytics} disabled={loadingStorageAnalytics} data-testid="storage-refresh-btn">
                         <RefreshCw className={`w-4 h-4 ${loadingStorageAnalytics ? 'animate-spin' : ''}`} />
                       </Button>
                     </div>
@@ -1042,8 +1042,8 @@ const AdminDashboard = () => {
                             { label: 'Downloads', value: storageAnalytics.total_downloads, color: 'purple' },
                             { label: 'Uploads (30d)', value: storageAnalytics.cost_projection?.uploads_30d || 0, color: 'emerald' },
                           ].map((s, i) => (
-                            <div key={i} className="bg-[#0a0f1a] rounded-xl p-4 border border-gray-800">
-                              <p className="text-gray-500 text-xs mb-1">{s.label}</p>
+                            <div key={i} className="bg-cream-100 rounded-xl p-4 border border-slate-200">
+                              <p className="text-slate-500 text-xs mb-1">{s.label}</p>
                               <p className={`text-xl font-bold text-${s.color}-400`}>{s.value}</p>
                             </div>
                           ))}
@@ -1051,38 +1051,38 @@ const AdminDashboard = () => {
 
                         {/* Cost Projection */}
                         {storageAnalytics.cost_projection && (
-                          <div className="bg-[#0a0f1a] rounded-xl p-4 border border-gray-800">
+                          <div className="bg-cream-100 rounded-xl p-4 border border-slate-200">
                             <h4 className="text-sm font-semibold text-navy-900 mb-3 flex items-center gap-2">
                               <DollarSign className="w-4 h-4 text-coral-600" />
                               Cost Projection (AWS S3 Standard)
                             </h4>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                               <div>
-                                <p className="text-gray-500 text-xs">Current Usage</p>
+                                <p className="text-slate-500 text-xs">Current Usage</p>
                                 <p className="text-navy-900 font-medium">{storageAnalytics.cost_projection.current_gb} GB</p>
                               </div>
                               <div>
-                                <p className="text-gray-500 text-xs">Monthly Cost</p>
+                                <p className="text-slate-500 text-xs">Monthly Cost</p>
                                 <p className="text-coral-600 font-medium">${storageAnalytics.cost_projection.monthly_cost_usd}</p>
                               </div>
                               <div>
-                                <p className="text-gray-500 text-xs">Growth Rate (30d)</p>
+                                <p className="text-slate-500 text-xs">Growth Rate (30d)</p>
                                 <p className={`font-medium ${storageAnalytics.cost_projection.growth_rate_pct >= 0 ? 'text-yellow-400' : 'text-coral-600'}`}>
                                   {storageAnalytics.cost_projection.growth_rate_pct > 0 ? '+' : ''}{storageAnalytics.cost_projection.growth_rate_pct}%
                                 </p>
                               </div>
                               <div>
-                                <p className="text-gray-500 text-xs">12-Month Projected</p>
+                                <p className="text-slate-500 text-xs">12-Month Projected</p>
                                 <p className="text-navy-900 font-medium">${storageAnalytics.cost_projection.projected_12m_cost_usd}</p>
                               </div>
                             </div>
-                            <p className="text-gray-600 text-xs mt-2">Based on $0.023/GB/month S3 Standard pricing</p>
+                            <p className="text-slate-600 text-xs mt-2">Based on $0.023/GB/month S3 Standard pricing</p>
                           </div>
                         )}
 
                         {/* Upload Activity Trend */}
                         {storageAnalytics.activity_trend?.length > 0 && (
-                          <div className="bg-[#0a0f1a] rounded-xl p-4 border border-gray-800">
+                          <div className="bg-cream-100 rounded-xl p-4 border border-slate-200">
                             <h4 className="text-sm font-semibold text-navy-900 mb-3">Upload Activity (Last 30 Days)</h4>
                             <div className="flex items-end gap-1 h-20">
                               {storageAnalytics.activity_trend.map((d, i) => {
@@ -1106,7 +1106,7 @@ const AdminDashboard = () => {
 
                         {/* Per-User Storage */}
                         {storageAnalytics.per_user?.length > 0 && (
-                          <div className="bg-[#0a0f1a] rounded-xl p-4 border border-gray-800">
+                          <div className="bg-cream-100 rounded-xl p-4 border border-slate-200">
                             <h4 className="text-sm font-semibold text-navy-900 mb-3">Storage by User (Top 10)</h4>
                             <div className="space-y-2">
                               {storageAnalytics.per_user.slice(0, 10).map((u, i) => {
@@ -1114,11 +1114,11 @@ const AdminDashboard = () => {
                                 const pct = (u.total_size_mb / maxMB) * 100;
                                 return (
                                   <div key={i} className="flex items-center gap-3 text-sm">
-                                    <span className="text-gray-400 w-48 truncate">{u.email}</span>
+                                    <span className="text-slate-500 w-48 truncate">{u.email}</span>
                                     <div className="flex-1 h-2 bg-gray-800 rounded-full overflow-hidden">
                                       <div className="h-full bg-blue-500/60 rounded-full" style={{ width: `${Math.max(pct, 2)}%` }} />
                                     </div>
-                                    <span className="text-gray-400 w-24 text-right">{u.total_size_mb} MB ({u.file_count})</span>
+                                    <span className="text-slate-500 w-24 text-right">{u.total_size_mb} MB ({u.file_count})</span>
                                   </div>
                                 );
                               })}
@@ -1128,14 +1128,14 @@ const AdminDashboard = () => {
                       </div>
                     ) : (
                       <div className="flex items-center justify-center py-8">
-                        <p className="text-gray-500 text-sm">Click refresh to load storage analytics</p>
+                        <p className="text-slate-500 text-sm">Click refresh to load storage analytics</p>
                       </div>
                     )}
                   </CardContent>
                 </Card>
 
                 {/* Alert Settings Panel */}
-                <Card className="bg-[#1a2332] border-gray-800" data-testid="alert-settings-panel">
+                <Card className="bg-white border-slate-200" data-testid="alert-settings-panel">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-5">
                       <h3 className="text-lg font-bold text-navy-900 flex items-center gap-2">
@@ -1154,7 +1154,7 @@ const AdminDashboard = () => {
                         </Button>
                       ) : (
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline" className="border-gray-600 text-gray-400" onClick={() => { setEditingAlerts(false); setAlertForm(JSON.parse(JSON.stringify(alertSettings))); }}>Cancel</Button>
+                          <Button size="sm" variant="outline" className="border-slate-200 text-slate-500" onClick={() => { setEditingAlerts(false); setAlertForm(JSON.parse(JSON.stringify(alertSettings))); }}>Cancel</Button>
                           <Button size="sm" className="bg-blue-600 hover:bg-blue-700" onClick={saveAlertSettings} disabled={savingAlerts} data-testid="save-alert-settings-btn">
                             <Save className="w-4 h-4 mr-1" /> {savingAlerts ? 'Saving...' : 'Save'}
                           </Button>
@@ -1167,40 +1167,40 @@ const AdminDashboard = () => {
                         {/* Timing */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
-                            <label className="text-gray-400 text-xs block mb-1.5">Check Interval (minutes)</label>
+                            <label className="text-slate-500 text-xs block mb-1.5">Check Interval (minutes)</label>
                             <input
                               type="number"
                               min={5} max={1440}
                               value={alertForm.check_interval_minutes}
                               onChange={(e) => setAlertForm(f => ({...f, check_interval_minutes: parseInt(e.target.value) || 30}))}
                               disabled={!editingAlerts}
-                              className="w-full px-3 py-2 rounded-lg bg-[#0a0f1a] border border-gray-700 text-navy-900 disabled:opacity-50"
+                              className="w-full px-3 py-2 rounded-lg bg-cream-100 border border-slate-200 text-navy-900 disabled:opacity-50"
                               data-testid="alert-check-interval"
                             />
-                            <p className="text-gray-600 text-xs mt-1">How often to check balance (5–1440 min)</p>
+                            <p className="text-slate-600 text-xs mt-1">How often to check balance (5–1440 min)</p>
                           </div>
                           <div>
-                            <label className="text-gray-400 text-xs block mb-1.5">Cooldown Period (hours)</label>
+                            <label className="text-slate-500 text-xs block mb-1.5">Cooldown Period (hours)</label>
                             <input
                               type="number"
                               min={1} max={168}
                               value={alertForm.cooldown_hours}
                               onChange={(e) => setAlertForm(f => ({...f, cooldown_hours: parseInt(e.target.value) || 24}))}
                               disabled={!editingAlerts}
-                              className="w-full px-3 py-2 rounded-lg bg-[#0a0f1a] border border-gray-700 text-navy-900 disabled:opacity-50"
+                              className="w-full px-3 py-2 rounded-lg bg-cream-100 border border-slate-200 text-navy-900 disabled:opacity-50"
                               data-testid="alert-cooldown"
                             />
-                            <p className="text-gray-600 text-xs mt-1">Don't repeat same alert within this period (1–168h)</p>
+                            <p className="text-slate-600 text-xs mt-1">Don't repeat same alert within this period (1–168h)</p>
                           </div>
                         </div>
 
                         {/* Notification Channels */}
                         <div>
-                          <label className="text-gray-400 text-xs block mb-2">Notification Channels</label>
+                          <label className="text-slate-500 text-xs block mb-2">Notification Channels</label>
                           <div className="flex gap-4">
                             <button
                               onClick={() => editingAlerts && setAlertForm(f => ({...f, email_alerts_enabled: !f.email_alerts_enabled}))}
-                              className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${alertForm.email_alerts_enabled ? 'bg-coral-500/10 border-emerald-500/40 text-coral-600' : 'bg-gray-800/50 border-gray-700 text-gray-500'} ${!editingAlerts ? 'opacity-60 cursor-default' : 'cursor-pointer'}`}
+                              className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${alertForm.email_alerts_enabled ? 'bg-coral-500/10 border-emerald-500/40 text-coral-600' : 'bg-gray-800/50 border-slate-200 text-slate-500'} ${!editingAlerts ? 'opacity-60 cursor-default' : 'cursor-pointer'}`}
                               data-testid="toggle-email-alerts"
                             >
                               {alertForm.email_alerts_enabled ? <Mail className="w-4 h-4" /> : <MailX className="w-4 h-4" />}
@@ -1208,7 +1208,7 @@ const AdminDashboard = () => {
                             </button>
                             <button
                               onClick={() => editingAlerts && setAlertForm(f => ({...f, in_app_alerts_enabled: !f.in_app_alerts_enabled}))}
-                              className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${alertForm.in_app_alerts_enabled ? 'bg-coral-500/10 border-emerald-500/40 text-coral-600' : 'bg-gray-800/50 border-gray-700 text-gray-500'} ${!editingAlerts ? 'opacity-60 cursor-default' : 'cursor-pointer'}`}
+                              className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${alertForm.in_app_alerts_enabled ? 'bg-coral-500/10 border-emerald-500/40 text-coral-600' : 'bg-gray-800/50 border-slate-200 text-slate-500'} ${!editingAlerts ? 'opacity-60 cursor-default' : 'cursor-pointer'}`}
                               data-testid="toggle-inapp-alerts"
                             >
                               {alertForm.in_app_alerts_enabled ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
@@ -1219,10 +1219,10 @@ const AdminDashboard = () => {
 
                         {/* Thresholds */}
                         <div>
-                          <label className="text-gray-400 text-xs block mb-2">Alert Thresholds</label>
+                          <label className="text-slate-500 text-xs block mb-2">Alert Thresholds</label>
                           <div className="space-y-2">
                             {alertForm.thresholds.map((t, idx) => (
-                              <div key={idx} className={`flex items-center gap-3 p-3 rounded-lg border ${t.enabled ? (t.level === 'emergency' ? 'bg-red-500/5 border-red-500/20' : t.level === 'critical' ? 'bg-coral-500/5 border-orange-500/20' : 'bg-yellow-500/5 border-yellow-500/20') : 'bg-gray-800/30 border-gray-700'}`}>
+                              <div key={idx} className={`flex items-center gap-3 p-3 rounded-lg border ${t.enabled ? (t.level === 'emergency' ? 'bg-red-500/5 border-red-500/20' : t.level === 'critical' ? 'bg-coral-500/5 border-orange-500/20' : 'bg-yellow-500/5 border-yellow-500/20') : 'bg-gray-800/30 border-slate-200'}`}>
                                 <button
                                   onClick={() => {
                                     if (!editingAlerts) return;
@@ -1233,12 +1233,12 @@ const AdminDashboard = () => {
                                   className={!editingAlerts ? 'cursor-default' : 'cursor-pointer'}
                                   data-testid={`toggle-threshold-${t.level}`}
                                 >
-                                  {t.enabled ? <ToggleRight className="w-5 h-5 text-coral-600" /> : <ToggleLeft className="w-5 h-5 text-gray-600" />}
+                                  {t.enabled ? <ToggleRight className="w-5 h-5 text-coral-600" /> : <ToggleLeft className="w-5 h-5 text-slate-600" />}
                                 </button>
                                 <span className={`text-xs font-bold px-2 py-0.5 rounded uppercase w-24 text-center ${t.level === 'emergency' ? 'bg-red-500/20 text-red-400' : t.level === 'critical' ? 'bg-coral-500/20 text-coral-600' : 'bg-yellow-500/20 text-yellow-400'}`}>
                                   {t.level}
                                 </span>
-                                <span className="text-gray-400 text-sm">&lt;</span>
+                                <span className="text-slate-500 text-sm">&lt;</span>
                                 <input
                                   type="number"
                                   min={0}
@@ -1249,10 +1249,10 @@ const AdminDashboard = () => {
                                     setAlertForm(f => ({...f, thresholds: updated}));
                                   }}
                                   disabled={!editingAlerts}
-                                  className="w-20 px-2 py-1 rounded bg-[#0a0f1a] border border-gray-700 text-navy-900 text-sm disabled:opacity-50"
+                                  className="w-20 px-2 py-1 rounded bg-cream-100 border border-slate-200 text-navy-900 text-sm disabled:opacity-50"
                                 />
-                                <span className="text-gray-400 text-sm">HBAR</span>
-                                <span className="text-gray-500 text-xs ml-auto hidden sm:inline">{t.label}</span>
+                                <span className="text-slate-500 text-sm">HBAR</span>
+                                <span className="text-slate-500 text-xs ml-auto hidden sm:inline">{t.label}</span>
                               </div>
                             ))}
                           </div>
@@ -1260,17 +1260,17 @@ const AdminDashboard = () => {
                       </div>
                     ) : (
                       <div className="flex items-center justify-center py-8">
-                        <RefreshCw className="w-6 h-6 text-gray-500 animate-spin" />
+                        <RefreshCw className="w-6 h-6 text-slate-500 animate-spin" />
                       </div>
                     )}
                   </CardContent>
                 </Card>
               </>
             ) : (
-              <Card className="bg-[#1a2332] border-gray-800">
+              <Card className="bg-white border-slate-200">
                 <CardContent className="p-12 text-center">
-                  <Server className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-400">Click refresh to load operations data</p>
+                  <Server className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                  <p className="text-slate-500">Click refresh to load operations data</p>
                 </CardContent>
               </Card>
             )}
@@ -1289,7 +1289,7 @@ const AdminDashboard = () => {
                 onClick={fetchSecurityCompliance}
                 disabled={loadingSecurity}
                 variant="outline"
-                className="border-gray-700"
+                className="border-slate-200"
                 data-testid="security-refresh-btn"
               >
                 <RefreshCw className={`w-4 h-4 ${loadingSecurity ? 'animate-spin' : ''}`} />
@@ -1315,7 +1315,7 @@ const AdminDashboard = () => {
             ) : securityData ? (
               <>
                 {/* Score Banner */}
-                <div className="relative overflow-hidden rounded-xl border border-gray-800 bg-[#1a2332] p-6" data-testid="security-score-banner">
+                <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-white p-6" data-testid="security-score-banner">
                   <div className="flex items-center gap-8">
                     <div className="relative w-28 h-28 flex-shrink-0">
                       <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
@@ -1336,10 +1336,10 @@ const AdminDashboard = () => {
                       <h3 className="text-2xl font-bold text-navy-900 mb-1">
                         {securityData.score_pct >= 90 ? 'Excellent' : securityData.score_pct >= 70 ? 'Good' : 'Needs Attention'}
                       </h3>
-                      <p className="text-gray-400">
+                      <p className="text-slate-500">
                         {securityData.active_features} of {securityData.total_features} security features active
                       </p>
-                      <p className="text-gray-600 text-sm mt-1">
+                      <p className="text-slate-600 text-sm mt-1">
                         Last checked: {new Date(securityData.generated_at).toLocaleString()}
                       </p>
                     </div>
@@ -1361,7 +1361,7 @@ const AdminDashboard = () => {
                     };
                     const CatIcon = catIcons[key] || Shield;
                     return (
-                      <Card key={key} className="bg-[#1a2332] border-gray-800" data-testid={`security-cat-${key}`}>
+                      <Card key={key} className="bg-white border-slate-200" data-testid={`security-cat-${key}`}>
                         <CardContent className="p-5">
                           <div className="flex items-center justify-between mb-4">
                             <h4 className="text-base font-bold text-navy-900 flex items-center gap-2">
@@ -1377,8 +1377,8 @@ const AdminDashboard = () => {
                               <div key={idx} className="flex items-start gap-3">
                                 <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${item.status === 'active' ? 'bg-emerald-400' : item.status === 'not_configured' || item.status === 'missing' ? 'bg-red-400' : 'bg-yellow-400'}`} />
                                 <div className="min-w-0">
-                                  <p className="text-gray-200 text-sm font-medium">{item.name}</p>
-                                  <p className="text-gray-500 text-xs mt-0.5">{item.detail}</p>
+                                  <p className="text-slate-500 text-sm font-medium">{item.name}</p>
+                                  <p className="text-slate-500 text-xs mt-0.5">{item.detail}</p>
                                 </div>
                               </div>
                             ))}
@@ -1390,10 +1390,10 @@ const AdminDashboard = () => {
                 </div>
               </>
             ) : (
-              <Card className="bg-[#1a2332] border-gray-800">
+              <Card className="bg-white border-slate-200">
                 <CardContent className="p-12 text-center">
-                  <ShieldCheck className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-400">Click refresh to load security compliance data</p>
+                  <ShieldCheck className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                  <p className="text-slate-500">Click refresh to load security compliance data</p>
                 </CardContent>
               </Card>
             )}
@@ -1415,7 +1415,7 @@ const AdminDashboard = () => {
                     setAnalyticsPeriod(Number(e.target.value));
                     fetchAnalyticsData(Number(e.target.value));
                   }}
-                  className="px-3 py-2 rounded-lg bg-[#0a0f1a] border border-gray-700 text-navy-900"
+                  className="px-3 py-2 rounded-lg bg-cream-100 border border-slate-200 text-navy-900"
                 >
                   <option value={7}>Last 7 Days</option>
                   <option value={30}>Last 30 Days</option>
@@ -1427,7 +1427,7 @@ const AdminDashboard = () => {
                   onClick={() => fetchAnalyticsData()}
                   disabled={loadingAnalytics}
                   variant="outline"
-                  className="border-gray-700"
+                  className="border-slate-200"
                 >
                   <RefreshCw className={`w-4 h-4 ${loadingAnalytics ? 'animate-spin' : ''}`} />
                 </Button>
@@ -1444,36 +1444,36 @@ const AdminDashboard = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4" data-testid="analytics-summary-cards">
                   <Card className="bg-gradient-to-br from-green-600/20 to-green-600/10 border-green-500/30" data-testid="analytics-total-revenue">
                     <CardContent className="p-4">
-                      <p className="text-gray-400 text-xs">Total Revenue</p>
+                      <p className="text-slate-500 text-xs">Total Revenue</p>
                       <p className="text-2xl font-bold text-navy-900">${analyticsData.summary.total_revenue.toLocaleString()}</p>
-                      <p className="text-xs text-gray-500 mt-1">Last {analyticsPeriod} days</p>
+                      <p className="text-xs text-slate-500 mt-1">Last {analyticsPeriod} days</p>
                     </CardContent>
                   </Card>
                   <Card className="bg-gradient-to-br from-blue-600/20 to-blue-600/10 border-blue-500/30" data-testid="analytics-new-users">
                     <CardContent className="p-4">
-                      <p className="text-gray-400 text-xs">New Users</p>
+                      <p className="text-slate-500 text-xs">New Users</p>
                       <p className="text-2xl font-bold text-navy-900">{analyticsData.summary.new_users}</p>
-                      <p className="text-xs text-gray-500 mt-1">Last {analyticsPeriod} days</p>
+                      <p className="text-xs text-slate-500 mt-1">Last {analyticsPeriod} days</p>
                     </CardContent>
                   </Card>
                   <Card className="bg-gradient-to-br from-purple-600/20 to-purple-600/10 border-purple-500/30" data-testid="analytics-notarizations">
                     <CardContent className="p-4">
-                      <p className="text-gray-400 text-xs">Notarizations</p>
+                      <p className="text-slate-500 text-xs">Notarizations</p>
                       <p className="text-2xl font-bold text-navy-900">{analyticsData.summary.total_notarizations}</p>
                       <p className="text-xs text-green-400 mt-1">{analyticsData.summary.completed_notarizations} completed</p>
                     </CardContent>
                   </Card>
                   <Card className="bg-gradient-to-br from-orange-600/20 to-orange-600/10 border-coral-200" data-testid="analytics-transactions">
                     <CardContent className="p-4">
-                      <p className="text-gray-400 text-xs">Transactions</p>
+                      <p className="text-slate-500 text-xs">Transactions</p>
                       <p className="text-2xl font-bold text-navy-900">{analyticsData.summary.total_transactions}</p>
-                      <p className="text-xs text-gray-500 mt-1">Orchestrator</p>
+                      <p className="text-xs text-slate-500 mt-1">Orchestrator</p>
                     </CardContent>
                   </Card>
                 </div>
 
                 {/* Revenue Trends Chart */}
-                <Card className="bg-[#1a2332] border-gray-800">
+                <Card className="bg-white border-slate-200">
                   <CardContent className="p-6">
                     <h3 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
                       <TrendingUp className="w-5 h-5 text-green-500" />
@@ -1509,7 +1509,7 @@ const AdminDashboard = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* User Growth Chart */}
-                  <Card className="bg-[#1a2332] border-gray-800">
+                  <Card className="bg-white border-slate-200">
                     <CardContent className="p-6">
                       <h3 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
                         <Users className="w-5 h-5 text-blue-500" />
@@ -1532,7 +1532,7 @@ const AdminDashboard = () => {
                   </Card>
 
                   {/* Payment Distribution Pie Chart */}
-                  <Card className="bg-[#1a2332] border-gray-800">
+                  <Card className="bg-white border-slate-200">
                     <CardContent className="p-6">
                       <h3 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
                         <Wallet className="w-5 h-5 text-orange-500" />
@@ -1563,7 +1563,7 @@ const AdminDashboard = () => {
                           </RechartsPie>
                         </ResponsiveContainer>
                       ) : (
-                        <div className="h-[250px] flex items-center justify-center text-gray-500">
+                        <div className="h-[250px] flex items-center justify-center text-slate-500">
                           No payment data available
                         </div>
                       )}
@@ -1571,7 +1571,7 @@ const AdminDashboard = () => {
                   </Card>
 
                   {/* Notarization Volume Chart */}
-                  <Card className="bg-[#1a2332] border-gray-800">
+                  <Card className="bg-white border-slate-200">
                     <CardContent className="p-6">
                       <h3 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
                         <FileText className="w-5 h-5 text-purple-500" />
@@ -1595,7 +1595,7 @@ const AdminDashboard = () => {
                   </Card>
 
                   {/* Top Notaries */}
-                  <Card className="bg-[#1a2332] border-gray-800">
+                  <Card className="bg-white border-slate-200">
                     <CardContent className="p-6">
                       <h3 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
                         <UserCheck className="w-5 h-5 text-green-500" />
@@ -1604,7 +1604,7 @@ const AdminDashboard = () => {
                       {analyticsData.top_notaries.length > 0 ? (
                         <div className="space-y-3">
                           {analyticsData.top_notaries.slice(0, 5).map((notary, idx) => (
-                            <div key={notary.notary_id} className="flex items-center justify-between p-3 bg-[#0a0f1a] rounded-lg">
+                            <div key={notary.notary_id} className="flex items-center justify-between p-3 bg-cream-100 rounded-lg">
                               <div className="flex items-center gap-3">
                                 <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
                                   idx === 0 ? 'bg-yellow-500 text-black' :
@@ -1616,7 +1616,7 @@ const AdminDashboard = () => {
                                 </span>
                                 <div>
                                   <p className="text-navy-900 font-medium">{notary.name || 'Unknown'}</p>
-                                  <p className="text-gray-500 text-xs">{notary.email}</p>
+                                  <p className="text-slate-500 text-xs">{notary.email}</p>
                                 </div>
                               </div>
                               <span className="text-green-400 font-bold">{notary.completed_notarizations}</span>
@@ -1624,7 +1624,7 @@ const AdminDashboard = () => {
                           ))}
                         </div>
                       ) : (
-                        <p className="text-gray-500 text-center py-8">No notary activity data</p>
+                        <p className="text-slate-500 text-center py-8">No notary activity data</p>
                       )}
                     </CardContent>
                   </Card>
@@ -1632,14 +1632,14 @@ const AdminDashboard = () => {
 
                 {/* Document & Transaction Types */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <Card className="bg-[#1a2332] border-gray-800">
+                  <Card className="bg-white border-slate-200">
                     <CardContent className="p-6">
                       <h3 className="text-lg font-bold text-navy-900 mb-4">Document Types</h3>
                       {analyticsData.document_types.length > 0 ? (
                         <div className="space-y-2">
                           {analyticsData.document_types.map((doc, idx) => (
                             <div key={idx} className="flex items-center justify-between">
-                              <span className="text-gray-400">{doc.name}</span>
+                              <span className="text-slate-500">{doc.name}</span>
                               <div className="flex items-center gap-3">
                                 <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
                                   <div 
@@ -1653,19 +1653,19 @@ const AdminDashboard = () => {
                           ))}
                         </div>
                       ) : (
-                        <p className="text-gray-500 text-center py-8">No document data</p>
+                        <p className="text-slate-500 text-center py-8">No document data</p>
                       )}
                     </CardContent>
                   </Card>
 
-                  <Card className="bg-[#1a2332] border-gray-800">
+                  <Card className="bg-white border-slate-200">
                     <CardContent className="p-6">
                       <h3 className="text-lg font-bold text-navy-900 mb-4">Transaction Types</h3>
                       {analyticsData.transaction_types.length > 0 ? (
                         <div className="space-y-2">
                           {analyticsData.transaction_types.map((tx, idx) => (
                             <div key={idx} className="flex items-center justify-between">
-                              <span className="text-gray-400">{tx.name}</span>
+                              <span className="text-slate-500">{tx.name}</span>
                               <div className="flex items-center gap-3">
                                 <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
                                   <div 
@@ -1679,7 +1679,7 @@ const AdminDashboard = () => {
                           ))}
                         </div>
                       ) : (
-                        <p className="text-gray-500 text-center py-8">No transaction data</p>
+                        <p className="text-slate-500 text-center py-8">No transaction data</p>
                       )}
                     </CardContent>
                   </Card>
@@ -1691,7 +1691,7 @@ const AdminDashboard = () => {
                     <h3 className="text-lg font-bold text-navy-900 flex items-center gap-2">
                       <Shield className="w-5 h-5 text-purple-400" /> Ceremony Pipeline Analytics
                     </h3>
-                    <Button variant="outline" size="sm" onClick={fetchCeremonyAnalytics} disabled={loadingCeremonyAnalytics} className="border-gray-700 text-gray-400 hover:text-navy-900 h-8">
+                    <Button variant="outline" size="sm" onClick={fetchCeremonyAnalytics} disabled={loadingCeremonyAnalytics} className="border-slate-200 text-slate-500 hover:text-navy-900 h-8">
                       {loadingCeremonyAnalytics ? <RefreshCw className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3 mr-1" />}
                       {loadingCeremonyAnalytics ? '' : 'Refresh'}
                     </Button>
@@ -1700,27 +1700,27 @@ const AdminDashboard = () => {
                     <>
                       {/* Summary Cards */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                        <Card className="bg-[#0f1825] border-gray-800">
+                        <Card className="bg-cream-100 border-slate-200">
                           <CardContent className="p-4 text-center">
-                            <p className="text-gray-500 text-xs mb-1">Total Ceremonies</p>
+                            <p className="text-slate-500 text-xs mb-1">Total Ceremonies</p>
                             <p className="text-2xl font-bold text-navy-900" data-testid="ceremony-total">{ceremonyAnalytics.total_ceremonies}</p>
                           </CardContent>
                         </Card>
-                        <Card className="bg-[#0f1825] border-gray-800">
+                        <Card className="bg-cream-100 border-slate-200">
                           <CardContent className="p-4 text-center">
-                            <p className="text-gray-500 text-xs mb-1">Approval Rate</p>
+                            <p className="text-slate-500 text-xs mb-1">Approval Rate</p>
                             <p className="text-2xl font-bold text-coral-600" data-testid="ceremony-approval-rate">{ceremonyAnalytics.approval_rate}%</p>
                           </CardContent>
                         </Card>
-                        <Card className="bg-[#0f1825] border-gray-800">
+                        <Card className="bg-cream-100 border-slate-200">
                           <CardContent className="p-4 text-center">
-                            <p className="text-gray-500 text-xs mb-1">Sealed</p>
+                            <p className="text-slate-500 text-xs mb-1">Sealed</p>
                             <p className="text-2xl font-bold text-blue-400" data-testid="ceremony-sealed">{ceremonyAnalytics.sealed_count}</p>
                           </CardContent>
                         </Card>
-                        <Card className="bg-[#0f1825] border-gray-800">
+                        <Card className="bg-cream-100 border-slate-200">
                           <CardContent className="p-4 text-center">
-                            <p className="text-gray-500 text-xs mb-1">Pending</p>
+                            <p className="text-slate-500 text-xs mb-1">Pending</p>
                             <p className="text-2xl font-bold text-yellow-400" data-testid="ceremony-pending">{ceremonyAnalytics.pending_count}</p>
                           </CardContent>
                         </Card>
@@ -1728,7 +1728,7 @@ const AdminDashboard = () => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         {/* Consensus Outcomes Pie */}
-                        <Card className="bg-[#0f1825] border-gray-800">
+                        <Card className="bg-cream-100 border-slate-200">
                           <CardContent className="p-5">
                             <h4 className="text-navy-900 font-medium text-sm mb-4">Consensus Outcomes</h4>
                             <div className="flex items-center justify-center gap-6">
@@ -1756,7 +1756,7 @@ const AdminDashboard = () => {
                                 {ceremonyAnalytics.consensus_outcomes.map((o) => (
                                   <div key={o.name} className="flex items-center gap-2">
                                     <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: o.color }} />
-                                    <span className="text-gray-400 text-xs">{o.name}</span>
+                                    <span className="text-slate-500 text-xs">{o.name}</span>
                                     <span className="text-navy-900 text-xs font-bold">{o.value}</span>
                                   </div>
                                 ))}
@@ -1766,20 +1766,20 @@ const AdminDashboard = () => {
                         </Card>
 
                         {/* Agent Pass Rates */}
-                        <Card className="bg-[#0f1825] border-gray-800" data-testid="agent-pass-rates">
+                        <Card className="bg-cream-100 border-slate-200" data-testid="agent-pass-rates">
                           <CardContent className="p-5">
                             <h4 className="text-navy-900 font-medium text-sm mb-4">Agent Pass Rates</h4>
                             <div className="space-y-4">
                               {Object.entries(ceremonyAnalytics.agent_stats).map(([name, stats]) => (
                                 <div key={name}>
                                   <div className="flex items-center justify-between mb-1">
-                                    <span className="text-gray-300 text-xs capitalize">{name}</span>
+                                    <span className="text-slate-500 text-xs capitalize">{name}</span>
                                     <span className="text-navy-900 text-xs font-bold">{stats.pass_rate}%</span>
                                   </div>
                                   <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
                                     <div className="h-full bg-coral-500 rounded-full transition-all" style={{ width: `${stats.pass_rate}%` }} />
                                   </div>
-                                  <div className="flex justify-between text-[10px] text-gray-600 mt-0.5">
+                                  <div className="flex justify-between text-[10px] text-slate-600 mt-0.5">
                                     <span>{stats.passes} pass / {stats.fails} fail</span>
                                     <span>Avg conf: {stats.avg_confidence}%</span>
                                   </div>
@@ -1792,7 +1792,7 @@ const AdminDashboard = () => {
 
                       {/* Volume Over Time */}
                       {ceremonyAnalytics.volume.length > 0 && (
-                        <Card className="bg-[#0f1825] border-gray-800" data-testid="ceremony-volume-chart">
+                        <Card className="bg-cream-100 border-slate-200" data-testid="ceremony-volume-chart">
                           <CardContent className="p-5">
                             <h4 className="text-navy-900 font-medium text-sm mb-4">Ceremony Volume (Last 30 Days)</h4>
                             <div className="h-44">
@@ -1814,29 +1814,29 @@ const AdminDashboard = () => {
 
                       {/* AI vs Simulated */}
                       <div className="grid grid-cols-2 gap-3 mt-4">
-                        <Card className="bg-[#0f1825] border-gray-800">
+                        <Card className="bg-cream-100 border-slate-200">
                           <CardContent className="p-4 text-center">
-                            <p className="text-gray-500 text-xs mb-1">AI Biometric</p>
+                            <p className="text-slate-500 text-xs mb-1">AI Biometric</p>
                             <p className="text-xl font-bold text-purple-400" data-testid="ai-biometric-count">{ceremonyAnalytics.ai_vs_simulated.ai_biometric}</p>
                           </CardContent>
                         </Card>
-                        <Card className="bg-[#0f1825] border-gray-800">
+                        <Card className="bg-cream-100 border-slate-200">
                           <CardContent className="p-4 text-center">
-                            <p className="text-gray-500 text-xs mb-1">Simulated</p>
-                            <p className="text-xl font-bold text-gray-400" data-testid="simulated-count">{ceremonyAnalytics.ai_vs_simulated.simulated}</p>
+                            <p className="text-slate-500 text-xs mb-1">Simulated</p>
+                            <p className="text-xl font-bold text-slate-500" data-testid="simulated-count">{ceremonyAnalytics.ai_vs_simulated.simulated}</p>
                           </CardContent>
                         </Card>
                       </div>
                     </>
                   ) : (
-                    <Card className="bg-[#0f1825] border-gray-800">
+                    <Card className="bg-cream-100 border-slate-200">
                       <CardContent className="p-8 text-center">
                         {loadingCeremonyAnalytics ? (
-                          <RefreshCw className="w-8 h-8 text-gray-600 mx-auto animate-spin" />
+                          <RefreshCw className="w-8 h-8 text-slate-600 mx-auto animate-spin" />
                         ) : (
                           <>
-                            <Shield className="w-10 h-10 text-gray-700 mx-auto mb-2" />
-                            <p className="text-gray-500 text-sm">No ceremony data yet</p>
+                            <Shield className="w-10 h-10 text-slate-700 mx-auto mb-2" />
+                            <p className="text-slate-500 text-sm">No ceremony data yet</p>
                           </>
                         )}
                       </CardContent>
@@ -1845,10 +1845,10 @@ const AdminDashboard = () => {
                 </div>
               </>
             ) : (
-              <Card className="bg-[#1a2332] border-gray-800">
+              <Card className="bg-white border-slate-200">
                 <CardContent className="p-12 text-center">
-                  <PieChart className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-400">Click refresh to load analytics data</p>
+                  <PieChart className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                  <p className="text-slate-500">Click refresh to load analytics data</p>
                 </CardContent>
               </Card>
             )}
@@ -1856,30 +1856,30 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === 'users' && (
-          <Card className="bg-[#1a2332] border-gray-800">
+          <Card className="bg-white border-slate-200">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-navy-900">All Users</h3>
                 <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" />
                   <Input
                     placeholder="Search users..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 bg-[#0a0f1a] border-gray-700 text-navy-900 w-64"
+                    className="pl-10 bg-cream-100 border-slate-200 text-navy-900 w-64"
                   />
                 </div>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-gray-800">
-                      <th className="text-left text-gray-400 text-sm py-3 px-4">User</th>
-                      <th className="text-left text-gray-400 text-sm py-3 px-4">Role</th>
-                      <th className="text-left text-gray-400 text-sm py-3 px-4">Status</th>
-                      <th className="text-left text-gray-400 text-sm py-3 px-4">Notary</th>
-                      <th className="text-left text-gray-400 text-sm py-3 px-4">Joined</th>
-                      <th className="text-right text-gray-400 text-sm py-3 px-4">Actions</th>
+                    <tr className="border-b border-slate-200">
+                      <th className="text-left text-slate-500 text-sm py-3 px-4">User</th>
+                      <th className="text-left text-slate-500 text-sm py-3 px-4">Role</th>
+                      <th className="text-left text-slate-500 text-sm py-3 px-4">Status</th>
+                      <th className="text-left text-slate-500 text-sm py-3 px-4">Notary</th>
+                      <th className="text-left text-slate-500 text-sm py-3 px-4">Joined</th>
+                      <th className="text-right text-slate-500 text-sm py-3 px-4">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1889,16 +1889,16 @@ const AdminDashboard = () => {
                         u.full_name?.toLowerCase().includes(searchQuery.toLowerCase())
                       )
                       .map((user) => (
-                      <tr key={user.id} className="border-b border-gray-800/50 hover:bg-[#0a0f1a]">
+                      <tr key={user.id} className="border-b border-slate-200/50 hover:bg-cream-100">
                         <td className="py-3 px-4">
                           <p className="text-navy-900 font-medium">{user.full_name || 'N/A'}</p>
-                          <p className="text-gray-500 text-sm">{user.email}</p>
+                          <p className="text-slate-500 text-sm">{user.email}</p>
                         </td>
                         <td className="py-3 px-4">
                           <span className={`px-2 py-1 rounded text-xs ${
                             user.role === 'admin' ? 'bg-red-500/20 text-red-400' :
                             user.role === 'notary' ? 'bg-blue-500/20 text-blue-400' :
-                            'bg-gray-500/20 text-gray-400'
+                            'bg-gray-500/20 text-slate-500'
                           }`}>
                             {user.role || 'user'}
                           </span>
@@ -1915,10 +1915,10 @@ const AdminDashboard = () => {
                           {user.is_notary ? (
                             <CheckCircle className="w-4 h-4 text-green-400" />
                           ) : (
-                            <XCircle className="w-4 h-4 text-gray-600" />
+                            <XCircle className="w-4 h-4 text-slate-600" />
                           )}
                         </td>
-                        <td className="py-3 px-4 text-gray-400 text-sm">
+                        <td className="py-3 px-4 text-slate-500 text-sm">
                           {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
                         </td>
                         <td className="py-3 px-4 text-right">
@@ -1926,7 +1926,7 @@ const AdminDashboard = () => {
                             size="sm"
                             variant="ghost"
                             onClick={() => viewUserDetails(user.id)}
-                            className="text-gray-400 hover:text-navy-900"
+                            className="text-slate-500 hover:text-navy-900"
                           >
                             <Eye className="w-4 h-4" />
                           </Button>
@@ -1941,25 +1941,25 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === 'notaries' && (
-          <Card className="bg-[#1a2332] border-gray-800">
+          <Card className="bg-white border-slate-200">
             <CardContent className="p-6">
               <h3 className="text-lg font-bold text-navy-900 mb-6">Notary Profiles</h3>
               <div className="space-y-4">
                 {notaries.map((notary) => (
-                  <div key={notary.id} className="bg-[#0a0f1a] rounded-lg p-4 flex items-center justify-between">
+                  <div key={notary.id} className="bg-cream-100 rounded-lg p-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center">
                         <UserCheck className="w-6 h-6 text-blue-400" />
                       </div>
                       <div>
                         <p className="text-navy-900 font-medium">{notary.user_full_name || 'Unknown'}</p>
-                        <p className="text-gray-500 text-sm">{notary.user_email}</p>
+                        <p className="text-slate-500 text-sm">{notary.user_email}</p>
                         <div className="flex gap-2 mt-1">
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-slate-500">
                             Commission: {notary.commission_number || 'N/A'}
                           </span>
-                          <span className="text-xs text-gray-400">|</span>
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-slate-500">|</span>
+                          <span className="text-xs text-slate-500">
                             State: {notary.state || 'N/A'}
                           </span>
                         </div>
@@ -1980,12 +1980,12 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === 'audit' && (
-          <Card className="bg-[#1a2332] border-gray-800">
+          <Card className="bg-white border-slate-200">
             <CardContent className="p-6">
               <h3 className="text-lg font-bold text-navy-900 mb-6">Audit Logs</h3>
               <div className="space-y-2 max-h-[600px] overflow-y-auto">
                 {auditLogs.map((log) => (
-                  <div key={log.id} className="bg-[#0a0f1a] rounded-lg p-3 flex items-start gap-3">
+                  <div key={log.id} className="bg-cream-100 rounded-lg p-3 flex items-start gap-3">
                     <div className={`w-2 h-2 rounded-full mt-2 ${
                       log.severity === 'critical' ? 'bg-red-500' :
                       log.severity === 'warning' ? 'bg-yellow-500' :
@@ -1994,14 +1994,14 @@ const AdminDashboard = () => {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="text-navy-900 font-medium text-sm">{log.action}</span>
-                        <span className="text-gray-600">•</span>
-                        <span className="text-gray-500 text-xs">{log.resource_type}</span>
+                        <span className="text-slate-600">•</span>
+                        <span className="text-slate-500 text-xs">{log.resource_type}</span>
                       </div>
-                      <p className="text-gray-400 text-sm">{log.description}</p>
+                      <p className="text-slate-500 text-sm">{log.description}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-gray-500 text-xs">{log.user_email || 'System'}</span>
-                        <span className="text-gray-600">•</span>
-                        <span className="text-gray-500 text-xs">
+                        <span className="text-slate-500 text-xs">{log.user_email || 'System'}</span>
+                        <span className="text-slate-600">•</span>
+                        <span className="text-slate-500 text-xs">
                           {new Date(log.timestamp).toLocaleString()}
                         </span>
                       </div>
@@ -2017,14 +2017,14 @@ const AdminDashboard = () => {
       {/* User Details Modal */}
       {showUserModal && selectedUser && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a2332] rounded-xl border border-gray-800 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-800">
+          <div className="bg-white rounded-xl border border-slate-200 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-slate-200">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold text-navy-900">User Details</h2>
                 <Button
                   variant="ghost"
                   onClick={() => { setShowUserModal(false); setSelectedUser(null); }}
-                  className="text-gray-400 hover:text-navy-900"
+                  className="text-slate-500 hover:text-navy-900"
                 >
                   <XCircle className="w-5 h-5" />
                 </Button>
@@ -2034,21 +2034,21 @@ const AdminDashboard = () => {
               {/* User Info */}
               <div>
                 <h3 className="text-navy-900 font-semibold mb-3">Profile</h3>
-                <div className="bg-[#0a0f1a] rounded-lg p-4 grid grid-cols-2 gap-4">
+                <div className="bg-cream-100 rounded-lg p-4 grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-gray-500 text-xs">Email</p>
+                    <p className="text-slate-500 text-xs">Email</p>
                     <p className="text-navy-900">{selectedUser.user?.email}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500 text-xs">Full Name</p>
+                    <p className="text-slate-500 text-xs">Full Name</p>
                     <p className="text-navy-900">{selectedUser.user?.full_name || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500 text-xs">Role</p>
+                    <p className="text-slate-500 text-xs">Role</p>
                     <p className="text-navy-900 capitalize">{selectedUser.user?.role || 'user'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500 text-xs">Status</p>
+                    <p className="text-slate-500 text-xs">Status</p>
                     <p className={selectedUser.user?.status === 'active' ? 'text-green-400' : 'text-red-400'}>
                       {selectedUser.user?.status || 'active'}
                     </p>
@@ -2060,17 +2060,17 @@ const AdminDashboard = () => {
               {selectedUser.notary_profile && (
                 <div>
                   <h3 className="text-navy-900 font-semibold mb-3">Notary Profile</h3>
-                  <div className="bg-[#0a0f1a] rounded-lg p-4 grid grid-cols-2 gap-4">
+                  <div className="bg-cream-100 rounded-lg p-4 grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-gray-500 text-xs">Commission #</p>
+                      <p className="text-slate-500 text-xs">Commission #</p>
                       <p className="text-navy-900">{selectedUser.notary_profile.commission_number || 'N/A'}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500 text-xs">State</p>
+                      <p className="text-slate-500 text-xs">State</p>
                       <p className="text-navy-900">{selectedUser.notary_profile.state || 'N/A'}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500 text-xs">Status</p>
+                      <p className="text-slate-500 text-xs">Status</p>
                       <span className={`px-2 py-1 rounded text-xs ${
                         selectedUser.notary_profile.status === 'approved' ? 'bg-green-500/20 text-green-400' :
                         'bg-yellow-500/20 text-yellow-400'
@@ -2083,7 +2083,7 @@ const AdminDashboard = () => {
               )}
 
               {/* Actions */}
-              <div className="flex gap-3 pt-4 border-t border-gray-800">
+              <div className="flex gap-3 pt-4 border-t border-slate-200">
                 {selectedUser.user?.status === 'active' ? (
                   <Button
                     onClick={() => handleUserStatusChange(selectedUser.user.id, 'disabled')}

@@ -162,7 +162,7 @@ const VideoRoom = ({
   }, [roomUrl]);
 
   return (
-    <div className="flex flex-col h-full bg-[#0a0f1a] rounded-xl overflow-hidden">
+    <div className="flex flex-col h-full bg-cream-100 rounded-xl overflow-hidden">
       {/* Error Display */}
       {error && (
         <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-2 text-sm">
@@ -180,14 +180,14 @@ const VideoRoom = ({
         
         {/* Pre-join screen */}
         {!isJoined && !callFrame && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0a0f1a]">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-cream-100">
             <div className="w-24 h-24 rounded-full bg-blue-600/20 flex items-center justify-center mb-6 animate-pulse">
               <Video className="w-12 h-12 text-blue-500" />
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">
               Preparing Video Session
             </h3>
-            <p className="text-gray-400 mb-6">
+            <p className="text-slate-500 mb-6">
               Setting up your secure notarization session...
             </p>
             <Button
@@ -209,7 +209,7 @@ const VideoRoom = ({
             </div>
             <div className="mt-2 space-y-1">
               {participants.slice(0, 4).map((p) => (
-                <div key={p.id} className="flex items-center gap-2 text-xs text-gray-300">
+                <div key={p.id} className="flex items-center gap-2 text-xs text-slate-500">
                   <div className={`w-2 h-2 rounded-full ${p.hasVideo ? 'bg-green-500' : 'bg-gray-500'}`} />
                   <span>{p.name} {p.isLocal && '(You)'} {p.isOwner && '👑'}</span>
                 </div>
@@ -220,7 +220,7 @@ const VideoRoom = ({
       </div>
 
       {/* Control Bar */}
-      <div className="bg-[#1a2332] border-t border-gray-800 px-6 py-4">
+      <div className="bg-white border-t border-slate-200 px-6 py-4">
         <div className="flex items-center justify-center gap-4">
           {/* Camera Toggle */}
           <Button
@@ -229,7 +229,7 @@ const VideoRoom = ({
             size="lg"
             className={`rounded-full w-14 h-14 p-0 ${
               isCameraOn 
-                ? 'bg-gray-700 hover:bg-gray-600 border-gray-600' 
+                ? 'bg-gray-700 hover:bg-gray-600 border-slate-200' 
                 : 'bg-red-600 hover:bg-red-700 border-red-600'
             }`}
             data-testid="toggle-camera-btn"
@@ -248,7 +248,7 @@ const VideoRoom = ({
             size="lg"
             className={`rounded-full w-14 h-14 p-0 ${
               isMicOn 
-                ? 'bg-gray-700 hover:bg-gray-600 border-gray-600' 
+                ? 'bg-gray-700 hover:bg-gray-600 border-slate-200' 
                 : 'bg-red-600 hover:bg-red-700 border-red-600'
             }`}
             data-testid="toggle-mic-btn"
@@ -268,7 +268,7 @@ const VideoRoom = ({
             className={`rounded-full w-14 h-14 p-0 ${
               isScreenSharing 
                 ? 'bg-blue-600 hover:bg-blue-700 border-blue-600' 
-                : 'bg-gray-700 hover:bg-gray-600 border-gray-600'
+                : 'bg-gray-700 hover:bg-gray-600 border-slate-200'
             }`}
             data-testid="toggle-screen-btn"
           >
@@ -284,7 +284,7 @@ const VideoRoom = ({
             onClick={toggleFullscreen}
             variant="outline"
             size="lg"
-            className="rounded-full w-14 h-14 p-0 bg-gray-700 hover:bg-gray-600 border-gray-600"
+            className="rounded-full w-14 h-14 p-0 bg-gray-700 hover:bg-gray-600 border-slate-200"
           >
             {isFullscreen ? (
               <Minimize2 className="w-5 h-5 text-white" />

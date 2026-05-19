@@ -7,7 +7,7 @@ const QuickSealSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-24 bg-gradient-to-br from-[#0f1825] via-[#1a2332] to-[#0f1825]">
+    <section className="py-24 bg-gradient-to-br from-[#0f1825] via-white to-cream-100">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Side - Content */}
@@ -20,7 +20,7 @@ const QuickSealSection = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Quick Seal™: Instant Blockchain Timestamps
             </h2>
-            <p className="text-gray-400 text-lg leading-relaxed mb-8">
+            <p className="text-slate-500 text-lg leading-relaxed mb-8">
               A low-cost, high-volume entry point for instant document timestamping. Prove a
               document's existence at a specific time without full notarization.
             </p>
@@ -32,7 +32,7 @@ const QuickSealSection = () => {
                 </div>
                 <div>
                   <h4 className="text-white font-semibold mb-1">Instant Processing</h4>
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-slate-500 text-sm">
                     Get your blockchain timestamp in seconds, not days
                   </p>
                 </div>
@@ -44,7 +44,7 @@ const QuickSealSection = () => {
                 </div>
                 <div>
                   <h4 className="text-white font-semibold mb-1">Just $5 Per Seal</h4>
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-slate-500 text-sm">
                     Affordable pricing for high-volume needs
                   </p>
                 </div>
@@ -56,7 +56,7 @@ const QuickSealSection = () => {
                 </div>
                 <div>
                   <h4 className="text-white font-semibold mb-1">Permanent Proof</h4>
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-slate-500 text-sm">
                     Immutable blockchain record that lasts forever
                   </p>
                 </div>
@@ -74,7 +74,7 @@ const QuickSealSection = () => {
 
           {/* Right Side - Visual */}
           <div className="relative">
-            <div className="bg-[#0a0f1a] border-2 border-yellow-500/30 rounded-2xl p-8 shadow-2xl">
+            <div className="bg-cream-100 border-2 border-yellow-500/30 rounded-2xl p-8 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold text-white">Quick Seal Process</h3>
                 <span className="bg-yellow-500/20 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full">
@@ -83,36 +83,36 @@ const QuickSealSection = () => {
               </div>
 
               <div className="space-y-4">
-                <div className="bg-[#1a2332] rounded-lg p-4 border border-gray-800">
+                <div className="bg-white rounded-lg p-4 border border-slate-200">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-8 h-8 bg-yellow-500/20 rounded-full flex items-center justify-center text-yellow-400 font-bold text-sm">
                       1
                     </div>
                     <span className="text-white font-semibold">Upload Document</span>
                   </div>
-                  <p className="text-gray-400 text-sm ml-11">Drop any file type</p>
+                  <p className="text-slate-500 text-sm ml-11">Drop any file type</p>
                 </div>
 
-                <div className="bg-[#1a2332] rounded-lg p-4 border border-gray-800">
+                <div className="bg-white rounded-lg p-4 border border-slate-200">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-8 h-8 bg-yellow-500/20 rounded-full flex items-center justify-center text-yellow-400 font-bold text-sm">
                       2
                     </div>
                     <span className="text-white font-semibold">Generate Hash</span>
                   </div>
-                  <p className="text-gray-400 text-sm ml-11">
+                  <p className="text-slate-500 text-sm ml-11">
                     SHA-256 fingerprint created
                   </p>
                 </div>
 
-                <div className="bg-[#1a2332] rounded-lg p-4 border border-gray-800">
+                <div className="bg-white rounded-lg p-4 border border-slate-200">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-8 h-8 bg-yellow-500/20 rounded-full flex items-center justify-center text-yellow-400 font-bold text-sm">
                       3
                     </div>
                     <span className="text-white font-semibold">Record on Hedera</span>
                   </div>
-                  <p className="text-gray-400 text-sm ml-11">
+                  <p className="text-slate-500 text-sm ml-11">
                     Permanent blockchain timestamp
                   </p>
                 </div>
@@ -125,9 +125,9 @@ const QuickSealSection = () => {
                 </div>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-gray-800">
+              <div className="mt-6 pt-6 border-t border-slate-200">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-sm">Cost per seal:</span>
+                  <span className="text-slate-500 text-sm">Cost per seal:</span>
                   <span className="text-2xl font-bold text-yellow-400">$5</span>
                 </div>
               </div>

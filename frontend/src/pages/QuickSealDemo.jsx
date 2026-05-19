@@ -79,7 +79,7 @@ const QuickSealDemo = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       
       <div className="pt-32 pb-24">
@@ -95,7 +95,7 @@ const QuickSealDemo = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-navy-900 mb-4">
               Try Quick Seal™ for Free
             </h1>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <p className="text-slate-500 text-lg max-w-2xl mx-auto">
               Upload any document and get an instant blockchain timestamp. No account required.
             </p>
           </div>
@@ -110,12 +110,12 @@ const QuickSealDemo = () => {
                       className={`w-12 h-12 rounded-full flex items-center justify-center font-bold transition-all ${
                         step >= num
                           ? 'bg-blue-600 text-navy-900'
-                          : 'bg-gray-800 text-gray-500'
+                          : 'bg-gray-800 text-slate-500'
                       }`}
                     >
                       {step > num ? <CheckCircle2 className="w-6 h-6" /> : num}
                     </div>
-                    <span className="text-xs text-gray-400 mt-2">
+                    <span className="text-xs text-slate-500 mt-2">
                       {num === 1 && 'Upload'}
                       {num === 2 && 'Hash'}
                       {num === 3 && 'Seal'}
@@ -135,7 +135,7 @@ const QuickSealDemo = () => {
           </div>
 
           {/* Main Card */}
-          <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800">
+          <Card className="bg-gradient-to-br from-white to-cream-100 border border-slate-200">
             <CardContent className="p-8">
               {/* Step 1: Upload */}
               {step === 1 && (
@@ -144,7 +144,7 @@ const QuickSealDemo = () => {
                     <Upload className="w-12 h-12 text-blue-500" />
                   </div>
                   <h2 className="text-2xl font-bold text-navy-900 mb-4">Upload Your Document</h2>
-                  <p className="text-gray-400 mb-8">
+                  <p className="text-slate-500 mb-8">
                     Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG (Max 10MB)
                   </p>
                   <label className="cursor-pointer">
@@ -159,7 +159,7 @@ const QuickSealDemo = () => {
                       Choose File
                     </div>
                   </label>
-                  <p className="text-gray-500 text-sm mt-6">
+                  <p className="text-slate-500 text-sm mt-6">
                     Or drag and drop your file here
                   </p>
                 </div>
@@ -172,14 +172,14 @@ const QuickSealDemo = () => {
                     <FileText className="w-12 h-12 text-blue-500 flex-shrink-0" />
                     <div className="flex-1">
                       <h3 className="text-xl font-semibold text-navy-900 mb-2">{fileName}</h3>
-                      <p className="text-gray-400 text-sm">{fileSize}</p>
+                      <p className="text-slate-500 text-sm">{fileSize}</p>
                     </div>
                   </div>
 
                   <div className="space-y-4">
                     <div
-                      className={`bg-[#0a0f1a] rounded-lg p-4 border transition-all ${
-                        step >= 2 ? 'border-blue-500/50' : 'border-gray-800'
+                      className={`bg-cream-100 rounded-lg p-4 border transition-all ${
+                        step >= 2 ? 'border-blue-500/50' : 'border-slate-200'
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -193,8 +193,8 @@ const QuickSealDemo = () => {
                     </div>
 
                     <div
-                      className={`bg-[#0a0f1a] rounded-lg p-4 border transition-all ${
-                        step >= 3 ? 'border-blue-500/50' : 'border-gray-800'
+                      className={`bg-cream-100 rounded-lg p-4 border transition-all ${
+                        step >= 3 ? 'border-blue-500/50' : 'border-slate-200'
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -218,29 +218,29 @@ const QuickSealDemo = () => {
                       <CheckCircle2 className="w-10 h-10 text-green-400" />
                     </div>
                     <h2 className="text-2xl font-bold text-navy-900 mb-2">Document Sealed Successfully!</h2>
-                    <p className="text-gray-400">Your document is now secured on the blockchain</p>
+                    <p className="text-slate-500">Your document is now secured on the blockchain</p>
                   </div>
 
                   {/* Document Info */}
-                  <div className="bg-[#0a0f1a] rounded-lg p-6 mb-6 border border-gray-800">
+                  <div className="bg-cream-100 rounded-lg p-6 mb-6 border border-slate-200">
                     <div className="flex items-center gap-4 mb-4">
                       <FileText className="w-10 h-10 text-blue-500" />
                       <div>
                         <h3 className="text-navy-900 font-semibold">{fileName}</h3>
-                        <p className="text-gray-400 text-sm">{fileSize}</p>
+                        <p className="text-slate-500 text-sm">{fileSize}</p>
                       </div>
                     </div>
                     
                     <div className="space-y-3">
                       <div>
-                        <label className="text-gray-400 text-sm block mb-1">SHA-256 Hash</label>
-                        <div className="flex items-center gap-2 bg-[#1a2332] rounded p-3">
+                        <label className="text-slate-500 text-sm block mb-1">SHA-256 Hash</label>
+                        <div className="flex items-center gap-2 bg-white rounded p-3">
                           <code className="text-blue-400 text-xs flex-1 overflow-hidden overflow-ellipsis">
                             {hash}
                           </code>
                           <button
                             onClick={() => copyToClipboard(hash)}
-                            className="text-gray-400 hover:text-navy-900 transition-colors"
+                            className="text-slate-500 hover:text-navy-900 transition-colors"
                           >
                             <Copy className="w-4 h-4" />
                           </button>
@@ -248,14 +248,14 @@ const QuickSealDemo = () => {
                       </div>
 
                       <div>
-                        <label className="text-gray-400 text-sm block mb-1">Transaction ID</label>
-                        <div className="flex items-center gap-2 bg-[#1a2332] rounded p-3">
+                        <label className="text-slate-500 text-sm block mb-1">Transaction ID</label>
+                        <div className="flex items-center gap-2 bg-white rounded p-3">
                           <code className="text-green-400 text-sm flex-1">{txId}</code>
                           <a
                             href={`https://hashscan.io/mainnet/transaction/${txId}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-400 hover:text-navy-900 transition-colors"
+                            className="text-slate-500 hover:text-navy-900 transition-colors"
                           >
                             <ExternalLink className="w-4 h-4" />
                           </a>
@@ -263,8 +263,8 @@ const QuickSealDemo = () => {
                       </div>
 
                       <div>
-                        <label className="text-gray-400 text-sm block mb-1">Timestamp</label>
-                        <div className="bg-[#1a2332] rounded p-3">
+                        <label className="text-slate-500 text-sm block mb-1">Timestamp</label>
+                        <div className="bg-white rounded p-3">
                           <code className="text-purple-400 text-sm">
                             {new Date(timestamp).toLocaleString()}
                           </code>
@@ -307,29 +307,29 @@ const QuickSealDemo = () => {
 
           {/* Features Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-            <Card className="bg-[#1a2332] border border-gray-800">
+            <Card className="bg-white border border-slate-200">
               <CardContent className="p-6 text-center">
                 <Shield className="w-10 h-10 text-blue-500 mx-auto mb-4" />
                 <h3 className="text-navy-900 font-semibold mb-2">Permanent Proof</h3>
-                <p className="text-gray-400 text-sm">
+                <p className="text-slate-500 text-sm">
                   Immutable record on Hedera blockchain that lasts forever
                 </p>
               </CardContent>
             </Card>
-            <Card className="bg-[#1a2332] border border-gray-800">
+            <Card className="bg-white border border-slate-200">
               <CardContent className="p-6 text-center">
                 <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto mb-4" />
                 <h3 className="text-navy-900 font-semibold mb-2">Instant Processing</h3>
-                <p className="text-gray-400 text-sm">
+                <p className="text-slate-500 text-sm">
                   Get your timestamp in under 10 seconds
                 </p>
               </CardContent>
             </Card>
-            <Card className="bg-[#1a2332] border border-gray-800">
+            <Card className="bg-white border border-slate-200">
               <CardContent className="p-6 text-center">
                 <ExternalLink className="w-10 h-10 text-purple-500 mx-auto mb-4" />
                 <h3 className="text-navy-900 font-semibold mb-2">Public Verification</h3>
-                <p className="text-gray-400 text-sm">
+                <p className="text-slate-500 text-sm">
                   Anyone can verify authenticity on the blockchain
                 </p>
               </CardContent>

@@ -100,7 +100,7 @@ const NotaryAvailabilitySettings = ({ token }) => {
   return (
     <div className="space-y-4" data-testid="notary-availability-settings">
       {/* Weekly Schedule */}
-      <Card className="bg-[#0d1520] border-gray-800">
+      <Card className="bg-cream-100 border-slate-200">
         <CardContent className="p-4">
           <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
             <Calendar className="w-4 h-4 text-blue-400" />
@@ -109,22 +109,22 @@ const NotaryAvailabilitySettings = ({ token }) => {
 
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div>
-              <label className="text-xs text-gray-400 block mb-1">Session Duration (min)</label>
+              <label className="text-xs text-slate-500 block mb-1">Session Duration (min)</label>
               <select
                 value={duration}
                 onChange={e => setDuration(parseInt(e.target.value))}
-                className="w-full bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-white text-sm"
+                className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-white text-sm"
                 data-testid="duration-select"
               >
                 {[30, 45, 60, 90, 120].map(m => <option key={m} value={m}>{m} min</option>)}
               </select>
             </div>
             <div>
-              <label className="text-xs text-gray-400 block mb-1">Break Between (min)</label>
+              <label className="text-xs text-slate-500 block mb-1">Break Between (min)</label>
               <select
                 value={breakTime}
                 onChange={e => setBreakTime(parseInt(e.target.value))}
-                className="w-full bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-white text-sm"
+                className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-white text-sm"
                 data-testid="break-select"
               >
                 {[0, 5, 10, 15, 30].map(m => <option key={m} value={m}>{m} min</option>)}
@@ -134,14 +134,14 @@ const NotaryAvailabilitySettings = ({ token }) => {
 
           <div className="space-y-2 mb-3">
             {slots.length === 0 && (
-              <p className="text-gray-500 text-sm text-center py-2">No availability set. Add time slots below.</p>
+              <p className="text-slate-500 text-sm text-center py-2">No availability set. Add time slots below.</p>
             )}
             {slots.map((slot, idx) => (
-              <div key={idx} className="flex items-center gap-2 bg-[#1a2332] p-2 rounded-lg border border-gray-800" data-testid={`schedule-slot-${idx}`}>
+              <div key={idx} className="flex items-center gap-2 bg-white p-2 rounded-lg border border-slate-200" data-testid={`schedule-slot-${idx}`}>
                 <select
                   value={slot.day_of_week}
                   onChange={e => updateSlot(idx, 'day_of_week', e.target.value)}
-                  className="bg-[#0d1520] border border-gray-700 rounded px-2 py-1.5 text-white text-sm flex-1"
+                  className="bg-cream-100 border border-slate-200 rounded px-2 py-1.5 text-white text-sm flex-1"
                 >
                   {DAYS_OF_WEEK.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
                 </select>
@@ -149,15 +149,15 @@ const NotaryAvailabilitySettings = ({ token }) => {
                   type="time"
                   value={slot.start_time}
                   onChange={e => updateSlot(idx, 'start_time', e.target.value)}
-                  className="bg-[#0d1520] border border-gray-700 rounded px-2 py-1.5 text-white text-sm"
+                  className="bg-cream-100 border border-slate-200 rounded px-2 py-1.5 text-white text-sm"
                   data-testid={`slot-start-${idx}`}
                 />
-                <span className="text-gray-500 text-sm">to</span>
+                <span className="text-slate-500 text-sm">to</span>
                 <input
                   type="time"
                   value={slot.end_time}
                   onChange={e => updateSlot(idx, 'end_time', e.target.value)}
-                  className="bg-[#0d1520] border border-gray-700 rounded px-2 py-1.5 text-white text-sm"
+                  className="bg-cream-100 border border-slate-200 rounded px-2 py-1.5 text-white text-sm"
                   data-testid={`slot-end-${idx}`}
                 />
                 <Button onClick={() => removeSlot(idx)} size="sm" variant="ghost" className="text-red-400 h-8 w-8 p-0">
@@ -180,7 +180,7 @@ const NotaryAvailabilitySettings = ({ token }) => {
       </Card>
 
       {/* Blocked Dates */}
-      <Card className="bg-[#0d1520] border-gray-800">
+      <Card className="bg-cream-100 border-slate-200">
         <CardContent className="p-4">
           <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
             <Ban className="w-4 h-4 text-red-400" />
@@ -193,7 +193,7 @@ const NotaryAvailabilitySettings = ({ token }) => {
               value={blockDate}
               onChange={e => setBlockDate(e.target.value)}
               min={new Date().toISOString().split('T')[0]}
-              className="bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-white text-sm flex-1"
+              className="bg-white border border-slate-200 rounded-md px-3 py-2 text-white text-sm flex-1"
               data-testid="block-date-input"
             />
             <input
@@ -201,7 +201,7 @@ const NotaryAvailabilitySettings = ({ token }) => {
               value={blockReason}
               onChange={e => setBlockReason(e.target.value)}
               placeholder="Reason (optional)"
-              className="bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-white text-sm flex-1"
+              className="bg-white border border-slate-200 rounded-md px-3 py-2 text-white text-sm flex-1"
               data-testid="block-reason-input"
             />
             <Button onClick={addBlockedDate} size="sm" className="bg-red-600 hover:bg-red-700" disabled={!blockDate} data-testid="add-block-btn">
@@ -210,13 +210,13 @@ const NotaryAvailabilitySettings = ({ token }) => {
           </div>
 
           {blockedDates.length === 0 ? (
-            <p className="text-gray-500 text-xs text-center py-2">No blocked dates.</p>
+            <p className="text-slate-500 text-xs text-center py-2">No blocked dates.</p>
           ) : (
             <div className="space-y-1" data-testid="blocked-dates-list">
               {blockedDates.map(b => (
                 <div key={b.id} className="flex items-center justify-between py-1.5 px-2 bg-red-500/5 rounded border border-red-500/20">
-                  <span className="text-sm text-gray-300">{b.date} {b.reason && <span className="text-gray-500">— {b.reason}</span>}</span>
-                  <Button onClick={() => removeBlockedDate(b.id)} size="sm" variant="ghost" className="text-gray-500 hover:text-red-400 h-6 px-1">
+                  <span className="text-sm text-slate-500">{b.date} {b.reason && <span className="text-slate-500">— {b.reason}</span>}</span>
+                  <Button onClick={() => removeBlockedDate(b.id)} size="sm" variant="ghost" className="text-slate-500 hover:text-red-400 h-6 px-1">
                     <Trash2 className="w-3 h-3" />
                   </Button>
                 </div>

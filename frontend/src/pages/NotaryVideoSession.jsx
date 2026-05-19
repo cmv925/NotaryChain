@@ -167,7 +167,7 @@ const NotaryVideoSession = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
       </div>
     );
@@ -175,13 +175,13 @@ const NotaryVideoSession = () => {
 
   if (error && !videoSession) {
     return (
-      <div className="min-h-screen bg-[#0f1825]">
+      <div className="min-h-screen bg-cream-100">
         <Navbar />
         <div className="pt-32 pb-24 px-6">
           <div className="max-w-xl mx-auto text-center">
             <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-navy-900 mb-2">Error</h1>
-            <p className="text-gray-400 mb-6">{error}</p>
+            <p className="text-slate-500 mb-6">{error}</p>
             <Button onClick={() => navigate('/dashboard')} className="bg-blue-600 hover:bg-blue-700">
               Back to Dashboard
             </Button>
@@ -192,7 +192,7 @@ const NotaryVideoSession = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
 
       <div className="pt-24 pb-8 px-6">
@@ -203,7 +203,7 @@ const NotaryVideoSession = () => {
               <Button
                 variant="ghost"
                 onClick={() => navigate('/dashboard')}
-                className="text-gray-400 hover:text-navy-900"
+                className="text-slate-500 hover:text-navy-900"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back
@@ -213,7 +213,7 @@ const NotaryVideoSession = () => {
                   <Video className="w-6 h-6 text-blue-500" />
                   Notarization Session
                 </h1>
-                <p className="text-gray-400 text-sm">
+                <p className="text-slate-500 text-sm">
                   {notaryRequest?.document_name || 'Document'} - {notaryRequest?.document_type}
                 </p>
               </div>
@@ -224,7 +224,7 @@ const NotaryVideoSession = () => {
                 <Button
                   onClick={copyInviteLink}
                   variant="outline"
-                  className="border-gray-700 text-gray-300"
+                  className="border-slate-200 text-slate-500"
                 >
                   <Link2 className="w-4 h-4 mr-2" />
                   Copy Invite Link
@@ -243,18 +243,18 @@ const NotaryVideoSession = () => {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Main Video Area */}
             <div className="lg:col-span-3">
-              <Card className="bg-[#1a2332] border-gray-800 overflow-hidden">
+              <Card className="bg-white border-slate-200 overflow-hidden">
                 <CardContent className="p-0">
                   {/* Pre-session Screen */}
                   {sessionStatus === 'preparing' && !videoSession && (
-                    <div className="aspect-video flex flex-col items-center justify-center bg-[#0a0f1a] p-8">
+                    <div className="aspect-video flex flex-col items-center justify-center bg-cream-100 p-8">
                       <div className="w-24 h-24 rounded-full bg-blue-600/20 flex items-center justify-center mb-6">
                         <Camera className="w-12 h-12 text-blue-500" />
                       </div>
                       <h2 className="text-2xl font-bold text-navy-900 mb-2">
                         Ready to Start?
                       </h2>
-                      <p className="text-gray-400 text-center mb-6 max-w-md">
+                      <p className="text-slate-500 text-center mb-6 max-w-md">
                         Start a secure video session for your remote online notarization. 
                         Make sure your camera and microphone are ready.
                       </p>
@@ -272,17 +272,17 @@ const NotaryVideoSession = () => {
 
                   {/* Joining Screen */}
                   {sessionStatus === 'joining' && videoSession && (
-                    <div className="aspect-video flex flex-col items-center justify-center bg-[#0a0f1a] p-8">
+                    <div className="aspect-video flex flex-col items-center justify-center bg-cream-100 p-8">
                       <div className="w-24 h-24 rounded-full bg-green-600/20 flex items-center justify-center mb-6">
                         <CheckCircle className="w-12 h-12 text-green-500" />
                       </div>
                       <h2 className="text-2xl font-bold text-navy-900 mb-2">
                         Session Ready
                       </h2>
-                      <p className="text-gray-400 text-center mb-2">
+                      <p className="text-slate-500 text-center mb-2">
                         Room: <span className="text-navy-900 font-mono">{videoSession.room_name}</span>
                       </p>
-                      <p className="text-gray-500 text-sm mb-6">
+                      <p className="text-slate-500 text-sm mb-6">
                         Click below to join the video call
                       </p>
                       <Button
@@ -312,21 +312,21 @@ const NotaryVideoSession = () => {
 
                   {/* Session Ended */}
                   {sessionStatus === 'ended' && (
-                    <div className="aspect-video flex flex-col items-center justify-center bg-[#0a0f1a] p-8">
+                    <div className="aspect-video flex flex-col items-center justify-center bg-cream-100 p-8">
                       <div className="w-24 h-24 rounded-full bg-gray-600/20 flex items-center justify-center mb-6">
-                        <CheckCircle className="w-12 h-12 text-gray-400" />
+                        <CheckCircle className="w-12 h-12 text-slate-500" />
                       </div>
                       <h2 className="text-2xl font-bold text-navy-900 mb-2">
                         Session Ended
                       </h2>
-                      <p className="text-gray-400 text-center mb-6">
+                      <p className="text-slate-500 text-center mb-6">
                         The video session has ended. Thank you for using NotaryChain.
                       </p>
                       <div className="flex gap-3">
                         <Button
                           onClick={() => setSessionStatus('joining')}
                           variant="outline"
-                          className="border-gray-700 text-gray-300"
+                          className="border-slate-200 text-slate-500"
                         >
                           Rejoin Session
                         </Button>
@@ -346,7 +346,7 @@ const NotaryVideoSession = () => {
             {/* Sidebar */}
             <div className="space-y-4">
               {/* Session Info */}
-              <Card className="bg-[#1a2332] border-gray-800">
+              <Card className="bg-white border-slate-200">
                 <CardContent className="p-4">
                   <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                     <FileText className="w-5 h-5 text-blue-500" />
@@ -354,19 +354,19 @@ const NotaryVideoSession = () => {
                   </h3>
                   <div className="space-y-3 text-sm">
                     <div>
-                      <span className="text-gray-500">Document:</span>
+                      <span className="text-slate-500">Document:</span>
                       <p className="text-navy-900">{notaryRequest?.document_name}</p>
                     </div>
                     <div>
-                      <span className="text-gray-500">Type:</span>
+                      <span className="text-slate-500">Type:</span>
                       <p className="text-navy-900 capitalize">{notaryRequest?.document_type}</p>
                     </div>
                     <div>
-                      <span className="text-gray-500">Status:</span>
+                      <span className="text-slate-500">Status:</span>
                       <p className={`capitalize ${
                         notaryRequest?.status === 'in_session' ? 'text-green-400' :
                         notaryRequest?.status === 'pending' ? 'text-yellow-400' :
-                        'text-gray-400'
+                        'text-slate-500'
                       }`}>
                         {notaryRequest?.status?.replace('_', ' ')}
                       </p>
@@ -376,7 +376,7 @@ const NotaryVideoSession = () => {
               </Card>
 
               {/* Participants */}
-              <Card className="bg-[#1a2332] border-gray-800">
+              <Card className="bg-white border-slate-200">
                 <CardContent className="p-4">
                   <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                     <Users className="w-5 h-5 text-blue-500" />
@@ -392,7 +392,7 @@ const NotaryVideoSession = () => {
                         </div>
                         <div>
                           <p className="text-navy-900">{signer.name}</p>
-                          <p className="text-gray-500 text-xs">{signer.email}</p>
+                          <p className="text-slate-500 text-xs">{signer.email}</p>
                         </div>
                       </div>
                     ))}
@@ -401,7 +401,7 @@ const NotaryVideoSession = () => {
               </Card>
 
               {/* Security Info */}
-              <Card className="bg-[#1a2332] border-gray-800">
+              <Card className="bg-white border-slate-200">
                 <CardContent className="p-4">
                   <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                     <Shield className="w-5 h-5 text-green-500" />
@@ -426,7 +426,7 @@ const NotaryVideoSession = () => {
 
               {/* Session Timer */}
               {videoSession && (
-                <Card className="bg-[#1a2332] border-gray-800">
+                <Card className="bg-white border-slate-200">
                   <CardContent className="p-4">
                     <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                       <Clock className="w-5 h-5 text-blue-500" />
@@ -434,7 +434,7 @@ const NotaryVideoSession = () => {
                     </h3>
                     <div className="space-y-2 text-sm">
                       <div>
-                        <span className="text-gray-500">Expires:</span>
+                        <span className="text-slate-500">Expires:</span>
                         <p className="text-navy-900">
                           {new Date(videoSession.expires_at).toLocaleTimeString()}
                         </p>

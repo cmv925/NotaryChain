@@ -114,7 +114,7 @@ export default function MultiSignature() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0f1a]" data-testid="multi-sig-page">
+    <div className="min-h-screen bg-cream-100" data-testid="multi-sig-page">
       <div className="max-w-5xl mx-auto px-4 py-6">
         <Breadcrumbs items={[{ label: 'Dashboard', path: '/dashboard' }, { label: 'Multi-Signature' }]} />
 

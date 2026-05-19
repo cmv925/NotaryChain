@@ -46,13 +46,13 @@ const processSteps = [
 
 const ProcessStepsSection = () => {
   return (
-    <section className="py-24 bg-gradient-to-br from-[#0f1825] via-[#1a2332] to-[#0f1825]">
+    <section className="py-24 bg-gradient-to-br from-[#0f1825] via-white to-cream-100">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
             From Document to Immutable Proof in Five Steps
           </h2>
-          <p className="text-gray-400 text-lg max-w-3xl mx-auto">
+          <p className="text-slate-500 text-lg max-w-3xl mx-auto">
             A seamless experience that is <span className="text-blue-400 font-semibold">70% Faster</span> with{' '}
             <span className="text-blue-400 font-semibold">10x Lower Fraud Risk</span>
           </p>
@@ -67,7 +67,7 @@ const ProcessStepsSection = () => {
               const Icon = step.icon;
               return (
                 <div key={index} className="relative">
-                  <div className="bg-[#1a2332] border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300 h-full group">
+                  <div className="bg-white border border-slate-200 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300 h-full group">
                     {/* Step Number Badge */}
                     <div className="flex justify-center mb-4">
                       <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-blue-600/50 group-hover:scale-110 transition-transform">
@@ -95,7 +95,7 @@ const ProcessStepsSection = () => {
                     </h3>
 
                     {/* Description */}
-                    <p className="text-gray-400 text-sm leading-relaxed text-center">
+                    <p className="text-slate-500 text-sm leading-relaxed text-center">
                       {step.description}
                     </p>
                   </div>

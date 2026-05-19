@@ -30,7 +30,7 @@ export const DocumentAnalysisStep = ({
   onProceedToStep2,
   onBrowseTemplates,
 }) => (
-  <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800" data-testid="step-1-card">
+  <Card className="bg-gradient-to-br from-white to-cream-100 border border-slate-200" data-testid="step-1-card">
     <CardContent className="p-8">
       <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
         <FileText className="w-6 h-6 text-blue-500" />
@@ -44,14 +44,14 @@ export const DocumentAnalysisStep = ({
             <CheckCircle className="w-4 h-4 text-blue-400" />
             <span className="text-blue-400 font-medium text-sm">Template Applied</span>
           </div>
-          <p className="text-gray-300 text-sm">
+          <p className="text-slate-500 text-sm">
             Using <strong className="text-white">{templateData.templateName}</strong> template.
             Document type and signer slots have been pre-filled. Upload your document below.
           </p>
         </div>
       ) : (
-        <div className="mb-6 p-3 rounded-lg bg-[#0a0f1a] border border-gray-800 flex items-center justify-between" data-testid="template-suggestion-banner">
-          <div className="flex items-center gap-2 text-sm text-gray-400">
+        <div className="mb-6 p-3 rounded-lg bg-cream-100 border border-slate-200 flex items-center justify-between" data-testid="template-suggestion-banner">
+          <div className="flex items-center gap-2 text-sm text-slate-500">
             <BookOpen className="w-4 h-4 text-purple-400" />
             <span>Need a starting point? Browse our template library.</span>
           </div>
@@ -77,7 +77,7 @@ export const DocumentAnalysisStep = ({
           name="document_type"
           value={formData.document_type}
           onChange={onDocTypeChange}
-          className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
+          className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
           data-testid="document-type-select"
         >
           {DOCUMENT_TYPES.map((type) => (
@@ -93,14 +93,14 @@ export const DocumentAnalysisStep = ({
         <Label className="text-white mb-2 block">Upload Document</Label>
         <div
           className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-            selectedFile ? 'border-blue-500 bg-blue-500/5' : 'border-gray-700 hover:border-gray-600'
+            selectedFile ? 'border-blue-500 bg-blue-500/5' : 'border-slate-200 hover:border-slate-200'
           }`}
         >
           {selectedFile ? (
             <div className="space-y-3">
               <FileText className="w-12 h-12 mx-auto text-blue-500" />
               <p className="text-white font-medium">{selectedFile.name}</p>
-              <p className="text-gray-400 text-sm">
+              <p className="text-slate-500 text-sm">
                 {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
               </p>
               <div className="flex items-center justify-center gap-2">
@@ -120,7 +120,7 @@ export const DocumentAnalysisStep = ({
                   variant="outline"
                   size="sm"
                   onClick={onRemoveFile}
-                  className="border-gray-600 text-gray-300"
+                  className="border-slate-200 text-slate-500"
                 >
                   Remove
                 </Button>
@@ -128,11 +128,11 @@ export const DocumentAnalysisStep = ({
             </div>
           ) : (
             <label className="cursor-pointer block">
-              <Upload className="w-12 h-12 mx-auto text-gray-500 mb-4" />
-              <p className="text-gray-300 mb-2">
+              <Upload className="w-12 h-12 mx-auto text-slate-500 mb-4" />
+              <p className="text-slate-500 mb-2">
                 Drag and drop or click to upload
               </p>
-              <p className="text-gray-500 text-sm">
+              <p className="text-slate-500 text-sm">
                 Supports PDF, JPG, PNG, TXT (Max 10MB)
               </p>
               <input

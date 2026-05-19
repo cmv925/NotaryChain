@@ -140,16 +140,16 @@ const SecuritySettings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center">
         <div className="text-navy-900 text-xl">Loading security settings...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       {/* Header */}
-      <header className="bg-[#1a2332] border-b border-gray-800">
+      <header className="bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
@@ -161,7 +161,7 @@ const SecuritySettings = () => {
               <NotificationBell token={token} />
               <div className="text-right hidden sm:block">
                 <div className="text-navy-900 font-semibold text-sm">{user?.full_name}</div>
-                <div className="text-gray-400 text-xs">{user?.email}</div>
+                <div className="text-slate-500 text-xs">{user?.email}</div>
               </div>
             </div>
           </div>
@@ -172,7 +172,7 @@ const SecuritySettings = () => {
         <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Security Settings' }]} />
         {/* 2FA Status Card */}
         {step === 'status' && (
-          <Card className="bg-[#1a2332] border-gray-800" data-testid="2fa-status-card">
+          <Card className="bg-white border-slate-200" data-testid="2fa-status-card">
             <CardContent className="p-8">
               <div className="flex items-start gap-6">
                 <div className={`w-16 h-16 rounded-xl flex items-center justify-center ${twoFAStatus?.enabled ? 'bg-green-500/20' : 'bg-yellow-500/20'}`}>
@@ -184,7 +184,7 @@ const SecuritySettings = () => {
                 </div>
                 <div className="flex-1">
                   <h2 className="text-xl font-bold text-navy-900 mb-1">{t('security.two_factor')}</h2>
-                  <p className="text-gray-400 text-sm mb-4">
+                  <p className="text-slate-500 text-sm mb-4">
                     {twoFAStatus?.enabled
                       ? t('security.enabled_desc')
                       : t('security.disabled_desc')}
@@ -195,7 +195,7 @@ const SecuritySettings = () => {
                   </div>
 
                   {twoFAStatus?.enabled && twoFAStatus?.enabled_at && (
-                    <p className="text-gray-500 text-xs mt-2">
+                    <p className="text-slate-500 text-xs mt-2">
                       Enabled on {new Date(twoFAStatus.enabled_at).toLocaleDateString()}
                     </p>
                   )}
@@ -206,7 +206,7 @@ const SecuritySettings = () => {
                         <Button onClick={() => setStep('disable')} variant="outline" className="border-red-500/50 text-red-400 hover:bg-red-500/10" data-testid="disable-2fa-button">
                           <ShieldOff className="w-4 h-4 mr-2" /> {t('security.disable_2fa')}
                         </Button>
-                        <Button onClick={regenerateBackupCodes} variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800" disabled={actionLoading} data-testid="regenerate-backup-codes-button">
+                        <Button onClick={regenerateBackupCodes} variant="outline" className="border-slate-200 text-slate-500 hover:bg-gray-800" disabled={actionLoading} data-testid="regenerate-backup-codes-button">
                           <RefreshCw className="w-4 h-4 mr-2" /> {t('security.regenerate')}
                         </Button>
                       </>
@@ -218,7 +218,7 @@ const SecuritySettings = () => {
                   </div>
 
                   {twoFAStatus?.enabled && twoFAStatus?.backup_codes_remaining !== undefined && (
-                    <p className="text-gray-500 text-xs mt-4">
+                    <p className="text-slate-500 text-xs mt-4">
                       <KeyRound className="w-3 h-3 inline mr-1" />
                       {twoFAStatus.backup_codes_remaining} {t('security.codes_remaining')}
                     </p>
@@ -231,10 +231,10 @@ const SecuritySettings = () => {
 
         {/* Setup Step */}
         {step === 'setup' && setupData && (
-          <Card className="bg-[#1a2332] border-gray-800" data-testid="2fa-setup-card">
+          <Card className="bg-white border-slate-200" data-testid="2fa-setup-card">
             <CardContent className="p-8">
               <h2 className="text-xl font-bold text-navy-900 mb-2">{t('security.setup_title')}</h2>
-              <p className="text-gray-400 text-sm mb-6">{t('security.setup_desc')}</p>
+              <p className="text-slate-500 text-sm mb-6">{t('security.setup_desc')}</p>
 
               <div className="flex flex-col lg:flex-row gap-8">
                 {/* QR Code */}
@@ -242,10 +242,10 @@ const SecuritySettings = () => {
                   <div className="bg-white p-4 rounded-xl mb-3">
                     <img src={setupData.qr_code} alt="2FA QR Code" className="w-48 h-48" data-testid="2fa-qr-code" />
                   </div>
-                  <p className="text-gray-500 text-xs text-center max-w-[250px]">
+                  <p className="text-slate-500 text-xs text-center max-w-[250px]">
                     {t('security.manual_key')}
                   </p>
-                  <code className="mt-1 text-xs bg-[#0a0f1a] text-blue-400 px-3 py-1.5 rounded border border-gray-700 select-all" data-testid="2fa-secret-key">
+                  <code className="mt-1 text-xs bg-cream-100 text-blue-400 px-3 py-1.5 rounded border border-slate-200 select-all" data-testid="2fa-secret-key">
                     {setupData.secret}
                   </code>
                 </div>
@@ -255,22 +255,22 @@ const SecuritySettings = () => {
                   <h3 className="text-navy-900 font-semibold mb-2 flex items-center gap-2">
                     <KeyRound className="w-4 h-4 text-yellow-400" /> {t('security.backup_codes')}
                   </h3>
-                  <p className="text-gray-400 text-xs mb-3">{t('security.backup_desc')}</p>
+                  <p className="text-slate-500 text-xs mb-3">{t('security.backup_desc')}</p>
                   <div className="grid grid-cols-2 gap-2 mb-3" data-testid="backup-codes-list">
                     {backupCodes.map((code, i) => (
-                      <div key={i} className="bg-[#0a0f1a] border border-gray-700 rounded px-3 py-1.5 text-sm font-mono text-gray-300">{code}</div>
+                      <div key={i} className="bg-cream-100 border border-slate-200 rounded px-3 py-1.5 text-sm font-mono text-slate-500">{code}</div>
                     ))}
                   </div>
-                  <Button onClick={copyBackupCodes} variant="outline" size="sm" className="border-gray-700 text-gray-300 hover:bg-gray-800" data-testid="copy-backup-codes">
+                  <Button onClick={copyBackupCodes} variant="outline" size="sm" className="border-slate-200 text-slate-500 hover:bg-gray-800" data-testid="copy-backup-codes">
                     <Copy className="w-3 h-3 mr-2" /> {t('security.copy_all')}
                   </Button>
                 </div>
               </div>
 
               {/* Verify Step */}
-              <div className="mt-8 pt-6 border-t border-gray-800">
+              <div className="mt-8 pt-6 border-t border-slate-200">
                 <h3 className="text-navy-900 font-semibold mb-2">{t('security.verify_setup')}</h3>
-                <p className="text-gray-400 text-sm mb-4">{t('security.verify_desc')}</p>
+                <p className="text-slate-500 text-sm mb-4">{t('security.verify_desc')}</p>
                 <form onSubmit={verifySetup} className="flex flex-col items-center gap-4" data-testid="2fa-verify-setup-form">
                   <div className="flex gap-2" onPaste={handleCodePaste}>
                     {verifyCode.map((digit, index) => (
@@ -283,14 +283,14 @@ const SecuritySettings = () => {
                         value={digit}
                         onChange={(e) => handleCodeChange(index, e.target.value)}
                         onKeyDown={(e) => handleCodeKeyDown(index, e)}
-                        className="w-12 h-14 text-center text-xl font-bold bg-[#0a0f1a] border border-gray-700 rounded-lg text-navy-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                        className="w-12 h-14 text-center text-xl font-bold bg-cream-100 border border-slate-200 rounded-lg text-navy-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
                         disabled={actionLoading}
                         data-testid={`2fa-setup-code-input-${index}`}
                       />
                     ))}
                   </div>
                   <div className="flex gap-3">
-                    <Button type="button" variant="ghost" onClick={() => { setStep('status'); setSetupData(null); setVerifyCode(['','','','','','']); }} className="text-gray-400" data-testid="2fa-setup-cancel">
+                    <Button type="button" variant="ghost" onClick={() => { setStep('status'); setSetupData(null); setVerifyCode(['','','','','','']); }} className="text-slate-500" data-testid="2fa-setup-cancel">
                       {t('common.cancel')}
                     </Button>
                     <Button type="submit" className="bg-blue-600 hover:bg-blue-700" disabled={actionLoading || verifyCode.join('').length < 6} data-testid="2fa-setup-verify">
@@ -305,7 +305,7 @@ const SecuritySettings = () => {
 
         {/* Disable Step */}
         {step === 'disable' && (
-          <Card className="bg-[#1a2332] border-gray-800" data-testid="2fa-disable-card">
+          <Card className="bg-white border-slate-200" data-testid="2fa-disable-card">
             <CardContent className="p-8">
               <div className="flex items-start gap-4 mb-6">
                 <div className="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -313,7 +313,7 @@ const SecuritySettings = () => {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-navy-900 mb-1">{t('security.disable_title')}</h2>
-                  <p className="text-gray-400 text-sm">{t('security.disable_desc')}</p>
+                  <p className="text-slate-500 text-sm">{t('security.disable_desc')}</p>
                 </div>
               </div>
 
@@ -325,12 +325,12 @@ const SecuritySettings = () => {
                       type={showPassword ? 'text' : 'password'}
                       value={disablePassword}
                       onChange={(e) => setDisablePassword(e.target.value)}
-                      className="bg-[#0a0f1a] border-gray-700 text-navy-900 pr-10"
+                      className="bg-cream-100 border-slate-200 text-navy-900 pr-10"
                       placeholder="Enter your password"
                       required
                       data-testid="disable-2fa-password"
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-navy-900">
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-navy-900">
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
@@ -341,7 +341,7 @@ const SecuritySettings = () => {
                     type="text"
                     value={disableCode}
                     onChange={(e) => setDisableCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    className="bg-[#0a0f1a] border-gray-700 text-navy-900"
+                    className="bg-cream-100 border-slate-200 text-navy-900"
                     placeholder="Enter 6-digit code"
                     required
                     inputMode="numeric"
@@ -349,7 +349,7 @@ const SecuritySettings = () => {
                   />
                 </div>
                 <div className="flex gap-3 pt-2">
-                  <Button type="button" variant="ghost" onClick={() => { setStep('status'); setDisablePassword(''); setDisableCode(''); }} className="text-gray-400" data-testid="disable-2fa-cancel">
+                  <Button type="button" variant="ghost" onClick={() => { setStep('status'); setDisablePassword(''); setDisableCode(''); }} className="text-slate-500" data-testid="disable-2fa-cancel">
                     {t('common.cancel')}
                   </Button>
                   <Button type="submit" className="bg-red-600 hover:bg-red-700" disabled={actionLoading || !disablePassword || disableCode.length < 6} data-testid="disable-2fa-confirm">
@@ -363,22 +363,22 @@ const SecuritySettings = () => {
 
         {/* Backup codes modal (after regeneration) */}
         {showBackupCodes && backupCodes.length > 0 && step === 'status' && (
-          <Card className="bg-[#1a2332] border-gray-800 mt-6" data-testid="new-backup-codes-card">
+          <Card className="bg-white border-slate-200 mt-6" data-testid="new-backup-codes-card">
             <CardContent className="p-8">
               <h3 className="text-lg font-bold text-navy-900 mb-2 flex items-center gap-2">
                 <KeyRound className="w-5 h-5 text-yellow-400" /> {t('security.new_backup')}
               </h3>
-              <p className="text-gray-400 text-sm mb-4">{t('security.new_backup_desc')}</p>
+              <p className="text-slate-500 text-sm mb-4">{t('security.new_backup_desc')}</p>
               <div className="grid grid-cols-2 gap-2 mb-4" data-testid="new-backup-codes-list">
                 {backupCodes.map((code, i) => (
-                  <div key={i} className="bg-[#0a0f1a] border border-gray-700 rounded px-3 py-1.5 text-sm font-mono text-gray-300">{code}</div>
+                  <div key={i} className="bg-cream-100 border border-slate-200 rounded px-3 py-1.5 text-sm font-mono text-slate-500">{code}</div>
                 ))}
               </div>
               <div className="flex gap-3">
-                <Button onClick={copyBackupCodes} variant="outline" size="sm" className="border-gray-700 text-gray-300 hover:bg-gray-800">
+                <Button onClick={copyBackupCodes} variant="outline" size="sm" className="border-slate-200 text-slate-500 hover:bg-gray-800">
                   <Copy className="w-3 h-3 mr-2" /> Copy All
                 </Button>
-                <Button onClick={() => setShowBackupCodes(false)} variant="ghost" size="sm" className="text-gray-400">
+                <Button onClick={() => setShowBackupCodes(false)} variant="ghost" size="sm" className="text-slate-500">
                   {t('security.dismiss')}
                 </Button>
               </div>

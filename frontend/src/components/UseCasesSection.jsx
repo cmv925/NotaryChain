@@ -49,13 +49,13 @@ const useCases = [
 
 const UseCasesSection = () => {
   return (
-    <section className="py-24 bg-[#0a0f1a]">
+    <section className="py-24 bg-cream-100">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Beyond Traditional Notarization
           </h2>
-          <p className="text-gray-400 text-lg max-w-3xl mx-auto">
+          <p className="text-slate-500 text-lg max-w-3xl mx-auto">
             Unlock new revenue streams and serve diverse industries with blockchain-powered
             digital trust services
           </p>
@@ -67,7 +67,7 @@ const UseCasesSection = () => {
             return (
               <Card
                 key={index}
-                className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800 hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 group"
+                className="bg-gradient-to-br from-white to-cream-100 border border-slate-200 hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 group"
               >
                 <CardContent className="p-6">
                   <div className="mb-4">
@@ -76,7 +76,7 @@ const UseCasesSection = () => {
                     </div>
                   </div>
                   <h3 className="text-xl font-semibold text-white mb-3">{useCase.title}</h3>
-                  <p className="text-gray-400 leading-relaxed mb-4 text-sm">
+                  <p className="text-slate-500 leading-relaxed mb-4 text-sm">
                     {useCase.description}
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -101,7 +101,7 @@ const UseCasesSection = () => {
             <h3 className="text-2xl font-bold text-white mb-3">
               Ready to Expand Your Services?
             </h3>
-            <p className="text-gray-400 mb-6 max-w-2xl">
+            <p className="text-slate-500 mb-6 max-w-2xl">
               Join thousands of professionals who are transforming their notary practice with
               blockchain technology
             </p>

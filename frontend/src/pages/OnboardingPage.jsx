@@ -92,7 +92,7 @@ const OnboardingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1825] flex items-center justify-center p-4" data-testid="onboarding-page">
+    <div className="min-h-screen bg-cream-100 flex items-center justify-center p-4" data-testid="onboarding-page">
       <div className="w-full max-w-2xl">
         {/* Progress */}
         <div className="flex items-center gap-2 mb-8 justify-center">
@@ -101,7 +101,7 @@ const OnboardingPage = () => {
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
                 i < step ? 'bg-coral-500 text-navy-900' :
                 i === step ? 'bg-blue-600 text-navy-900 ring-4 ring-blue-600/20' :
-                'bg-gray-800 text-gray-500'
+                'bg-gray-800 text-slate-500'
               }`}>
                 {i < step ? <CheckCircle className="w-4 h-4" /> : i + 1}
               </div>
@@ -113,13 +113,13 @@ const OnboardingPage = () => {
         </div>
 
         {/* Card */}
-        <div className="bg-[#1a2332] border border-gray-800 rounded-2xl p-8 shadow-2xl shadow-black/30">
+        <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-2xl shadow-black/30">
           <div className="text-center mb-8">
             <div className={`w-14 h-14 rounded-xl bg-${currentStep.color}-500/10 flex items-center justify-center mx-auto mb-4`}>
               <currentStep.icon className={`w-7 h-7 text-${currentStep.color}-400`} />
             </div>
             <h2 className="text-2xl font-bold text-navy-900 mb-2">{currentStep.title}</h2>
-            <p className="text-gray-400">{currentStep.subtitle}</p>
+            <p className="text-slate-500">{currentStep.subtitle}</p>
           </div>
 
           {/* Step: Welcome */}
@@ -131,9 +131,9 @@ const OnboardingPage = () => {
                   { icon: Cpu, label: 'AI Powered', color: 'purple' },
                   { icon: Fingerprint, label: 'Biometric ID', color: 'emerald' },
                 ].map((f, i) => (
-                  <div key={i} className="bg-[#0a0f1a] rounded-xl p-4 text-center border border-gray-800">
+                  <div key={i} className="bg-cream-100 rounded-xl p-4 text-center border border-slate-200">
                     <f.icon className={`w-6 h-6 text-${f.color}-400 mx-auto mb-2`} />
-                    <p className="text-gray-300 text-sm">{f.label}</p>
+                    <p className="text-slate-500 text-sm">{f.label}</p>
                   </div>
                 ))}
               </div>
@@ -153,16 +153,16 @@ const OnboardingPage = () => {
                   className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all text-left ${
                     selectedRole === opt.value
                       ? 'border-blue-500 bg-blue-500/10'
-                      : 'border-gray-800 bg-[#0a0f1a] hover:border-gray-700'
+                      : 'border-slate-200 bg-cream-100 hover:border-slate-200'
                   }`}
                   data-testid={`role-${opt.value}`}
                 >
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${selectedRole === opt.value ? 'bg-blue-500/20' : 'bg-gray-800'}`}>
-                    <opt.icon className={`w-5 h-5 ${selectedRole === opt.value ? 'text-blue-400' : 'text-gray-500'}`} />
+                    <opt.icon className={`w-5 h-5 ${selectedRole === opt.value ? 'text-blue-400' : 'text-slate-500'}`} />
                   </div>
                   <div className="flex-1">
                     <p className="text-navy-900 font-medium">{opt.label}</p>
-                    <p className="text-gray-500 text-sm">{opt.desc}</p>
+                    <p className="text-slate-500 text-sm">{opt.desc}</p>
                   </div>
                   {selectedRole === opt.value && <CheckCircle className="w-5 h-5 text-blue-400" />}
                 </button>
@@ -177,15 +177,15 @@ const OnboardingPage = () => {
           {step === 2 && (
             <div className="space-y-3">
               {features.map((f, i) => (
-                <div key={i} className="flex items-center gap-4 p-4 rounded-xl border border-gray-800 bg-[#0a0f1a]">
+                <div key={i} className="flex items-center gap-4 p-4 rounded-xl border border-slate-200 bg-cream-100">
                   <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0">
                     <f.icon className="w-5 h-5 text-blue-400" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-navy-900 font-medium text-sm">{f.title}</p>
-                    <p className="text-gray-500 text-xs">{f.desc}</p>
+                    <p className="text-slate-500 text-xs">{f.desc}</p>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
+                  <ChevronRight className="w-4 h-4 text-slate-600 flex-shrink-0" />
                 </div>
               ))}
               <Button onClick={() => setStep(3)} className="w-full bg-blue-600 hover:bg-blue-500 py-5 text-base mt-4">
@@ -200,17 +200,17 @@ const OnboardingPage = () => {
               <div className="w-20 h-20 rounded-full bg-coral-500/10 flex items-center justify-center mx-auto">
                 <CheckCircle className="w-10 h-10 text-coral-600" />
               </div>
-              <p className="text-gray-400">Your workspace is ready. Jump into your dashboard or explore a feature.</p>
+              <p className="text-slate-500">Your workspace is ready. Jump into your dashboard or explore a feature.</p>
               <div className="grid grid-cols-2 gap-3">
                 {features.slice(0, 2).map((f, i) => (
                   <button
                     key={i}
                     onClick={() => navigate(f.path)}
-                    className="p-4 rounded-xl border border-gray-800 bg-[#0a0f1a] hover:border-blue-500/50 transition-all text-left"
+                    className="p-4 rounded-xl border border-slate-200 bg-cream-100 hover:border-blue-500/50 transition-all text-left"
                   >
                     <f.icon className="w-5 h-5 text-blue-400 mb-2" />
                     <p className="text-navy-900 text-sm font-medium">{f.title}</p>
-                    <p className="text-gray-500 text-xs mt-1">{f.desc}</p>
+                    <p className="text-slate-500 text-xs mt-1">{f.desc}</p>
                   </button>
                 ))}
               </div>

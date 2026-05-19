@@ -69,7 +69,7 @@ export default function PublicAuditTrail() {
   }, []);
 
   if (loading) return (
-    <div className="min-h-screen bg-[#0a0f1a] flex items-center justify-center">
+    <div className="min-h-screen bg-cream-100 flex items-center justify-center">
       <div className="animate-spin w-8 h-8 border-2 border-sky-500 border-t-transparent rounded-full" />
     </div>
   );
@@ -77,7 +77,7 @@ export default function PublicAuditTrail() {
   const stats = data?.platform_stats || {};
 
   return (
-    <div className="min-h-screen bg-[#0a0f1a]" data-testid="public-audit-trail">
+    <div className="min-h-screen bg-cream-100" data-testid="public-audit-trail">
       <div className="max-w-5xl mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-10">

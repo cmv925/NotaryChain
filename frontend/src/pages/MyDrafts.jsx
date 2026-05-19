@@ -57,7 +57,7 @@ const MyDrafts = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       <div className="pt-24 sm:pt-28 pb-16 sm:pb-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -65,7 +65,7 @@ const MyDrafts = () => {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-navy-900" data-testid="my-drafts-title">My Drafts</h1>
-              <p className="text-gray-400 text-sm mt-1">Resume your saved template drafts</p>
+              <p className="text-slate-500 text-sm mt-1">Resume your saved template drafts</p>
             </div>
             <Button onClick={() => navigate('/templates')} className="bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="browse-templates-btn">
               Browse Templates
@@ -75,11 +75,11 @@ const MyDrafts = () => {
           {loading ? (
             <div className="text-center py-20"><Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto" /></div>
           ) : drafts.length === 0 ? (
-            <Card className="bg-[#1a2332] border-gray-800">
+            <Card className="bg-white border-slate-200">
               <CardContent className="p-10 text-center">
-                <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-400 mb-2">No drafts yet</p>
-                <p className="text-gray-500 text-sm mb-4">Start from a template and save your progress as a draft.</p>
+                <FileText className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                <p className="text-slate-500 mb-2">No drafts yet</p>
+                <p className="text-slate-500 text-sm mb-4">Start from a template and save your progress as a draft.</p>
                 <Button onClick={() => navigate('/templates')} className="bg-blue-600 hover:bg-blue-700 text-navy-900">
                   Browse Templates
                 </Button>
@@ -88,14 +88,14 @@ const MyDrafts = () => {
           ) : (
             <div className="space-y-3" data-testid="drafts-list">
               {drafts.map((draft) => (
-                <Card key={draft.id} className="bg-[#1a2332] border-gray-800 hover:border-gray-700 transition-all" data-testid={`draft-${draft.id}`}>
+                <Card key={draft.id} className="bg-white border-slate-200 hover:border-slate-200 transition-all" data-testid={`draft-${draft.id}`}>
                   <CardContent className="p-4 flex items-center gap-4">
                     <div className="w-10 h-10 rounded-lg bg-blue-500/15 flex items-center justify-center flex-shrink-0">
                       <FileText className="w-5 h-5 text-blue-400" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-navy-900 font-medium text-sm truncate">{draft.name}</p>
-                      <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+                      <div className="flex items-center gap-3 text-xs text-slate-500 mt-0.5">
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           {new Date(draft.updated_at).toLocaleDateString()}
@@ -120,7 +120,7 @@ const MyDrafts = () => {
                       </Button>
                       <button
                         onClick={() => handleDelete(draft.id)}
-                        className="text-gray-500 hover:text-red-400 p-1.5"
+                        className="text-slate-500 hover:text-red-400 p-1.5"
                         data-testid={`delete-draft-${draft.id}`}
                       >
                         <Trash2 className="w-4 h-4" />

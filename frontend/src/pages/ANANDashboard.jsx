@@ -278,8 +278,8 @@ export default function ANANDashboard() {
   // ═══════════════════════════════════════════════════════
   if (view === 'list' || !ceremonyId) {
     return (
-      <div className="min-h-screen bg-[#060a12] text-navy-900">
-        <div className="bg-[#0a0f1a] border-b border-[#1a2540] sticky top-0 z-20">
+      <div className="min-h-screen bg-navy-900 text-navy-900">
+        <div className="bg-cream-100 border-b border-slate-200 sticky top-0 z-20">
           <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center">
@@ -313,7 +313,7 @@ export default function ANANDashboard() {
 
           {/* Bond Status */}
           {bond && (
-            <Card className="bg-[#0d1420] border-[#1a2540] mb-6" data-testid="anan-bond-status">
+            <Card className="bg-cream-100 border-slate-200 mb-6" data-testid="anan-bond-status">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -326,7 +326,7 @@ export default function ANANDashboard() {
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <div className="w-48 h-2 bg-[#1a2540] rounded-full overflow-hidden">
+                    <div className="w-48 h-2 bg-white rounded-full overflow-hidden">
                       <div className={`h-full rounded-full transition-all ${bond.health === 'healthy' ? 'bg-coral-500' : bond.health === 'warning' ? 'bg-coral-500' : 'bg-red-500'}`} style={{ width: `${bond.health_pct}%` }} />
                     </div>
                     <span className={`text-xs font-bold ${bond.health === 'healthy' ? 'text-coral-600' : bond.health === 'warning' ? 'text-coral-600' : 'text-red-400'}`}>{bond.health_pct}%</span>
@@ -334,7 +334,7 @@ export default function ANANDashboard() {
                 </div>
                 {/* On-Chain Status */}
                 {bond.on_chain && (
-                  <div className="mt-3 pt-3 border-t border-[#1a2540] flex items-center justify-between">
+                  <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Blocks className="w-3.5 h-3.5 text-coral-600" />
                       <span className="text-[10px] text-slate-500 uppercase tracking-wider">On-Chain Ledger</span>
@@ -351,7 +351,7 @@ export default function ANANDashboard() {
                       {bond.on_chain.network && (
                         <span className="text-[10px] text-coral-600 font-bold uppercase">{bond.on_chain.network}</span>
                       )}
-                      <Button size="sm" variant="outline" className="border-[#1a2540] text-slate-600 text-[10px] h-6"
+                      <Button size="sm" variant="outline" className="border-slate-200 text-slate-600 text-[10px] h-6"
                         onClick={async () => {
                           try {
                             const res = await axios.get(`${API}/anan/bond/verify`, { headers });
@@ -376,7 +376,7 @@ export default function ANANDashboard() {
           {reputation && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
               {/* Reputation */}
-              <Card className="bg-[#0d1420] border-[#1a2540]" data-testid="anan-reputation">
+              <Card className="bg-cream-100 border-slate-200" data-testid="anan-reputation">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
@@ -395,7 +395,7 @@ export default function ANANDashboard() {
                       return (
                         <div key={agent} className="flex items-center gap-3 text-xs" data-testid={`anan-rep-${agent}`}>
                           <span className="text-slate-600 w-14 capitalize">{agent}</span>
-                          <div className="flex-1 h-1.5 bg-[#1a2540] rounded-full overflow-hidden">
+                          <div className="flex-1 h-1.5 bg-white rounded-full overflow-hidden">
                             <div className="h-full bg-violet-500 rounded-full" style={{ width: `${rep.all_time.accuracy}%` }} />
                           </div>
                           <span className="text-navy-900 font-mono w-10 text-right">{rep.all_time.accuracy}%</span>
@@ -409,7 +409,7 @@ export default function ANANDashboard() {
               </Card>
 
               {/* Fraud Intel Link */}
-              <Card className="bg-[#0d1420] border-[#1a2540] cursor-pointer hover:border-red-500/30 transition-colors"
+              <Card className="bg-cream-100 border-slate-200 cursor-pointer hover:border-red-500/30 transition-colors"
                 onClick={() => navigate('/fraud-intelligence')} data-testid="anan-fraud-link">
                 <CardContent className="p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -431,7 +431,7 @@ export default function ANANDashboard() {
 
           {/* Create Form */}
           {showCreate && (
-            <Card className="bg-[#0d1420] border-cyan-500/30 mb-6" data-testid="anan-create-form">
+            <Card className="bg-cream-100 border-cyan-500/30 mb-6" data-testid="anan-create-form">
               <CardContent className="p-6">
                 <h2 className="text-navy-900 font-bold text-lg mb-4 flex items-center gap-2">
                   <Zap className="w-5 h-5 text-coral-600" /> New ANAN Ceremony
@@ -439,15 +439,15 @@ export default function ANANDashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="text-slate-600 text-xs block mb-1">Document Name *</label>
-                    <Input value={form.document_name} onChange={e => setForm(f => ({ ...f, document_name: e.target.value }))} placeholder="e.g. Affidavit of Identity" className="bg-[#060a12] border-[#1a2540] text-navy-900" data-testid="anan-doc-name" />
+                    <Input value={form.document_name} onChange={e => setForm(f => ({ ...f, document_name: e.target.value }))} placeholder="e.g. Affidavit of Identity" className="bg-navy-900 border-slate-200 text-navy-900" data-testid="anan-doc-name" />
                   </div>
                   <div>
                     <label className="text-slate-600 text-xs block mb-1">Signer Name *</label>
-                    <Input value={form.signer_name} onChange={e => setForm(f => ({ ...f, signer_name: e.target.value }))} placeholder="e.g. John Smith" className="bg-[#060a12] border-[#1a2540] text-navy-900" data-testid="anan-signer-name" />
+                    <Input value={form.signer_name} onChange={e => setForm(f => ({ ...f, signer_name: e.target.value }))} placeholder="e.g. John Smith" className="bg-navy-900 border-slate-200 text-navy-900" data-testid="anan-signer-name" />
                   </div>
                   <div>
                     <label className="text-slate-600 text-xs block mb-1">Document Type</label>
-                    <select value={form.document_type} onChange={e => setForm(f => ({ ...f, document_type: e.target.value }))} className="w-full px-3 py-2 bg-[#060a12] border border-[#1a2540] text-navy-900 rounded-md text-sm" data-testid="anan-doc-type">
+                    <select value={form.document_type} onChange={e => setForm(f => ({ ...f, document_type: e.target.value }))} className="w-full px-3 py-2 bg-navy-900 border border-slate-200 text-navy-900 rounded-md text-sm" data-testid="anan-doc-type">
                       <option value="affidavit">Affidavit</option>
                       <option value="power_of_attorney">Power of Attorney</option>
                       <option value="deed">Deed</option>
@@ -458,7 +458,7 @@ export default function ANANDashboard() {
                   </div>
                   <div>
                     <label className="text-slate-600 text-xs block mb-1">Jurisdiction</label>
-                    <select value={form.jurisdiction} onChange={e => setForm(f => ({ ...f, jurisdiction: e.target.value }))} className="w-full px-3 py-2 bg-[#060a12] border border-[#1a2540] text-navy-900 rounded-md text-sm" data-testid="anan-jurisdiction">
+                    <select value={form.jurisdiction} onChange={e => setForm(f => ({ ...f, jurisdiction: e.target.value }))} className="w-full px-3 py-2 bg-navy-900 border border-slate-200 text-navy-900 rounded-md text-sm" data-testid="anan-jurisdiction">
                       <option value="US-FL">Florida (FL)</option>
                       <option value="US-TX">Texas (TX)</option>
                       <option value="US-VA">Virginia (VA)</option>
@@ -475,7 +475,7 @@ export default function ANANDashboard() {
                     {actionLoading === 'create' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Zap className="w-4 h-4 mr-2" />}
                     Initialize ANAN Protocol
                   </Button>
-                  <Button variant="outline" onClick={() => setShowCreate(false)} className="border-[#1a2540] text-slate-600">Cancel</Button>
+                  <Button variant="outline" onClick={() => setShowCreate(false)} className="border-slate-200 text-slate-600">Cancel</Button>
                 </div>
               </CardContent>
             </Card>
@@ -489,7 +489,7 @@ export default function ANANDashboard() {
               </h3>
               <div className="space-y-2" data-testid="anan-escalation-queue">
                 {escalations.map((esc) => (
-                  <Card key={esc.escalation_id} className="bg-[#0d1420] border-amber-500/20">
+                  <Card key={esc.escalation_id} className="bg-cream-100 border-amber-500/20">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
                         <p className="text-navy-900 text-sm font-medium">{esc.ceremony_context?.document_name || 'Unknown'}</p>
@@ -519,7 +519,7 @@ export default function ANANDashboard() {
           {loading ? (
             <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 text-coral-600 animate-spin" /></div>
           ) : ceremonies.length === 0 ? (
-            <Card className="bg-[#0d1420] border-[#1a2540]">
+            <Card className="bg-cream-100 border-slate-200">
               <CardContent className="p-12 text-center">
                 <Brain className="w-14 h-14 text-slate-700 mx-auto mb-4" />
                 <h3 className="text-navy-900 font-bold text-lg mb-2">No ANAN Ceremonies Yet</h3>
@@ -532,7 +532,7 @@ export default function ANANDashboard() {
           ) : (
             <div className="space-y-2" data-testid="anan-ceremony-list">
               {ceremonies.map((c) => (
-                <Card key={c.ceremony_id} className="bg-[#0d1420] border-[#1a2540] hover:border-cyan-500/30 transition-colors cursor-pointer"
+                <Card key={c.ceremony_id} className="bg-cream-100 border-slate-200 hover:border-cyan-500/30 transition-colors cursor-pointer"
                   onClick={() => navigate(`/anan/${c.ceremony_id}`)} data-testid={`anan-card-${c.ceremony_id}`}>
                   <CardContent className="p-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -565,7 +565,7 @@ export default function ANANDashboard() {
   //  DETAIL VIEW
   // ═══════════════════════════════════════════════════════
   if (!current) {
-    return <div className="min-h-screen bg-[#060a12] flex items-center justify-center"><Loader2 className="w-8 h-8 text-coral-600 animate-spin" /></div>;
+    return <div className="min-h-screen bg-navy-900 flex items-center justify-center"><Loader2 className="w-8 h-8 text-coral-600 animate-spin" /></div>;
   }
 
   const c = current;
@@ -574,9 +574,9 @@ export default function ANANDashboard() {
   const canExecute = c.status === 'pending' || c.status === 'escalated';
 
   return (
-    <div className="min-h-screen bg-[#060a12] text-navy-900">
+    <div className="min-h-screen bg-navy-900 text-navy-900">
       {/* Header */}
-      <div className="bg-[#0a0f1a] border-b border-[#1a2540] sticky top-0 z-20">
+      <div className="bg-cream-100 border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center">
@@ -596,7 +596,7 @@ export default function ANANDashboard() {
 
         {/* Execute Actions */}
         {canExecute && (
-          <Card className="bg-[#0d1420] border-cyan-500/20 mb-6" data-testid="anan-execute-panel">
+          <Card className="bg-cream-100 border-cyan-500/20 mb-6" data-testid="anan-execute-panel">
             <CardContent className="p-4 flex items-center justify-between">
               <div>
                 <p className="text-navy-900 font-semibold text-sm">Ready to Execute Blind Scoring Protocol</p>
@@ -609,7 +609,7 @@ export default function ANANDashboard() {
                   {streaming ? 'Scoring...' : 'Execute (Live Stream)'}
                 </Button>
                 <Button onClick={handleExecute} disabled={streaming || actionLoading === 'execute'} variant="outline"
-                  className="border-[#1a2540] text-slate-600 hover:text-navy-900" data-testid="anan-execute-btn">
+                  className="border-slate-200 text-slate-600 hover:text-navy-900" data-testid="anan-execute-btn">
                   {actionLoading === 'execute' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Zap className="w-4 h-4 mr-2" />}
                   Execute (Instant)
                 </Button>
@@ -670,7 +670,7 @@ export default function ANANDashboard() {
                   return (
                     <div key={agent} className="flex items-center gap-3 text-xs">
                       <span className="text-slate-600 w-16 capitalize">{agent}</span>
-                      <div className="flex-1 h-2 bg-[#1a2540] rounded-full overflow-hidden">
+                      <div className="flex-1 h-2 bg-white rounded-full overflow-hidden">
                         <div className={`h-full ${colorCls} rounded-full transition-all duration-700`} style={{ width: `${score}%` }} />
                       </div>
                       <span className="text-navy-900 font-mono w-8 text-right">{score}</span>
@@ -685,7 +685,7 @@ export default function ANANDashboard() {
 
         {/* Blockchain Seal */}
         {c.blockchain_seal && (
-          <Card className="bg-[#0d1420] border-[#1a2540] mb-6" data-testid="anan-blockchain-seal">
+          <Card className="bg-cream-100 border-slate-200 mb-6" data-testid="anan-blockchain-seal">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-navy-900 font-bold text-sm flex items-center gap-2"><Blocks className="w-4 h-4 text-coral-600" /> Blockchain Seal</h3>
@@ -714,7 +714,7 @@ export default function ANANDashboard() {
         {/* Badge Embed Modal */}
         {showBadge && badgeData && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowBadge(false)}>
-            <Card className="bg-[#0d1420] border-coral-200 max-w-2xl w-full max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()} data-testid="anan-badge-modal">
+            <Card className="bg-cream-100 border-coral-200 max-w-2xl w-full max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()} data-testid="anan-badge-modal">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-navy-900 font-bold text-lg flex items-center gap-2"><Shield className="w-5 h-5 text-coral-600" /> Shareable Verification Badge</h3>
@@ -723,7 +723,7 @@ export default function ANANDashboard() {
 
                 {/* Preview — sanitize with DOMPurify before injecting; embed_html is
                     server-generated by /api/trustlayer/badge-v2.js, but defense-in-depth */}
-                <div className="mb-4 p-4 bg-white/5 rounded-lg border border-[#1a2540] flex justify-center">
+                <div className="mb-4 p-4 bg-white/5 rounded-lg border border-slate-200 flex justify-center">
                   <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(badgeData.embed_html || '', { USE_PROFILES: { html: true, svg: true } }) }} />
                 </div>
 
@@ -731,13 +731,13 @@ export default function ANANDashboard() {
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-slate-600 text-xs font-bold">Static HTML (Works Everywhere)</label>
-                    <Button size="sm" variant="outline" className="border-[#1a2540] text-slate-600 text-[10px] h-6"
+                    <Button size="sm" variant="outline" className="border-slate-200 text-slate-600 text-[10px] h-6"
                       onClick={() => { navigator.clipboard.writeText(badgeData.embed_html); toast({ title: 'Copied HTML!' }); }}
                       data-testid="badge-copy-html">
                       <Copy className="w-3 h-3 mr-1" /> Copy
                     </Button>
                   </div>
-                  <pre className="bg-[#060a12] border border-[#1a2540] rounded p-3 text-[10px] text-coral-600 font-mono overflow-x-auto max-h-24 whitespace-pre-wrap">
+                  <pre className="bg-navy-900 border border-slate-200 rounded p-3 text-[10px] text-coral-600 font-mono overflow-x-auto max-h-24 whitespace-pre-wrap">
                     {badgeData.embed_html}
                   </pre>
                 </div>
@@ -746,13 +746,13 @@ export default function ANANDashboard() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-slate-600 text-xs font-bold">Dynamic JS Widget (Live Status Updates)</label>
-                    <Button size="sm" variant="outline" className="border-[#1a2540] text-slate-600 text-[10px] h-6"
+                    <Button size="sm" variant="outline" className="border-slate-200 text-slate-600 text-[10px] h-6"
                       onClick={() => { navigator.clipboard.writeText(badgeData.embed_js); toast({ title: 'Copied JS widget!' }); }}
                       data-testid="badge-copy-js">
                       <Copy className="w-3 h-3 mr-1" /> Copy
                     </Button>
                   </div>
-                  <pre className="bg-[#060a12] border border-[#1a2540] rounded p-3 text-[10px] text-coral-600 font-mono overflow-x-auto max-h-24 whitespace-pre-wrap">
+                  <pre className="bg-navy-900 border border-slate-200 rounded p-3 text-[10px] text-coral-600 font-mono overflow-x-auto max-h-24 whitespace-pre-wrap">
                     {badgeData.embed_js}
                   </pre>
                 </div>
@@ -778,7 +778,7 @@ export default function ANANDashboard() {
 
         {/* SSE Event Log */}
         {sseEvents.length > 0 && (
-          <Card className="bg-[#0d1420] border-[#1a2540]" data-testid="anan-event-log">
+          <Card className="bg-cream-100 border-slate-200" data-testid="anan-event-log">
             <CardContent className="p-4">
               <h3 className="text-slate-600 font-bold text-sm mb-3 flex items-center gap-2"><Radio className="w-4 h-4" /> Live Event Stream</h3>
               <div className="space-y-1.5 max-h-60 overflow-y-auto font-mono text-[10px]">
@@ -797,7 +797,7 @@ export default function ANANDashboard() {
         )}
 
         {/* Ceremony Meta */}
-        <Card className="bg-[#0d1420] border-[#1a2540] mt-6" data-testid="anan-ceremony-meta">
+        <Card className="bg-cream-100 border-slate-200 mt-6" data-testid="anan-ceremony-meta">
           <CardContent className="p-4">
             <h3 className="text-slate-600 font-bold text-sm mb-3 flex items-center gap-2"><FileText className="w-4 h-4" /> Ceremony Details</h3>
             <div className="grid grid-cols-2 gap-2 text-xs">
@@ -824,7 +824,7 @@ function AgentScoreCard({ agentKey, config, agent, streaming }) {
   const scoreColor = hasScore ? (agent.score >= 70 ? 'emerald' : agent.score >= 40 ? 'amber' : 'red') : config.color;
 
   return (
-    <Card className={`bg-[#0d1420] transition-all duration-500 ${isRunning ? 'border-blue-500/40 ring-1 ring-blue-500/20' : hasScore && agent.score >= 60 ? 'border-coral-200' : hasScore ? 'border-red-500/30' : 'border-[#1a2540]'}`}
+    <Card className={`bg-cream-100 transition-all duration-500 ${isRunning ? 'border-blue-500/40 ring-1 ring-blue-500/20' : hasScore && agent.score >= 60 ? 'border-coral-200' : hasScore ? 'border-red-500/30' : 'border-slate-200'}`}
       data-testid={`anan-agent-${agentKey}`}>
       <CardContent className="p-5">
         <div className="flex items-center justify-between mb-4">
@@ -843,7 +843,7 @@ function AgentScoreCard({ agentKey, config, agent, streaming }) {
             ) : isRunning ? (
               <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
             ) : (
-              <div className="w-[52px] h-[52px] rounded-full border-2 border-[#1a2540] flex items-center justify-center">
+              <div className="w-[52px] h-[52px] rounded-full border-2 border-slate-200 flex items-center justify-center">
                 <span className="text-slate-600 text-xs">--</span>
               </div>
             )}
@@ -897,7 +897,7 @@ function AgentScoreCard({ agentKey, config, agent, streaming }) {
 
 function StatCard({ label, value, icon: Icon, color }) {
   return (
-    <Card className="bg-[#0d1420] border-[#1a2540]">
+    <Card className="bg-cream-100 border-slate-200">
       <CardContent className="p-3 flex items-center gap-3">
         <div className={`w-8 h-8 rounded-lg bg-${color}-500/10 flex items-center justify-center`}>
           <Icon className={`w-4 h-4 text-${color}-400`} />

@@ -49,7 +49,7 @@ export default function DocComparePage() {
   const toggle = (k) => setExpanded((p) => ({ ...p, [k]: !p[k] }));
 
   return (
-    <div className="min-h-screen bg-[#030712] text-navy-900">
+    <div className="min-h-screen bg-cream-100 text-navy-900">
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-8">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} data-testid="back-btn">
@@ -60,26 +60,26 @@ export default function DocComparePage() {
               <GitCompareArrows className="w-6 h-6 text-coral-600" />
               Document Comparison
             </h1>
-            <p className="text-gray-400 text-sm">AI-powered side-by-side diff analysis</p>
+            <p className="text-slate-500 text-sm">AI-powered side-by-side diff analysis</p>
           </div>
         </div>
 
         {/* Input: two text areas side by side */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-          <Card className="bg-[#0d1b2a] border-gray-800">
+          <Card className="bg-cream-100 border-slate-200">
             <CardHeader className="pb-2">
-              <input value={labelA} onChange={(e) => setLabelA(e.target.value)} className="bg-transparent text-navy-900 text-sm font-semibold border-b border-gray-700 pb-1" data-testid="label-a" />
+              <input value={labelA} onChange={(e) => setLabelA(e.target.value)} className="bg-transparent text-navy-900 text-sm font-semibold border-b border-slate-200 pb-1" data-testid="label-a" />
             </CardHeader>
             <CardContent>
-              <textarea value={textA} onChange={(e) => setTextA(e.target.value)} rows={10} placeholder="Paste original document text..." className="w-full bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-xs text-gray-300 resize-none" data-testid="text-a" />
+              <textarea value={textA} onChange={(e) => setTextA(e.target.value)} rows={10} placeholder="Paste original document text..." className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-500 resize-none" data-testid="text-a" />
             </CardContent>
           </Card>
-          <Card className="bg-[#0d1b2a] border-gray-800">
+          <Card className="bg-cream-100 border-slate-200">
             <CardHeader className="pb-2">
-              <input value={labelB} onChange={(e) => setLabelB(e.target.value)} className="bg-transparent text-navy-900 text-sm font-semibold border-b border-gray-700 pb-1" data-testid="label-b" />
+              <input value={labelB} onChange={(e) => setLabelB(e.target.value)} className="bg-transparent text-navy-900 text-sm font-semibold border-b border-slate-200 pb-1" data-testid="label-b" />
             </CardHeader>
             <CardContent>
-              <textarea value={textB} onChange={(e) => setTextB(e.target.value)} rows={10} placeholder="Paste revised document text..." className="w-full bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-xs text-gray-300 resize-none" data-testid="text-b" />
+              <textarea value={textB} onChange={(e) => setTextB(e.target.value)} rows={10} placeholder="Paste revised document text..." className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-500 resize-none" data-testid="text-b" />
             </CardContent>
           </Card>
         </div>
@@ -93,12 +93,12 @@ export default function DocComparePage() {
         {result && (
           <div className="space-y-4" data-testid="compare-results">
             {/* Summary */}
-            <Card className="bg-[#0d1b2a] border-gray-800">
+            <Card className="bg-cream-100 border-slate-200">
               <CardContent className="pt-5">
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <p className="text-navy-900 font-semibold text-sm">{result.summary}</p>
-                    <p className="text-gray-500 text-xs mt-1">{result.change_count} changes detected</p>
+                    <p className="text-slate-500 text-xs mt-1">{result.change_count} changes detected</p>
                   </div>
                   <Badge className={
                     result.significance === 'major' ? 'bg-red-500/15 text-red-400' :
@@ -106,7 +106,7 @@ export default function DocComparePage() {
                     'bg-green-500/15 text-green-400'
                   }>{result.significance}</Badge>
                 </div>
-                {result.recommendation && <p className="text-gray-400 text-xs">{result.recommendation}</p>}
+                {result.recommendation && <p className="text-slate-500 text-xs">{result.recommendation}</p>}
               </CardContent>
             </Card>
 
@@ -116,7 +116,7 @@ export default function DocComparePage() {
                 {result.changes.map((c, i) => {
                   const Icon = typeIcons[c.type] || RefreshCw;
                   return (
-                    <Card key={i} className={`border ${typeColors[c.type] || 'border-gray-800'}`} data-testid={`change-${i}`}>
+                    <Card key={i} className={`border ${typeColors[c.type] || 'border-slate-200'}`} data-testid={`change-${i}`}>
                       <CardContent className="pt-3 pb-3">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
@@ -124,20 +124,20 @@ export default function DocComparePage() {
                             <span className="text-navy-900 text-sm font-medium">{c.section}</span>
                             <Badge className={`text-[9px] ${impactColors[c.impact] || ''}`}>{c.impact}</Badge>
                           </div>
-                          <Badge variant="outline" className="text-[9px] border-gray-700 text-gray-400">{c.type}</Badge>
+                          <Badge variant="outline" className="text-[9px] border-slate-200 text-slate-500">{c.type}</Badge>
                         </div>
-                        <p className="text-gray-500 text-xs mb-2">{c.explanation}</p>
+                        <p className="text-slate-500 text-xs mb-2">{c.explanation}</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           {c.original && (
                             <div className="bg-red-500/5 rounded p-2 border border-red-500/10">
                               <p className="text-[10px] text-red-400 mb-1">{labelA}:</p>
-                              <p className="text-xs text-gray-300 line-through">{c.original}</p>
+                              <p className="text-xs text-slate-500 line-through">{c.original}</p>
                             </div>
                           )}
                           {c.modified && (
                             <div className="bg-green-500/5 rounded p-2 border border-green-500/10">
                               <p className="text-[10px] text-green-400 mb-1">{labelB}:</p>
-                              <p className="text-xs text-gray-300">{c.modified}</p>
+                              <p className="text-xs text-slate-500">{c.modified}</p>
                             </div>
                           )}
                         </div>
@@ -150,7 +150,7 @@ export default function DocComparePage() {
 
             {/* Legal Implications */}
             {result.legal_implications?.length > 0 && (
-              <Card className="bg-[#0d1b2a] border-gray-800">
+              <Card className="bg-cream-100 border-slate-200">
                 <CardHeader className="pb-2 cursor-pointer" onClick={() => toggle('legal')}>
                   <CardTitle className="text-sm text-navy-900 flex items-center justify-between">
                     <span className="flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-coral-600" /> Legal Implications</span>
@@ -160,7 +160,7 @@ export default function DocComparePage() {
                 {expanded.legal && (
                   <CardContent className="space-y-1">
                     {result.legal_implications.map((l, i) => (
-                      <p key={i} className="text-gray-400 text-xs flex gap-1.5"><span className="text-coral-600">&#8226;</span> {l}</p>
+                      <p key={i} className="text-slate-500 text-xs flex gap-1.5"><span className="text-coral-600">&#8226;</span> {l}</p>
                     ))}
                   </CardContent>
                 )}

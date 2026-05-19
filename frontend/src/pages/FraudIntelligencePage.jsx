@@ -107,12 +107,12 @@ export default function FraudIntelligencePage() {
   );
 
   if (loading) {
-    return <div className="min-h-screen bg-[#060a12] flex items-center justify-center"><Loader2 className="w-8 h-8 text-red-400 animate-spin" /></div>;
+    return <div className="min-h-screen bg-navy-900 flex items-center justify-center"><Loader2 className="w-8 h-8 text-red-400 animate-spin" /></div>;
   }
 
   return (
-    <div className="min-h-screen bg-[#060a12] text-navy-900">
-      <div className="bg-[#0a0f1a] border-b border-[#1a2540] sticky top-0 z-20">
+    <div className="min-h-screen bg-navy-900 text-navy-900">
+      <div className="bg-cream-100 border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center">
@@ -140,7 +140,7 @@ export default function FraudIntelligencePage() {
         )}
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-6 bg-[#0d1420] rounded-lg p-1 w-fit" data-testid="fraud-tabs">
+        <div className="flex gap-1 mb-6 bg-cream-100 rounded-lg p-1 w-fit" data-testid="fraud-tabs">
           <button onClick={() => setTab('patterns')} className={`px-4 py-2 text-xs font-bold rounded ${tab === 'patterns' ? 'bg-red-500/20 text-red-400' : 'text-slate-500 hover:text-navy-900'}`}>
             Fraud Patterns ({patterns.length})
           </button>
@@ -156,7 +156,7 @@ export default function FraudIntelligencePage() {
               <div className="relative flex-1 max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                 <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search patterns..."
-                  className="pl-9 bg-[#0d1420] border-[#1a2540] text-navy-900 text-sm" data-testid="fraud-search" />
+                  className="pl-9 bg-cream-100 border-slate-200 text-navy-900 text-sm" data-testid="fraud-search" />
               </div>
               <Button onClick={() => setShowCreate(true)} className="bg-red-600 hover:bg-red-700 text-navy-900 text-xs" data-testid="fraud-add-btn">
                 <Plus className="w-3 h-3 mr-1" /> Add Pattern
@@ -164,14 +164,14 @@ export default function FraudIntelligencePage() {
             </div>
 
             {showCreate && (
-              <Card className="bg-[#0d1420] border-red-500/20 mb-4" data-testid="fraud-create-form">
+              <Card className="bg-cream-100 border-red-500/20 mb-4" data-testid="fraud-create-form">
                 <CardContent className="p-4">
                   <h3 className="text-navy-900 font-bold text-sm mb-3">New Fraud Pattern</h3>
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     <div>
                       <label className="text-slate-600 text-[10px] block mb-1">Category</label>
                       <select value={form.category} onChange={e => setForm(f => ({...f, category: e.target.value}))}
-                        className="w-full px-3 py-2 bg-[#060a12] border border-[#1a2540] text-navy-900 rounded text-xs" data-testid="fraud-category">
+                        className="w-full px-3 py-2 bg-navy-900 border border-slate-200 text-navy-900 rounded text-xs" data-testid="fraud-category">
                         <option value="identity">Identity</option>
                         <option value="document">Document</option>
                         <option value="biometric">Biometric</option>
@@ -181,7 +181,7 @@ export default function FraudIntelligencePage() {
                     <div>
                       <label className="text-slate-600 text-[10px] block mb-1">Severity</label>
                       <select value={form.severity} onChange={e => setForm(f => ({...f, severity: e.target.value}))}
-                        className="w-full px-3 py-2 bg-[#060a12] border border-[#1a2540] text-navy-900 rounded text-xs" data-testid="fraud-severity">
+                        className="w-full px-3 py-2 bg-navy-900 border border-slate-200 text-navy-900 rounded text-xs" data-testid="fraud-severity">
                         <option value="critical">Critical</option>
                         <option value="high">High</option>
                         <option value="medium">Medium</option>
@@ -190,17 +190,17 @@ export default function FraudIntelligencePage() {
                     </div>
                   </div>
                   <Input value={form.title} onChange={e => setForm(f => ({...f, title: e.target.value}))}
-                    placeholder="Pattern title" className="mb-2 bg-[#060a12] border-[#1a2540] text-navy-900 text-sm" data-testid="fraud-title" />
+                    placeholder="Pattern title" className="mb-2 bg-navy-900 border-slate-200 text-navy-900 text-sm" data-testid="fraud-title" />
                   <textarea value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))}
                     placeholder="Description..." rows={2}
-                    className="w-full px-3 py-2 mb-2 bg-[#060a12] border border-[#1a2540] text-navy-900 rounded text-sm resize-none" data-testid="fraud-desc" />
+                    className="w-full px-3 py-2 mb-2 bg-navy-900 border border-slate-200 text-navy-900 rounded text-sm resize-none" data-testid="fraud-desc" />
                   <Input value={form.indicators} onChange={e => setForm(f => ({...f, indicators: e.target.value}))}
-                    placeholder="Indicators (comma-separated)" className="mb-3 bg-[#060a12] border-[#1a2540] text-navy-900 text-sm" data-testid="fraud-indicators" />
+                    placeholder="Indicators (comma-separated)" className="mb-3 bg-navy-900 border-slate-200 text-navy-900 text-sm" data-testid="fraud-indicators" />
                   <div className="flex gap-2">
                     <Button onClick={handleCreatePattern} disabled={actionLoading === 'create'} className="bg-red-600 hover:bg-red-700 text-xs" data-testid="fraud-submit-btn">
                       {actionLoading === 'create' ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Plus className="w-3 h-3 mr-1" />} Create
                     </Button>
-                    <Button variant="outline" onClick={() => setShowCreate(false)} className="border-[#1a2540] text-slate-600 text-xs">Cancel</Button>
+                    <Button variant="outline" onClick={() => setShowCreate(false)} className="border-slate-200 text-slate-600 text-xs">Cancel</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -211,7 +211,7 @@ export default function FraudIntelligencePage() {
                 const sev = SEVERITY_MAP[p.severity] || SEVERITY_MAP.medium;
                 const CatIcon = CATEGORY_ICONS[p.category] || FileWarning;
                 return (
-                  <Card key={p.pattern_id} className={`bg-[#0d1420] border-[#1a2540] ${!p.active ? 'opacity-50' : ''}`}
+                  <Card key={p.pattern_id} className={`bg-cream-100 border-slate-200 ${!p.active ? 'opacity-50' : ''}`}
                     data-testid={`fraud-pattern-${p.pattern_id}`}>
                     <CardContent className="p-4 flex items-start justify-between gap-4">
                       <div className="flex items-start gap-3 flex-1">
@@ -222,7 +222,7 @@ export default function FraudIntelligencePage() {
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="text-navy-900 font-semibold text-sm">{p.title}</h4>
                             <span className={`px-1.5 py-0.5 text-[9px] font-bold border rounded ${sev.cls}`}>{sev.label}</span>
-                            <span className="px-1.5 py-0.5 text-[9px] text-slate-500 border border-[#1a2540] rounded capitalize">{p.category}</span>
+                            <span className="px-1.5 py-0.5 text-[9px] text-slate-500 border border-slate-200 rounded capitalize">{p.category}</span>
                           </div>
                           <p className="text-slate-600 text-[11px] leading-relaxed mb-1.5">{p.description}</p>
                           {p.indicators?.length > 0 && (
@@ -256,7 +256,7 @@ export default function FraudIntelligencePage() {
         {tab === 'ron' && (
           <div className="space-y-2" data-testid="ron-rule-list">
             {rules.map(r => (
-              <Card key={r.jurisdiction} className="bg-[#0d1420] border-[#1a2540]"
+              <Card key={r.jurisdiction} className="bg-cream-100 border-slate-200"
                 data-testid={`ron-rule-${r.jurisdiction}`}>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between cursor-pointer" onClick={() => setExpandedRule(expandedRule === r.jurisdiction ? null : r.jurisdiction)}>
@@ -280,7 +280,7 @@ export default function FraudIntelligencePage() {
                   </div>
 
                   {expandedRule === r.jurisdiction && (
-                    <div className="mt-3 pt-3 border-t border-[#1a2540] grid grid-cols-2 gap-2 text-[11px]">
+                    <div className="mt-3 pt-3 border-t border-slate-200 grid grid-cols-2 gap-2 text-[11px]">
                       {r.requirements && Object.entries(r.requirements).map(([key, val]) => (
                         <div key={key} className="flex items-center justify-between">
                           <span className="text-slate-500">{key.replace(/_/g, ' ')}</span>
@@ -309,7 +309,7 @@ export default function FraudIntelligencePage() {
 
 function MiniStat({ label, value, color }) {
   return (
-    <Card className="bg-[#0d1420] border-[#1a2540]">
+    <Card className="bg-cream-100 border-slate-200">
       <CardContent className="p-3 text-center">
         <p className={`text-${color}-400 font-bold text-xl`}>{value}</p>
         <p className="text-slate-500 text-[10px]">{label}</p>

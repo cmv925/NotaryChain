@@ -32,7 +32,7 @@ const CATEGORY_COLORS = {
   identity: 'bg-amber-500/15 text-amber-400',
   financial: 'bg-teal-500/15 text-teal-400',
   legal: 'bg-red-500/15 text-red-400',
-  other: 'bg-gray-500/15 text-gray-400',
+  other: 'bg-gray-500/15 text-slate-500',
 };
 
 const formatSize = (bytes) => {
@@ -84,15 +84,15 @@ const UploadModal = ({ orgId, token, onClose, onUploaded }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" data-testid="upload-modal">
-      <div className="bg-[#1a2332] border border-gray-700 rounded-xl max-w-md w-full p-6">
+      <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-white font-bold text-lg">Upload Document</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="text-slate-500 hover:text-white"><X className="w-5 h-5" /></button>
         </div>
         <form onSubmit={handleUpload} className="space-y-4">
           <div
             className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-              file ? 'border-blue-500 bg-blue-500/5' : 'border-gray-700 hover:border-gray-600'
+              file ? 'border-blue-500 bg-blue-500/5' : 'border-slate-200 hover:border-slate-200'
             }`}
             onClick={() => fileRef.current?.click()}
           >
@@ -100,36 +100,36 @@ const UploadModal = ({ orgId, token, onClose, onUploaded }) => {
               <div>
                 <FileText className="w-8 h-8 mx-auto text-blue-400 mb-2" />
                 <p className="text-white text-sm">{file.name}</p>
-                <p className="text-gray-500 text-xs">{formatSize(file.size)}</p>
+                <p className="text-slate-500 text-xs">{formatSize(file.size)}</p>
               </div>
             ) : (
               <div>
-                <Upload className="w-8 h-8 mx-auto text-gray-500 mb-2" />
-                <p className="text-gray-400 text-sm">Click to select a file</p>
-                <p className="text-gray-600 text-xs">Max 25MB</p>
+                <Upload className="w-8 h-8 mx-auto text-slate-500 mb-2" />
+                <p className="text-slate-500 text-sm">Click to select a file</p>
+                <p className="text-slate-600 text-xs">Max 25MB</p>
               </div>
             )}
             <input ref={fileRef} type="file" className="hidden" onChange={(e) => setFile(e.target.files[0])} data-testid="vault-file-input" />
           </div>
           <div>
-            <Label className="text-gray-200 text-sm">Document Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={file?.name || 'Document name'} className="bg-[#0a0f1a] border-gray-700 text-white mt-1" data-testid="vault-doc-name" />
+            <Label className="text-slate-500 text-sm">Document Name</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={file?.name || 'Document name'} className="bg-cream-100 border-slate-200 text-white mt-1" data-testid="vault-doc-name" />
           </div>
           <div>
-            <Label className="text-gray-200 text-sm">Category</Label>
-            <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white mt-1" data-testid="vault-category-select">
+            <Label className="text-slate-500 text-sm">Category</Label>
+            <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white mt-1" data-testid="vault-category-select">
               {Object.entries(CATEGORY_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>{v}</option>
               ))}
             </select>
           </div>
           <div>
-            <Label className="text-gray-200 text-sm">Tags (comma-separated)</Label>
-            <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="e.g., urgent, Q1-2026" className="bg-[#0a0f1a] border-gray-700 text-white mt-1" data-testid="vault-tags-input" />
+            <Label className="text-slate-500 text-sm">Tags (comma-separated)</Label>
+            <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="e.g., urgent, Q1-2026" className="bg-cream-100 border-slate-200 text-white mt-1" data-testid="vault-tags-input" />
           </div>
           <div>
-            <Label className="text-gray-200 text-sm">Description</Label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} placeholder="Brief description..." className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white text-sm mt-1 resize-none" data-testid="vault-description" />
+            <Label className="text-slate-500 text-sm">Description</Label>
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} placeholder="Brief description..." className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white text-sm mt-1 resize-none" data-testid="vault-description" />
           </div>
           <Button type="submit" disabled={uploading || !file} className="w-full bg-blue-600 hover:bg-blue-700 text-white" data-testid="vault-upload-btn">
             {uploading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
@@ -182,36 +182,36 @@ const DocDetailModal = ({ doc, orgId, token, isAdmin, onClose, onDeleted }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" data-testid="doc-detail-modal">
-      <div className="bg-[#1a2332] border border-gray-700 rounded-xl max-w-lg w-full max-h-[85vh] overflow-y-auto">
-        <div className="sticky top-0 bg-[#1a2332] border-b border-gray-800 p-5 flex items-center justify-between">
+      <div className="bg-white border border-slate-200 rounded-xl max-w-lg w-full max-h-[85vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b border-slate-200 p-5 flex items-center justify-between">
           <h2 className="text-white font-bold text-lg truncate pr-4">{doc.name}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white flex-shrink-0"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="text-slate-500 hover:text-white flex-shrink-0"><X className="w-5 h-5" /></button>
         </div>
         <div className="p-5 space-y-5">
           {/* Meta */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-[#0a0f1a] rounded-lg p-3">
-              <p className="text-gray-500 text-xs">Size</p>
+            <div className="bg-cream-100 rounded-lg p-3">
+              <p className="text-slate-500 text-xs">Size</p>
               <p className="text-white text-sm font-medium">{formatSize(doc.file_size)}</p>
             </div>
-            <div className="bg-[#0a0f1a] rounded-lg p-3">
-              <p className="text-gray-500 text-xs">Category</p>
+            <div className="bg-cream-100 rounded-lg p-3">
+              <p className="text-slate-500 text-xs">Category</p>
               <p className="text-white text-sm font-medium">{CATEGORY_LABELS[doc.category] || doc.category}</p>
             </div>
-            <div className="bg-[#0a0f1a] rounded-lg p-3">
-              <p className="text-gray-500 text-xs">Uploaded By</p>
+            <div className="bg-cream-100 rounded-lg p-3">
+              <p className="text-slate-500 text-xs">Uploaded By</p>
               <p className="text-white text-sm font-medium">{doc.uploaded_by_name || doc.uploaded_by_email}</p>
             </div>
-            <div className="bg-[#0a0f1a] rounded-lg p-3">
-              <p className="text-gray-500 text-xs">Uploaded</p>
+            <div className="bg-cream-100 rounded-lg p-3">
+              <p className="text-slate-500 text-xs">Uploaded</p>
               <p className="text-white text-sm font-medium">{new Date(doc.created_at).toLocaleDateString()}</p>
             </div>
           </div>
 
           {doc.description && (
             <div>
-              <p className="text-gray-500 text-xs mb-1">Description</p>
-              <p className="text-gray-300 text-sm">{doc.description}</p>
+              <p className="text-slate-500 text-xs mb-1">Description</p>
+              <p className="text-slate-500 text-sm">{doc.description}</p>
             </div>
           )}
 
@@ -223,7 +223,7 @@ const DocDetailModal = ({ doc, orgId, token, isAdmin, onClose, onDeleted }) => {
             </div>
           )}
 
-          <div className="flex items-center gap-3 text-xs text-gray-500">
+          <div className="flex items-center gap-3 text-xs text-slate-500">
             <span className="flex items-center gap-1"><Eye className="w-3 h-3" /> {doc.view_count} views</span>
             <span className="flex items-center gap-1"><Download className="w-3 h-3" /> {doc.download_count} downloads</span>
           </div>
@@ -244,19 +244,19 @@ const DocDetailModal = ({ doc, orgId, token, isAdmin, onClose, onDeleted }) => {
           {doc.audit_trail?.length > 0 && (
             <div>
               <h3 className="text-white font-semibold text-sm mb-3 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-gray-400" /> Audit Trail
+                <Clock className="w-4 h-4 text-slate-500" /> Audit Trail
               </h3>
               <div className="space-y-2 max-h-48 overflow-y-auto" data-testid="audit-trail">
                 {doc.audit_trail.map((entry) => {
                   const Icon = ACTION_ICONS[entry.action] || Eye;
                   return (
                     <div key={entry.id} className="flex items-start gap-2 text-xs">
-                      <Icon className="w-3.5 h-3.5 text-gray-500 mt-0.5 flex-shrink-0" />
+                      <Icon className="w-3.5 h-3.5 text-slate-500 mt-0.5 flex-shrink-0" />
                       <div>
-                        <span className="text-gray-300">{entry.user_email}</span>
-                        <span className="text-gray-500 mx-1">{entry.action}</span>
-                        {entry.details && <span className="text-gray-600">- {entry.details}</span>}
-                        <p className="text-gray-600">{new Date(entry.timestamp).toLocaleString()}</p>
+                        <span className="text-slate-500">{entry.user_email}</span>
+                        <span className="text-slate-500 mx-1">{entry.action}</span>
+                        {entry.details && <span className="text-slate-600">- {entry.details}</span>}
+                        <p className="text-slate-600">{new Date(entry.timestamp).toLocaleString()}</p>
                       </div>
                     </div>
                   );
@@ -330,17 +330,17 @@ export const OrgVault = ({ orgId, myRole, token, userPerms = [] }) => {
       {/* Stats Bar */}
       {stats && (
         <div className="grid grid-cols-3 gap-3 mb-5">
-          <div className="bg-[#0a0f1a] rounded-lg p-3 text-center">
+          <div className="bg-cream-100 rounded-lg p-3 text-center">
             <p className="text-white text-lg font-bold">{stats.total_documents}</p>
-            <p className="text-gray-500 text-xs">Documents</p>
+            <p className="text-slate-500 text-xs">Documents</p>
           </div>
-          <div className="bg-[#0a0f1a] rounded-lg p-3 text-center">
+          <div className="bg-cream-100 rounded-lg p-3 text-center">
             <p className="text-white text-lg font-bold">{formatSize(stats.total_size_bytes)}</p>
-            <p className="text-gray-500 text-xs">Total Size</p>
+            <p className="text-slate-500 text-xs">Total Size</p>
           </div>
-          <div className="bg-[#0a0f1a] rounded-lg p-3 text-center">
+          <div className="bg-cream-100 rounded-lg p-3 text-center">
             <p className="text-white text-lg font-bold">{Object.keys(stats.categories).length}</p>
-            <p className="text-gray-500 text-xs">Categories</p>
+            <p className="text-slate-500 text-xs">Categories</p>
           </div>
         </div>
       )}
@@ -348,12 +348,12 @@ export const OrgVault = ({ orgId, myRole, token, userPerms = [] }) => {
       {/* Search & Actions */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <Input
             placeholder="Search documents..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-[#0a0f1a] border-gray-700 text-white"
+            className="pl-10 bg-cream-100 border-slate-200 text-white"
             data-testid="vault-search"
           />
         </div>
@@ -371,7 +371,7 @@ export const OrgVault = ({ orgId, myRole, token, userPerms = [] }) => {
             variant={activeCategory === null ? 'default' : 'outline'}
             size="sm"
             onClick={() => setActiveCategory(null)}
-            className={activeCategory === null ? 'bg-blue-600 text-white' : 'border-gray-700 text-gray-400'}
+            className={activeCategory === null ? 'bg-blue-600 text-white' : 'border-slate-200 text-slate-500'}
           >
             All
           </Button>
@@ -381,7 +381,7 @@ export const OrgVault = ({ orgId, myRole, token, userPerms = [] }) => {
               variant={activeCategory === cat ? 'default' : 'outline'}
               size="sm"
               onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
-              className={activeCategory === cat ? 'bg-blue-600 text-white' : 'border-gray-700 text-gray-400'}
+              className={activeCategory === cat ? 'bg-blue-600 text-white' : 'border-slate-200 text-slate-500'}
               data-testid={`vault-filter-${cat}`}
             >
               {CATEGORY_LABELS[cat] || cat}
@@ -392,12 +392,12 @@ export const OrgVault = ({ orgId, myRole, token, userPerms = [] }) => {
 
       {/* Document List */}
       {loading ? (
-        <div className="text-center py-12 text-gray-400"><Loader2 className="w-6 h-6 animate-spin mx-auto" /></div>
+        <div className="text-center py-12 text-slate-500"><Loader2 className="w-6 h-6 animate-spin mx-auto" /></div>
       ) : docs.length === 0 ? (
         <div className="text-center py-12" data-testid="vault-empty">
-          <FolderOpen className="w-10 h-10 text-gray-600 mx-auto mb-2" />
-          <p className="text-gray-400 text-sm">No documents in the vault yet.</p>
-          {canUpload && <p className="text-gray-500 text-xs mt-1">Upload your first document to get started.</p>}
+          <FolderOpen className="w-10 h-10 text-slate-600 mx-auto mb-2" />
+          <p className="text-slate-500 text-sm">No documents in the vault yet.</p>
+          {canUpload && <p className="text-slate-500 text-xs mt-1">Upload your first document to get started.</p>}
         </div>
       ) : (
         <div className="space-y-2" data-testid="vault-docs-list">
@@ -405,7 +405,7 @@ export const OrgVault = ({ orgId, myRole, token, userPerms = [] }) => {
             <div
               key={doc.id}
               onClick={() => openDoc(doc)}
-              className="flex items-center gap-3 p-3 bg-[#0a0f1a] rounded-lg border border-gray-800 hover:border-gray-700 cursor-pointer transition-all"
+              className="flex items-center gap-3 p-3 bg-cream-100 rounded-lg border border-slate-200 hover:border-slate-200 cursor-pointer transition-all"
               data-testid={`vault-doc-${doc.id}`}
             >
               <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${CATEGORY_COLORS[doc.category] || CATEGORY_COLORS.other}`}>
@@ -413,7 +413,7 @@ export const OrgVault = ({ orgId, myRole, token, userPerms = [] }) => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-white text-sm font-medium truncate">{doc.name}</p>
-                <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+                <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                   <span>{formatSize(doc.file_size)}</span>
                   <span>&bull;</span>
                   <span>{CATEGORY_LABELS[doc.category]}</span>
@@ -421,11 +421,11 @@ export const OrgVault = ({ orgId, myRole, token, userPerms = [] }) => {
                   <span>{new Date(doc.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-xs text-gray-600">
+              <div className="flex items-center gap-2 text-xs text-slate-600">
                 {doc.tags?.length > 0 && (
                   <span className="flex items-center gap-0.5"><Tag className="w-3 h-3" /> {doc.tags.length}</span>
                 )}
-                <ChevronRight className="w-4 h-4 text-gray-600" />
+                <ChevronRight className="w-4 h-4 text-slate-600" />
               </div>
             </div>
           ))}

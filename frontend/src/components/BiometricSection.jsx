@@ -42,7 +42,7 @@ const benefits = [
 
 const BiometricSection = () => {
   return (
-    <section className="py-24 bg-gradient-to-br from-[#0f1825] via-[#1a2332] to-[#0f1825]">
+    <section className="py-24 bg-gradient-to-br from-[#0f1825] via-white to-cream-100">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left Side - Steps */}
@@ -53,7 +53,7 @@ const BiometricSection = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Go Beyond Visual Checks. Prove Identity.
             </h2>
-            <p className="text-gray-400 text-lg mb-12">
+            <p className="text-slate-500 text-lg mb-12">
               In an era of deepfakes, simply looking at an ID on a webcam is not enough.
               NotaryChain's™ AI synthesizes facial geometry, voiceprints, and liveness
               detection to create a biometric identity so secure, it can be defended in court.
@@ -73,7 +73,7 @@ const BiometricSection = () => {
                       <h4 className="text-lg font-semibold text-white mb-2">
                         {benefit.title}
                       </h4>
-                      <p className="text-gray-400 leading-relaxed">{benefit.description}</p>
+                      <p className="text-slate-500 leading-relaxed">{benefit.description}</p>
                     </div>
                   </div>
                 );
@@ -83,7 +83,7 @@ const BiometricSection = () => {
 
           {/* Right Side - Biometric Steps */}
           <div>
-            <div className="bg-[#0a0f1a] border border-gray-800 rounded-xl p-8">
+            <div className="bg-cream-100 border border-slate-200 rounded-xl p-8">
               <h3 className="text-2xl font-bold text-white mb-8 text-center">
                 Advanced Biometric Verification
               </h3>
@@ -103,7 +103,7 @@ const BiometricSection = () => {
                             <Icon className="w-5 h-5 text-blue-500" />
                             <h4 className="text-lg font-semibold text-white">{step.title}</h4>
                           </div>
-                          <p className="text-gray-400 text-sm leading-relaxed">
+                          <p className="text-slate-500 text-sm leading-relaxed">
                             {step.description}
                           </p>
                         </div>
@@ -115,8 +115,8 @@ const BiometricSection = () => {
                   );
                 })}
               </div>
-              <div className="mt-8 pt-8 border-t border-gray-800">
-                <p className="text-gray-400 text-center text-sm">
+              <div className="mt-8 pt-8 border-t border-slate-200">
+                <p className="text-slate-500 text-center text-sm">
                   This multi-modal approach creates a forensic-grade identity verification that
                   is nearly impossible to forge.
                 </p>

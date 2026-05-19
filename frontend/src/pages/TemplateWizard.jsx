@@ -28,7 +28,7 @@ const FieldInput = ({ field, value, onChange, onAiSuggest, aiLoading }) => {
     return (
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label className="text-gray-200 text-sm">
+          <Label className="text-slate-500 text-sm">
             {field.label} {field.required && <span className="text-red-400">*</span>}
           </Label>
           {isAiEligible && (
@@ -55,7 +55,7 @@ const FieldInput = ({ field, value, onChange, onAiSuggest, aiLoading }) => {
           onChange={(e) => onChange(field.name, e.target.value)}
           placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}...`}
           rows={4}
-          className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 focus:outline-none resize-none"
+          className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 focus:outline-none resize-none"
           data-testid={`field-${field.name}`}
         />
       </div>
@@ -65,14 +65,14 @@ const FieldInput = ({ field, value, onChange, onAiSuggest, aiLoading }) => {
   if (field.type === 'date') {
     return (
       <div className="space-y-2">
-        <Label className="text-gray-200 text-sm">
+        <Label className="text-slate-500 text-sm">
           {field.label} {field.required && <span className="text-red-400">*</span>}
         </Label>
         <Input
           type="date"
           value={value}
           onChange={(e) => onChange(field.name, e.target.value)}
-          className="bg-[#0a0f1a] border-gray-700 text-navy-900 text-sm"
+          className="bg-cream-100 border-slate-200 text-navy-900 text-sm"
           data-testid={`field-${field.name}`}
         />
       </div>
@@ -82,7 +82,7 @@ const FieldInput = ({ field, value, onChange, onAiSuggest, aiLoading }) => {
   if (field.type === 'number') {
     return (
       <div className="space-y-2">
-        <Label className="text-gray-200 text-sm">
+        <Label className="text-slate-500 text-sm">
           {field.label} {field.required && <span className="text-red-400">*</span>}
         </Label>
         <Input
@@ -90,7 +90,7 @@ const FieldInput = ({ field, value, onChange, onAiSuggest, aiLoading }) => {
           value={value}
           onChange={(e) => onChange(field.name, e.target.value)}
           placeholder={field.placeholder || '0'}
-          className="bg-[#0a0f1a] border-gray-700 text-navy-900 text-sm"
+          className="bg-cream-100 border-slate-200 text-navy-900 text-sm"
           data-testid={`field-${field.name}`}
         />
       </div>
@@ -100,7 +100,7 @@ const FieldInput = ({ field, value, onChange, onAiSuggest, aiLoading }) => {
   // Default: text
   return (
     <div className="space-y-2">
-      <Label className="text-gray-200 text-sm">
+      <Label className="text-slate-500 text-sm">
         {field.label} {field.required && <span className="text-red-400">*</span>}
       </Label>
       <Input
@@ -108,7 +108,7 @@ const FieldInput = ({ field, value, onChange, onAiSuggest, aiLoading }) => {
         value={value}
         onChange={(e) => onChange(field.name, e.target.value)}
         placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}...`}
-        className="bg-[#0a0f1a] border-gray-700 text-navy-900 text-sm"
+        className="bg-cream-100 border-slate-200 text-navy-900 text-sm"
         data-testid={`field-${field.name}`}
       />
     </div>
@@ -121,7 +121,7 @@ const LivePreview = ({ template, fieldValues }) => {
   const progress = totalCount > 0 ? Math.round((filledCount / totalCount) * 100) : 0;
 
   return (
-    <Card className="bg-[#1a2332] border-gray-800 sticky top-24">
+    <Card className="bg-white border-slate-200 sticky top-24">
       <CardContent className="p-5">
         <h3 className="text-navy-900 font-semibold text-sm mb-3 flex items-center gap-2">
           <FileText className="w-4 h-4 text-blue-400" />
@@ -130,7 +130,7 @@ const LivePreview = ({ template, fieldValues }) => {
 
         <div className="flex items-center gap-2 mb-4">
           <Progress value={progress} className="flex-1 h-1.5" />
-          <span className="text-gray-400 text-xs">{filledCount}/{totalCount}</span>
+          <span className="text-slate-500 text-xs">{filledCount}/{totalCount}</span>
         </div>
 
         {/* Mini document preview */}
@@ -139,8 +139,8 @@ const LivePreview = ({ template, fieldValues }) => {
             <p className="font-bold text-gray-900 text-xs uppercase tracking-wide">
               {template?.name || 'Document'}
             </p>
-            <p className="text-gray-400 text-[8px]">NotaryChain Generated Document</p>
-            <hr className="my-2 border-gray-300" />
+            <p className="text-slate-500 text-[8px]">NotaryChain Generated Document</p>
+            <hr className="my-2 border-slate-300" />
           </div>
 
           {template?.fields?.map((field) => {
@@ -148,26 +148,26 @@ const LivePreview = ({ template, fieldValues }) => {
             if (!val) return null;
             return (
               <div key={field.name} className="mb-2">
-                <p className="text-gray-400 uppercase text-[7px] tracking-wider">{field.label}</p>
+                <p className="text-slate-500 uppercase text-[7px] tracking-wider">{field.label}</p>
                 <p className="text-gray-900 text-[9px]">{val}</p>
               </div>
             );
           })}
 
           {filledCount === 0 && (
-            <p className="text-gray-300 text-center py-4 italic text-[9px]">
+            <p className="text-slate-500 text-center py-4 italic text-[9px]">
               Start filling fields to see the preview...
             </p>
           )}
 
           {filledCount > 0 && (
             <>
-              <hr className="my-3 border-gray-200" />
+              <hr className="my-3 border-slate-200" />
               <div className="space-y-3">
                 {Array.from({ length: template?.signers_needed || 1 }).map((_, i) => (
                   <div key={i}>
-                    <div className="border-b border-gray-400 w-1/2 mb-0.5" />
-                    <p className="text-gray-500 text-[7px]">Signature (Party {i + 1})</p>
+                    <div className="border-b border-slate-300 w-1/2 mb-0.5" />
+                    <p className="text-slate-500 text-[7px]">Signature (Party {i + 1})</p>
                   </div>
                 ))}
               </div>
@@ -447,7 +447,7 @@ const TemplateWizard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
       </div>
     );
@@ -456,7 +456,7 @@ const TemplateWizard = () => {
   if (!template) return null;
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       <div className="pt-24 sm:pt-28 pb-16 sm:pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -466,7 +466,7 @@ const TemplateWizard = () => {
               variant="ghost"
               size="sm"
               onClick={() => navigate('/templates')}
-              className="text-gray-400 hover:text-navy-900 mb-3"
+              className="text-slate-500 hover:text-navy-900 mb-3"
               data-testid="back-to-templates"
             >
               <ArrowLeft className="w-4 h-4 mr-1" /> Back to Templates
@@ -474,7 +474,7 @@ const TemplateWizard = () => {
             <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 mb-1" data-testid="wizard-title">
               {template.name}
             </h1>
-            <p className="text-gray-400 text-sm">{template.description}</p>
+            <p className="text-slate-500 text-sm">{template.description}</p>
           </div>
 
           {/* Draft Action Bar */}
@@ -484,7 +484,7 @@ const TemplateWizard = () => {
               size="sm"
               onClick={handleSaveDraft}
               disabled={savingDraft || filledCount === 0}
-              className="border-gray-700 text-gray-300 hover:text-navy-900 hover:border-blue-500"
+              className="border-slate-200 text-slate-500 hover:text-navy-900 hover:border-blue-500"
               data-testid="save-draft-btn"
             >
               {savingDraft ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Save className="w-3.5 h-3.5 mr-1.5" />}
@@ -496,7 +496,7 @@ const TemplateWizard = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => handleShareDraft(false)}
-                  className="border-gray-700 text-gray-300 hover:text-navy-900 hover:border-purple-500"
+                  className="border-slate-200 text-slate-500 hover:text-navy-900 hover:border-purple-500"
                   data-testid="share-draft-btn"
                 >
                   <Share2 className="w-3.5 h-3.5 mr-1.5" /> Share
@@ -505,7 +505,7 @@ const TemplateWizard = () => {
                   variant="outline"
                   size="sm"
                   onClick={handleShowRevisions}
-                  className="border-gray-700 text-gray-300 hover:text-navy-900 hover:border-amber-500"
+                  className="border-slate-200 text-slate-500 hover:text-navy-900 hover:border-amber-500"
                   data-testid="revisions-btn"
                 >
                   <History className="w-3.5 h-3.5 mr-1.5" /> History ({draftVersion} rev{draftVersion !== 1 ? 's' : ''})
@@ -513,14 +513,14 @@ const TemplateWizard = () => {
               </>
             )}
             {draftId && (
-              <span className="text-gray-600 text-xs ml-auto">Draft v{draftVersion}</span>
+              <span className="text-slate-600 text-xs ml-auto">Draft v{draftVersion}</span>
             )}
           </div>
 
           {/* Progress bar */}
           <div className="mb-6 flex items-center gap-3">
             <Progress value={(filledCount / totalCount) * 100} className="flex-1 h-2" />
-            <span className="text-gray-400 text-sm whitespace-nowrap">
+            <span className="text-slate-500 text-sm whitespace-nowrap">
               {filledCount} of {totalCount} fields filled
             </span>
           </div>
@@ -529,7 +529,7 @@ const TemplateWizard = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Form Column */}
             <div className="lg:col-span-2">
-              <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800">
+              <Card className="bg-gradient-to-br from-white to-cream-100 border border-slate-200">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 mb-5">
                     <FileText className="w-5 h-5 text-blue-400" />
@@ -580,7 +580,7 @@ const TemplateWizard = () => {
                           <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0" />
                           <div>
                             <p className="text-green-400 font-medium">PDF Generated Successfully</p>
-                            <p className="text-gray-400 text-sm">Your document is ready for download or notarization.</p>
+                            <p className="text-slate-500 text-sm">Your document is ready for download or notarization.</p>
                           </div>
                         </div>
 
@@ -588,7 +588,7 @@ const TemplateWizard = () => {
                           <Button
                             onClick={handleDownload}
                             variant="outline"
-                            className="border-gray-600 text-gray-200 hover:text-navy-900 hover:border-blue-500 py-5"
+                            className="border-slate-200 text-slate-500 hover:text-navy-900 hover:border-blue-500 py-5"
                             data-testid="download-pdf-btn"
                           >
                             <Download className="w-5 h-5 mr-2" />
@@ -610,7 +610,7 @@ const TemplateWizard = () => {
                           onClick={() => { setGeneratedPdfUrl(null); }}
                           variant="ghost"
                           size="sm"
-                          className="w-full text-gray-500 hover:text-gray-300"
+                          className="w-full text-slate-500 hover:text-slate-500"
                           data-testid="regenerate-btn"
                         >
                           Edit fields and regenerate
@@ -641,16 +641,16 @@ const TemplateWizard = () => {
       {/* Share Modal */}
       {showShareModal && shareToken && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" data-testid="share-modal">
-          <div className="bg-[#1a2332] border border-gray-700 rounded-xl max-w-md w-full p-6">
+          <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-navy-900 font-bold text-lg flex items-center gap-2">
                 <Share2 className="w-5 h-5 text-purple-400" /> Share Draft
               </h2>
-              <button onClick={() => setShowShareModal(false)} className="text-gray-400 hover:text-navy-900"><X className="w-5 h-5" /></button>
+              <button onClick={() => setShowShareModal(false)} className="text-slate-500 hover:text-navy-900"><X className="w-5 h-5" /></button>
             </div>
-            <div className="bg-[#0a0f1a] rounded-lg p-3 flex items-center gap-2 mb-4">
+            <div className="bg-cream-100 rounded-lg p-3 flex items-center gap-2 mb-4">
               <Link className="w-4 h-4 text-blue-400 flex-shrink-0" />
-              <span className="text-gray-300 text-sm truncate flex-1">{`${window.location.origin}/drafts/shared/${shareToken}`}</span>
+              <span className="text-slate-500 text-sm truncate flex-1">{`${window.location.origin}/drafts/shared/${shareToken}`}</span>
               <Button size="sm" variant="ghost" onClick={copyShareLink} className="text-blue-400 hover:text-blue-300" data-testid="copy-share-link">
                 <Copy className="w-3.5 h-3.5" />
               </Button>
@@ -673,19 +673,19 @@ const TemplateWizard = () => {
       {/* Revisions Modal */}
       {showRevisions && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" data-testid="revisions-modal">
-          <div className="bg-[#1a2332] border border-gray-700 rounded-xl max-w-md w-full p-6 max-h-[80vh] overflow-y-auto">
+          <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6 max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-navy-900 font-bold text-lg flex items-center gap-2">
                 <History className="w-5 h-5 text-coral-600" /> Version History
               </h2>
-              <button onClick={() => setShowRevisions(false)} className="text-gray-400 hover:text-navy-900"><X className="w-5 h-5" /></button>
+              <button onClick={() => setShowRevisions(false)} className="text-slate-500 hover:text-navy-900"><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-2">
               {[...revisions].reverse().map((rev) => (
                 <div key={rev.version} className={`p-3 rounded-lg border ${
                   rev.version === draftVersion
                     ? 'bg-blue-500/10 border-blue-500/30'
-                    : 'bg-[#0a0f1a] border-gray-800'
+                    : 'bg-cream-100 border-slate-200'
                 }`}>
                   <div className="flex items-center justify-between">
                     <div>
@@ -700,13 +700,13 @@ const TemplateWizard = () => {
                       </Button>
                     )}
                   </div>
-                  <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                  <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
                     <Clock className="w-3 h-3" />
                     <span>{new Date(rev.saved_at).toLocaleString()}</span>
                     <span>&bull;</span>
                     <span>{rev.saved_by}</span>
                   </div>
-                  <div className="mt-1 text-xs text-gray-600">
+                  <div className="mt-1 text-xs text-slate-600">
                     {Object.keys(rev.field_values).filter(k => rev.field_values[k]).length} fields filled
                   </div>
                 </div>

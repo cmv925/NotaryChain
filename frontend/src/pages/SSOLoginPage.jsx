@@ -96,10 +96,10 @@ const SSOLoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       <div className="pt-24 sm:pt-32 pb-16 flex items-center justify-center px-4">
-        <Card className="bg-[#1a2332] border-gray-800 max-w-md w-full" data-testid="sso-login-card">
+        <Card className="bg-white border-slate-200 max-w-md w-full" data-testid="sso-login-card">
           <CardContent className="p-8">
             {/* Header */}
             <div className="text-center mb-6">
@@ -107,7 +107,7 @@ const SSOLoginPage = () => {
                 <KeyRound className="w-7 h-7 text-purple-400" />
               </div>
               <h1 className="text-xl font-bold text-navy-900" data-testid="sso-page-title">Enterprise SSO Login</h1>
-              <p className="text-gray-500 text-sm mt-1">Sign in with your organization's identity provider</p>
+              <p className="text-slate-500 text-sm mt-1">Sign in with your organization's identity provider</p>
             </div>
 
             {error && (
@@ -121,23 +121,23 @@ const SSOLoginPage = () => {
             {step === 'email' && (
               <form onSubmit={handleDiscover} className="space-y-4" data-testid="sso-email-step">
                 <div>
-                  <Label className="text-gray-200 text-sm">Work Email</Label>
+                  <Label className="text-slate-500 text-sm">Work Email</Label>
                   <Input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@company.com"
-                    className="bg-[#0a0f1a] border-gray-700 text-navy-900 mt-1"
+                    className="bg-cream-100 border-slate-200 text-navy-900 mt-1"
                     data-testid="sso-email-input"
                   />
-                  <p className="text-gray-600 text-xs mt-1">We'll check if your organization has SSO enabled</p>
+                  <p className="text-slate-600 text-xs mt-1">We'll check if your organization has SSO enabled</p>
                 </div>
                 <Button type="submit" disabled={discovering || !email.trim()} className="w-full bg-purple-600 hover:bg-purple-700 text-navy-900" data-testid="sso-discover-btn">
                   {discovering ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Globe className="w-4 h-4 mr-2" />}
                   Continue with SSO
                 </Button>
                 <div className="text-center">
-                  <button type="button" onClick={() => navigate('/login')} className="text-gray-500 text-sm hover:text-gray-300 transition-colors" data-testid="sso-back-to-login">
+                  <button type="button" onClick={() => navigate('/login')} className="text-slate-500 text-sm hover:text-slate-500 transition-colors" data-testid="sso-back-to-login">
                     <ArrowLeft className="w-3 h-3 inline mr-1" /> Back to standard login
                   </button>
                 </div>
@@ -147,22 +147,22 @@ const SSOLoginPage = () => {
             {/* Step 1.5: Multiple orgs found */}
             {step === 'discover' && (
               <div className="space-y-3" data-testid="sso-org-select-step">
-                <p className="text-gray-300 text-sm">Multiple organizations found for <strong className="text-navy-900">{email}</strong>:</p>
+                <p className="text-slate-500 text-sm">Multiple organizations found for <strong className="text-navy-900">{email}</strong>:</p>
                 {ssoOrgs.map((org) => (
                   <button
                     key={org.org_id}
                     onClick={() => handleSelectOrg(org)}
-                    className="w-full text-left p-3 rounded-lg bg-[#0a0f1a] border border-gray-800 hover:border-purple-500/50 transition-all flex items-center gap-3"
+                    className="w-full text-left p-3 rounded-lg bg-cream-100 border border-slate-200 hover:border-purple-500/50 transition-all flex items-center gap-3"
                     data-testid={`sso-org-${org.org_id}`}
                   >
                     <Building2 className="w-5 h-5 text-purple-400" />
                     <div>
                       <p className="text-navy-900 text-sm font-medium">{org.org_name}</p>
-                      <p className="text-gray-500 text-xs">{org.provider.toUpperCase()} &bull; {org.org_slug}</p>
+                      <p className="text-slate-500 text-xs">{org.provider.toUpperCase()} &bull; {org.org_slug}</p>
                     </div>
                   </button>
                 ))}
-                <button onClick={() => { setStep('email'); setError(''); }} className="text-gray-500 text-sm hover:text-gray-300 mt-2">
+                <button onClick={() => { setStep('email'); setError(''); }} className="text-slate-500 text-sm hover:text-slate-500 mt-2">
                   <ArrowLeft className="w-3 h-3 inline mr-1" /> Use different email
                 </button>
               </div>
@@ -178,15 +178,15 @@ const SSOLoginPage = () => {
                   </div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Organization</span>
+                      <span className="text-slate-500">Organization</span>
                       <span className="text-navy-900">{sessionInfo.org_name}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Protocol</span>
+                      <span className="text-slate-500">Protocol</span>
                       <span className="text-purple-400 uppercase text-xs font-mono">{sessionInfo.provider}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Email</span>
+                      <span className="text-slate-500">Email</span>
                       <span className="text-navy-900">{sessionInfo.email}</span>
                     </div>
                   </div>
@@ -198,18 +198,18 @@ const SSOLoginPage = () => {
                 </div>
 
                 <div>
-                  <Label className="text-gray-200 text-sm">Display Name (optional)</Label>
+                  <Label className="text-slate-500 text-sm">Display Name (optional)</Label>
                   <Input
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Your full name"
-                    className="bg-[#0a0f1a] border-gray-700 text-navy-900 mt-1"
+                    className="bg-cream-100 border-slate-200 text-navy-900 mt-1"
                     data-testid="sso-fullname-input"
                   />
                 </div>
 
                 <div className="flex gap-2">
-                  <Button onClick={() => { setStep('email'); setError(''); }} variant="outline" className="flex-1 border-gray-700 text-gray-300" data-testid="sso-deny-btn">
+                  <Button onClick={() => { setStep('email'); setError(''); }} variant="outline" className="flex-1 border-slate-200 text-slate-500" data-testid="sso-deny-btn">
                     <X className="w-4 h-4 mr-1" /> Deny
                   </Button>
                   <Button onClick={handleAuthorize} disabled={authorizing} className="flex-1 bg-purple-600 hover:bg-purple-700 text-navy-900" data-testid="sso-authorize-btn">
@@ -227,7 +227,7 @@ const SSOLoginPage = () => {
                   <Check className="w-6 h-6 text-coral-600" />
                 </div>
                 <p className="text-navy-900 font-medium">SSO Authentication Successful</p>
-                <p className="text-gray-500 text-sm mt-1">Redirecting to dashboard...</p>
+                <p className="text-slate-500 text-sm mt-1">Redirecting to dashboard...</p>
               </div>
             )}
           </CardContent>

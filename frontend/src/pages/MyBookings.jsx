@@ -58,7 +58,7 @@ const MyBookings = () => {
   const past = bookings.filter(b => b.status === 'completed' || b.status === 'cancelled');
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       <div className="pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -69,7 +69,7 @@ const MyBookings = () => {
                 <Calendar className="w-7 h-7 text-blue-400" />
                 My Bookings
               </h1>
-              <p className="text-gray-400 text-sm mt-1">Manage your notarization appointments</p>
+              <p className="text-slate-500 text-sm mt-1">Manage your notarization appointments</p>
             </div>
             <div className="flex gap-2">
               <Button onClick={() => navigate('/marketplace')} className="bg-blue-600 hover:bg-blue-700" data-testid="find-notary-btn">
@@ -86,7 +86,7 @@ const MyBookings = () => {
                 onClick={() => setFilter(f)}
                 size="sm"
                 variant={filter === f ? 'default' : 'outline'}
-                className={filter === f ? 'bg-blue-600' : 'border-gray-700 text-gray-400'}
+                className={filter === f ? 'bg-blue-600' : 'border-slate-200 text-slate-500'}
                 data-testid={`filter-${f}`}
               >
                 {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
@@ -97,10 +97,10 @@ const MyBookings = () => {
           {loading ? (
             <div className="text-center py-12"><Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto" /></div>
           ) : bookings.length === 0 ? (
-            <Card className="bg-[#1a2332] border-gray-800">
+            <Card className="bg-white border-slate-200">
               <CardContent className="p-12 text-center">
-                <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-400 mb-4">No bookings yet. Find a notary and book a session.</p>
+                <Calendar className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                <p className="text-slate-500 mb-4">No bookings yet. Find a notary and book a session.</p>
                 <Button onClick={() => navigate('/marketplace')} className="bg-blue-600 hover:bg-blue-700" data-testid="empty-find-notary">
                   Browse Marketplace
                 </Button>
@@ -116,19 +116,19 @@ const MyBookings = () => {
                     {upcoming.map(b => {
                       const cfg = statusCfg[b.status] || statusCfg.pending;
                       return (
-                        <Card key={b.id} className={`bg-[#1a2332] border-gray-800 ${cfg.border}`} data-testid={`booking-${b.id}`}>
+                        <Card key={b.id} className={`bg-white border-slate-200 ${cfg.border}`} data-testid={`booking-${b.id}`}>
                           <CardContent className="p-4">
                             <div className="flex items-start gap-4">
                               <div className="w-14 text-center flex-shrink-0">
                                 <div className="text-2xl font-bold text-navy-900">{b.date.split('-')[2]}</div>
-                                <div className="text-xs text-gray-500">{new Date(b.date + 'T12:00:00').toLocaleString('en', { month: 'short' })}</div>
+                                <div className="text-xs text-slate-500">{new Date(b.date + 'T12:00:00').toLocaleString('en', { month: 'short' })}</div>
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1">
                                   <h3 className="text-navy-900 font-semibold truncate">{b.document_name}</h3>
                                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${cfg.bg} ${cfg.color}`}>{cfg.label}</span>
                                 </div>
-                                <div className="flex items-center gap-3 text-sm text-gray-400">
+                                <div className="flex items-center gap-3 text-sm text-slate-500">
                                   <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {b.start_time} - {b.end_time}</span>
                                   <span className="flex items-center gap-1"><User className="w-3.5 h-3.5" /> {b.notary_name}</span>
                                   <span className="flex items-center gap-1"><FileText className="w-3.5 h-3.5" /> {b.document_type?.replace(/_/g, ' ')}</span>
@@ -170,20 +170,20 @@ const MyBookings = () => {
               {/* Past */}
               {past.length > 0 && (
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-400 mb-3">Past</h2>
+                  <h2 className="text-lg font-semibold text-slate-500 mb-3">Past</h2>
                   <div className="space-y-2 opacity-75" data-testid="past-bookings">
                     {past.map(b => {
                       const cfg = statusCfg[b.status] || statusCfg.completed;
                       return (
-                        <Card key={b.id} className="bg-[#1a2332] border-gray-800" data-testid={`booking-${b.id}`}>
+                        <Card key={b.id} className="bg-white border-slate-200" data-testid={`booking-${b.id}`}>
                           <CardContent className="p-3 flex items-center gap-3">
                             <div className="w-10 text-center flex-shrink-0">
-                              <div className="text-lg font-bold text-gray-400">{b.date.split('-')[2]}</div>
-                              <div className="text-[10px] text-gray-600">{new Date(b.date + 'T12:00:00').toLocaleString('en', { month: 'short' })}</div>
+                              <div className="text-lg font-bold text-slate-500">{b.date.split('-')[2]}</div>
+                              <div className="text-[10px] text-slate-600">{new Date(b.date + 'T12:00:00').toLocaleString('en', { month: 'short' })}</div>
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-gray-300 text-sm truncate">{b.document_name}</p>
-                              <p className="text-gray-500 text-xs">{b.start_time} - {b.end_time} &middot; {b.notary_name}</p>
+                              <p className="text-slate-500 text-sm truncate">{b.document_name}</p>
+                              <p className="text-slate-500 text-xs">{b.start_time} - {b.end_time} &middot; {b.notary_name}</p>
                             </div>
                             <span className={`px-2 py-0.5 rounded-full text-xs ${cfg.bg} ${cfg.color}`}>{cfg.label}</span>
                           </CardContent>

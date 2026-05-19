@@ -74,7 +74,7 @@ export default function AIConductorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-navy-900">
+    <div className="min-h-screen bg-cream-100 text-navy-900">
       <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
@@ -86,7 +86,7 @@ export default function AIConductorPage() {
               <Sparkles className="w-6 h-6 text-coral-600" />
               AI Conductor
             </h1>
-            <p className="text-gray-400 text-sm">Intelligent step-by-step transaction guidance</p>
+            <p className="text-slate-500 text-sm">Intelligent step-by-step transaction guidance</p>
           </div>
           {role && <Badge className="bg-violet-500/15 text-coral-600">{role}</Badge>}
         </div>
@@ -105,7 +105,7 @@ export default function AIConductorPage() {
             </Button>
 
             {loading && (
-              <div className="flex flex-col items-center py-12 text-gray-400">
+              <div className="flex flex-col items-center py-12 text-slate-500">
                 <Loader2 className="w-8 h-8 animate-spin mb-3 text-coral-600" />
                 <p className="text-sm">AI Conductor is analyzing your position...</p>
               </div>
@@ -114,12 +114,12 @@ export default function AIConductorPage() {
             {guidance && !loading && (
               <>
                 {/* Greeting & Summary */}
-                <Card className="bg-[#0d1b2a] border-gray-800" data-testid="guidance-summary">
+                <Card className="bg-cream-100 border-slate-200" data-testid="guidance-summary">
                   <CardContent className="pt-5">
                     <p className="text-coral-600 font-medium text-sm mb-2">{guidance.greeting}</p>
-                    <p className="text-gray-300 text-sm">{guidance.current_status_summary}</p>
+                    <p className="text-slate-500 text-sm">{guidance.current_status_summary}</p>
                     {guidance.timeline_estimate && (
-                      <p className="text-gray-500 text-xs mt-2 flex items-center gap-1">
+                      <p className="text-slate-500 text-xs mt-2 flex items-center gap-1">
                         <Clock className="w-3 h-3" /> {guidance.timeline_estimate}
                       </p>
                     )}
@@ -128,13 +128,13 @@ export default function AIConductorPage() {
 
                 {/* Next Steps */}
                 {guidance.next_steps?.length > 0 && (
-                  <Card className="bg-[#0d1b2a] border-gray-800" data-testid="next-steps-card">
+                  <Card className="bg-cream-100 border-slate-200" data-testid="next-steps-card">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm text-navy-900">Your Next Steps</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
                       {guidance.next_steps.map((step, i) => (
-                        <div key={i} className="border border-gray-700/50 rounded-lg p-3">
+                        <div key={i} className="border border-slate-200/50 rounded-lg p-3">
                           <div className="flex items-start justify-between mb-1">
                             <div className="flex items-center gap-2">
                               <div className="w-6 h-6 rounded-full bg-violet-500/20 text-coral-600 flex items-center justify-center text-xs font-bold">
@@ -146,9 +146,9 @@ export default function AIConductorPage() {
                               {step.urgency}
                             </Badge>
                           </div>
-                          <p className="text-gray-400 text-xs ml-8">{step.details}</p>
+                          <p className="text-slate-500 text-xs ml-8">{step.details}</p>
                           {step.estimated_time && (
-                            <p className="text-gray-600 text-[10px] ml-8 mt-1 flex items-center gap-1">
+                            <p className="text-slate-600 text-[10px] ml-8 mt-1 flex items-center gap-1">
                               <Clock className="w-3 h-3" /> {step.estimated_time}
                             </p>
                           )}
@@ -173,7 +173,7 @@ export default function AIConductorPage() {
                       {guidance.blockers.map((b, i) => (
                         <div key={i} className="text-xs">
                           <p className="text-red-300">{b.issue}</p>
-                          <p className="text-gray-500 mt-0.5">{b.resolution}</p>
+                          <p className="text-slate-500 mt-0.5">{b.resolution}</p>
                         </div>
                       ))}
                     </CardContent>
@@ -182,7 +182,7 @@ export default function AIConductorPage() {
 
                 {/* Encouragement */}
                 {guidance.encouragement && (
-                  <div className="text-center text-gray-500 text-xs py-2">
+                  <div className="text-center text-slate-500 text-xs py-2">
                     {guidance.encouragement}
                   </div>
                 )}
@@ -192,8 +192,8 @@ export default function AIConductorPage() {
 
           {/* Right: Chat Panel */}
           <div className="lg:col-span-2">
-            <Card className="bg-[#0d1b2a] border-gray-800 h-[600px] flex flex-col" data-testid="conductor-chat">
-              <CardHeader className="pb-2 border-b border-gray-800">
+            <Card className="bg-cream-100 border-slate-200 h-[600px] flex flex-col" data-testid="conductor-chat">
+              <CardHeader className="pb-2 border-b border-slate-200">
                 <CardTitle className="text-sm text-navy-900 flex items-center gap-2">
                   <MessageSquare className="w-4 h-4 text-coral-600" />
                   Ask the Conductor
@@ -201,7 +201,7 @@ export default function AIConductorPage() {
               </CardHeader>
               <CardContent className="flex-1 overflow-y-auto py-3 space-y-3">
                 {chatMessages.length === 0 && (
-                  <div className="text-center text-gray-600 py-8">
+                  <div className="text-center text-slate-600 py-8">
                     <Bot className="w-8 h-8 mx-auto mb-2 opacity-30" />
                     <p className="text-xs">Ask anything about this transaction</p>
                     <div className="mt-3 space-y-1">
@@ -222,7 +222,7 @@ export default function AIConductorPage() {
                     <div className={`max-w-[85%] rounded-lg px-3 py-2 text-xs ${
                       msg.role === 'user'
                         ? 'bg-violet-600/20 text-violet-200'
-                        : 'bg-[#1a2332] text-gray-300'
+                        : 'bg-white text-slate-500'
                     }`}>
                       {msg.content}
                     </div>
@@ -230,20 +230,20 @@ export default function AIConductorPage() {
                 ))}
                 {sending && (
                   <div className="flex justify-start">
-                    <div className="bg-[#1a2332] rounded-lg px-3 py-2">
+                    <div className="bg-white rounded-lg px-3 py-2">
                       <Loader2 className="w-4 h-4 animate-spin text-coral-600" />
                     </div>
                   </div>
                 )}
                 <div ref={chatEndRef} />
               </CardContent>
-              <div className="p-3 border-t border-gray-800 flex gap-2">
+              <div className="p-3 border-t border-slate-200 flex gap-2">
                 <Input
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && sendChat()}
                   placeholder="Ask the conductor..."
-                  className="bg-[#1a2332] border-gray-700 text-navy-900 text-sm"
+                  className="bg-white border-slate-200 text-navy-900 text-sm"
                   data-testid="conductor-chat-input"
                 />
                 <Button

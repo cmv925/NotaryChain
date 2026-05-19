@@ -12,15 +12,15 @@ export function Breadcrumbs({ items = [] }) {
         const isFirst = i === 0;
         return (
           <React.Fragment key={i}>
-            {i > 0 && <ChevronRight className="w-3.5 h-3.5 text-gray-600 flex-shrink-0" />}
+            {i > 0 && <ChevronRight className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" />}
             {isLast ? (
-              <span className="text-gray-300 font-medium truncate" data-testid={`breadcrumb-current`}>
+              <span className="text-slate-500 font-medium truncate" data-testid={`breadcrumb-current`}>
                 {item.label}
               </span>
             ) : (
               <Link
                 to={item.path}
-                className="text-gray-500 hover:text-white transition-colors flex items-center gap-1 flex-shrink-0"
+                className="text-slate-500 hover:text-white transition-colors flex items-center gap-1 flex-shrink-0"
                 data-testid={`breadcrumb-${i}`}
               >
                 {isFirst && <Home className="w-3.5 h-3.5" />}

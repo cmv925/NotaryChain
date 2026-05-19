@@ -80,16 +80,16 @@ const RONComplianceDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
-      <header className="bg-[#1a2332] border-b border-gray-800">
+    <div className="min-h-screen bg-cream-100">
+      <header className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/admin')} className="text-gray-400 hover:text-navy-900">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/admin')} className="text-slate-500 hover:text-navy-900">
                 <ArrowLeft className="w-5 h-5 sm:mr-2" /><span className="hidden sm:inline">Admin</span>
               </Button>
               <h1 className="text-navy-900 font-semibold flex items-center gap-2 text-sm sm:text-base">
-                <Shield className="w-5 h-5 text-[#00d4aa]" /> RON Compliance Engine
+                <Shield className="w-5 h-5 text-coral-600" /> RON Compliance Engine
               </h1>
             </div>
             <NotificationBell token={token} />
@@ -107,12 +107,12 @@ const RONComplianceDashboard = () => {
               { label: 'Limited', value: stats.limited_ron, color: 'text-yellow-400' },
               { label: 'Pending', value: stats.pending_legislation, color: 'text-blue-400' },
               { label: 'Prohibited', value: stats.prohibited, color: 'text-red-400' },
-              { label: 'Coverage', value: `${stats.coverage_pct}%`, color: 'text-[#00d4aa]' },
+              { label: 'Coverage', value: `${stats.coverage_pct}%`, color: 'text-coral-600' },
             ].map(item => (
-              <Card key={item.label} className="bg-[#1a2332] border-gray-800">
+              <Card key={item.label} className="bg-white border-slate-200">
                 <CardContent className="p-4 text-center">
                   <p className={`text-2xl font-bold ${item.color}`}>{item.value}</p>
-                  <p className="text-gray-500 text-xs">{item.label}</p>
+                  <p className="text-slate-500 text-xs">{item.label}</p>
                 </CardContent>
               </Card>
             ))}
@@ -120,7 +120,7 @@ const RONComplianceDashboard = () => {
         )}
 
         {/* Tabs */}
-        <div className="flex gap-1 bg-[#1a2332] rounded-lg p-1 w-fit" data-testid="compliance-tabs">
+        <div className="flex gap-1 bg-white rounded-lg p-1 w-fit" data-testid="compliance-tabs">
           {[
             { id: 'map', label: 'State Rules', icon: MapPin },
             { id: 'violations', label: 'Violations', icon: AlertTriangle },
@@ -130,7 +130,7 @@ const RONComplianceDashboard = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTab === tab.id ? 'bg-[#00d4aa] text-black' : 'text-gray-400 hover:text-navy-900'
+                activeTab === tab.id ? 'bg-coral-500 text-black' : 'text-slate-500 hover:text-navy-900'
               }`}
               data-testid={`tab-${tab.id}`}
             >
@@ -144,12 +144,12 @@ const RONComplianceDashboard = () => {
             {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                 <Input
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   placeholder="Search state..."
-                  className="bg-[#1a2332] border-gray-700 text-navy-900 pl-10"
+                  className="bg-white border-slate-200 text-navy-900 pl-10"
                   data-testid="state-search"
                 />
               </div>
@@ -160,7 +160,7 @@ const RONComplianceDashboard = () => {
                     size="sm"
                     variant={filterStatus === f ? 'default' : 'outline'}
                     onClick={() => setFilterStatus(f)}
-                    className={filterStatus === f ? 'bg-[#00d4aa] text-black' : 'border-gray-700 text-gray-400'}
+                    className={filterStatus === f ? 'bg-coral-500 text-black' : 'border-slate-200 text-slate-500'}
                     data-testid={`filter-${f}`}
                   >
                     {f === 'all' ? 'All' : statusConfig[f]?.label}
@@ -171,7 +171,7 @@ const RONComplianceDashboard = () => {
 
             {/* State Grid */}
             {loading ? (
-              <p className="text-gray-500 text-center py-8">Loading state rules...</p>
+              <p className="text-slate-500 text-center py-8">Loading state rules...</p>
             ) : (
               Object.entries(groupedByStatus).map(([status, stateList]) => {
                 if (stateList.length === 0) return null;
@@ -186,7 +186,7 @@ const RONComplianceDashboard = () => {
                       {stateList.map(state => {
                         const expanded = expandedState === state.state_code;
                         return (
-                          <Card key={state.state_code} className="bg-[#1a2332] border-gray-800 overflow-hidden">
+                          <Card key={state.state_code} className="bg-white border-slate-200 overflow-hidden">
                             <button
                               onClick={() => setExpandedState(expanded ? null : state.state_code)}
                               className="w-full p-4 text-left hover:bg-white/5 transition-colors"
@@ -194,47 +194,47 @@ const RONComplianceDashboard = () => {
                             >
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                  <span className="text-navy-900 font-mono font-bold text-sm bg-[#0d1b2a] px-2 py-1 rounded">{state.state_code}</span>
-                                  <span className="text-gray-300 text-sm">{state.name}</span>
+                                  <span className="text-navy-900 font-mono font-bold text-sm bg-cream-100 px-2 py-1 rounded">{state.state_code}</span>
+                                  <span className="text-slate-500 text-sm">{state.name}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <Badge className={`${cfg.color} text-[10px]`}>{cfg.label}</Badge>
-                                  {expanded ? <ChevronDown className="w-4 h-4 text-gray-500" /> : <ChevronRight className="w-4 h-4 text-gray-500" />}
+                                  {expanded ? <ChevronDown className="w-4 h-4 text-slate-500" /> : <ChevronRight className="w-4 h-4 text-slate-500" />}
                                 </div>
                               </div>
                             </button>
                             {expanded && (
-                              <div className="px-4 pb-4 pt-0 border-t border-gray-800 space-y-2">
+                              <div className="px-4 pb-4 pt-0 border-t border-slate-200 space-y-2">
                                 {state.effective_date && (
                                   <div className="flex justify-between text-xs">
-                                    <span className="text-gray-500">Effective</span>
-                                    <span className="text-gray-300">{state.effective_date}</span>
+                                    <span className="text-slate-500">Effective</span>
+                                    <span className="text-slate-500">{state.effective_date}</span>
                                   </div>
                                 )}
                                 <div className="flex justify-between text-xs">
-                                  <span className="text-gray-500">ID Requirements</span>
-                                  <span className="text-gray-300">{(state.id_requirements || []).join(', ') || 'N/A'}</span>
+                                  <span className="text-slate-500">ID Requirements</span>
+                                  <span className="text-slate-500">{(state.id_requirements || []).join(', ') || 'N/A'}</span>
                                 </div>
                                 <div className="flex justify-between text-xs">
-                                  <span className="text-gray-500">Witnesses</span>
-                                  <span className="text-gray-300">{state.witnesses_required || 'None'}</span>
+                                  <span className="text-slate-500">Witnesses</span>
+                                  <span className="text-slate-500">{state.witnesses_required || 'None'}</span>
                                 </div>
                                 <div className="flex justify-between text-xs">
-                                  <span className="text-gray-500">Recording</span>
-                                  <span className="text-gray-300">{state.recording_required ? 'Required' : 'Not Required'}</span>
+                                  <span className="text-slate-500">Recording</span>
+                                  <span className="text-slate-500">{state.recording_required ? 'Required' : 'Not Required'}</span>
                                 </div>
                                 <div className="flex justify-between text-xs">
-                                  <span className="text-gray-500">Max Signers</span>
-                                  <span className="text-gray-300">{state.max_signers_per_session || 'N/A'}</span>
+                                  <span className="text-slate-500">Max Signers</span>
+                                  <span className="text-slate-500">{state.max_signers_per_session || 'N/A'}</span>
                                 </div>
                                 {state.restricted_doc_types && (
                                   <div className="flex justify-between text-xs">
-                                    <span className="text-gray-500">Restricted Docs</span>
+                                    <span className="text-slate-500">Restricted Docs</span>
                                     <span className="text-red-400">{state.restricted_doc_types.join(', ')}</span>
                                   </div>
                                 )}
                                 {state.notes && (
-                                  <p className="text-gray-500 text-xs mt-2 italic">{state.notes}</p>
+                                  <p className="text-slate-500 text-xs mt-2 italic">{state.notes}</p>
                                 )}
                               </div>
                             )}
@@ -250,7 +250,7 @@ const RONComplianceDashboard = () => {
         )}
 
         {activeTab === 'violations' && (
-          <Card className="bg-[#1a2332] border-gray-800" data-testid="violations-list">
+          <Card className="bg-white border-slate-200" data-testid="violations-list">
             <CardContent className="p-6">
               <h3 className="text-navy-900 font-semibold mb-4 flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-red-400" /> Compliance Violations & Warnings
@@ -258,20 +258,20 @@ const RONComplianceDashboard = () => {
               {violations.length === 0 ? (
                 <div className="text-center py-8">
                   <CheckCircle className="w-10 h-10 text-emerald-500/30 mx-auto mb-3" />
-                  <p className="text-gray-500 text-sm">No compliance violations found</p>
+                  <p className="text-slate-500 text-sm">No compliance violations found</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {violations.map((v, i) => (
-                    <div key={v.id || i} className="bg-[#0d1b2a] rounded-lg p-4 border border-gray-700" data-testid={`violation-${i}`}>
+                    <div key={v.id || i} className="bg-cream-100 rounded-lg p-4 border border-slate-200" data-testid={`violation-${i}`}>
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-navy-900 font-mono font-bold text-sm bg-[#1a2332] px-2 py-0.5 rounded">{v.state_code}</span>
-                          <span className="text-gray-300 text-sm">{v.document_type}</span>
+                          <span className="text-navy-900 font-mono font-bold text-sm bg-white px-2 py-0.5 rounded">{v.state_code}</span>
+                          <span className="text-slate-500 text-sm">{v.document_type}</span>
                           {!v.compliant && <Badge className="bg-red-500/20 text-red-400 text-[10px]">Failed</Badge>}
                           {v.compliant && v.warnings?.length > 0 && <Badge className="bg-yellow-500/20 text-yellow-400 text-[10px]">Warning</Badge>}
                         </div>
-                        <span className="text-gray-500 text-xs">{new Date(v.timestamp).toLocaleString()}</span>
+                        <span className="text-slate-500 text-xs">{new Date(v.timestamp).toLocaleString()}</span>
                       </div>
                       {v.errors?.map((err, j) => (
                         <p key={j} className="text-red-400 text-xs flex items-start gap-1.5 mt-1">
@@ -292,7 +292,7 @@ const RONComplianceDashboard = () => {
         )}
 
         {activeTab === 'activity' && (
-          <Card className="bg-[#1a2332] border-gray-800" data-testid="activity-log">
+          <Card className="bg-white border-slate-200" data-testid="activity-log">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-navy-900 font-semibold flex items-center gap-2">
@@ -300,27 +300,27 @@ const RONComplianceDashboard = () => {
                 </h3>
                 {activity?.summary && (
                   <div className="flex gap-3 text-xs">
-                    <span className="text-gray-400">Checks: <span className="text-navy-900">{activity.summary.total_checks}</span></span>
-                    <span className="text-gray-400">Failed: <span className="text-red-400">{activity.summary.failed}</span></span>
-                    <span className="text-gray-400">Pass Rate: <span className="text-coral-600">{activity.summary.pass_rate}%</span></span>
+                    <span className="text-slate-500">Checks: <span className="text-navy-900">{activity.summary.total_checks}</span></span>
+                    <span className="text-slate-500">Failed: <span className="text-red-400">{activity.summary.failed}</span></span>
+                    <span className="text-slate-500">Pass Rate: <span className="text-coral-600">{activity.summary.pass_rate}%</span></span>
                   </div>
                 )}
               </div>
               {!activity?.activity?.length ? (
-                <p className="text-gray-500 text-sm text-center py-8">No validation activity yet</p>
+                <p className="text-slate-500 text-sm text-center py-8">No validation activity yet</p>
               ) : (
                 <div className="space-y-2">
                   {activity.activity.map((a, i) => (
-                    <div key={a.id || i} className="flex items-center gap-3 py-2 border-b border-gray-800 last:border-0">
+                    <div key={a.id || i} className="flex items-center gap-3 py-2 border-b border-slate-200 last:border-0">
                       {a.compliant ? (
                         <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                       ) : (
                         <XCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
                       )}
                       <span className="text-navy-900 font-mono text-sm w-8">{a.state_code}</span>
-                      <span className="text-gray-300 text-sm flex-1">{a.document_type}</span>
-                      <span className="text-gray-500 text-xs">{a.signer_count} signer(s)</span>
-                      <span className="text-gray-500 text-xs">{new Date(a.timestamp).toLocaleString()}</span>
+                      <span className="text-slate-500 text-sm flex-1">{a.document_type}</span>
+                      <span className="text-slate-500 text-xs">{a.signer_count} signer(s)</span>
+                      <span className="text-slate-500 text-xs">{new Date(a.timestamp).toLocaleString()}</span>
                     </div>
                   ))}
                 </div>

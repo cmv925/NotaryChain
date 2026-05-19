@@ -63,13 +63,13 @@ const PaymentSuccess = () => {
   }, [sessionId, token, pollCount]);
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
 
       <div className="pt-32 pb-24">
         <div className="max-w-xl mx-auto px-6">
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Pricing', path: '/pricing' }, { label: 'Payment Success' }]} />
-          <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800">
+          <Card className="bg-gradient-to-br from-white to-cream-100 border border-slate-200">
             <CardContent className="p-8 text-center">
               {status === 'checking' && (
                 <>
@@ -77,7 +77,7 @@ const PaymentSuccess = () => {
                   <h1 className="text-2xl font-bold text-navy-900 mb-2">
                     Verifying Payment...
                   </h1>
-                  <p className="text-gray-400">
+                  <p className="text-slate-500">
                     Please wait while we confirm your payment.
                   </p>
                 </>
@@ -91,29 +91,29 @@ const PaymentSuccess = () => {
                   <h1 className="text-3xl font-bold text-navy-900 mb-2">
                     Payment Successful!
                   </h1>
-                  <p className="text-gray-400 mb-6">
+                  <p className="text-slate-500 mb-6">
                     Thank you for your purchase. Your notarization service is now active.
                   </p>
 
                   {paymentDetails && (
-                    <div className="bg-[#0a0f1a] rounded-lg p-4 mb-6 text-left">
+                    <div className="bg-cream-100 rounded-lg p-4 mb-6 text-left">
                       <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                         <FileText className="w-5 h-5 text-blue-500" />
                         Payment Details
                       </h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Service:</span>
+                          <span className="text-slate-500">Service:</span>
                           <span className="text-navy-900">{paymentDetails.package?.name}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Amount:</span>
+                          <span className="text-slate-500">Amount:</span>
                           <span className="text-navy-900">
                             ${paymentDetails.amount} {paymentDetails.currency?.toUpperCase()}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Status:</span>
+                          <span className="text-slate-500">Status:</span>
                           <span className="text-green-400 font-medium">Paid</span>
                         </div>
                       </div>
@@ -131,7 +131,7 @@ const PaymentSuccess = () => {
                     <Button
                       onClick={() => navigate('/dashboard')}
                       variant="outline"
-                      className="w-full border-gray-700 text-gray-300"
+                      className="w-full border-slate-200 text-slate-500"
                     >
                       Go to Dashboard
                     </Button>
@@ -147,7 +147,7 @@ const PaymentSuccess = () => {
                   <h1 className="text-2xl font-bold text-navy-900 mb-2">
                     Payment Processing
                   </h1>
-                  <p className="text-gray-400 mb-6">
+                  <p className="text-slate-500 mb-6">
                     Your payment is being processed. You'll receive a confirmation email shortly.
                   </p>
                   <Button
@@ -167,7 +167,7 @@ const PaymentSuccess = () => {
                   <h1 className="text-2xl font-bold text-navy-900 mb-2">
                     {status === 'expired' ? 'Session Expired' : 'Verification Error'}
                   </h1>
-                  <p className="text-gray-400 mb-6">
+                  <p className="text-slate-500 mb-6">
                     {status === 'expired' 
                       ? 'Your payment session has expired. Please try again.'
                       : 'We couldn\'t verify your payment. Please check your email or contact support.'}

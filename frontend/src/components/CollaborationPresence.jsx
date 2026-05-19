@@ -27,12 +27,12 @@ export function PresenceBar({ users, connected, currentUserId }) {
 
   return (
     <div
-      className="flex items-center gap-2 p-2.5 rounded-lg bg-[#0d1520] border border-gray-800"
+      className="flex items-center gap-2 p-2.5 rounded-lg bg-cream-100 border border-slate-200"
       data-testid="presence-bar"
     >
       <div className="flex items-center gap-1.5">
         <div className={`w-2 h-2 rounded-full ${connected ? 'bg-green-500' : 'bg-gray-500'}`} />
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-slate-500">
           {connected ? 'Live' : 'Connecting...'}
         </span>
       </div>
@@ -40,12 +40,12 @@ export function PresenceBar({ users, connected, currentUserId }) {
       {otherUsers.length > 0 && (
         <>
           <div className="w-px h-4 bg-gray-700" />
-          <Users className="w-3.5 h-3.5 text-gray-500" />
+          <Users className="w-3.5 h-3.5 text-slate-500" />
           <div className="flex -space-x-2">
             {otherUsers.slice(0, 5).map((user) => (
               <div
                 key={user.user_id}
-                className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-[#0d1520] ${getColor(user.user_id)}`}
+                className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-slate-200 ${getColor(user.user_id)}`}
                 title={`${user.name} (${user.email})`}
                 data-testid={`presence-avatar-${user.user_id}`}
               >
@@ -53,12 +53,12 @@ export function PresenceBar({ users, connected, currentUserId }) {
               </div>
             ))}
             {otherUsers.length > 5 && (
-              <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-gray-300 border-2 border-[#0d1520] bg-gray-700">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-slate-500 border-2 border-slate-200 bg-gray-700">
                 +{otherUsers.length - 5}
               </div>
             )}
           </div>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-slate-500">
             {otherUsers.length} other{otherUsers.length > 1 ? 's' : ''} here
           </span>
         </>
@@ -67,7 +67,7 @@ export function PresenceBar({ users, connected, currentUserId }) {
       {otherUsers.length === 0 && connected && (
         <>
           <div className="w-px h-4 bg-gray-700" />
-          <span className="text-xs text-gray-600">Only you here</span>
+          <span className="text-xs text-slate-600">Only you here</span>
         </>
       )}
     </div>

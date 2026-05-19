@@ -128,19 +128,19 @@ export default function CeremonyReplay() {
   const reset = () => { setPlaying(false); setCurrentStep(0); };
 
   if (loading) return (
-    <div className="min-h-screen bg-[#0a0f1a] flex items-center justify-center">
+    <div className="min-h-screen bg-cream-100 flex items-center justify-center">
       <Loader2 className="w-6 h-6 animate-spin text-slate-500" />
     </div>
   );
 
   if (!data) return (
-    <div className="min-h-screen bg-[#0a0f1a] flex items-center justify-center text-slate-500">
+    <div className="min-h-screen bg-cream-100 flex items-center justify-center text-slate-500">
       Ceremony not found
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#0a0f1a]" data-testid="ceremony-replay-page">
+    <div className="min-h-screen bg-cream-100" data-testid="ceremony-replay-page">
       <style>{`
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(12px); }

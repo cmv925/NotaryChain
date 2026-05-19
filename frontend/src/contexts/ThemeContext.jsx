@@ -3,7 +3,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => localStorage.getItem('nc_theme') || 'dark');
+  // Corporate Trust Notary is the platform default. Users can opt into dark
+  // mode via the theme toggle (preserved for backwards-compat).
+  const [theme, setTheme] = useState(() => localStorage.getItem('nc_theme') || 'light');
 
   useEffect(() => {
     localStorage.setItem('nc_theme', theme);

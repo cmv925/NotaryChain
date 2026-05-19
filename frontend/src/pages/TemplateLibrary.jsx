@@ -45,11 +45,11 @@ const CATEGORY_COLORS = {
 
 const TemplateCard = ({ template, onSelect, onPreview }) => {
   const IconComponent = ICON_MAP[template.icon] || FileText;
-  const catColor = CATEGORY_COLORS[template.category] || 'bg-gray-500/15 text-gray-400 border-gray-500/30';
+  const catColor = CATEGORY_COLORS[template.category] || 'bg-gray-500/15 text-slate-500 border-slate-300/30';
 
   return (
     <Card
-      className="bg-[#1a2332] border-gray-800 hover:border-blue-500/50 transition-all group cursor-pointer"
+      className="bg-white border-slate-200 hover:border-blue-500/50 transition-all group cursor-pointer"
       data-testid={`template-card-${template.id}`}
       onClick={() => onPreview(template)}
     >
@@ -74,11 +74,11 @@ const TemplateCard = ({ template, onSelect, onPreview }) => {
         <h3 className="text-navy-900 font-semibold text-base mb-1.5 group-hover:text-blue-400 transition-colors">
           {template.name}
         </h3>
-        <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+        <p className="text-slate-500 text-sm mb-4 line-clamp-2">
           {template.description}
         </p>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 text-xs text-gray-500">
+          <div className="flex items-center gap-3 text-xs text-slate-500">
             <span className="flex items-center gap-1">
               <Clock className="w-3.5 h-3.5" /> {template.estimated_time}
             </span>
@@ -101,41 +101,41 @@ const TemplatePreviewModal = ({ template, onClose, onUse }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" data-testid="template-preview-modal">
-      <div className="bg-[#1a2332] border border-gray-700 rounded-xl max-w-lg w-full max-h-[85vh] overflow-y-auto">
-        <div className="sticky top-0 bg-[#1a2332] border-b border-gray-800 p-5 flex items-center justify-between">
+      <div className="bg-white border border-slate-200 rounded-xl max-w-lg w-full max-h-[85vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b border-slate-200 p-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-blue-500/15 flex items-center justify-center">
               <IconComponent className="w-5 h-5 text-blue-400" />
             </div>
             <div>
               <h2 className="text-navy-900 font-bold text-lg">{template.name}</h2>
-              <span className="text-gray-500 text-xs">{CATEGORY_LABELS[template.category]}</span>
+              <span className="text-slate-500 text-xs">{CATEGORY_LABELS[template.category]}</span>
             </div>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-navy-900 p-1" data-testid="close-preview-modal">
+          <button onClick={onClose} className="text-slate-500 hover:text-navy-900 p-1" data-testid="close-preview-modal">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="p-5 space-y-5">
-          <p className="text-gray-300 text-sm">{template.description}</p>
+          <p className="text-slate-500 text-sm">{template.description}</p>
 
           {/* Meta info */}
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-[#0a0f1a] rounded-lg p-3 text-center">
+            <div className="bg-cream-100 rounded-lg p-3 text-center">
               <Clock className="w-4 h-4 text-blue-400 mx-auto mb-1" />
               <p className="text-navy-900 text-sm font-medium">{template.estimated_time}</p>
-              <p className="text-gray-500 text-xs">Est. Time</p>
+              <p className="text-slate-500 text-xs">Est. Time</p>
             </div>
-            <div className="bg-[#0a0f1a] rounded-lg p-3 text-center">
+            <div className="bg-cream-100 rounded-lg p-3 text-center">
               <Users className="w-4 h-4 text-green-400 mx-auto mb-1" />
               <p className="text-navy-900 text-sm font-medium">{template.signers_needed}</p>
-              <p className="text-gray-500 text-xs">Signers</p>
+              <p className="text-slate-500 text-xs">Signers</p>
             </div>
-            <div className="bg-[#0a0f1a] rounded-lg p-3 text-center">
+            <div className="bg-cream-100 rounded-lg p-3 text-center">
               <Shield className="w-4 h-4 text-purple-400 mx-auto mb-1" />
               <p className="text-navy-900 text-sm font-medium">{template.notarization_required ? 'Yes' : 'No'}</p>
-              <p className="text-gray-500 text-xs">Notarization</p>
+              <p className="text-slate-500 text-xs">Notarization</p>
             </div>
           </div>
 
@@ -144,13 +144,13 @@ const TemplatePreviewModal = ({ template, onClose, onUse }) => {
             <h3 className="text-navy-900 font-semibold text-sm mb-3">Required Information</h3>
             <div className="space-y-2">
               {template.fields?.map((field, idx) => (
-                <div key={idx} className="flex items-center gap-2 bg-[#0a0f1a] rounded-lg px-3 py-2.5 border border-gray-800">
+                <div key={idx} className="flex items-center gap-2 bg-cream-100 rounded-lg px-3 py-2.5 border border-slate-200">
                   <ChevronRight className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <span className="text-gray-200 text-sm">{field.label}</span>
+                    <span className="text-slate-500 text-sm">{field.label}</span>
                     {field.required && <span className="text-red-400 text-xs ml-1">*</span>}
                   </div>
-                  <span className="text-gray-600 text-xs flex-shrink-0">{field.type}</span>
+                  <span className="text-slate-600 text-xs flex-shrink-0">{field.type}</span>
                 </div>
               ))}
             </div>
@@ -211,7 +211,7 @@ const TemplateLibrary = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       <div className="pt-24 sm:pt-32 pb-16 sm:pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -222,7 +222,7 @@ const TemplateLibrary = () => {
             <h1 className="text-2xl sm:text-4xl font-bold text-navy-900 mb-2 sm:mb-3" data-testid="template-library-title">
               Document Template Library
             </h1>
-            <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+            <p className="text-slate-500 text-sm sm:text-base max-w-xl mx-auto">
               Start from a pre-built legal template instead of uploading from scratch. Choose a template, fill in your details, and submit for notarization.
             </p>
           </div>
@@ -230,12 +230,12 @@ const TemplateLibrary = () => {
           {/* Search & Filters */}
           <div className="flex flex-col sm:flex-row gap-3 mb-6 sm:mb-8">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
               <Input
                 placeholder="Search templates..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-[#1a2332] border-gray-700 text-navy-900 placeholder:text-gray-500"
+                className="pl-10 bg-white border-slate-200 text-navy-900 placeholder:text-slate-500"
                 data-testid="template-search-input"
               />
             </div>
@@ -246,7 +246,7 @@ const TemplateLibrary = () => {
                 onClick={() => setActiveCategory(null)}
                 className={activeCategory === null
                   ? 'bg-blue-600 text-navy-900'
-                  : 'border-gray-700 text-gray-400 hover:text-navy-900'}
+                  : 'border-slate-200 text-slate-500 hover:text-navy-900'}
                 data-testid="filter-all"
               >
                 All
@@ -259,7 +259,7 @@ const TemplateLibrary = () => {
                   onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
                   className={activeCategory === cat
                     ? 'bg-blue-600 text-navy-900'
-                    : 'border-gray-700 text-gray-400 hover:text-navy-900'}
+                    : 'border-slate-200 text-slate-500 hover:text-navy-900'}
                   data-testid={`filter-${cat}`}
                 >
                   {CATEGORY_LABELS[cat] || cat}
@@ -270,11 +270,11 @@ const TemplateLibrary = () => {
 
           {/* Template Grid */}
           {loading ? (
-            <div className="text-center py-20 text-gray-400">Loading templates...</div>
+            <div className="text-center py-20 text-slate-500">Loading templates...</div>
           ) : templates.length === 0 ? (
             <div className="text-center py-20" data-testid="no-templates">
-              <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-              <p className="text-gray-400">No templates found. Try a different search or filter.</p>
+              <FileText className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+              <p className="text-slate-500">No templates found. Try a different search or filter.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" data-testid="template-grid">
@@ -291,11 +291,11 @@ const TemplateLibrary = () => {
 
           {/* CTA to upload manually */}
           <div className="mt-10 text-center">
-            <p className="text-gray-500 text-sm mb-3">Don't see what you need?</p>
+            <p className="text-slate-500 text-sm mb-3">Don't see what you need?</p>
             <Button
               onClick={() => navigate('/request-notarization')}
               variant="outline"
-              className="border-gray-700 text-gray-300 hover:text-navy-900 hover:border-blue-500"
+              className="border-slate-200 text-slate-500 hover:text-navy-900 hover:border-blue-500"
               data-testid="upload-own-document-btn"
             >
               <FileText className="w-4 h-4 mr-2" />

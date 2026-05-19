@@ -17,7 +17,7 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const planIcons = { free: Zap, pro: Crown, enterprise: Building2 };
 const planColors = {
-  free: 'text-gray-400',
+  free: 'text-slate-500',
   pro: 'text-blue-400',
   enterprise: 'text-purple-400',
 };
@@ -63,7 +63,7 @@ const SubscriptionPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center">
         <div className="text-navy-900 text-xl">Loading subscription...</div>
       </div>
     );
@@ -73,11 +73,11 @@ const SubscriptionPage = () => {
   const sub = subData?.subscription || {};
   const usage = subData?.usage || {};
   const Icon = planIcons[plan.id] || Zap;
-  const color = planColors[plan.id] || 'text-gray-400';
+  const color = planColors[plan.id] || 'text-slate-500';
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
-      <header className="bg-[#1a2332] border-b border-gray-800">
+    <div className="min-h-screen bg-cream-100">
+      <header className="bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
@@ -93,7 +93,7 @@ const SubscriptionPage = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
         <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Subscription' }]} />
         {/* Current Plan Card */}
-        <Card className="bg-[#1a2332] border-gray-800" data-testid="current-plan-card">
+        <Card className="bg-white border-slate-200" data-testid="current-plan-card">
           <CardContent className="p-6 sm:p-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-4">
@@ -102,12 +102,12 @@ const SubscriptionPage = () => {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-navy-900">{plan.name} Plan</h2>
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-slate-500 text-sm">
                     {plan.price === 0 ? 'Free forever' : `$${plan.price}/${plan.interval}`}
                   </p>
                   <div className={`inline-flex items-center gap-1.5 mt-1 text-xs ${
                     sub.status === 'active' ? 'text-green-400' :
-                    sub.status === 'cancelling' ? 'text-yellow-400' : 'text-gray-400'
+                    sub.status === 'cancelling' ? 'text-yellow-400' : 'text-slate-500'
                   }`}>
                     {sub.status === 'active' ? <CheckCircle className="w-3 h-3" /> :
                      sub.status === 'cancelling' ? <AlertTriangle className="w-3 h-3" /> :
@@ -132,10 +132,10 @@ const SubscriptionPage = () => {
             </div>
 
             {sub.current_period_end && (
-              <div className="mt-4 pt-4 border-t border-gray-800">
-                <p className="text-gray-500 text-xs">
+              <div className="mt-4 pt-4 border-t border-slate-200">
+                <p className="text-slate-500 text-xs">
                   {sub.status === 'cancelling' ? 'Access until' : 'Next billing date'}:{' '}
-                  <span className="text-gray-300">
+                  <span className="text-slate-500">
                     {new Date(sub.current_period_end).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                   </span>
                 </p>
@@ -146,33 +146,33 @@ const SubscriptionPage = () => {
 
         {/* Discount Savings Card */}
         {discountInfo && discountInfo.discount_pct > 0 && (
-          <Card className="bg-[#1a2332] border-coral-200 border" data-testid="discount-card">
+          <Card className="bg-white border-coral-200 border" data-testid="discount-card">
             <CardContent className="p-6 sm:p-8">
               <div className="flex items-center gap-2 mb-4">
                 <BadgePercent className="w-5 h-5 text-coral-600" />
                 <h3 className="text-lg font-bold text-navy-900">Per-Document Discount</h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-[#0a0f1a] rounded-lg border border-gray-800 p-4 text-center">
+                <div className="bg-cream-100 rounded-lg border border-slate-200 p-4 text-center">
                   <p className="text-coral-600 text-3xl font-bold">{discountInfo.discount_pct}%</p>
-                  <p className="text-gray-500 text-xs mt-1">Discount Rate</p>
+                  <p className="text-slate-500 text-xs mt-1">Discount Rate</p>
                 </div>
-                <div className="bg-[#0a0f1a] rounded-lg border border-gray-800 p-4 text-center">
+                <div className="bg-cream-100 rounded-lg border border-slate-200 p-4 text-center">
                   <p className="text-navy-900 text-3xl font-bold">${discountInfo.total_saved_this_cycle}</p>
-                  <p className="text-gray-500 text-xs mt-1">Saved This Cycle</p>
+                  <p className="text-slate-500 text-xs mt-1">Saved This Cycle</p>
                 </div>
-                <div className="bg-[#0a0f1a] rounded-lg border border-gray-800 p-4 text-center">
+                <div className="bg-cream-100 rounded-lg border border-slate-200 p-4 text-center">
                   <p className="text-navy-900 text-3xl font-bold">{discountInfo.docs_discounted_this_cycle}</p>
-                  <p className="text-gray-500 text-xs mt-1">Docs Discounted</p>
+                  <p className="text-slate-500 text-xs mt-1">Docs Discounted</p>
                 </div>
               </div>
-              <p className="text-gray-500 text-xs mt-3">Your <span className="text-coral-600">{discountInfo.plan_name}</span> plan gives you {discountInfo.discount_pct}% off every document notarization.</p>
+              <p className="text-slate-500 text-xs mt-3">Your <span className="text-coral-600">{discountInfo.plan_name}</span> plan gives you {discountInfo.discount_pct}% off every document notarization.</p>
             </CardContent>
           </Card>
         )}
 
         {/* Usage Card */}
-        <Card className="bg-[#1a2332] border-gray-800" data-testid="usage-card">
+        <Card className="bg-white border-slate-200" data-testid="usage-card">
           <CardContent className="p-6 sm:p-8">
             <div className="flex items-center gap-2 mb-6">
               <BarChart3 className="w-5 h-5 text-blue-400" />
@@ -193,10 +193,10 @@ const SubscriptionPage = () => {
                   <div key={key} data-testid={`usage-${key}`}>
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2">
-                        <UsageIcon className="w-4 h-4 text-gray-500" />
-                        <span className="text-sm text-gray-300">{label}</span>
+                        <UsageIcon className="w-4 h-4 text-slate-500" />
+                        <span className="text-sm text-slate-500">{label}</span>
                       </div>
-                      <span className={`text-sm font-medium ${isOver ? 'text-red-400' : 'text-gray-400'}`}>
+                      <span className={`text-sm font-medium ${isOver ? 'text-red-400' : 'text-slate-500'}`}>
                         {item.used} / {item.limit > 1000 ? 'Unlimited' : item.limit}
                       </span>
                     </div>
@@ -215,12 +215,12 @@ const SubscriptionPage = () => {
         </Card>
 
         {/* Plan Features */}
-        <Card className="bg-[#1a2332] border-gray-800" data-testid="plan-features-card">
+        <Card className="bg-white border-slate-200" data-testid="plan-features-card">
           <CardContent className="p-6 sm:p-8">
             <h3 className="text-lg font-bold text-navy-900 mb-4">Your Plan Includes</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {(plan.features || []).map((feature, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-gray-300">
+                <div key={i} className="flex items-center gap-2 text-sm text-slate-500">
                   <CheckCircle className={`w-4 h-4 flex-shrink-0 ${color}`} />
                   {feature}
                 </div>

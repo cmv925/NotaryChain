@@ -1,5 +1,15 @@
-/* Theme Variables */
-:root, [data-theme="dark"] {
+/* Theme Variables — Corporate Trust Notary is now the default. */
+:root, [data-theme="light"] {
+  --bg-primary: #FDFCF8;    /* cream-100 */
+  --bg-secondary: #FFFFFF;  /* card surface */
+  --bg-tertiary: #F8F4EA;   /* cream-200 */
+  --text-primary: #142E54;  /* navy-700 */
+  --text-secondary: #475569; /* slate-600 */
+  --text-muted: #94a3b8;
+  --border-color: #e2e8f0;
+}
+
+[data-theme="dark"] {
   --bg-primary: #030712;
   --bg-secondary: #0d1b2a;
   --bg-tertiary: #1a2332;
@@ -9,17 +19,7 @@
   --border-color: #1e293b;
 }
 
-[data-theme="light"] {
-  --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f1f5f9;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
-  --border-color: #e2e8f0;
-}
-
-[data-theme="light"] body {
+body {
   background: var(--bg-primary);
   color: var(--text-primary);
 }

@@ -202,7 +202,7 @@ const RequestNotarization = () => {
   const canProceedToStep2 = analysisResult && (analysisResult.status === 'verified' || analysisResult.status === 'needs_review');
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       <div className="pt-24 sm:pt-32 pb-16 sm:pb-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -211,7 +211,7 @@ const RequestNotarization = () => {
             <h1 className="text-2xl sm:text-4xl font-bold text-navy-900 mb-2 sm:mb-4">
               Request Notarization
             </h1>
-            <p className="text-gray-400 text-sm sm:text-lg">
+            <p className="text-slate-500 text-sm sm:text-lg">
               AI-powered document analysis with biometric verification
             </p>
           </div>

@@ -10,12 +10,12 @@ const PaymentCancel = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
 
       <div className="pt-32 pb-24">
         <div className="max-w-xl mx-auto px-6">
-          <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800">
+          <Card className="bg-gradient-to-br from-white to-cream-100 border border-slate-200">
             <CardContent className="p-8 text-center">
               <div className="w-20 h-20 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-6">
                 <XCircle className="w-10 h-10 text-red-500" />
@@ -23,7 +23,7 @@ const PaymentCancel = () => {
               <h1 className="text-3xl font-bold text-navy-900 mb-2">
                 Payment Cancelled
               </h1>
-              <p className="text-gray-400 mb-8">
+              <p className="text-slate-500 mb-8">
                 Your payment was cancelled. No charges were made to your account.
               </p>
 
@@ -38,14 +38,14 @@ const PaymentCancel = () => {
                 <Button
                   onClick={() => navigate('/')}
                   variant="outline"
-                  className="w-full border-gray-700 text-gray-300"
+                  className="w-full border-slate-200 text-slate-500"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to Home
                 </Button>
               </div>
 
-              <p className="text-gray-500 text-sm mt-6">
+              <p className="text-slate-500 text-sm mt-6">
                 Need help? Contact our support team.
               </p>
             </CardContent>

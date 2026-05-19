@@ -29,7 +29,7 @@ const API = `${BACKEND_URL}/api`;
 const ROLE_BADGES = {
   owner: { label: 'Owner', color: 'bg-coral-500/15 text-coral-600 border-gold-500/30' },
   admin: { label: 'Admin', color: 'bg-blue-500/15 text-blue-400 border-blue-500/30' },
-  member: { label: 'Member', color: 'bg-gray-500/15 text-gray-400 border-gray-500/30' },
+  member: { label: 'Member', color: 'bg-gray-500/15 text-slate-500 border-slate-300/30' },
 };
 
 // --- Create Organization Modal ---
@@ -63,24 +63,24 @@ const CreateOrgModal = ({ onClose, onCreated, token }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" data-testid="create-org-modal">
-      <div className="bg-[#1a2332] border border-gray-700 rounded-xl max-w-md w-full p-6">
+      <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-navy-900 font-bold text-lg">Create Organization</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-navy-900"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="text-slate-500 hover:text-navy-900"><X className="w-5 h-5" /></button>
         </div>
         <form onSubmit={handleCreate} className="space-y-4">
           <div>
-            <Label className="text-gray-200 text-sm">Organization Name *</Label>
-            <Input value={name} onChange={(e) => handleNameChange(e.target.value)} placeholder="Acme Corp" className="bg-[#0a0f1a] border-gray-700 text-navy-900 mt-1" data-testid="org-name-input" />
+            <Label className="text-slate-500 text-sm">Organization Name *</Label>
+            <Input value={name} onChange={(e) => handleNameChange(e.target.value)} placeholder="Acme Corp" className="bg-cream-100 border-slate-200 text-navy-900 mt-1" data-testid="org-name-input" />
           </div>
           <div>
-            <Label className="text-gray-200 text-sm">URL Slug *</Label>
-            <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="acme-corp" className="bg-[#0a0f1a] border-gray-700 text-navy-900 mt-1" data-testid="org-slug-input" />
-            <p className="text-gray-500 text-xs mt-1">Used in URLs: /org/{slug}</p>
+            <Label className="text-slate-500 text-sm">URL Slug *</Label>
+            <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="acme-corp" className="bg-cream-100 border-slate-200 text-navy-900 mt-1" data-testid="org-slug-input" />
+            <p className="text-slate-500 text-xs mt-1">Used in URLs: /org/{slug}</p>
           </div>
           <div>
-            <Label className="text-gray-200 text-sm">Description</Label>
-            <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="A brief description..." className="bg-[#0a0f1a] border-gray-700 text-navy-900 mt-1" data-testid="org-desc-input" />
+            <Label className="text-slate-500 text-sm">Description</Label>
+            <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="A brief description..." className="bg-cream-100 border-slate-200 text-navy-900 mt-1" data-testid="org-desc-input" />
           </div>
           <Button type="submit" disabled={creating || !name.trim()} className="w-full bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="create-org-btn">
             {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
@@ -117,18 +117,18 @@ const InviteMemberModal = ({ orgId, onClose, onInvited, token }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" data-testid="invite-member-modal">
-      <div className="bg-[#1a2332] border border-gray-700 rounded-xl max-w-md w-full p-6">
+      <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-navy-900 font-bold text-lg">Invite Member</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-navy-900"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="text-slate-500 hover:text-navy-900"><X className="w-5 h-5" /></button>
         </div>
         <form onSubmit={handleInvite} className="space-y-4">
           <div>
-            <Label className="text-gray-200 text-sm">Email Address *</Label>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="colleague@company.com" className="bg-[#0a0f1a] border-gray-700 text-navy-900 mt-1" data-testid="invite-email-input" />
+            <Label className="text-slate-500 text-sm">Email Address *</Label>
+            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="colleague@company.com" className="bg-cream-100 border-slate-200 text-navy-900 mt-1" data-testid="invite-email-input" />
           </div>
           <div>
-            <Label className="text-gray-200 text-sm">Role</Label>
+            <Label className="text-slate-500 text-sm">Role</Label>
             <div className="mt-2 space-y-2">
               {[
                 { value: 'admin', label: 'Admin', desc: 'Full access — manage members, billing, settings, and SSO', icon: Shield },
@@ -138,13 +138,13 @@ const InviteMemberModal = ({ orgId, onClose, onInvited, token }) => {
                   key={r.value}
                   type="button"
                   onClick={() => setRole(r.value)}
-                  className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${role === r.value ? 'border-blue-500 bg-blue-500/10' : 'border-gray-700 bg-[#0a0f1a] hover:border-gray-600'}`}
+                  className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${role === r.value ? 'border-blue-500 bg-blue-500/10' : 'border-slate-200 bg-cream-100 hover:border-slate-200'}`}
                   data-testid={`invite-role-${r.value}`}
                 >
-                  <r.icon className={`w-4 h-4 ${role === r.value ? 'text-blue-400' : 'text-gray-500'}`} />
+                  <r.icon className={`w-4 h-4 ${role === r.value ? 'text-blue-400' : 'text-slate-500'}`} />
                   <div>
-                    <p className={`text-sm font-medium ${role === r.value ? 'text-navy-900' : 'text-gray-300'}`}>{r.label}</p>
-                    <p className="text-gray-500 text-xs">{r.desc}</p>
+                    <p className={`text-sm font-medium ${role === r.value ? 'text-navy-900' : 'text-slate-500'}`}>{r.label}</p>
+                    <p className="text-slate-500 text-xs">{r.desc}</p>
                   </div>
                 </button>
               ))}
@@ -222,17 +222,17 @@ const SSOSettings = ({ orgId, myRole, token }) => {
     }
   };
 
-  if (loading) return <div className="text-gray-400 py-8 text-center">Loading SSO config...</div>;
-  if (myRole !== 'owner') return <div className="text-gray-400 py-8 text-center">Only the organization owner can configure SSO.</div>;
+  if (loading) return <div className="text-slate-500 py-8 text-center">Loading SSO config...</div>;
+  if (myRole !== 'owner') return <div className="text-slate-500 py-8 text-center">Only the organization owner can configure SSO.</div>;
 
   return (
     <div className="space-y-4" data-testid="sso-settings">
-      <div className="flex items-center justify-between p-4 bg-[#0a0f1a] rounded-lg border border-gray-800">
+      <div className="flex items-center justify-between p-4 bg-cream-100 rounded-lg border border-slate-200">
         <div className="flex items-center gap-3">
           <Lock className="w-5 h-5 text-purple-400" />
           <div>
             <p className="text-navy-900 font-medium">Single Sign-On (SSO)</p>
-            <p className="text-gray-500 text-xs">Allow members to sign in with your identity provider</p>
+            <p className="text-slate-500 text-xs">Allow members to sign in with your identity provider</p>
           </div>
         </div>
         <button
@@ -245,38 +245,38 @@ const SSOSettings = ({ orgId, myRole, token }) => {
       </div>
 
       {form.sso_enabled && (
-        <div className="space-y-4 p-4 bg-[#0a0f1a] rounded-lg border border-gray-800">
+        <div className="space-y-4 p-4 bg-cream-100 rounded-lg border border-slate-200">
           <div>
-            <Label className="text-gray-200 text-sm">Provider</Label>
-            <select value={form.sso_provider} onChange={(e) => setForm(f => ({ ...f, sso_provider: e.target.value }))} className="w-full bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-navy-900 mt-1" data-testid="sso-provider-select">
+            <Label className="text-slate-500 text-sm">Provider</Label>
+            <select value={form.sso_provider} onChange={(e) => setForm(f => ({ ...f, sso_provider: e.target.value }))} className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-navy-900 mt-1" data-testid="sso-provider-select">
               <option value="oidc">OpenID Connect (OIDC)</option>
               <option value="saml">SAML 2.0</option>
             </select>
           </div>
           <div>
-            <Label className="text-gray-200 text-sm">Issuer URL / IdP URL *</Label>
-            <Input value={form.sso_issuer_url} onChange={(e) => setForm(f => ({ ...f, sso_issuer_url: e.target.value }))} placeholder="https://login.example.com" className="bg-[#1a2332] border-gray-700 text-navy-900 mt-1" data-testid="sso-issuer-input" />
+            <Label className="text-slate-500 text-sm">Issuer URL / IdP URL *</Label>
+            <Input value={form.sso_issuer_url} onChange={(e) => setForm(f => ({ ...f, sso_issuer_url: e.target.value }))} placeholder="https://login.example.com" className="bg-white border-slate-200 text-navy-900 mt-1" data-testid="sso-issuer-input" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label className="text-gray-200 text-sm">Client ID *</Label>
-              <Input value={form.sso_client_id} onChange={(e) => setForm(f => ({ ...f, sso_client_id: e.target.value }))} className="bg-[#1a2332] border-gray-700 text-navy-900 mt-1" data-testid="sso-client-id-input" />
+              <Label className="text-slate-500 text-sm">Client ID *</Label>
+              <Input value={form.sso_client_id} onChange={(e) => setForm(f => ({ ...f, sso_client_id: e.target.value }))} className="bg-white border-slate-200 text-navy-900 mt-1" data-testid="sso-client-id-input" />
             </div>
             <div>
-              <Label className="text-gray-200 text-sm">Client Secret *</Label>
-              <Input type="password" value={form.sso_client_secret} onChange={(e) => setForm(f => ({ ...f, sso_client_secret: e.target.value }))} className="bg-[#1a2332] border-gray-700 text-navy-900 mt-1" data-testid="sso-client-secret-input" />
+              <Label className="text-slate-500 text-sm">Client Secret *</Label>
+              <Input type="password" value={form.sso_client_secret} onChange={(e) => setForm(f => ({ ...f, sso_client_secret: e.target.value }))} className="bg-white border-slate-200 text-navy-900 mt-1" data-testid="sso-client-secret-input" />
             </div>
           </div>
           {form.sso_provider === 'saml' && (
             <div>
-              <Label className="text-gray-200 text-sm">Metadata URL</Label>
-              <Input value={form.sso_metadata_url} onChange={(e) => setForm(f => ({ ...f, sso_metadata_url: e.target.value }))} placeholder="https://login.example.com/saml/metadata" className="bg-[#1a2332] border-gray-700 text-navy-900 mt-1" data-testid="sso-metadata-input" />
+              <Label className="text-slate-500 text-sm">Metadata URL</Label>
+              <Input value={form.sso_metadata_url} onChange={(e) => setForm(f => ({ ...f, sso_metadata_url: e.target.value }))} placeholder="https://login.example.com/saml/metadata" className="bg-white border-slate-200 text-navy-900 mt-1" data-testid="sso-metadata-input" />
             </div>
           )}
           <div>
-            <Label className="text-gray-200 text-sm">Allowed Email Domains</Label>
-            <Input value={form.sso_allowed_domains} onChange={(e) => setForm(f => ({ ...f, sso_allowed_domains: e.target.value }))} placeholder="example.com, acme.com" className="bg-[#1a2332] border-gray-700 text-navy-900 mt-1" data-testid="sso-domains-input" />
-            <p className="text-gray-500 text-xs mt-1">Comma-separated. Only users with these email domains can SSO.</p>
+            <Label className="text-slate-500 text-sm">Allowed Email Domains</Label>
+            <Input value={form.sso_allowed_domains} onChange={(e) => setForm(f => ({ ...f, sso_allowed_domains: e.target.value }))} placeholder="example.com, acme.com" className="bg-white border-slate-200 text-navy-900 mt-1" data-testid="sso-domains-input" />
+            <p className="text-slate-500 text-xs mt-1">Comma-separated. Only users with these email domains can SSO.</p>
           </div>
           <Button onClick={handleSave} disabled={saving} className="bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="save-sso-btn">
             {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
@@ -294,7 +294,7 @@ const MemberRow = ({ member: m, orgId, myRole, isAdmin, token, onRemove, onRoleC
   const canRemove = userPerms.includes('members:remove');
 
   return (
-    <div className="flex items-center justify-between p-3 bg-[#0a0f1a] rounded-lg border border-gray-800" data-testid={`member-${m.id}`}>
+    <div className="flex items-center justify-between p-3 bg-cream-100 rounded-lg border border-slate-200" data-testid={`member-${m.id}`}>
       <div className="flex items-center gap-3">
         <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-bold">
           {(m.full_name || m.email)[0].toUpperCase()}
@@ -302,7 +302,7 @@ const MemberRow = ({ member: m, orgId, myRole, isAdmin, token, onRemove, onRoleC
         <div>
           <p className="text-navy-900 text-sm font-medium">{m.full_name || m.email}</p>
           <div className="flex items-center gap-2">
-            <p className="text-gray-500 text-xs">{m.email}</p>
+            <p className="text-slate-500 text-xs">{m.email}</p>
             {m.custom_role_id && (
               <span className="text-[10px] px-1.5 py-0.5 rounded bg-coral-500/15 text-coral-600 border border-coral-200">
                 {roles.find(r => r.id === m.custom_role_id)?.name || 'Custom Role'}
@@ -319,7 +319,7 @@ const MemberRow = ({ member: m, orgId, myRole, isAdmin, token, onRemove, onRoleC
             <select
               value={m.role}
               onChange={(e) => onRoleChange(m.id, e.target.value)}
-              className="bg-[#1a2332] border border-gray-700 rounded text-xs text-gray-300 px-2 py-1"
+              className="bg-white border border-slate-200 rounded text-xs text-slate-500 px-2 py-1"
               data-testid={`member-role-select-${m.id}`}
             >
               <option value="member">Member</option>
@@ -328,7 +328,7 @@ const MemberRow = ({ member: m, orgId, myRole, isAdmin, token, onRemove, onRoleC
             <select
               value={m.custom_role_id || ''}
               onChange={(e) => onAssignCustomRole(m.id, e.target.value || null)}
-              className="bg-[#1a2332] border border-gray-700 rounded text-xs text-gray-300 px-2 py-1"
+              className="bg-white border border-slate-200 rounded text-xs text-slate-500 px-2 py-1"
               data-testid={`member-custom-role-select-${m.id}`}
             >
               <option value="">No custom role</option>
@@ -515,7 +515,7 @@ const OrganizationPage = () => {
   const TABS = ALL_TABS.filter(tab => isAdmin || myPerms.includes(tab.permission));
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       <div className="pt-24 sm:pt-28 pb-16 sm:pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -524,7 +524,7 @@ const OrganizationPage = () => {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-navy-900" data-testid="org-page-title">Organizations</h1>
-              <p className="text-gray-400 text-sm mt-1">Manage your teams and enterprise settings</p>
+              <p className="text-slate-500 text-sm mt-1">Manage your teams and enterprise settings</p>
             </div>
             <Button onClick={() => setShowCreateModal(true)} className="bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="new-org-btn">
               <Plus className="w-4 h-4 mr-2" /> New Organization
@@ -538,7 +538,7 @@ const OrganizationPage = () => {
                 <div key={inv.id} className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-blue-400" />
-                    <span className="text-gray-200 text-sm">
+                    <span className="text-slate-500 text-sm">
                       <strong className="text-navy-900">{inv.invited_by_name}</strong> invited you to <strong className="text-navy-900">{inv.org_name}</strong> as {inv.role}
                     </span>
                   </div>
@@ -551,17 +551,17 @@ const OrganizationPage = () => {
           )}
 
           {loading ? (
-            <div className="text-center py-20 text-gray-400"><Loader2 className="w-8 h-8 animate-spin mx-auto" /></div>
+            <div className="text-center py-20 text-slate-500"><Loader2 className="w-8 h-8 animate-spin mx-auto" /></div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               {/* Org Sidebar */}
               <div className="space-y-2" data-testid="org-list">
                 {orgs.length === 0 ? (
-                  <Card className="bg-[#1a2332] border-gray-800">
+                  <Card className="bg-white border-slate-200">
                     <CardContent className="p-6 text-center">
-                      <Building2 className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-                      <p className="text-gray-400 text-sm">No organizations yet.</p>
-                      <p className="text-gray-500 text-xs mt-1">Create one to get started.</p>
+                      <Building2 className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+                      <p className="text-slate-500 text-sm">No organizations yet.</p>
+                      <p className="text-slate-500 text-xs mt-1">Create one to get started.</p>
                     </CardContent>
                   </Card>
                 ) : orgs.map((org) => (
@@ -571,19 +571,19 @@ const OrganizationPage = () => {
                     className={`w-full text-left p-3 rounded-lg border transition-all ${
                       selectedOrg?.id === org.id
                         ? 'bg-blue-500/10 border-blue-500/30'
-                        : 'bg-[#1a2332] border-gray-800 hover:border-gray-700'
+                        : 'bg-white border-slate-200 hover:border-slate-200'
                     }`}
                     data-testid={`org-item-${org.id}`}
                   >
                     <div className="flex items-center gap-2">
-                      <Building2 className={`w-4 h-4 ${selectedOrg?.id === org.id ? 'text-blue-400' : 'text-gray-500'}`} />
+                      <Building2 className={`w-4 h-4 ${selectedOrg?.id === org.id ? 'text-blue-400' : 'text-slate-500'}`} />
                       <span className="text-navy-900 font-medium text-sm truncate">{org.name}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-1 ml-6">
                       <span className={`text-xs px-1.5 py-0.5 rounded border ${ROLE_BADGES[org.my_role]?.color}`}>
                         {ROLE_BADGES[org.my_role]?.label}
                       </span>
-                      <span className="text-gray-500 text-xs">{org.member_count} member{org.member_count !== 1 ? 's' : ''}</span>
+                      <span className="text-slate-500 text-xs">{org.member_count} member{org.member_count !== 1 ? 's' : ''}</span>
                     </div>
                   </button>
                 ))}
@@ -592,13 +592,13 @@ const OrganizationPage = () => {
               {/* Org Detail */}
               {selectedOrg ? (
                 <div className="lg:col-span-3">
-                  <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800">
+                  <Card className="bg-gradient-to-br from-white to-cream-100 border border-slate-200">
                     <CardContent className="p-6">
                       {/* Org Header */}
                       <div className="flex items-center justify-between mb-5">
                         <div>
                           <h2 className="text-navy-900 font-bold text-xl" data-testid="selected-org-name">{selectedOrg.name}</h2>
-                          <p className="text-gray-500 text-sm">{selectedOrg.description || `/${selectedOrg.slug}`}</p>
+                          <p className="text-slate-500 text-sm">{selectedOrg.description || `/${selectedOrg.slug}`}</p>
                         </div>
                         <span className={`text-xs px-2 py-1 rounded border ${ROLE_BADGES[selectedOrg.my_role]?.color}`}>
                           {ROLE_BADGES[selectedOrg.my_role]?.label}
@@ -606,13 +606,13 @@ const OrganizationPage = () => {
                       </div>
 
                       {/* Tabs */}
-                      <div className="flex gap-1 mb-5 bg-[#0a0f1a] rounded-lg p-1" data-testid="org-tabs">
+                      <div className="flex gap-1 mb-5 bg-cream-100 rounded-lg p-1" data-testid="org-tabs">
                         {TABS.map(({ id, label, icon: Icon }) => (
                           <button
                             key={id}
                             onClick={() => setActiveTab(id)}
                             className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm transition-all ${
-                              activeTab === id ? 'bg-blue-600 text-navy-900' : 'text-gray-400 hover:text-navy-900'
+                              activeTab === id ? 'bg-blue-600 text-navy-900' : 'text-slate-500 hover:text-navy-900'
                             }`}
                             data-testid={`tab-${id}`}
                           >
@@ -628,7 +628,7 @@ const OrganizationPage = () => {
                             <h3 className="text-navy-900 font-semibold">Members ({members.length})</h3>
                             <div className="flex items-center gap-2">
                               {permSource && (
-                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#1a2332] text-gray-500 border border-gray-800" data-testid="perm-source-badge">
+                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200" data-testid="perm-source-badge">
                                   {permSource}
                                 </span>
                               )}
@@ -672,14 +672,14 @@ const OrganizationPage = () => {
                         <div data-testid="invites-tab">
                           <h3 className="text-navy-900 font-semibold mb-4">Pending Invites ({invites.length})</h3>
                           {invites.length === 0 ? (
-                            <p className="text-gray-500 text-sm text-center py-8">No pending invites.</p>
+                            <p className="text-slate-500 text-sm text-center py-8">No pending invites.</p>
                           ) : (
                             <div className="space-y-2">
                               {invites.map((inv) => (
-                                <div key={inv.id} className="flex items-center justify-between p-3 bg-[#0a0f1a] rounded-lg border border-gray-800">
+                                <div key={inv.id} className="flex items-center justify-between p-3 bg-cream-100 rounded-lg border border-slate-200">
                                   <div>
                                     <p className="text-navy-900 text-sm">{inv.email}</p>
-                                    <p className="text-gray-500 text-xs">Role: {inv.role} &bull; Invited by {inv.invited_by_name}</p>
+                                    <p className="text-slate-500 text-xs">Role: {inv.role} &bull; Invited by {inv.invited_by_name}</p>
                                   </div>
                                   <PermissionGate permission="members:invite" userPermissions={myPerms}>
                                     <button onClick={() => handleCancelInvite(inv.id)} className="text-red-400 hover:text-red-300 text-xs flex items-center gap-1">
@@ -708,35 +708,35 @@ const OrganizationPage = () => {
                         <div data-testid="settings-tab">
                           <h3 className="text-navy-900 font-semibold mb-4">Organization Settings</h3>
                           <div className="space-y-4">
-                            <div className="p-4 bg-[#0a0f1a] rounded-lg border border-gray-800">
-                              <p className="text-gray-400 text-sm mb-1">Organization ID</p>
+                            <div className="p-4 bg-cream-100 rounded-lg border border-slate-200">
+                              <p className="text-slate-500 text-sm mb-1">Organization ID</p>
                               <p className="text-navy-900 text-sm font-mono">{selectedOrg.id}</p>
                             </div>
-                            <div className="p-4 bg-[#0a0f1a] rounded-lg border border-gray-800">
-                              <p className="text-gray-400 text-sm mb-1">URL Slug</p>
+                            <div className="p-4 bg-cream-100 rounded-lg border border-slate-200">
+                              <p className="text-slate-500 text-sm mb-1">URL Slug</p>
                               <p className="text-navy-900 text-sm font-mono">/{selectedOrg.slug}</p>
                             </div>
-                            <div className="p-4 bg-[#0a0f1a] rounded-lg border border-gray-800">
-                              <p className="text-gray-400 text-sm mb-1">Created</p>
+                            <div className="p-4 bg-cream-100 rounded-lg border border-slate-200">
+                              <p className="text-slate-500 text-sm mb-1">Created</p>
                               <p className="text-navy-900 text-sm">{new Date(selectedOrg.created_at).toLocaleDateString()}</p>
                             </div>
-                            <div className="p-4 bg-[#0a0f1a] rounded-lg border border-gray-800">
-                              <p className="text-gray-400 text-sm mb-1">Plan</p>
+                            <div className="p-4 bg-cream-100 rounded-lg border border-slate-200">
+                              <p className="text-slate-500 text-sm mb-1">Plan</p>
                               <p className="text-navy-900 text-sm capitalize">{selectedOrg.plan}</p>
                             </div>
-                            <div className="p-4 bg-[#0a0f1a] rounded-lg border border-gray-800">
-                              <p className="text-gray-400 text-sm mb-1">Your Permissions</p>
+                            <div className="p-4 bg-cream-100 rounded-lg border border-slate-200">
+                              <p className="text-slate-500 text-sm mb-1">Your Permissions</p>
                               <p className="text-navy-900 text-sm">{myPerms.length} permissions via <span className="text-blue-400">{permSource}</span></p>
                               <div className="flex flex-wrap gap-1 mt-2">
                                 {myPerms.slice(0, 8).map(p => (
                                   <span key={p} className="text-[10px] px-1.5 py-0.5 rounded bg-coral-500/10 text-coral-600 border border-coral-200">{p}</span>
                                 ))}
-                                {myPerms.length > 8 && <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-gray-500">+{myPerms.length - 8} more</span>}
+                                {myPerms.length > 8 && <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-slate-500">+{myPerms.length - 8} more</span>}
                               </div>
                             </div>
                             <PermissionGate permission="org:settings" userPermissions={myPerms}>
                               {selectedOrg.my_role === 'owner' && (
-                                <div className="pt-4 border-t border-gray-800">
+                                <div className="pt-4 border-t border-slate-200">
                                   <Button onClick={handleDeleteOrg} variant="outline" className="border-red-500/50 text-red-400 hover:bg-red-500/10" data-testid="delete-org-btn">
                                     <Trash2 className="w-4 h-4 mr-2" /> Delete Organization
                                   </Button>
@@ -752,8 +752,8 @@ const OrganizationPage = () => {
               ) : (
                 <div className="lg:col-span-3 flex items-center justify-center">
                   <div className="text-center py-20">
-                    <Building2 className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                    <p className="text-gray-400">Select an organization or create a new one</p>
+                    <Building2 className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                    <p className="text-slate-500">Select an organization or create a new one</p>
                   </div>
                 </div>
               )}

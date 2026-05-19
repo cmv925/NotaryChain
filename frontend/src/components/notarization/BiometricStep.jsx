@@ -15,7 +15,7 @@ export const BiometricStep = ({
   onBack,
   onProceedToStep3,
 }) => (
-  <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800" data-testid="step-2-card">
+  <Card className="bg-gradient-to-br from-white to-cream-100 border border-slate-200" data-testid="step-2-card">
     <CardContent className="p-8">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-white flex items-center gap-3">
@@ -25,14 +25,14 @@ export const BiometricStep = ({
         <Button
           variant="ghost"
           onClick={onBack}
-          className="text-gray-400 hover:text-white"
+          className="text-slate-500 hover:text-white"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
         </Button>
       </div>
 
-      <p className="text-gray-400 mb-6">
+      <p className="text-slate-500 mb-6">
         Our AI-powered biometric system uses TensorFlow.js for real-time face detection
         and liveness verification. Complete the challenges to verify your identity.
       </p>
@@ -62,7 +62,7 @@ export const BiometricStep = ({
                 }`}>
                   {verificationResult.status === 'passed' ? 'Identity Verified!' : 'Verification Failed'}
                 </span>
-                <p className="text-gray-400 text-sm">
+                <p className="text-slate-500 text-sm">
                   {verificationResult.status === 'passed'
                     ? 'Your identity has been verified using AI biometrics'
                     : 'Please try again with better lighting and face positioning'}
@@ -70,8 +70,8 @@ export const BiometricStep = ({
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="bg-[#0a0f1a] rounded p-3">
-                <span className="text-gray-500 text-xs">Face Confidence</span>
+              <div className="bg-cream-100 rounded p-3">
+                <span className="text-slate-500 text-xs">Face Confidence</span>
                 <div className="flex items-center gap-2 mt-1">
                   <Progress value={verificationResult.confidence * 100} className="flex-1 h-2" />
                   <span className="text-white font-medium text-sm">
@@ -79,8 +79,8 @@ export const BiometricStep = ({
                   </span>
                 </div>
               </div>
-              <div className="bg-[#0a0f1a] rounded p-3">
-                <span className="text-gray-500 text-xs">Liveness Score</span>
+              <div className="bg-cream-100 rounded p-3">
+                <span className="text-slate-500 text-xs">Liveness Score</span>
                 <div className="flex items-center gap-2 mt-1">
                   <Progress value={verificationResult.livenessScore || 0} className="flex-1 h-2" />
                   <span className="text-white font-medium text-sm">

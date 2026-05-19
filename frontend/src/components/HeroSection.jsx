@@ -9,7 +9,7 @@ const HeroSection = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-[#0f1825] pt-20 overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center bg-cream-100 pt-20 overflow-hidden">
       {/* Animated grid background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
@@ -34,7 +34,7 @@ const HeroSection = () => {
           </span>
         </h1>
 
-        <p className="text-base lg:text-lg text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-base lg:text-lg text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed">
           {t('hero.subtitle')}
         </p>
 
@@ -50,7 +50,7 @@ const HeroSection = () => {
           <Button
             onClick={() => navigate('/demo')}
             variant="outline"
-            className="border border-gray-700 hover:border-blue-500/60 text-gray-300 hover:text-white px-8 py-6 text-base rounded-lg transition-all bg-white/[0.02] hover:bg-blue-500/5 group"
+            className="border border-slate-200 hover:border-blue-500/60 text-slate-500 hover:text-white px-8 py-6 text-base rounded-lg transition-all bg-white/[0.02] hover:bg-blue-500/5 group"
             data-testid="hero-demo-btn"
           >
             <Play className="mr-2 w-4 h-4 text-blue-400 group-hover:text-blue-300" />
@@ -68,11 +68,11 @@ const HeroSection = () => {
           ].map((item, idx) => (
             <div
               key={idx}
-              className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-800/60 bg-white/[0.02] backdrop-blur-sm hover:border-blue-500/30 transition-all"
+              className="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200/60 bg-white/[0.02] backdrop-blur-sm hover:border-blue-500/30 transition-all"
             >
               <item.icon className="w-5 h-5 text-blue-400" />
               <span className="text-sm font-medium text-white">{item.label}</span>
-              <span className="text-xs text-gray-500">{item.sublabel}</span>
+              <span className="text-xs text-slate-500">{item.sublabel}</span>
             </div>
           ))}
         </div>

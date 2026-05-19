@@ -44,7 +44,7 @@ const AICopilotPanel = ({ requestId, token, onJournalPrefill }) => {
   };
 
   return (
-    <Card className="bg-gradient-to-br from-[#1a1a2e] to-[#16213e] border-purple-500/30" data-testid="ai-copilot-panel">
+    <Card className="bg-gradient-to-br from-white to-cream-200 border-purple-500/30" data-testid="ai-copilot-panel">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-white font-semibold flex items-center gap-2">
@@ -66,23 +66,23 @@ const AICopilotPanel = ({ requestId, token, onJournalPrefill }) => {
         {analyzing && (
           <div className="text-center py-6">
             <Loader2 className="w-8 h-8 text-purple-400 animate-spin mx-auto mb-2" />
-            <p className="text-gray-400 text-sm">Analyzing request...</p>
+            <p className="text-slate-500 text-sm">Analyzing request...</p>
           </div>
         )}
 
         {analysis && !analyzing && (
           <div className="space-y-3" data-testid="copilot-results">
             {/* Summary + Score */}
-            <div className="flex items-start gap-3 p-3 bg-[#0d1520] rounded-lg border border-gray-800">
+            <div className="flex items-start gap-3 p-3 bg-cream-100 rounded-lg border border-slate-200">
               <div className="text-center flex-shrink-0">
                 <div className={`text-2xl font-bold ${analysis.readiness_score >= 70 ? 'text-green-400' : analysis.readiness_score >= 40 ? 'text-amber-400' : 'text-red-400'}`}>
                   {analysis.readiness_score}
                 </div>
-                <div className="text-[10px] text-gray-500">Readiness</div>
+                <div className="text-[10px] text-slate-500">Readiness</div>
               </div>
               <div className="flex-1">
-                <p className="text-gray-300 text-sm">{analysis.summary}</p>
-                <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${riskColors[analysis.risk_level] || 'text-gray-400'} bg-opacity-15`}>
+                <p className="text-slate-500 text-sm">{analysis.summary}</p>
+                <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${riskColors[analysis.risk_level] || 'text-slate-500'} bg-opacity-15`}>
                   Risk: {analysis.risk_level?.toUpperCase()}
                 </span>
               </div>
@@ -91,10 +91,10 @@ const AICopilotPanel = ({ requestId, token, onJournalPrefill }) => {
             {/* Key Highlights */}
             {analysis.key_highlights?.length > 0 && (
               <div>
-                <h4 className="text-xs text-gray-500 uppercase tracking-wider mb-1.5">Key Data</h4>
+                <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-1.5">Key Data</h4>
                 <div className="space-y-1">
                   {analysis.key_highlights.map((h, i) => (
-                    <div key={i} className={`flex items-center justify-between px-2.5 py-1.5 rounded border text-xs ${statusColors[h.status] || 'bg-gray-800 text-gray-300 border-gray-700'}`}>
+                    <div key={i} className={`flex items-center justify-between px-2.5 py-1.5 rounded border text-xs ${statusColors[h.status] || 'bg-gray-800 text-slate-500 border-slate-200'}`}>
                       <span>{h.label}</span>
                       <span className="font-medium">{h.value}</span>
                     </div>
@@ -106,15 +106,15 @@ const AICopilotPanel = ({ requestId, token, onJournalPrefill }) => {
             {/* Inconsistency Flags */}
             {analysis.inconsistency_flags?.length > 0 && (
               <div>
-                <h4 className="text-xs text-gray-500 uppercase tracking-wider mb-1.5">Flags</h4>
+                <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-1.5">Flags</h4>
                 <div className="space-y-1.5">
                   {analysis.inconsistency_flags.map((f, i) => (
                     <div key={i} className="p-2 bg-red-500/5 rounded border border-red-500/20">
                       <div className="flex items-center gap-1.5">
                         <AlertTriangle className={`w-3 h-3 ${f.severity === 'high' ? 'text-red-400' : f.severity === 'medium' ? 'text-amber-400' : 'text-blue-400'}`} />
-                        <span className="text-xs text-gray-300">{f.description}</span>
+                        <span className="text-xs text-slate-500">{f.description}</span>
                       </div>
-                      {f.recommendation && <p className="text-[10px] text-gray-500 mt-0.5 ml-4">{f.recommendation}</p>}
+                      {f.recommendation && <p className="text-[10px] text-slate-500 mt-0.5 ml-4">{f.recommendation}</p>}
                     </div>
                   ))}
                 </div>
@@ -124,12 +124,12 @@ const AICopilotPanel = ({ requestId, token, onJournalPrefill }) => {
             {/* Checklist */}
             {analysis.checklist?.length > 0 && (
               <div>
-                <h4 className="text-xs text-gray-500 uppercase tracking-wider mb-1.5">Checklist</h4>
+                <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-1.5">Checklist</h4>
                 <div className="space-y-1">
                   {analysis.checklist.map((c, i) => (
                     <div key={i} className="flex items-center gap-2 text-xs">
-                      {c.completed ? <CheckCircle className="w-3.5 h-3.5 text-green-400" /> : <div className="w-3.5 h-3.5 rounded-full border border-gray-600" />}
-                      <span className={c.completed ? 'text-gray-400' : 'text-gray-300'}>{c.item}</span>
+                      {c.completed ? <CheckCircle className="w-3.5 h-3.5 text-green-400" /> : <div className="w-3.5 h-3.5 rounded-full border border-slate-200" />}
+                      <span className={c.completed ? 'text-slate-500' : 'text-slate-500'}>{c.item}</span>
                     </div>
                   ))}
                 </div>
@@ -139,9 +139,9 @@ const AICopilotPanel = ({ requestId, token, onJournalPrefill }) => {
             {/* Recommendations */}
             {analysis.recommendations?.length > 0 && (
               <div>
-                <h4 className="text-xs text-gray-500 uppercase tracking-wider mb-1.5">Recommendations</h4>
+                <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-1.5">Recommendations</h4>
                 {analysis.recommendations.map((r, i) => (
-                  <div key={i} className="flex items-start gap-1.5 text-xs text-gray-400">
+                  <div key={i} className="flex items-start gap-1.5 text-xs text-slate-500">
                     <ChevronRight className="w-3 h-3 mt-0.5 text-purple-400 flex-shrink-0" />
                     <span>{r}</span>
                   </div>
@@ -152,7 +152,7 @@ const AICopilotPanel = ({ requestId, token, onJournalPrefill }) => {
         )}
 
         {!analysis && !analyzing && (
-          <p className="text-gray-500 text-xs text-center py-3">Click "Analyze" to get AI insights on this request</p>
+          <p className="text-slate-500 text-xs text-center py-3">Click "Analyze" to get AI insights on this request</p>
         )}
       </CardContent>
     </Card>

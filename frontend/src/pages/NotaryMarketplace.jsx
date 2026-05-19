@@ -25,7 +25,7 @@ function StarRating({ rating, size = 'sm' }) {
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map(i => (
-        <Star key={i} className={`${s} ${i <= Math.round(rating) ? 'text-coral-600 fill-amber-400' : 'text-gray-600'}`} />
+        <Star key={i} className={`${s} ${i <= Math.round(rating) ? 'text-coral-600 fill-amber-400' : 'text-slate-600'}`} />
       ))}
     </div>
   );
@@ -105,17 +105,17 @@ const NotaryMarketplace = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       <div className="pt-24 pb-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           {selectedNotary ? (
             /* Notary Profile Detail */
             <div data-testid="notary-profile-detail">
-              <Button onClick={() => setSelectedNotary(null)} variant="ghost" className="text-gray-400 mb-4">
+              <Button onClick={() => setSelectedNotary(null)} variant="ghost" className="text-slate-500 mb-4">
                 &larr; {t('marketplace.back')}
               </Button>
-              <Card className="bg-[#1a2332] border-gray-800 mb-6">
+              <Card className="bg-white border-slate-200 mb-6">
                 <CardContent className="p-6">
                   <div className="flex flex-col sm:flex-row gap-6">
                     <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-navy-900 text-2xl font-bold flex-shrink-0">
@@ -127,26 +127,26 @@ const NotaryMarketplace = () => {
                         <div className="flex items-center gap-1">
                           <StarRating rating={selectedNotary.avg_rating} size="md" />
                           <span className="text-coral-600 font-semibold ml-1">{selectedNotary.avg_rating}</span>
-                          <span className="text-gray-500 text-sm">({selectedNotary.review_count} reviews)</span>
+                          <span className="text-slate-500 text-sm">({selectedNotary.review_count} reviews)</span>
                         </div>
-                        <span className="text-gray-600">|</span>
-                        <span className="text-gray-400 text-sm flex items-center gap-1">
+                        <span className="text-slate-600">|</span>
+                        <span className="text-slate-500 text-sm flex items-center gap-1">
                           <MapPin className="w-3.5 h-3.5" /> {selectedNotary.license_state}
                         </span>
                         {selectedNotary.ron_certified && (
                           <span className="px-2 py-0.5 bg-green-500/15 text-green-400 text-xs rounded-full border border-green-500/30">{t('marketplace.ron_certified')}</span>
                         )}
                       </div>
-                      <p className="text-gray-400 text-sm mt-3">{selectedNotary.bio || 'No bio provided.'}</p>
+                      <p className="text-slate-500 text-sm mt-3">{selectedNotary.bio || 'No bio provided.'}</p>
                       <div className="flex flex-wrap gap-2 mt-3">
                         {(selectedNotary.specializations || []).map(s => (
                           <span key={s} className="px-2 py-0.5 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">{s}</span>
                         ))}
                       </div>
                       <div className="flex items-center gap-6 mt-4 text-sm">
-                        <div><span className="text-gray-500">{t('marketplace.rate')}:</span> <span className="text-navy-900 font-semibold">${selectedNotary.hourly_rate}/hr</span></div>
-                        <div><span className="text-gray-500">{t('marketplace.experience')}:</span> <span className="text-navy-900 font-semibold">{selectedNotary.years_experience} yrs</span></div>
-                        <div><span className="text-gray-500">{t('dashboard.completed')}:</span> <span className="text-navy-900 font-semibold">{selectedNotary.completed_notarizations}</span></div>
+                        <div><span className="text-slate-500">{t('marketplace.rate')}:</span> <span className="text-navy-900 font-semibold">${selectedNotary.hourly_rate}/hr</span></div>
+                        <div><span className="text-slate-500">{t('marketplace.experience')}:</span> <span className="text-navy-900 font-semibold">{selectedNotary.years_experience} yrs</span></div>
+                        <div><span className="text-slate-500">{t('dashboard.completed')}:</span> <span className="text-navy-900 font-semibold">{selectedNotary.completed_notarizations}</span></div>
                       </div>
                     </div>
                   </div>
@@ -167,7 +167,7 @@ const NotaryMarketplace = () => {
 
               {/* Availability Preview */}
               {availability && (
-                <Card className="bg-[#1a2332] border-gray-800 mb-6" data-testid="notary-availability">
+                <Card className="bg-white border-slate-200 mb-6" data-testid="notary-availability">
                   <CardContent className="p-5">
                     <h3 className="text-base font-semibold text-navy-900 mb-3 flex items-center gap-2">
                       <CalendarIcon className="w-4 h-4 text-blue-400" />
@@ -180,15 +180,15 @@ const NotaryMarketplace = () => {
                           const slots = availability.availability[dayKey] || availability.availability[['monday','tuesday','wednesday','thursday','friday','saturday','sunday'][i]] || [];
                           const hasSlots = Array.isArray(slots) ? slots.length > 0 : !!slots;
                           return (
-                            <div key={day} className={`rounded-lg p-2 text-center border ${hasSlots ? 'bg-coral-500/5 border-coral-200' : 'bg-gray-800/30 border-gray-700'}`}>
-                              <p className={`text-xs font-medium ${hasSlots ? 'text-coral-600' : 'text-gray-600'}`}>{day}</p>
-                              <p className="text-[10px] text-gray-500 mt-0.5">{hasSlots ? (Array.isArray(slots) ? `${slots.length} slots` : 'Available') : 'Closed'}</p>
+                            <div key={day} className={`rounded-lg p-2 text-center border ${hasSlots ? 'bg-coral-500/5 border-coral-200' : 'bg-gray-800/30 border-slate-200'}`}>
+                              <p className={`text-xs font-medium ${hasSlots ? 'text-coral-600' : 'text-slate-600'}`}>{day}</p>
+                              <p className="text-[10px] text-slate-500 mt-0.5">{hasSlots ? (Array.isArray(slots) ? `${slots.length} slots` : 'Available') : 'Closed'}</p>
                             </div>
                           );
                         })}
                       </div>
                     ) : (
-                      <p className="text-gray-500 text-sm">{t('marketplace.no_availability')}</p>
+                      <p className="text-slate-500 text-sm">{t('marketplace.no_availability')}</p>
                     )}
                   </CardContent>
                 </Card>
@@ -206,23 +206,23 @@ const NotaryMarketplace = () => {
 
               {/* Review Form */}
               {showReviewForm && (
-                <Card className="bg-[#1a2332] border-blue-500/30 mb-4" data-testid="review-form">
+                <Card className="bg-white border-blue-500/30 mb-4" data-testid="review-form">
                   <CardContent className="p-5 space-y-4">
                     <h3 className="text-navy-900 font-medium">{t('marketplace.rate_experience')}</h3>
                     <div className="flex items-center gap-1">
                       {[1, 2, 3, 4, 5].map(i => (
                         <button key={i} onClick={() => setReviewRating(i)} className="focus:outline-none" data-testid={`review-star-${i}`}>
-                          <Star className={`w-7 h-7 ${i <= reviewRating ? 'text-coral-600 fill-amber-400' : 'text-gray-600'} hover:text-coral-700 transition-colors`} />
+                          <Star className={`w-7 h-7 ${i <= reviewRating ? 'text-coral-600 fill-amber-400' : 'text-slate-600'} hover:text-coral-700 transition-colors`} />
                         </button>
                       ))}
-                      <span className="text-gray-400 text-sm ml-2">{reviewRating}/5</span>
+                      <span className="text-slate-500 text-sm ml-2">{reviewRating}/5</span>
                     </div>
                     <textarea
                       value={reviewComment}
                       onChange={e => setReviewComment(e.target.value)}
                       placeholder={t('marketplace.share_experience')}
                       rows={3}
-                      className="w-full bg-[#0a0f1a] border border-gray-700 rounded-lg px-3 py-2 text-navy-900 text-sm placeholder-gray-500 focus:border-blue-500 outline-none"
+                      className="w-full bg-cream-100 border border-slate-200 rounded-lg px-3 py-2 text-navy-900 text-sm placeholder-gray-500 focus:border-blue-500 outline-none"
                       data-testid="review-comment"
                     />
                     <div className="flex gap-2">
@@ -230,26 +230,26 @@ const NotaryMarketplace = () => {
                         {submittingReview ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null}
                         {t('marketplace.submit_review')}
                       </Button>
-                      <Button variant="outline" onClick={() => setShowReviewForm(false)} className="border-gray-700 text-gray-400">{t('common.cancel')}</Button>
+                      <Button variant="outline" onClick={() => setShowReviewForm(false)} className="border-slate-200 text-slate-500">{t('common.cancel')}</Button>
                     </div>
                   </CardContent>
                 </Card>
               )}
               {(selectedNotary.reviews || []).length === 0 ? (
-                <p className="text-gray-500 text-sm">{t('marketplace.no_reviews')}</p>
+                <p className="text-slate-500 text-sm">{t('marketplace.no_reviews')}</p>
               ) : (
                 <div className="space-y-3" data-testid="notary-reviews">
                   {selectedNotary.reviews.map(review => (
-                    <Card key={review.id} className="bg-[#1a2332] border-gray-800">
+                    <Card key={review.id} className="bg-white border-slate-200">
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <span className="text-navy-900 text-sm font-medium">{review.user_name}</span>
                             <StarRating rating={review.rating} />
                           </div>
-                          <span className="text-gray-500 text-xs">{new Date(review.created_at).toLocaleDateString()}</span>
+                          <span className="text-slate-500 text-xs">{new Date(review.created_at).toLocaleDateString()}</span>
                         </div>
-                        <p className="text-gray-400 text-sm">{review.comment || 'No comment.'}</p>
+                        <p className="text-slate-500 text-sm">{review.comment || 'No comment.'}</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -265,7 +265,7 @@ const NotaryMarketplace = () => {
                   <Users className="w-7 h-7 text-blue-400" />
                   {t('marketplace.title')}
                 </h1>
-                <p className="text-gray-400 text-sm mt-1">{t('marketplace.subtitle')}</p>
+                <p className="text-slate-500 text-sm mt-1">{t('marketplace.subtitle')}</p>
               </div>
 
               {/* Filters */}
@@ -275,19 +275,19 @@ const NotaryMarketplace = () => {
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     placeholder={t('marketplace.search_placeholder')}
-                    className="bg-[#1a2332] border-gray-700 text-navy-900"
+                    className="bg-white border-slate-200 text-navy-900"
                     data-testid="marketplace-search"
                   />
                 </div>
-                <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none" data-testid="marketplace-state-filter">
+                <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="bg-white border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none" data-testid="marketplace-state-filter">
                   <option value="">{t('marketplace.all_states')}</option>
                   {STATES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <select value={specFilter} onChange={e => setSpecFilter(e.target.value)} className="bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none" data-testid="marketplace-spec-filter">
+                <select value={specFilter} onChange={e => setSpecFilter(e.target.value)} className="bg-white border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none" data-testid="marketplace-spec-filter">
                   <option value="">{t('marketplace.all_specs')}</option>
                   {SPECIALIZATIONS.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="bg-[#1a2332] border border-gray-700 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none" data-testid="marketplace-sort">
+                <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="bg-white border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none" data-testid="marketplace-sort">
                   <option value="rating">{t('marketplace.top_rated')}</option>
                   <option value="experience">{t('marketplace.most_experienced')}</option>
                   <option value="rate">{t('marketplace.lowest_rate')}</option>
@@ -296,7 +296,7 @@ const NotaryMarketplace = () => {
                   onClick={() => setRonOnly(!ronOnly)}
                   variant={ronOnly ? 'default' : 'outline'}
                   size="sm"
-                  className={ronOnly ? 'bg-green-600' : 'border-gray-700 text-gray-300'}
+                  className={ronOnly ? 'bg-green-600' : 'border-slate-200 text-slate-500'}
                   data-testid="ron-filter-toggle"
                 >
                   <Video className="w-3.5 h-3.5 mr-1" /> RON
@@ -307,10 +307,10 @@ const NotaryMarketplace = () => {
               {loading ? (
                 <div className="text-center py-12"><Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto" /></div>
               ) : notaries.length === 0 ? (
-                <Card className="bg-[#1a2332] border-gray-800">
+                <Card className="bg-white border-slate-200">
                   <CardContent className="p-12 text-center">
-                    <Users className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                    <p className="text-gray-400">{t('marketplace.no_results')}</p>
+                    <Users className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                    <p className="text-slate-500">{t('marketplace.no_results')}</p>
                   </CardContent>
                 </Card>
               ) : (
@@ -318,7 +318,7 @@ const NotaryMarketplace = () => {
                   {notaries.map(notary => (
                     <Card
                       key={notary.notary_id}
-                      className="bg-[#1a2332] border-gray-800 hover:border-blue-500/30 transition-colors cursor-pointer"
+                      className="bg-white border-slate-200 hover:border-blue-500/30 transition-colors cursor-pointer"
                       onClick={() => viewProfile(notary.notary_id)}
                       data-testid={`notary-card-${notary.notary_id}`}
                     >
@@ -330,14 +330,14 @@ const NotaryMarketplace = () => {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
                               <h3 className="text-navy-900 font-semibold truncate">{notary.name}</h3>
-                              <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
+                              <ChevronRight className="w-4 h-4 text-slate-600 flex-shrink-0" />
                             </div>
                             <div className="flex items-center gap-2 mt-1">
                               <StarRating rating={notary.avg_rating} />
                               <span className="text-coral-600 text-xs font-semibold">{notary.avg_rating}</span>
-                              <span className="text-gray-500 text-xs">({notary.review_count})</span>
+                              <span className="text-slate-500 text-xs">({notary.review_count})</span>
                             </div>
-                            <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+                            <div className="flex items-center gap-3 mt-2 text-xs text-slate-500">
                               <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{notary.license_state}</span>
                               <span>${notary.hourly_rate}/hr</span>
                               <span>{notary.completed_notarizations} done</span>

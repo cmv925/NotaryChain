@@ -16,7 +16,7 @@ export const StepProgressBar = ({ currentStep }) => (
             <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-base transition-all ${
               currentStep >= step.num
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-700 text-gray-400'
+                : 'bg-gray-700 text-slate-500'
             }`}>
               {currentStep > step.num ? (
                 <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -25,7 +25,7 @@ export const StepProgressBar = ({ currentStep }) => (
               )}
             </div>
             <span className={`mt-1 sm:mt-2 text-xs sm:text-sm text-center ${
-              currentStep >= step.num ? 'text-blue-400' : 'text-gray-500'
+              currentStep >= step.num ? 'text-blue-400' : 'text-slate-500'
             }`}>
               {step.label}
             </span>

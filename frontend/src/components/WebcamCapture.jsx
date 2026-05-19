@@ -122,7 +122,7 @@ export function WebcamCapture({ onCapture, onCancel, label = 'Capture Photo' }) 
           </button>
           <button
             onClick={handleCancel}
-            className="bg-slate-800/80 text-gray-300 px-2 py-1 rounded-sm text-[10px] flex items-center gap-1"
+            className="bg-slate-800/80 text-slate-500 px-2 py-1 rounded-sm text-[10px] flex items-center gap-1"
             data-testid="webcam-cancel"
           >
             <X className="w-3 h-3" />
@@ -135,7 +135,7 @@ export function WebcamCapture({ onCapture, onCancel, label = 'Capture Photo' }) 
   return (
     <button
       onClick={startCamera}
-      className="flex flex-col items-center justify-center h-28 w-full border-2 border-dashed border-[#334155] bg-[#0f1825] hover:border-blue-500/50 hover:bg-blue-500/5 rounded-sm cursor-pointer transition-all"
+      className="flex flex-col items-center justify-center h-28 w-full border-2 border-dashed border-slate-200 bg-cream-100 hover:border-blue-500/50 hover:bg-blue-500/5 rounded-sm cursor-pointer transition-all"
       data-testid="webcam-start"
     >
       <Camera className="w-6 h-6 text-slate-500 mb-1" />

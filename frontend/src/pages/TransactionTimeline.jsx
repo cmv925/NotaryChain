@@ -188,7 +188,7 @@ export default function TransactionTimeline() {
   });
 
   return (
-    <div className="min-h-screen bg-[#030712] text-navy-900">
+    <div className="min-h-screen bg-cream-100 text-navy-900">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
@@ -201,13 +201,13 @@ export default function TransactionTimeline() {
               Transaction Timeline
             </h1>
             {data && (
-              <p className="text-gray-400 text-sm">{data.transaction_name} — {data.total_events} events</p>
+              <p className="text-slate-500 text-sm">{data.transaction_name} — {data.total_events} events</p>
             )}
           </div>
           <Badge className={
             data?.transaction_status === 'completed' ? 'bg-green-500/15 text-green-400' :
             data?.transaction_status === 'in_progress' ? 'bg-blue-500/15 text-blue-400' :
-            'bg-gray-500/15 text-gray-400'
+            'bg-gray-500/15 text-slate-500'
           }>
             {data?.transaction_status || '...'}
           </Badge>
@@ -219,7 +219,7 @@ export default function TransactionTimeline() {
             <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${
               wsConnected
                 ? 'bg-green-500/10 text-green-400 ring-1 ring-green-500/20'
-                : 'bg-gray-800/50 text-gray-500'
+                : 'bg-gray-800/50 text-slate-500'
             }`} data-testid="ws-status">
               {wsConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
               {wsConnected ? 'Live' : 'Connecting...'}
@@ -231,13 +231,13 @@ export default function TransactionTimeline() {
               </Badge>
             )}
           </div>
-          <span className="text-gray-600 text-xs">{allEvents.length} total events</span>
+          <span className="text-slate-600 text-xs">{allEvents.length} total events</span>
         </div>
 
         {loading && (
           <div className="flex flex-col items-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-blue-400 mb-3" />
-            <p className="text-gray-500 text-sm">Loading timeline...</p>
+            <p className="text-slate-500 text-sm">Loading timeline...</p>
           </div>
         )}
 
@@ -247,7 +247,7 @@ export default function TransactionTimeline() {
             <div className="mb-6">
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2 text-gray-400 hover:text-navy-900 text-sm mb-2 transition"
+                className="flex items-center gap-2 text-slate-500 hover:text-navy-900 text-sm mb-2 transition"
                 data-testid="filter-toggle"
               >
                 <Filter className="w-4 h-4" />
@@ -263,7 +263,7 @@ export default function TransactionTimeline() {
                       className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                         activeFilters.size === 0 || activeFilters.has(key)
                           ? `${cfg.color}/20 ${cfg.text} ring-1 ${cfg.ring}`
-                          : 'bg-gray-800/50 text-gray-600'
+                          : 'bg-gray-800/50 text-slate-600'
                       }`}
                       data-testid={`filter-${key}`}
                     >
@@ -273,7 +273,7 @@ export default function TransactionTimeline() {
                   {activeFilters.size > 0 && (
                     <button
                       onClick={() => setActiveFilters(new Set())}
-                      className="px-3 py-1.5 rounded-full text-xs text-gray-500 hover:text-navy-900 bg-gray-800/30"
+                      className="px-3 py-1.5 rounded-full text-xs text-slate-500 hover:text-navy-900 bg-gray-800/30"
                     >
                       Clear
                     </button>
@@ -287,9 +287,9 @@ export default function TransactionTimeline() {
               {Object.entries(catCounts).map(([cat, count]) => {
                 const cfg = CATEGORY_CONFIG[cat] || CATEGORY_CONFIG.lifecycle;
                 return (
-                  <div key={cat} className="bg-[#0d1b2a] rounded-lg px-3 py-2 text-center">
+                  <div key={cat} className="bg-cream-100 rounded-lg px-3 py-2 text-center">
                     <p className={`text-lg font-bold ${cfg.text}`}>{count}</p>
-                    <p className="text-gray-500 text-[10px] uppercase tracking-wide">{cfg.label}</p>
+                    <p className="text-slate-500 text-[10px] uppercase tracking-wide">{cfg.label}</p>
                   </div>
                 );
               })}
@@ -297,10 +297,10 @@ export default function TransactionTimeline() {
 
             {/* Timeline */}
             {filteredEvents.length === 0 ? (
-              <Card className="bg-[#0d1b2a] border-gray-800">
+              <Card className="bg-cream-100 border-slate-200">
                 <CardContent className="py-12 text-center">
-                  <Clock className="w-10 h-10 mx-auto mb-3 text-gray-600 opacity-30" />
-                  <p className="text-gray-500 text-sm">No events match your filters</p>
+                  <Clock className="w-10 h-10 mx-auto mb-3 text-slate-600 opacity-30" />
+                  <p className="text-slate-500 text-sm">No events match your filters</p>
                 </CardContent>
               </Card>
             ) : (
@@ -313,7 +313,7 @@ export default function TransactionTimeline() {
                     {/* Date Header */}
                     <div className="flex items-center gap-3 mb-4 relative z-10">
                       <div className="w-[47px] h-px bg-gray-700" />
-                      <span className="text-gray-500 text-xs font-semibold uppercase tracking-wider bg-[#030712] px-2">
+                      <span className="text-slate-500 text-xs font-semibold uppercase tracking-wider bg-cream-100 px-2">
                         {dateLabel}
                       </span>
                     </div>
@@ -338,8 +338,8 @@ export default function TransactionTimeline() {
 
                           {/* Content */}
                           <div
-                            className={`flex-1 bg-[#0d1b2a] rounded-lg p-3 border transition-all cursor-pointer mb-3 ${
-                              isExpanded ? 'border-gray-600' : 'border-gray-800/50 hover:border-gray-700'
+                            className={`flex-1 bg-cream-100 rounded-lg p-3 border transition-all cursor-pointer mb-3 ${
+                              isExpanded ? 'border-slate-200' : 'border-slate-200/50 hover:border-slate-200'
                             } ${ev._live ? 'ring-1 ring-green-500/30 animate-[fadeIn_0.5s_ease-in]' : ''} ${
                               newEventFlash === ev.sequence ? 'bg-green-500/5' : ''
                             }`}
@@ -357,32 +357,32 @@ export default function TransactionTimeline() {
                                 <Badge variant="outline" className={`text-[9px] border-0 ${catCfg.color}/10 ${catCfg.text}`}>
                                   {catCfg.label}
                                 </Badge>
-                                <span className="text-gray-600 text-[10px] whitespace-nowrap">
+                                <span className="text-slate-600 text-[10px] whitespace-nowrap">
                                   {formatTimestamp(ev.timestamp)}
                                 </span>
                               </div>
                             </div>
-                            <p className="text-gray-500 text-xs ml-3.5">{ev.description}</p>
+                            <p className="text-slate-500 text-xs ml-3.5">{ev.description}</p>
 
                             {isExpanded && (
-                              <div className="mt-3 ml-3.5 pt-2 border-t border-gray-800/50">
+                              <div className="mt-3 ml-3.5 pt-2 border-t border-slate-200/50">
                                 <div className="grid grid-cols-2 gap-2 text-[11px]">
                                   <div>
-                                    <span className="text-gray-600">Event #</span>
+                                    <span className="text-slate-600">Event #</span>
                                     <span className="text-navy-900 ml-1">{ev.sequence}</span>
                                   </div>
                                   <div>
-                                    <span className="text-gray-600">Type</span>
+                                    <span className="text-slate-600">Type</span>
                                     <span className="text-navy-900 ml-1">{ev.type}</span>
                                   </div>
                                   <div className="col-span-2">
-                                    <span className="text-gray-600">Timestamp</span>
+                                    <span className="text-slate-600">Timestamp</span>
                                     <span className="text-navy-900 ml-1">{formatFullDate(ev.timestamp)}</span>
                                   </div>
                                   {ev.metadata && Object.entries(ev.metadata).filter(([_, v]) => v).map(([k, v]) => (
                                     <div key={k}>
-                                      <span className="text-gray-600 capitalize">{k.replace(/_/g, ' ')}</span>
-                                      <span className="text-gray-300 ml-1 break-all">{typeof v === 'string' && v.length > 30 ? v.substring(0, 30) + '...' : String(v)}</span>
+                                      <span className="text-slate-600 capitalize">{k.replace(/_/g, ' ')}</span>
+                                      <span className="text-slate-500 ml-1 break-all">{typeof v === 'string' && v.length > 30 ? v.substring(0, 30) + '...' : String(v)}</span>
                                     </div>
                                   ))}
                                 </div>

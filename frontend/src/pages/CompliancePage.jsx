@@ -126,23 +126,23 @@ const CompliancePage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center">
         <p className="text-navy-900">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
-      <header className="bg-[#1a2332] border-b border-gray-800">
+    <div className="min-h-screen bg-cream-100">
+      <header className="bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-navy-900">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-slate-500 hover:text-navy-900">
                 <ArrowLeft className="w-5 h-5 sm:mr-2" /><span className="hidden sm:inline">Dashboard</span>
               </Button>
               <h1 className="text-navy-900 font-semibold flex items-center gap-2 text-sm sm:text-base">
-                <Shield className="w-5 h-5 text-[#00d4aa]" /> Privacy & Compliance
+                <Shield className="w-5 h-5 text-coral-600" /> Privacy & Compliance
               </h1>
             </div>
             <NotificationBell token={token} />
@@ -178,23 +178,23 @@ const CompliancePage = () => {
         )}
 
         {/* Privacy Settings */}
-        <Card className="bg-[#1a2332] border-gray-800" data-testid="privacy-settings-card">
+        <Card className="bg-white border-slate-200" data-testid="privacy-settings-card">
           <CardContent className="p-6">
             <h2 className="text-navy-900 font-semibold mb-1 flex items-center gap-2">
               <Lock className="w-5 h-5 text-blue-400" /> Privacy Settings
             </h2>
-            <p className="text-gray-500 text-sm mb-5">Control how your data is used on the platform</p>
+            <p className="text-slate-500 text-sm mb-5">Control how your data is used on the platform</p>
             <div className="space-y-4">
               {privacyOptions.map(({ key, label, desc }) => (
-                <div key={key} className="flex items-center justify-between py-2 border-b border-gray-800 last:border-0">
+                <div key={key} className="flex items-center justify-between py-2 border-b border-slate-200 last:border-0">
                   <div>
                     <p className="text-navy-900 text-sm font-medium">{label}</p>
-                    <p className="text-gray-500 text-xs">{desc}</p>
+                    <p className="text-slate-500 text-xs">{desc}</p>
                   </div>
                   <button
                     onClick={() => handlePrivacyToggle(key)}
                     disabled={savingPrivacy}
-                    className={`w-11 h-6 rounded-full relative transition-colors ${privacy?.[key] ? 'bg-[#00d4aa]' : 'bg-gray-700'}`}
+                    className={`w-11 h-6 rounded-full relative transition-colors ${privacy?.[key] ? 'bg-coral-500' : 'bg-gray-700'}`}
                     data-testid={`privacy-toggle-${key}`}
                   >
                     <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${privacy?.[key] ? 'left-[22px]' : 'left-0.5'}`} />
@@ -206,18 +206,18 @@ const CompliancePage = () => {
         </Card>
 
         {/* Data Export */}
-        <Card className="bg-[#1a2332] border-gray-800" data-testid="data-export-card">
+        <Card className="bg-white border-slate-200" data-testid="data-export-card">
           <CardContent className="p-6">
             <h2 className="text-navy-900 font-semibold mb-1 flex items-center gap-2">
-              <Download className="w-5 h-5 text-[#00d4aa]" /> Data Export
+              <Download className="w-5 h-5 text-coral-600" /> Data Export
             </h2>
-            <p className="text-gray-500 text-sm mb-4">Download a copy of all your data (GDPR Article 20 - Right to Data Portability)</p>
-            <div className="bg-[#0d1b2a] rounded-lg p-4 mb-4">
-              <p className="text-gray-400 text-xs mb-2">Your export will include:</p>
+            <p className="text-slate-500 text-sm mb-4">Download a copy of all your data (GDPR Article 20 - Right to Data Portability)</p>
+            <div className="bg-cream-100 rounded-lg p-4 mb-4">
+              <p className="text-slate-500 text-xs mb-2">Your export will include:</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
                 {['Profile Information', 'Notarization Requests', 'Document Seals', 'Notifications', 'Subscriptions', 'Transactions', 'Journal Entries', 'Audit Activity'].map(item => (
-                  <div key={item} className="flex items-center gap-1.5 text-gray-300">
-                    <CheckCircle className="w-3 h-3 text-[#00d4aa]" />{item}
+                  <div key={item} className="flex items-center gap-1.5 text-slate-500">
+                    <CheckCircle className="w-3 h-3 text-coral-600" />{item}
                   </div>
                 ))}
               </div>
@@ -225,7 +225,7 @@ const CompliancePage = () => {
             <Button
               onClick={handleExport}
               disabled={exporting}
-              className="bg-[#00d4aa] hover:bg-[#00b894] text-black"
+              className="bg-coral-500 hover:bg-coral-600 text-black"
               data-testid="export-data-btn"
             >
               <Download className="w-4 h-4 mr-2" />
@@ -236,12 +236,12 @@ const CompliancePage = () => {
 
         {/* Account Deletion */}
         {!deletionStatus?.has_pending_request && (
-          <Card className="bg-[#1a2332] border-red-500/20" data-testid="delete-account-card">
+          <Card className="bg-white border-red-500/20" data-testid="delete-account-card">
             <CardContent className="p-6">
               <h2 className="text-red-400 font-semibold mb-1 flex items-center gap-2">
                 <Trash2 className="w-5 h-5" /> Delete Account
               </h2>
-              <p className="text-gray-500 text-sm mb-4">
+              <p className="text-slate-500 text-sm mb-4">
                 Request permanent deletion of your account and all associated data (GDPR Article 17 - Right to Erasure).
                 A 30-day grace period applies during which you can cancel.
               </p>
@@ -262,23 +262,23 @@ const CompliancePage = () => {
                     <p className="text-red-300 text-sm">This action cannot be undone after the 30-day grace period. All your data will be permanently removed.</p>
                   </div>
                   <div>
-                    <label className="text-xs text-gray-400 mb-1 block">Password *</label>
+                    <label className="text-xs text-slate-500 mb-1 block">Password *</label>
                     <Input
                       type="password"
                       value={deletePassword}
                       onChange={e => setDeletePassword(e.target.value)}
                       placeholder="Enter your password to confirm"
-                      className="bg-[#0d1b2a] border-gray-700 text-navy-900"
+                      className="bg-cream-100 border-slate-200 text-navy-900"
                       data-testid="deletion-password-input"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-400 mb-1 block">Reason (optional)</label>
+                    <label className="text-xs text-slate-500 mb-1 block">Reason (optional)</label>
                     <textarea
                       value={deleteReason}
                       onChange={e => setDeleteReason(e.target.value)}
                       placeholder="Why are you leaving?"
-                      className="w-full bg-[#0d1b2a] border border-gray-700 text-navy-900 text-sm rounded-md px-3 py-2 h-16 resize-none"
+                      className="w-full bg-cream-100 border border-slate-200 text-navy-900 text-sm rounded-md px-3 py-2 h-16 resize-none"
                       data-testid="deletion-reason-input"
                     />
                   </div>
@@ -286,7 +286,7 @@ const CompliancePage = () => {
                     <Button
                       onClick={() => { setShowDeleteConfirm(false); setDeletePassword(''); setDeleteReason(''); }}
                       variant="ghost"
-                      className="text-gray-400"
+                      className="text-slate-500"
                     >
                       Cancel
                     </Button>

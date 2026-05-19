@@ -21,16 +21,16 @@ const VerificationSummary = ({ selectedFile, analysisResult, verificationResult 
         <FileText className="w-5 h-5 text-green-500" />
         <span className="text-green-400 font-medium">Document Analyzed</span>
       </div>
-      <p className="text-gray-300 text-sm">{selectedFile?.name}</p>
-      <p className="text-gray-500 text-xs">Confidence: {analysisResult?.confidence_score}%</p>
+      <p className="text-slate-500 text-sm">{selectedFile?.name}</p>
+      <p className="text-slate-500 text-xs">Confidence: {analysisResult?.confidence_score}%</p>
     </div>
     <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
       <div className="flex items-center gap-2 mb-2">
         <Shield className="w-5 h-5 text-green-500" />
         <span className="text-green-400 font-medium">Identity Verified</span>
       </div>
-      <p className="text-gray-300 text-sm">Facial Recognition</p>
-      <p className="text-gray-500 text-xs">Confidence: {(verificationResult?.confidence * 100).toFixed(1)}%</p>
+      <p className="text-slate-500 text-sm">Facial Recognition</p>
+      <p className="text-slate-500 text-xs">Confidence: {(verificationResult?.confidence * 100).toFixed(1)}%</p>
     </div>
   </div>
 );
@@ -43,7 +43,7 @@ const SignersSection = ({ signers, loading, onSignerChange, onAddSigner, onRemov
     </h3>
     <div className="space-y-4">
       {signers.map((signer, index) => (
-        <div key={index} className="bg-[#0a0f1a] rounded-lg p-4 border border-gray-800">
+        <div key={index} className="bg-cream-100 rounded-lg p-4 border border-slate-200">
           <div className="flex items-center justify-between mb-3">
             <span className="text-white font-semibold">Signer {index + 1}</span>
             {signers.length > 1 && (
@@ -62,7 +62,7 @@ const SignersSection = ({ signers, loading, onSignerChange, onAddSigner, onRemov
               placeholder="Full Name"
               value={signer.name}
               onChange={(e) => onSignerChange(index, 'name', e.target.value)}
-              className="bg-[#1a2332] border-gray-700 text-white"
+              className="bg-white border-slate-200 text-white"
               disabled={loading}
               data-testid={`signer-${index}-name`}
             />
@@ -71,7 +71,7 @@ const SignersSection = ({ signers, loading, onSignerChange, onAddSigner, onRemov
               placeholder="Email Address"
               value={signer.email}
               onChange={(e) => onSignerChange(index, 'email', e.target.value)}
-              className="bg-[#1a2332] border-gray-700 text-white"
+              className="bg-white border-slate-200 text-white"
               disabled={loading}
               data-testid={`signer-${index}-email`}
             />
@@ -82,7 +82,7 @@ const SignersSection = ({ signers, loading, onSignerChange, onAddSigner, onRemov
         type="button"
         onClick={onAddSigner}
         variant="outline"
-        className="w-full border-gray-700 text-gray-300 hover:text-white"
+        className="w-full border-slate-200 text-slate-500 hover:text-white"
         disabled={loading}
       >
         + Add Another Signer
@@ -104,7 +104,7 @@ export const SubmissionStep = ({
   onAddSigner,
   onRemoveSigner,
 }) => (
-  <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800" data-testid="step-3-card">
+  <Card className="bg-gradient-to-br from-white to-cream-100 border border-slate-200" data-testid="step-3-card">
     <CardContent className="p-8">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-white flex items-center gap-3">
@@ -114,7 +114,7 @@ export const SubmissionStep = ({
         <Button
           variant="ghost"
           onClick={onBack}
-          className="text-gray-400 hover:text-white"
+          className="text-slate-500 hover:text-white"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
@@ -145,7 +145,7 @@ export const SubmissionStep = ({
                 required
                 value={formData.document_name}
                 onChange={onChange}
-                className="bg-[#0a0f1a] border-gray-700 text-white"
+                className="bg-cream-100 border-slate-200 text-white"
                 placeholder="e.g., Property Purchase Agreement"
                 disabled={loading}
                 data-testid="document-name-input"
@@ -162,7 +162,7 @@ export const SubmissionStep = ({
                 required
                 value={formData.notarization_type}
                 onChange={onChange}
-                className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
+                className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
                 disabled={loading}
                 data-testid="notarization-type-select"
               >
@@ -184,7 +184,7 @@ export const SubmissionStep = ({
                 required
                 value={formData.state_code || 'FL'}
                 onChange={onChange}
-                className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
+                className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
                 disabled={loading}
                 data-testid="state-code-select"
               >
@@ -194,7 +194,7 @@ export const SubmissionStep = ({
                 <option value="CA">California (CA) — Phase 2 pipeline</option>
                 <option value="VA">Virginia (VA) — Phase 2 pipeline</option>
               </select>
-              <p className="text-[10px] text-gray-400 mt-1">Determines which state's RON compliance gates apply at seal time.</p>
+              <p className="text-[10px] text-slate-500 mt-1">Determines which state's RON compliance gates apply at seal time.</p>
             </div>
           </div>
         </div>
@@ -215,7 +215,7 @@ export const SubmissionStep = ({
               type="datetime-local"
               value={formData.scheduled_time}
               onChange={onChange}
-              className="bg-[#0a0f1a] border-gray-700 text-white"
+              className="bg-cream-100 border-slate-200 text-white"
               disabled={loading}
               data-testid="scheduled-time-input"
             />
@@ -242,7 +242,7 @@ export const SubmissionStep = ({
             value={formData.notes}
             onChange={onChange}
             rows={4}
-            className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
+            className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
             placeholder="Any special instructions or requirements..."
             disabled={loading}
             data-testid="notes-textarea"

@@ -14,7 +14,7 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const planIcons = { free: Zap, pro: Crown, enterprise: Building2 };
 const planAccents = {
-  free: { border: 'border-gray-700', bg: 'bg-gray-500/10', text: 'text-gray-300', btn: 'bg-gray-700 hover:bg-gray-600' },
+  free: { border: 'border-slate-200', bg: 'bg-gray-500/10', text: 'text-slate-500', btn: 'bg-gray-700 hover:bg-gray-600' },
   pro: { border: 'border-blue-500', bg: 'bg-blue-500/10', text: 'text-blue-400', btn: 'bg-blue-600 hover:bg-blue-700' },
   enterprise: { border: 'border-purple-500', bg: 'bg-purple-500/10', text: 'text-purple-400', btn: 'bg-purple-600 hover:bg-purple-700' },
 };
@@ -66,14 +66,14 @@ const PricingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       <div className="pt-24 sm:pt-32 pb-16 sm:pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Pricing' }]} />
           <div className="text-center mb-10 sm:mb-16">
             <h1 className="text-3xl sm:text-5xl font-bold text-navy-900 mb-3 sm:mb-4">Simple, Transparent Pricing</h1>
-            <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
+            <p className="text-slate-500 text-base sm:text-lg max-w-2xl mx-auto">
               Choose the plan that fits your needs. Upgrade or downgrade anytime.
             </p>
           </div>
@@ -88,7 +88,7 @@ const PricingPage = () => {
               return (
                 <Card
                   key={plan.id}
-                  className={`relative bg-[#1a2332] ${accent.border} border-2 ${isPopular ? 'ring-2 ring-blue-500/50 md:scale-[1.02]' : ''} transition-all hover:scale-[1.01]`}
+                  className={`relative bg-white ${accent.border} border-2 ${isPopular ? 'ring-2 ring-blue-500/50 md:scale-[1.02]' : ''} transition-all hover:scale-[1.01]`}
                   data-testid={`plan-card-${plan.id}`}
                 >
                   {isPopular && (
@@ -103,20 +103,20 @@ const PricingPage = () => {
                       </div>
                       <div>
                         <h3 className="text-lg font-bold text-navy-900">{plan.name}</h3>
-                        <p className="text-gray-500 text-xs">{plan.description}</p>
+                        <p className="text-slate-500 text-xs">{plan.description}</p>
                       </div>
                     </div>
 
                     <div className="mb-6">
                       <div className="flex items-baseline gap-1">
                         <span className="text-4xl font-bold text-navy-900">${plan.price === 0 ? '0' : plan.price}</span>
-                        <span className="text-gray-500 text-sm">/{plan.interval}</span>
+                        <span className="text-slate-500 text-sm">/{plan.interval}</span>
                       </div>
                       {plan.discount_pct > 0 && (
                         <div className="mt-2 flex items-center gap-1.5" data-testid={`discount-badge-${plan.id}`}>
                           <BadgePercent className={`w-4 h-4 ${accent.text}`} />
                           <span className={`text-sm font-semibold ${accent.text}`}>{plan.discount_pct}% off</span>
-                          <span className="text-gray-500 text-xs">every document</span>
+                          <span className="text-slate-500 text-xs">every document</span>
                         </div>
                       )}
                     </div>
@@ -134,7 +134,7 @@ const PricingPage = () => {
                       {plan.features.map((feature, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm">
                           <Check className={`w-4 h-4 mt-0.5 flex-shrink-0 ${accent.text}`} />
-                          <span className="text-gray-300">{feature}</span>
+                          <span className="text-slate-500">{feature}</span>
                         </li>
                       ))}
                     </ul>
@@ -145,7 +145,7 @@ const PricingPage = () => {
           </div>
 
           <div className="mt-12 sm:mt-16 text-center">
-            <p className="text-gray-500 text-sm">All plans include SSL encryption, email notifications, and basic document management.</p>
+            <p className="text-slate-500 text-sm">All plans include SSL encryption, email notifications, and basic document management.</p>
             {isAuthenticated && (
               <Button variant="link" onClick={() => navigate('/subscription')} className="text-blue-400 mt-2" data-testid="manage-subscription-link">
                 Manage your subscription

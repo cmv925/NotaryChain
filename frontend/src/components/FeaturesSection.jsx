@@ -31,12 +31,12 @@ const features = [
 
 const FeaturesSection = () => {
   return (
-    <section id="features" className="py-24 bg-[#0a0f1a]">
+    <section id="features" className="py-24 bg-cream-100">
       <div className="max-w-7xl mx-auto px-6">
         <h2 className="text-4xl md:text-5xl font-bold text-white text-center mb-4">
           A Smarter Way to Notarize
         </h2>
-        <p className="text-gray-400 text-center mb-16 text-lg">
+        <p className="text-slate-500 text-center mb-16 text-lg">
           Go beyond simple e-signatures with a suite of intelligent tools.
         </p>
 
@@ -46,7 +46,7 @@ const FeaturesSection = () => {
             return (
               <Card
                 key={index}
-                className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800 hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 group"
+                className="bg-gradient-to-br from-white to-cream-100 border border-slate-200 hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 group"
               >
                 <CardContent className="p-6">
                   <div className="mb-4">
@@ -57,7 +57,7 @@ const FeaturesSection = () => {
                   <h3 className="text-xl font-semibold text-white mb-3">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-400 leading-relaxed">{feature.description}</p>
+                  <p className="text-slate-500 leading-relaxed">{feature.description}</p>
                 </CardContent>
               </Card>
             );

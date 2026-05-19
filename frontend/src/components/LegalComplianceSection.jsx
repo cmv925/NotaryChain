@@ -35,7 +35,7 @@ const complianceItems = [
 
 const LegalComplianceSection = () => {
   return (
-    <section className="py-24 bg-gradient-to-br from-[#0f1825] via-[#1a2332] to-[#0f1825]">
+    <section className="py-24 bg-gradient-to-br from-[#0f1825] via-white to-cream-100">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <div className="inline-block px-4 py-2 bg-green-500/10 rounded-full border border-green-500/30 mb-4">
@@ -44,7 +44,7 @@ const LegalComplianceSection = () => {
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Built on Legal Foundations You Can Trust
           </h2>
-          <p className="text-gray-400 text-lg max-w-3xl mx-auto">
+          <p className="text-slate-500 text-lg max-w-3xl mx-auto">
             Our blockchain notarization is backed by federal law and recognized across all 50
             states, giving you the strongest legal protection available.
           </p>
@@ -56,7 +56,7 @@ const LegalComplianceSection = () => {
             return (
               <Card
                 key={index}
-                className="bg-[#1a2332] border border-gray-800 hover:border-green-500/50 transition-all duration-300 group"
+                className="bg-white border border-slate-200 hover:border-green-500/50 transition-all duration-300 group"
               >
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
@@ -72,7 +72,7 @@ const LegalComplianceSection = () => {
                           {item.status}
                         </span>
                       </div>
-                      <p className="text-gray-400 text-sm leading-relaxed">{item.description}</p>
+                      <p className="text-slate-500 text-sm leading-relaxed">{item.description}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -93,7 +93,7 @@ const LegalComplianceSection = () => {
               <h3 className="text-2xl font-bold text-white mb-3">
                 The Ultimate Legal Defense
               </h3>
-              <p className="text-gray-300 leading-relaxed">
+              <p className="text-slate-500 leading-relaxed">
                 Instead of <span className="text-white font-semibold">you proving</span> the
                 document is real, the accuser has the{' '}
                 <span className="text-white font-semibold">impossible task</span> of proving the

@@ -109,7 +109,7 @@ const SharedDraftViewer = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f1825] flex items-center justify-center">
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
       </div>
     );
@@ -117,12 +117,12 @@ const SharedDraftViewer = () => {
 
   if (!draft) {
     return (
-      <div className="min-h-screen bg-[#0f1825]">
+      <div className="min-h-screen bg-cream-100">
         <Navbar />
         <div className="pt-32 text-center">
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Shared Draft' }]} />
-          <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-          <p className="text-gray-400">This shared draft was not found or the link has expired.</p>
+          <FileText className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+          <p className="text-slate-500">This shared draft was not found or the link has expired.</p>
           <Button onClick={() => navigate('/templates')} className="mt-4 bg-blue-600 text-navy-900">
             Browse Templates
           </Button>
@@ -133,7 +133,7 @@ const SharedDraftViewer = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       <div className="pt-24 sm:pt-28 pb-16 sm:pb-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
@@ -147,13 +147,13 @@ const SharedDraftViewer = () => {
               {draft.allow_edit ? (
                 <span className="ml-1 text-green-400">&bull; You can edit</span>
               ) : (
-                <span className="ml-1 text-gray-500">&bull; View only</span>
+                <span className="ml-1 text-slate-500">&bull; View only</span>
               )}
             </span>
           </div>
 
           <h1 className="text-2xl font-bold text-navy-900 mb-1" data-testid="shared-draft-title">{draft.name}</h1>
-          <p className="text-gray-400 text-sm mb-4">Template: {draft.template_name} &bull; Version {draft.version}</p>
+          <p className="text-slate-500 text-sm mb-4">Template: {draft.template_name} &bull; Version {draft.version}</p>
 
           {/* Collaboration Presence Bar */}
           <div className="mb-4">
@@ -172,12 +172,12 @@ const SharedDraftViewer = () => {
             </div>
           )}
 
-          <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800">
+          <Card className="bg-gradient-to-br from-white to-cream-100 border border-slate-200">
             <CardContent className="p-6">
               <div className="space-y-4" data-testid="shared-draft-fields">
                 {Object.entries(fieldValues).map(([key, value]) => (
                   <div key={key}>
-                    <Label className="text-gray-300 text-sm capitalize">{key.replace(/_/g, ' ')}</Label>
+                    <Label className="text-slate-500 text-sm capitalize">{key.replace(/_/g, ' ')}</Label>
                     <FieldCollabIndicator
                       fieldName={key}
                       cursors={collab.cursors}
@@ -191,7 +191,7 @@ const SharedDraftViewer = () => {
                           onChange={(e) => handleFieldChange(key, e.target.value)}
                           onFocus={() => handleFieldFocus(key)}
                           rows={3}
-                          className="w-full mt-1 bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 focus:outline-none resize-none"
+                          className="w-full mt-1 bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 focus:outline-none resize-none"
                           data-testid={`shared-field-${key}`}
                         />
                       ) : (
@@ -199,13 +199,13 @@ const SharedDraftViewer = () => {
                           value={value}
                           onChange={(e) => handleFieldChange(key, e.target.value)}
                           onFocus={() => handleFieldFocus(key)}
-                          className="bg-[#0a0f1a] border-gray-700 text-navy-900 mt-1"
+                          className="bg-cream-100 border-slate-200 text-navy-900 mt-1"
                           data-testid={`shared-field-${key}`}
                         />
                       )
                     ) : (
-                      <p className="text-navy-900 text-sm mt-1 bg-[#0a0f1a] rounded-md px-3 py-2 border border-gray-800" data-testid={`shared-field-${key}`}>
-                        {value || <span className="text-gray-600 italic">Empty</span>}
+                      <p className="text-navy-900 text-sm mt-1 bg-cream-100 rounded-md px-3 py-2 border border-slate-200" data-testid={`shared-field-${key}`}>
+                        {value || <span className="text-slate-600 italic">Empty</span>}
                       </p>
                     )}
                   </div>

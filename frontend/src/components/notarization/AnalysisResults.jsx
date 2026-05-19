@@ -28,7 +28,7 @@ const getSeverityColor = (severity) => {
     case 'low':
       return 'text-blue-400 bg-blue-500/10 border-blue-500/30';
     default:
-      return 'text-gray-400 bg-gray-500/10 border-gray-500/30';
+      return 'text-slate-500 bg-gray-500/10 border-slate-300/30';
   }
 };
 
@@ -47,18 +47,18 @@ const OverallStatus = ({ analysisResult }) => (
       </span>
     </div>
     <div className="flex items-center gap-2 mb-2">
-      <span className="text-gray-400">Confidence Score:</span>
+      <span className="text-slate-500">Confidence Score:</span>
       <Progress value={analysisResult.confidence_score} className="flex-1 h-2" />
       <span className="text-white font-medium">
         {analysisResult.confidence_score}%
       </span>
     </div>
-    <p className="text-gray-300 text-sm">{analysisResult.summary}</p>
+    <p className="text-slate-500 text-sm">{analysisResult.summary}</p>
   </div>
 );
 
 const Discrepancies = ({ items }) => (
-  <div className="bg-[#0a0f1a] rounded-lg p-4 border border-gray-800">
+  <div className="bg-cream-100 rounded-lg p-4 border border-slate-200">
     <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
       <AlertTriangle className="w-5 h-5 text-yellow-500" />
       Findings ({items.length})
@@ -91,20 +91,20 @@ const Discrepancies = ({ items }) => (
 );
 
 const SignatureAnalysis = ({ data }) => (
-  <div className="bg-[#0a0f1a] rounded-lg p-4 border border-gray-800" data-testid="signature-analysis">
+  <div className="bg-cream-100 rounded-lg p-4 border border-slate-200" data-testid="signature-analysis">
     <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
       <FileText className="w-5 h-5 text-purple-500" />
       Signature Analysis
     </h3>
     <div className="grid grid-cols-2 gap-4 text-sm">
-      <div className="bg-[#1a2332] rounded p-3">
-        <span className="text-gray-500 text-xs">Signatures Found</span>
+      <div className="bg-white rounded p-3">
+        <span className="text-slate-500 text-xs">Signatures Found</span>
         <p className="text-white text-lg font-bold">
           {data.signatures_found || 0}
         </p>
       </div>
-      <div className="bg-[#1a2332] rounded p-3">
-        <span className="text-gray-500 text-xs">Signature Quality</span>
+      <div className="bg-white rounded p-3">
+        <span className="text-slate-500 text-xs">Signature Quality</span>
         <p className={`text-lg font-bold capitalize ${
           data.signature_quality === 'clear' ? 'text-green-400' :
           data.signature_quality === 'partial' ? 'text-yellow-400' :
@@ -117,7 +117,7 @@ const SignatureAnalysis = ({ data }) => (
 
       {data.signature_locations?.length > 0 && (
         <div className="col-span-2">
-          <span className="text-gray-500 text-xs">Signature Locations</span>
+          <span className="text-slate-500 text-xs">Signature Locations</span>
           <ul className="text-white text-sm mt-1 list-disc list-inside">
             {data.signature_locations.map((loc, idx) => (
               <li key={idx}>{loc}</li>
@@ -128,7 +128,7 @@ const SignatureAnalysis = ({ data }) => (
 
       {data.signature_types?.length > 0 && (
         <div className="col-span-2">
-          <span className="text-gray-500 text-xs">Signature Types</span>
+          <span className="text-slate-500 text-xs">Signature Types</span>
           <div className="flex flex-wrap gap-2 mt-1">
             {data.signature_types.map((type, idx) => (
               <span key={idx} className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs capitalize">
@@ -140,7 +140,7 @@ const SignatureAnalysis = ({ data }) => (
       )}
 
       <div className="col-span-2">
-        <span className="text-gray-500 text-xs">All Required Signatures Present</span>
+        <span className="text-slate-500 text-xs">All Required Signatures Present</span>
         <p className={`font-medium ${
           data.all_required_signatures_present ? 'text-green-400' : 'text-yellow-400'
         }`}>
@@ -174,29 +174,29 @@ const SignatureAnalysis = ({ data }) => (
 );
 
 const KeyInformation = ({ data }) => (
-  <div className="bg-[#0a0f1a] rounded-lg p-4 border border-gray-800">
+  <div className="bg-cream-100 rounded-lg p-4 border border-slate-200">
     <h3 className="text-white font-semibold mb-3">Key Information Extracted</h3>
     <div className="grid grid-cols-2 gap-3 text-sm">
       {data.names?.length > 0 && (
         <div>
-          <span className="text-gray-500">Names:</span>
+          <span className="text-slate-500">Names:</span>
           <p className="text-white">{data.names.join(', ')}</p>
         </div>
       )}
       {data.dates?.length > 0 && (
         <div>
-          <span className="text-gray-500">Dates:</span>
+          <span className="text-slate-500">Dates:</span>
           <p className="text-white">{data.dates.join(', ')}</p>
         </div>
       )}
       {data.addresses?.length > 0 && (
         <div className="col-span-2">
-          <span className="text-gray-500">Addresses:</span>
+          <span className="text-slate-500">Addresses:</span>
           <p className="text-white">{data.addresses.join('; ')}</p>
         </div>
       )}
       <div>
-        <span className="text-gray-500">Signatures Present:</span>
+        <span className="text-slate-500">Signatures Present:</span>
         <p className={data.signatures_present ? 'text-green-400' : 'text-yellow-400'}>
           {data.signatures_present ? 'Yes' : 'No'}
         </p>
@@ -206,9 +206,9 @@ const KeyInformation = ({ data }) => (
 );
 
 const Recommendations = ({ items }) => (
-  <div className="bg-[#0a0f1a] rounded-lg p-4 border border-gray-800">
+  <div className="bg-cream-100 rounded-lg p-4 border border-slate-200">
     <h3 className="text-white font-semibold mb-3">Recommendations</h3>
-    <ul className="list-disc list-inside text-gray-300 text-sm space-y-1">
+    <ul className="list-disc list-inside text-slate-500 text-sm space-y-1">
       {items.map((rec, index) => (
         <li key={index}>{rec}</li>
       ))}

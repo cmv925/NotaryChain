@@ -112,7 +112,7 @@ export function NotificationBell({ token }) {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+        className="relative p-2 text-slate-500 hover:text-white transition-colors rounded-lg hover:bg-white/5"
         data-testid="notification-bell"
       >
         <Bell className="h-5 w-5" />
@@ -128,10 +128,10 @@ export function NotificationBell({ token }) {
 
       {isOpen && (
         <div
-          className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-[#1a2332] border border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden"
+          className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white border border-slate-200 rounded-xl shadow-2xl z-50 overflow-hidden"
           data-testid="notification-dropdown"
         >
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200">
             <h3 className="text-white font-semibold text-sm">Notifications</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
@@ -139,7 +139,7 @@ export function NotificationBell({ token }) {
                   <CheckCheck className="h-4 w-4" />
                 </button>
               )}
-              <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white">
+              <button onClick={() => setIsOpen(false)} className="text-slate-500 hover:text-white">
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -147,9 +147,9 @@ export function NotificationBell({ token }) {
 
           <div className="max-h-80 overflow-y-auto">
             {loading ? (
-              <div className="py-8 text-center text-gray-500 text-sm">Loading...</div>
+              <div className="py-8 text-center text-slate-500 text-sm">Loading...</div>
             ) : notifications.length === 0 ? (
-              <div className="py-8 text-center text-gray-500 text-sm" data-testid="no-notifications">
+              <div className="py-8 text-center text-slate-500 text-sm" data-testid="no-notifications">
                 <Bell className="h-8 w-8 mx-auto mb-2 opacity-30" />
                 No notifications yet
               </div>
@@ -158,7 +158,7 @@ export function NotificationBell({ token }) {
                 <div
                   key={notif.id}
                   onClick={() => handleNotifClick(notif)}
-                  className={`px-4 py-3 border-b border-gray-800 cursor-pointer hover:bg-white/5 transition-colors ${
+                  className={`px-4 py-3 border-b border-slate-200 cursor-pointer hover:bg-white/5 transition-colors ${
                     !notif.read ? 'bg-blue-500/5' : ''
                   }`}
                   data-testid={`notification-item-${notif.id}`}
@@ -169,12 +169,12 @@ export function NotificationBell({ token }) {
                     }`} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <p className={`text-sm font-medium truncate ${notif.read ? 'text-gray-400' : 'text-white'}`}>
+                        <p className={`text-sm font-medium truncate ${notif.read ? 'text-slate-500' : 'text-white'}`}>
                           {notif.title}
                         </p>
-                        <span className="text-[10px] text-gray-500 flex-shrink-0">{timeAgo(notif.created_at)}</span>
+                        <span className="text-[10px] text-slate-500 flex-shrink-0">{timeAgo(notif.created_at)}</span>
                       </div>
-                      <p className={`text-xs mt-0.5 line-clamp-2 ${notif.read ? 'text-gray-500' : 'text-gray-400'}`}>
+                      <p className={`text-xs mt-0.5 line-clamp-2 ${notif.read ? 'text-slate-500' : 'text-slate-500'}`}>
                         {notif.message}
                       </p>
                       {notif.link && (

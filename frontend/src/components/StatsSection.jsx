@@ -31,7 +31,7 @@ const stats = [
 
 const StatsSection = () => {
   return (
-    <section className="py-16 bg-[#0a0f1a]">
+    <section className="py-16 bg-cream-100">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => {
@@ -39,7 +39,7 @@ const StatsSection = () => {
             return (
               <Card
                 key={index}
-                className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800 hover:border-blue-500/50 transition-all duration-300 group"
+                className="bg-gradient-to-br from-white to-cream-100 border border-slate-200 hover:border-blue-500/50 transition-all duration-300 group"
               >
                 <CardContent className="p-6 text-center">
                   <div className="flex justify-center mb-4">
@@ -49,7 +49,7 @@ const StatsSection = () => {
                   </div>
                   <div className="text-4xl font-bold text-white mb-2">{stat.value}</div>
                   <div className="text-sm font-semibold text-blue-400 mb-1">{stat.label}</div>
-                  <div className="text-xs text-gray-500">{stat.description}</div>
+                  <div className="text-xs text-slate-500">{stat.description}</div>
                 </CardContent>
               </Card>
             );

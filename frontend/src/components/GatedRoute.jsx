@@ -9,7 +9,7 @@ export function GatedRoute({ feature, title, description, children }) {
   if (canAccess(feature)) return children;
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <UpgradeGate feature={feature} title={title} description={description}>
         {children}
       </UpgradeGate>

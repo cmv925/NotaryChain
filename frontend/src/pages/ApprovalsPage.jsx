@@ -16,7 +16,7 @@ const statusStyles = {
   approved: 'bg-green-500/15 text-green-400',
   rejected: 'bg-red-500/15 text-red-400',
   pending: 'bg-coral-500/15 text-coral-600',
-  waiting: 'bg-gray-500/15 text-gray-400',
+  waiting: 'bg-gray-500/15 text-slate-500',
 };
 
 export default function ApprovalsPage() {
@@ -87,7 +87,7 @@ export default function ApprovalsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-navy-900">
+    <div className="min-h-screen bg-cream-100 text-navy-900">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
@@ -99,7 +99,7 @@ export default function ApprovalsPage() {
                 <UserCheck className="w-6 h-6 text-blue-400" />
                 Approval Workflows
               </h1>
-              <p className="text-gray-400 text-sm">Multi-step document approvals</p>
+              <p className="text-slate-500 text-sm">Multi-step document approvals</p>
             </div>
           </div>
           <Button onClick={() => setShowCreate(!showCreate)} className="bg-blue-600 hover:bg-blue-700" data-testid="create-approval-btn">
@@ -109,25 +109,25 @@ export default function ApprovalsPage() {
 
         {/* Create Form */}
         {showCreate && (
-          <Card className="bg-[#0d1b2a] border-gray-800 mb-6" data-testid="create-form">
+          <Card className="bg-cream-100 border-slate-200 mb-6" data-testid="create-form">
             <CardContent className="pt-5 space-y-3">
-              <Input value={docName} onChange={(e) => setDocName(e.target.value)} placeholder="Document name" className="bg-[#1a2332] border-gray-700 text-navy-900" data-testid="doc-name-input" />
-              <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description (optional)" className="bg-[#1a2332] border-gray-700 text-navy-900" />
+              <Input value={docName} onChange={(e) => setDocName(e.target.value)} placeholder="Document name" className="bg-white border-slate-200 text-navy-900" data-testid="doc-name-input" />
+              <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description (optional)" className="bg-white border-slate-200 text-navy-900" />
               <div className="space-y-2">
-                <p className="text-gray-400 text-xs">Approval Chain (in order):</p>
+                <p className="text-slate-500 text-xs">Approval Chain (in order):</p>
                 {chain.map((c, i) => (
                   <div key={i} className="flex gap-2">
                     <Input
                       value={c.approver_email}
                       onChange={(e) => { const n = [...chain]; n[i].approver_email = e.target.value; setChain(n); }}
                       placeholder="Approver email"
-                      className="bg-[#1a2332] border-gray-700 text-navy-900 flex-1"
+                      className="bg-white border-slate-200 text-navy-900 flex-1"
                       data-testid={`approver-email-${i}`}
                     />
                     <select
                       value={c.role}
                       onChange={(e) => { const n = [...chain]; n[i].role = e.target.value; setChain(n); }}
-                      className="bg-[#1a2332] border border-gray-700 rounded-md px-2 text-sm text-navy-900"
+                      className="bg-white border border-slate-200 rounded-md px-2 text-sm text-navy-900"
                     >
                       {['manager', 'legal', 'executive', 'compliance', 'custom'].map((r) => (
                         <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>
@@ -157,7 +157,7 @@ export default function ApprovalsPage() {
               key={key}
               onClick={() => setTab(key)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                tab === key ? 'bg-blue-600/20 text-blue-400' : 'bg-gray-800/50 text-gray-500 hover:text-gray-300'
+                tab === key ? 'bg-blue-600/20 text-blue-400' : 'bg-gray-800/50 text-slate-500 hover:text-slate-500'
               }`}
               data-testid={`tab-${key}`}
             >
@@ -168,10 +168,10 @@ export default function ApprovalsPage() {
 
         {/* Requests */}
         {loading ? (
-          <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-gray-500" /></div>
+          <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-slate-500" /></div>
         ) : requests.length === 0 ? (
-          <Card className="bg-[#0d1b2a] border-gray-800">
-            <CardContent className="py-12 text-center text-gray-500">
+          <Card className="bg-cream-100 border-slate-200">
+            <CardContent className="py-12 text-center text-slate-500">
               <UserCheck className="w-10 h-10 mx-auto mb-3 opacity-30" />
               <p className="text-sm">{tab === 'pending' ? 'No approvals waiting' : 'No requests yet'}</p>
             </CardContent>
@@ -179,13 +179,13 @@ export default function ApprovalsPage() {
         ) : (
           <div className="space-y-3">
             {requests.map((req) => (
-              <Card key={req.id} className="bg-[#0d1b2a] border-gray-800" data-testid={`approval-${req.id}`}>
+              <Card key={req.id} className="bg-cream-100 border-slate-200" data-testid={`approval-${req.id}`}>
                 <CardContent className="pt-4">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h3 className="text-navy-900 font-medium text-sm">{req.document_name}</h3>
-                      <p className="text-gray-500 text-xs">by {req.requester_name} — {new Date(req.created_at).toLocaleDateString()}</p>
-                      {req.description && <p className="text-gray-400 text-xs mt-1">{req.description}</p>}
+                      <p className="text-slate-500 text-xs">by {req.requester_name} — {new Date(req.created_at).toLocaleDateString()}</p>
+                      {req.description && <p className="text-slate-500 text-xs mt-1">{req.description}</p>}
                     </div>
                     <Badge className={statusStyles[req.status]}>{req.status}</Badge>
                   </div>
@@ -198,27 +198,27 @@ export default function ApprovalsPage() {
                           step.status === 'approved' ? 'bg-green-500/10 text-green-400' :
                           step.status === 'rejected' ? 'bg-red-500/10 text-red-400' :
                           step.status === 'pending' ? 'bg-coral-500/10 text-coral-600 ring-1 ring-amber-500/20' :
-                          'bg-gray-800/50 text-gray-500'
+                          'bg-gray-800/50 text-slate-500'
                         }`}>
                           {step.status === 'approved' ? <CheckCircle className="w-3 h-3" /> :
                            step.status === 'rejected' ? <XCircle className="w-3 h-3" /> :
                            step.status === 'pending' ? <Clock className="w-3 h-3" /> : null}
                           <span>{step.approver_name || step.approver_email}</span>
-                          <span className="text-gray-600">({step.role})</span>
+                          <span className="text-slate-600">({step.role})</span>
                         </div>
-                        {i < req.steps.length - 1 && <ChevronRight className="w-3 h-3 text-gray-600 flex-shrink-0" />}
+                        {i < req.steps.length - 1 && <ChevronRight className="w-3 h-3 text-slate-600 flex-shrink-0" />}
                       </React.Fragment>
                     ))}
                   </div>
 
                   {/* Action buttons for pending tab */}
                   {tab === 'pending' && req.status === 'pending' && (
-                    <div className="flex gap-2 items-center border-t border-gray-800 pt-3">
+                    <div className="flex gap-2 items-center border-t border-slate-200 pt-3">
                       <Input
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         placeholder="Optional comment..."
-                        className="bg-[#1a2332] border-gray-700 text-navy-900 text-xs flex-1"
+                        className="bg-white border-slate-200 text-navy-900 text-xs flex-1"
                       />
                       <Button
                         size="sm"

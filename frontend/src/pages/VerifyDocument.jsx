@@ -100,7 +100,7 @@ const VerifyDocument = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
 
       <div className="pt-32 pb-24">
@@ -115,14 +115,14 @@ const VerifyDocument = () => {
             <h1 className="text-4xl font-bold text-navy-900 mb-4">
               Verify Document
             </h1>
-            <p className="text-gray-400 text-lg max-w-xl mx-auto">
+            <p className="text-slate-500 text-lg max-w-xl mx-auto">
               Check if a document has been notarized and sealed on the Hedera blockchain.
               Enter the document hash or upload the original file.
             </p>
           </div>
 
           {/* Verification Card */}
-          <Card className="bg-gradient-to-br from-[#1a2332] to-[#0f1825] border border-gray-800 mb-8" data-testid="verify-card">
+          <Card className="bg-gradient-to-br from-white to-cream-100 border border-slate-200 mb-8" data-testid="verify-card">
             <CardContent className="p-8">
               {/* Method Toggle */}
               <div className="flex gap-4 mb-8">
@@ -131,7 +131,7 @@ const VerifyDocument = () => {
                   onClick={() => setVerificationMethod('hash')}
                   className={verificationMethod === 'hash' 
                     ? 'bg-blue-600 hover:bg-blue-700' 
-                    : 'border-gray-700 text-gray-300'}
+                    : 'border-slate-200 text-slate-500'}
                 >
                   <Hash className="w-4 h-4 mr-2" />
                   Enter Hash
@@ -141,7 +141,7 @@ const VerifyDocument = () => {
                   onClick={() => setVerificationMethod('file')}
                   className={verificationMethod === 'file' 
                     ? 'bg-blue-600 hover:bg-blue-700' 
-                    : 'border-gray-700 text-gray-300'}
+                    : 'border-slate-200 text-slate-500'}
                 >
                   <Upload className="w-4 h-4 mr-2" />
                   Upload File
@@ -157,7 +157,7 @@ const VerifyDocument = () => {
                       value={documentHash}
                       onChange={(e) => setDocumentHash(e.target.value)}
                       placeholder="Enter 64-character SHA-256 hash..."
-                      className="bg-[#0a0f1a] border-gray-700 text-navy-900 font-mono text-sm"
+                      className="bg-cream-100 border-slate-200 text-navy-900 font-mono text-sm"
                       data-testid="hash-input"
                     />
                   </div>
@@ -169,17 +169,17 @@ const VerifyDocument = () => {
                 <div className="space-y-4">
                   <div 
                     className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                      selectedFile ? 'border-blue-500 bg-blue-500/5' : 'border-gray-700 hover:border-gray-600'
+                      selectedFile ? 'border-blue-500 bg-blue-500/5' : 'border-slate-200 hover:border-slate-200'
                     }`}
                   >
                     {selectedFile ? (
                       <div className="space-y-3">
                         <FileText className="w-12 h-12 mx-auto text-blue-500" />
                         <p className="text-navy-900 font-medium">{selectedFile.name}</p>
-                        <p className="text-gray-400 text-sm">
+                        <p className="text-slate-500 text-sm">
                           {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                         </p>
-                        <p className="text-gray-500 text-xs font-mono break-all">
+                        <p className="text-slate-500 text-xs font-mono break-all">
                           Hash: {documentHash}
                         </p>
                         <Button
@@ -189,18 +189,18 @@ const VerifyDocument = () => {
                             setSelectedFile(null);
                             setDocumentHash('');
                           }}
-                          className="border-gray-600 text-gray-300"
+                          className="border-slate-200 text-slate-500"
                         >
                           Remove
                         </Button>
                       </div>
                     ) : (
                       <label className="cursor-pointer block">
-                        <Upload className="w-12 h-12 mx-auto text-gray-500 mb-4" />
-                        <p className="text-gray-300 mb-2">
+                        <Upload className="w-12 h-12 mx-auto text-slate-500 mb-4" />
+                        <p className="text-slate-500 mb-2">
                           Click to upload document
                         </p>
-                        <p className="text-gray-500 text-sm">
+                        <p className="text-slate-500 text-sm">
                           We'll calculate the hash locally (file never leaves your device)
                         </p>
                         <input
@@ -273,7 +273,7 @@ const VerifyDocument = () => {
                         ? 'Document Found (Pending Verification)'
                         : 'Document Not Found'}
                     </h2>
-                    <p className="text-gray-400">
+                    <p className="text-slate-500">
                       {result.found && result.blockchain_verified
                         ? 'This document has been notarized and sealed on the Hedera blockchain.'
                         : result.found
@@ -286,44 +286,44 @@ const VerifyDocument = () => {
                 {result.found && (
                   <div className="space-y-4">
                     {/* Document Info */}
-                    <div className="bg-[#0a0f1a] rounded-lg p-4 border border-gray-800">
+                    <div className="bg-cream-100 rounded-lg p-4 border border-slate-200">
                       <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                         <FileText className="w-5 h-5 text-blue-500" />
                         Document Information
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
-                          <span className="text-gray-500">Document Name:</span>
+                          <span className="text-slate-500">Document Name:</span>
                           <p className="text-navy-900">{result.document_name}</p>
                         </div>
                         <div>
-                          <span className="text-gray-500">Network:</span>
+                          <span className="text-slate-500">Network:</span>
                           <p className="text-navy-900 capitalize">{result.network}</p>
                         </div>
                       </div>
                     </div>
 
                     {/* Blockchain Info */}
-                    <div className="bg-[#0a0f1a] rounded-lg p-4 border border-gray-800">
+                    <div className="bg-cream-100 rounded-lg p-4 border border-slate-200">
                       <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
                         <Link2 className="w-5 h-5 text-blue-500" />
                         Blockchain Record
                       </h3>
                       <div className="space-y-3 text-sm">
                         <div>
-                          <span className="text-gray-500">Transaction ID:</span>
+                          <span className="text-slate-500">Transaction ID:</span>
                           <p className="text-navy-900 font-mono text-xs break-all">
                             {result.transaction_id}
                           </p>
                         </div>
                         <div>
-                          <span className="text-gray-500">Document Hash:</span>
+                          <span className="text-slate-500">Document Hash:</span>
                           <p className="text-navy-900 font-mono text-xs break-all">
                             {result.document_hash}
                           </p>
                         </div>
                         <div>
-                          <span className="text-gray-500 flex items-center gap-1">
+                          <span className="text-slate-500 flex items-center gap-1">
                             <Clock className="w-4 h-4" />
                             Sealed At:
                           </span>
@@ -351,7 +351,7 @@ const VerifyDocument = () => {
 
                 {!result.found && (
                   <div className="text-center py-4">
-                    <p className="text-gray-400 mb-4">
+                    <p className="text-slate-500 mb-4">
                       This document has not been notarized through NotaryChain.
                     </p>
                     <Button
@@ -370,30 +370,30 @@ const VerifyDocument = () => {
           <div className="mt-12">
             <h3 className="text-xl font-bold text-navy-900 mb-6 text-center">How Verification Works</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-[#1a2332] rounded-lg p-6 border border-gray-800 text-center">
+              <div className="bg-white rounded-lg p-6 border border-slate-200 text-center">
                 <div className="w-12 h-12 rounded-full bg-blue-600/20 flex items-center justify-center mx-auto mb-4">
                   <Hash className="w-6 h-6 text-blue-500" />
                 </div>
                 <h4 className="text-navy-900 font-semibold mb-2">1. Document Hash</h4>
-                <p className="text-gray-400 text-sm">
+                <p className="text-slate-500 text-sm">
                   Every document has a unique SHA-256 fingerprint that identifies it.
                 </p>
               </div>
-              <div className="bg-[#1a2332] rounded-lg p-6 border border-gray-800 text-center">
+              <div className="bg-white rounded-lg p-6 border border-slate-200 text-center">
                 <div className="w-12 h-12 rounded-full bg-blue-600/20 flex items-center justify-center mx-auto mb-4">
                   <Search className="w-6 h-6 text-blue-500" />
                 </div>
                 <h4 className="text-navy-900 font-semibold mb-2">2. Blockchain Lookup</h4>
-                <p className="text-gray-400 text-sm">
+                <p className="text-slate-500 text-sm">
                   We search the Hedera blockchain for the matching seal record.
                 </p>
               </div>
-              <div className="bg-[#1a2332] rounded-lg p-6 border border-gray-800 text-center">
+              <div className="bg-white rounded-lg p-6 border border-slate-200 text-center">
                 <div className="w-12 h-12 rounded-full bg-blue-600/20 flex items-center justify-center mx-auto mb-4">
                   <Shield className="w-6 h-6 text-blue-500" />
                 </div>
                 <h4 className="text-navy-900 font-semibold mb-2">3. Tamper-Proof</h4>
-                <p className="text-gray-400 text-sm">
+                <p className="text-slate-500 text-sm">
                   If verified, the document hasn't been altered since notarization.
                 </p>
               </div>

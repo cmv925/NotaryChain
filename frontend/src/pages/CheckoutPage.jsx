@@ -94,7 +94,7 @@ const CheckoutPage = () => {
   const packageOrder = ['general', 'affidavit', 'power_of_attorney', 'contract', 'will', 'trust', 'real_estate'];
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
 
       <div className="pt-32 pb-24">
@@ -110,7 +110,7 @@ const CheckoutPage = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-navy-900 mb-4">
               Notarization Services
             </h1>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <p className="text-slate-500 text-lg max-w-2xl mx-auto">
               Choose the service that fits your needs. All notarizations include 
               AI document analysis, biometric verification, and blockchain sealing.
             </p>
@@ -123,7 +123,7 @@ const CheckoutPage = () => {
               onClick={() => setPaymentMethod('card')}
               className={paymentMethod === 'card' 
                 ? 'bg-blue-600 hover:bg-blue-700' 
-                : 'border-gray-700 text-gray-300'}
+                : 'border-slate-200 text-slate-500'}
             >
               <CreditCard className="w-4 h-4 mr-2" />
               Pay with Card
@@ -133,7 +133,7 @@ const CheckoutPage = () => {
               onClick={() => setPaymentMethod('both')}
               className={paymentMethod === 'both' 
                 ? 'bg-blue-600 hover:bg-blue-700' 
-                : 'border-gray-700 text-gray-300'}
+                : 'border-slate-200 text-slate-500'}
             >
               <Wallet className="w-4 h-4 mr-2" />
               Card or Crypto
@@ -167,7 +167,7 @@ const CheckoutPage = () => {
                     className={`relative cursor-pointer transition-all duration-300 ${
                       isSelected 
                         ? 'bg-blue-600/10 border-blue-500 scale-[1.02]' 
-                        : 'bg-gradient-to-br from-[#1a2332] to-[#0f1825] border-gray-800 hover:border-gray-700'
+                        : 'bg-gradient-to-br from-white to-cream-100 border-slate-200 hover:border-slate-200'
                     }`}
                     onClick={() => setSelectedPackage(pkgId)}
                     data-testid={`package-${pkgId}`}
@@ -191,21 +191,21 @@ const CheckoutPage = () => {
                         )}
                       </div>
                       <h3 className="text-xl font-bold text-navy-900 mb-2">{pkg.name}</h3>
-                      <p className="text-gray-400 text-sm mb-4">{pkg.description}</p>
+                      <p className="text-slate-500 text-sm mb-4">{pkg.description}</p>
                       <div className="flex items-baseline gap-1">
                         <span className="text-3xl font-bold text-navy-900">${pkg.price}</span>
-                        <span className="text-gray-500">USD</span>
+                        <span className="text-slate-500">USD</span>
                       </div>
                       <ul className="mt-4 space-y-2">
-                        <li className="flex items-center gap-2 text-gray-300 text-sm">
+                        <li className="flex items-center gap-2 text-slate-500 text-sm">
                           <Check className="w-4 h-4 text-green-500" />
                           AI Document Analysis
                         </li>
-                        <li className="flex items-center gap-2 text-gray-300 text-sm">
+                        <li className="flex items-center gap-2 text-slate-500 text-sm">
                           <Check className="w-4 h-4 text-green-500" />
                           Biometric Verification
                         </li>
-                        <li className="flex items-center gap-2 text-gray-300 text-sm">
+                        <li className="flex items-center gap-2 text-slate-500 text-sm">
                           <Check className="w-4 h-4 text-green-500" />
                           Blockchain Seal
                         </li>
@@ -237,7 +237,7 @@ const CheckoutPage = () => {
                 </>
               )}
             </Button>
-            <p className="text-center text-gray-500 text-sm mt-4">
+            <p className="text-center text-slate-500 text-sm mt-4">
               Secure payment powered by Stripe
             </p>
           </div>
@@ -249,7 +249,7 @@ const CheckoutPage = () => {
                 <Shield className="w-8 h-8 text-green-500" />
               </div>
               <h4 className="text-navy-900 font-semibold mb-2">Legally Binding</h4>
-              <p className="text-gray-400 text-sm">
+              <p className="text-slate-500 text-sm">
                 All notarizations are legally valid and recognized across states
               </p>
             </div>
@@ -258,7 +258,7 @@ const CheckoutPage = () => {
                 <FileText className="w-8 h-8 text-blue-500" />
               </div>
               <h4 className="text-navy-900 font-semibold mb-2">Instant Processing</h4>
-              <p className="text-gray-400 text-sm">
+              <p className="text-slate-500 text-sm">
                 Connect with a notary within minutes, not days
               </p>
             </div>
@@ -267,7 +267,7 @@ const CheckoutPage = () => {
                 <Wallet className="w-8 h-8 text-purple-500" />
               </div>
               <h4 className="text-navy-900 font-semibold mb-2">Flexible Payments</h4>
-              <p className="text-gray-400 text-sm">
+              <p className="text-slate-500 text-sm">
                 Pay with credit card or cryptocurrency
               </p>
             </div>

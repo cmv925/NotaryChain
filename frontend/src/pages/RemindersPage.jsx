@@ -50,7 +50,7 @@ export default function RemindersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-navy-900">
+    <div className="min-h-screen bg-cream-100 text-navy-900">
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-8">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} data-testid="back-btn">
@@ -61,19 +61,19 @@ export default function RemindersPage() {
               <Bell className="w-6 h-6 text-coral-600" />
               Smart Reminders
             </h1>
-            <p className="text-gray-400 text-sm">Automated notifications & calendar integration</p>
+            <p className="text-slate-500 text-sm">Automated notifications & calendar integration</p>
           </div>
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-16"><Loader2 className="w-6 h-6 animate-spin text-gray-500" /></div>
+          <div className="flex justify-center py-16"><Loader2 className="w-6 h-6 animate-spin text-slate-500" /></div>
         ) : (
           <div className="space-y-6">
             {/* Preferences */}
-            <Card className="bg-[#0d1b2a] border-gray-800" data-testid="reminder-prefs">
+            <Card className="bg-cream-100 border-slate-200" data-testid="reminder-prefs">
               <CardHeader>
                 <CardTitle className="text-base text-navy-900 flex items-center gap-2">
-                  <Settings className="w-4 h-4 text-gray-400" /> Notification Preferences
+                  <Settings className="w-4 h-4 text-slate-500" /> Notification Preferences
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -88,7 +88,7 @@ export default function RemindersPage() {
                       <Icon className={`w-4 h-4 mt-0.5 ${color}`} />
                       <div>
                         <p className="text-navy-900 text-sm font-medium">{label}</p>
-                        <p className="text-gray-500 text-xs">{desc}</p>
+                        <p className="text-slate-500 text-xs">{desc}</p>
                       </div>
                     </div>
                     <Switch
@@ -98,24 +98,24 @@ export default function RemindersPage() {
                     />
                   </div>
                 ))}
-                {saving && <p className="text-gray-500 text-xs text-right">Saving...</p>}
+                {saving && <p className="text-slate-500 text-xs text-right">Saving...</p>}
               </CardContent>
             </Card>
 
             {/* Calendar Export */}
-            <Card className="bg-[#0d1b2a] border-gray-800" data-testid="calendar-export">
+            <Card className="bg-cream-100 border-slate-200" data-testid="calendar-export">
               <CardHeader>
                 <CardTitle className="text-base text-navy-900 flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-coral-600" /> Calendar Integration
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <p className="text-gray-400 text-sm">Export your schedule to Google Calendar, Apple Calendar, or Outlook.</p>
+                <p className="text-slate-500 text-sm">Export your schedule to Google Calendar, Apple Calendar, or Outlook.</p>
                 <div className="flex gap-3">
                   <Button
                     variant="outline"
                     onClick={() => downloadIcs('bookings')}
-                    className="border-gray-700 text-gray-300"
+                    className="border-slate-200 text-slate-500"
                     data-testid="export-bookings"
                   >
                     <Download className="w-4 h-4 mr-2" /> Bookings (.ics)
@@ -123,7 +123,7 @@ export default function RemindersPage() {
                   <Button
                     variant="outline"
                     onClick={() => downloadIcs('tasks')}
-                    className="border-gray-700 text-gray-300"
+                    className="border-slate-200 text-slate-500"
                     data-testid="export-tasks"
                   >
                     <Download className="w-4 h-4 mr-2" /> Tasks (.ics)

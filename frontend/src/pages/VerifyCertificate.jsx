@@ -50,7 +50,7 @@ export default function VerifyCertificate() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1825]">
+    <div className="min-h-screen bg-cream-100">
       <Navbar />
       <div className="pt-28 sm:pt-32 pb-16 sm:pb-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
@@ -64,20 +64,20 @@ export default function VerifyCertificate() {
             <h1 className="text-3xl sm:text-4xl font-bold text-navy-900 mb-3" data-testid="verify-cert-title">
               Verify Certificate
             </h1>
-            <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+            <p className="text-slate-500 text-sm sm:text-base max-w-xl mx-auto">
               Enter a Certificate ID, Ceremony ID, or Blockchain Hash to verify the authenticity of a NotaryChain notarization certificate.
             </p>
           </div>
 
           {/* Search Card */}
-          <Card className="bg-[#1a2332] border-gray-800 mb-8" data-testid="verify-cert-search">
+          <Card className="bg-white border-slate-200 mb-8" data-testid="verify-cert-search">
             <CardContent className="p-6">
               <form onSubmit={handleSubmit} className="flex gap-3">
                 <Input
                   value={inputHash}
                   onChange={(e) => setInputHash(e.target.value)}
                   placeholder="e.g. NC-A1B2C3D4E5F6, ceremony ID, or blockchain hash..."
-                  className="bg-[#0f1825] border-gray-700 text-navy-900 flex-1 placeholder:text-gray-600"
+                  className="bg-cream-100 border-slate-200 text-navy-900 flex-1 placeholder:text-slate-600"
                   data-testid="verify-cert-input"
                 />
                 <Button type="submit" disabled={loading || !inputHash.trim()} className="bg-coral-500 hover:bg-emerald-700 text-navy-900 px-6" data-testid="verify-cert-submit">
@@ -107,7 +107,7 @@ export default function VerifyCertificate() {
                   </Card>
 
                   {/* Document Info */}
-                  <Card className="bg-[#1a2332] border-gray-800" data-testid="cert-document-info">
+                  <Card className="bg-white border-slate-200" data-testid="cert-document-info">
                     <CardContent className="p-6">
                       <h3 className="text-navy-900 font-semibold text-lg mb-4 flex items-center gap-2">
                         <FileText className="w-5 h-5 text-blue-400" /> Document Information
@@ -124,7 +124,7 @@ export default function VerifyCertificate() {
                   </Card>
 
                   {/* Agent Verdicts */}
-                  <Card className="bg-[#1a2332] border-gray-800" data-testid="cert-agent-verdicts">
+                  <Card className="bg-white border-slate-200" data-testid="cert-agent-verdicts">
                     <CardContent className="p-6">
                       <h3 className="text-navy-900 font-semibold text-lg mb-4 flex items-center gap-2">
                         <Shield className="w-5 h-5 text-purple-400" /> Agent Verification Results
@@ -133,18 +133,18 @@ export default function VerifyCertificate() {
                         {result.agents.map((a) => (
                           <div
                             key={a.agent}
-                            className={`p-4 rounded-lg border text-center ${a.verdict === 'PASS' ? 'bg-coral-500/10 border-coral-200' : a.verdict === 'FAIL' ? 'bg-red-500/10 border-red-500/30' : 'bg-gray-700/20 border-gray-700'}`}
+                            className={`p-4 rounded-lg border text-center ${a.verdict === 'PASS' ? 'bg-coral-500/10 border-coral-200' : a.verdict === 'FAIL' ? 'bg-red-500/10 border-red-500/30' : 'bg-gray-700/20 border-slate-200'}`}
                             data-testid={`cert-agent-${a.agent.toLowerCase()}`}
                           >
                             <div className="flex justify-center mb-2">
-                              {a.verdict === 'PASS' ? <CheckCircle className="w-6 h-6 text-coral-600" /> : a.verdict === 'FAIL' ? <XCircle className="w-6 h-6 text-red-400" /> : <Clock className="w-6 h-6 text-gray-500" />}
+                              {a.verdict === 'PASS' ? <CheckCircle className="w-6 h-6 text-coral-600" /> : a.verdict === 'FAIL' ? <XCircle className="w-6 h-6 text-red-400" /> : <Clock className="w-6 h-6 text-slate-500" />}
                             </div>
                             <p className="text-navy-900 font-medium text-sm">{a.agent}</p>
-                            <p className={`text-xs font-bold mt-1 ${a.verdict === 'PASS' ? 'text-coral-600' : a.verdict === 'FAIL' ? 'text-red-400' : 'text-gray-500'}`}>
+                            <p className={`text-xs font-bold mt-1 ${a.verdict === 'PASS' ? 'text-coral-600' : a.verdict === 'FAIL' ? 'text-red-400' : 'text-slate-500'}`}>
                               {a.verdict}
                             </p>
                             {a.confidence != null && (
-                              <p className="text-gray-500 text-xs mt-1">{a.confidence}% confidence</p>
+                              <p className="text-slate-500 text-xs mt-1">{a.confidence}% confidence</p>
                             )}
                           </div>
                         ))}
@@ -153,7 +153,7 @@ export default function VerifyCertificate() {
                   </Card>
 
                   {/* Consensus */}
-                  <Card className="bg-[#1a2332] border-gray-800" data-testid="cert-consensus">
+                  <Card className="bg-white border-slate-200" data-testid="cert-consensus">
                     <CardContent className="p-6">
                       <h3 className="text-navy-900 font-semibold text-lg mb-4 flex items-center gap-2">
                         <ShieldCheck className="w-5 h-5 text-coral-600" /> Consensus Oracle
@@ -169,7 +169,7 @@ export default function VerifyCertificate() {
 
                   {/* Blockchain Seal */}
                   {result.blockchain_seal && (
-                    <Card className="bg-[#1a2332] border-gray-800" data-testid="cert-blockchain-seal">
+                    <Card className="bg-white border-slate-200" data-testid="cert-blockchain-seal">
                       <CardContent className="p-6">
                         <h3 className="text-navy-900 font-semibold text-lg mb-4 flex items-center gap-2">
                           <Blocks className="w-5 h-5 text-coral-600" /> Blockchain Seal
@@ -224,7 +224,7 @@ function InfoRow({ label, value, copyable, onCopy, badge, badgeColor, mono }) {
   const displayVal = String(value);
   return (
     <div>
-      <p className="text-gray-500 text-xs mb-1">{label}</p>
+      <p className="text-slate-500 text-xs mb-1">{label}</p>
       <div className="flex items-center gap-2">
         {badge ? (
           <span className={`px-2 py-0.5 text-xs font-bold rounded-md bg-${badgeColor}-500/20 text-${badgeColor}-400 border border-${badgeColor}-500/30`}>
@@ -234,7 +234,7 @@ function InfoRow({ label, value, copyable, onCopy, badge, badgeColor, mono }) {
           <span className={`text-navy-900 text-sm ${mono ? 'font-mono text-xs break-all' : ''}`}>{displayVal}</span>
         )}
         {copyable && onCopy && (
-          <button onClick={() => onCopy(displayVal)} className="text-gray-600 hover:text-gray-300 transition-colors">
+          <button onClick={() => onCopy(displayVal)} className="text-slate-600 hover:text-slate-500 transition-colors">
             <Copy className="w-3.5 h-3.5" />
           </button>
         )}
