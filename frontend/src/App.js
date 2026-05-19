@@ -59,6 +59,7 @@ const PublicScannerDemo = lazy(() => import('./pages/PublicScannerDemo'));
 const EmbedCeremony = lazy(() => import('./pages/EmbedCeremony'));
 const DeveloperSDK = lazy(() => import('./pages/DeveloperSDK'));
 const SDKKeys = lazy(() => import('./pages/SDKKeys'));
+const MyDocuments = lazy(() => import('./pages/MyDocuments'));
 const TrustBadges = lazy(() => import('./pages/TrustBadges'));
 const TrustBadgeLanding = lazy(() => import('./pages/TrustBadgeLanding'));
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
@@ -246,6 +247,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <SDKKeys />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-documents"
+              element={
+                <ProtectedRoute>
+                  <MyDocuments />
                 </ProtectedRoute>
               }
             />

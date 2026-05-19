@@ -645,3 +645,138 @@ async def public_handoff_accept(token: str):
         "share_percent": benef.get("share_percent"),
         "asset_id": asset_id,
     }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Viral signup loop — convert beneficiaries into NotaryChain users
+# ─────────────────────────────────────────────────────────────────────────────
+
+class HandoffSignupBody(BaseModel):
+    token: str
+    password: str
+    full_name: Optional[str] = None
+
+
+@router.get("/handoffs/received")
+async def my_received_handoffs(request: Request):
+    """Beneficiary handoffs received by the current user (matched by email).
+    Used by the Client Portal /my-documents page."""
+    user = await _get_user(request)
+    email = (user.get("email") or "").strip().lower()
+    if not email:
+        return {"beneficiaries": []}
+
+    rows = []
+    async for b in db.salv_beneficiaries.find(
+        {"email": email}, {"_id": 0}
+    ).sort("created_at", -1).limit(100):
+        # join asset title
+        asset = await db.salv_assets.find_one({"asset_id": b.get("asset_id")}, {"_id": 0, "title": 1, "asset_type": 1})
+        b["asset_title"] = (asset or {}).get("title")
+        b["asset_type"] = (asset or {}).get("asset_type")
+        rows.append(b)
+    return {"beneficiaries": rows}
+
+
+@router.get("/viral/stats")
+async def viral_stats():
+    """Public stats for the viral signup landing — shown to beneficiaries post-accept."""
+    total_assets = await db.salv_assets.count_documents({})
+    total_value_cursor = db.salv_assets.aggregate([
+        {"$group": {"_id": None, "sum": {"$sum": {"$ifNull": ["$value_estimate_usd", 0]}}}}
+    ])
+    total_value_doc = await total_value_cursor.to_list(1)
+    total_value = int(total_value_doc[0]["sum"]) if total_value_doc else 0
+    total_beneficiaries = await db.salv_beneficiaries.count_documents({})
+    accepted_handoffs = await db.salv_beneficiaries.count_documents({"status": "accepted"})
+    # Conversion count (beneficiaries who signed up)
+    converted = await db.salv_handoff_conversions.count_documents({})
+    return {
+        "total_assets_protected": total_assets,
+        "total_value_usd": total_value,
+        "total_beneficiaries": total_beneficiaries,
+        "accepted_handoffs": accepted_handoffs,
+        "viral_conversions": converted,
+    }
+
+
+@router.post("/handoff/{token}/signup")
+async def handoff_signup(token: str, body: HandoffSignupBody, request: Request):
+    """Public signup flow attributed to a SALV handoff. Pre-fills name/email from
+    beneficiary record. Creates a regular user, links viral attribution, returns JWT.
+    Works for both 'active' and 'claimed' tokens (we want post-accept conversion)."""
+    from services import salv_service
+    from auth import get_password_hash, create_access_token
+    from middleware.security import sanitize_email, validate_password
+    from models import User
+
+    rec = await salv_service.lookup_handoff_token(token)
+    if not rec:
+        raise HTTPException(status_code=404, detail="Invalid or unknown handoff token")
+    if rec["status"] not in ("active", "claimed"):
+        raise HTTPException(status_code=400, detail=f"Token not eligible for signup ({rec['status']})")
+
+    benef = await db.salv_beneficiaries.find_one({"beneficiary_id": rec["beneficiary_id"]}, {"_id": 0})
+    if not benef:
+        raise HTTPException(status_code=404, detail="Beneficiary record missing")
+    benef_email = benef.get("email", "").strip().lower()
+    if not benef_email:
+        raise HTTPException(status_code=400, detail="No email on beneficiary record")
+
+    try:
+        clean_email = sanitize_email(benef_email)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    is_valid, message = validate_password(body.password)
+    if not is_valid:
+        raise HTTPException(status_code=400, detail=message)
+
+    existing = await db.users.find_one({"email": clean_email})
+    if existing:
+        # Idempotent: if user already signed up, just attach attribution & return token
+        token_jwt = create_access_token(data={"sub": clean_email})
+        await db.salv_handoff_conversions.update_one(
+            {"beneficiary_id": rec["beneficiary_id"]},
+            {"$setOnInsert": {
+                "beneficiary_id": rec["beneficiary_id"],
+                "asset_id": benef.get("asset_id"),
+                "vault_id": benef.get("vault_id"),
+                "converted_user_email": clean_email,
+                "converted_at": _iso(_now()),
+                "was_existing_user": True,
+            }},
+            upsert=True,
+        )
+        return {"access_token": token_jwt, "token_type": "bearer", "is_existing": True}
+
+    full_name = (body.full_name or benef.get("name") or clean_email.split("@")[0]).strip()
+    user = User(email=clean_email, full_name=full_name)
+    user_dict = user.dict()
+    user_dict["hashed_password"] = get_password_hash(body.password)
+    user_dict["role"] = "user"
+    user_dict["acquisition_source"] = "salv_handoff_viral"
+    user_dict["referring_beneficiary_id"] = rec["beneficiary_id"]
+    await db.users.insert_one(user_dict)
+
+    # Record viral attribution
+    await db.salv_handoff_conversions.insert_one({
+        "conversion_id": uuid.uuid4().hex[:16],
+        "beneficiary_id": rec["beneficiary_id"],
+        "asset_id": benef.get("asset_id"),
+        "vault_id": benef.get("vault_id"),
+        "converted_user_id": user.id,
+        "converted_user_email": clean_email,
+        "converted_at": _iso(_now()),
+        "was_existing_user": False,
+    })
+
+    # Emit event for asset owner notification
+    await _emit_event(
+        benef.get("asset_id"), benef.get("vault_id"),
+        "beneficiary_signed_up",
+        {"beneficiary_id": rec["beneficiary_id"], "new_user_email": clean_email}
+    )
+
+    jwt_token = create_access_token(data={"sub": clean_email})
+    return {"access_token": jwt_token, "token_type": "bearer", "is_existing": False}

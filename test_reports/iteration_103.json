@@ -1,0 +1,42 @@
+{
+  "summary": "Backend + frontend testing for NotaryChain Beneficiary Viral Loop + Client Portal /my-documents. 12/12 backend pytest cases passed. Frontend handoff accept flow + signup form + /my-documents full filter/search/CSV export verified working end-to-end.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Handoff accept → Viral CTA → Signup",
+        "issue": "After accept, the viral CTA card (data-testid='viral-cta-card') auto-dismisses to the signup form after 600ms via setTimeout in HandoffAccept.jsx L67 (`setTimeout(() => setShowSignup(true), 600)`). Spec required showing the CTA card with stats (assets protected, total value, beneficiaries) and only switching to signup form when the user clicks the 'Protect my legacy' CTA. Currently the stats card is shown only momentarily, undermining the viral conversion messaging.",
+        "affected_selectors": ["[data-testid='viral-cta-card']", "[data-testid='viral-signup-cta']", "[data-testid='viral-signup-form']"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_viral_handoff_portal.py",
+    "/app/test_reports/pytest/iter103_viral_portal.xml"
+  ],
+  "action_items": [
+    "REVIEW: Remove the 600ms setTimeout auto-open in HandoffAccept.jsx L67 so the viral CTA card with stats is the default post-accept view. Switch to signup form only on click of 'viral-signup-cta'. This restores the funnel UX called out in the spec.",
+    "VERIFY: data-testid='my-documents-btn' on Dashboard bento was not visible during automated query immediately after login (count=0). Source code (Dashboard.jsx L255) has the testid set. Likely a timing/lazy-render artifact. Main agent may want to confirm the bento renders on initial dashboard load without scroll."
+  ],
+  "critical_code_review_comments": [
+    "salv_routes.py handoff_signup: idempotency uses $setOnInsert on a doc keyed by beneficiary_id only — this means a different beneficiary record sharing the same converted email isn't deduped. Acceptable for current spec but worth noting.",
+    "MyDocuments.jsx hashscan URL is hard-coded to /mainnet/transaction/{tx}. If Hedera testnet is ever used, this link will 404. Consider env-driven base.",
+    "HandoffAccept.jsx loginWithToken/localStorage fallback (L85-86) — relies on AuthContext exposing loginWithToken. If signature changes, the localStorage fallback may leave context state stale until next reload.",
+    "MyDocuments.jsx unified list keying uses `${kind}-${id}-${idx}`; index in key defeats React reconciliation when filtering. Use kind+id alone."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_viral_handoff_portal.py"
+  ],
+  "success_rate": {"backend": "100% (12/12)", "frontend": "~90% (1 UX deviation)"},
+  "test_credentials": "demo@test.com / Demo123! (43 unified docs: 10 sealed, 29 notarized, 4 vault, 0 handoff). alice@example.com / Viral123! is the prior viral-signup user.",
+  "seed_data_creation": "Generated 3 fresh handoff tokens via salv_service.issue_handoff_token in tests; consumed for signup test. All targeted beneficiary alice@example.com.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend viral signup, viral/stats, handoffs/received, and lookup endpoints all verified. /my-documents page renders 5 category tabs with counts (All/Sealed/Notarized/Vault/Handoffs), search by title/hash/tx works, status dropdown works, empty state renders correctly, CSV export downloads with naming pattern `my-documents-YYYY-MM-DD.csv`. The viral CTA card (data-testid='viral-cta-card') is skipped due to a 600ms auto-show of the signup form — if E1 removes that setTimeout, re-verify by accepting a fresh handoff token and confirming the CTA card with stats remains visible until clicked.",
+  "rca of the issue": "Viral CTA bypass: HandoffAccept.jsx L67 inside accept() handler calls setTimeout(()=>setShowSignup(true), 600). This unconditionally toggles showSignup=true 600ms after accept resolves, hiding the viral-cta-card (which only renders when !showSignup). To match the spec, remove this line; the form already opens via the viral-signup-cta button onClick."
+}
