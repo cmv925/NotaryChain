@@ -118,12 +118,13 @@ const DigitalSeal = () => {
             </h2>
             {activeSeal ? (
               <div className="flex flex-col sm:flex-row items-center gap-6">
-                <div className="w-40 h-40 bg-[#0d1b2a] border border-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
+                <div className="relative w-40 h-40 bg-[#0d1b2a] border border-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
+                  <span className="absolute inset-0 flex items-center justify-center text-gray-500 text-xs text-center pointer-events-none">Preview unavailable</span>
                   <img
                     src={`${process.env.REACT_APP_BACKEND_URL}/api/notary/professional/seals/${activeSeal.id}/file`}
                     alt="Active Seal"
-                    className="max-w-full max-h-full object-contain"
-                    onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<div class="text-gray-500 text-xs text-center">Preview unavailable</div>'; }}
+                    className="relative max-w-full max-h-full object-contain"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
                     data-testid="active-seal-image"
                   />
                 </div>
@@ -187,12 +188,13 @@ const DigitalSeal = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" data-testid="seals-grid">
                 {seals.map(seal => (
                   <div key={seal.id} className={`bg-[#0d1b2a] rounded-lg border p-4 ${seal.is_active ? 'border-[#00d4aa]/50' : 'border-gray-700'}`} data-testid={`seal-card-${seal.id}`}>
-                    <div className="w-full h-28 bg-[#0f1825] rounded mb-3 flex items-center justify-center overflow-hidden">
+                    <div className="relative w-full h-28 bg-[#0f1825] rounded mb-3 flex items-center justify-center overflow-hidden">
+                      <span className="absolute inset-0 flex items-center justify-center text-gray-600 text-xs pointer-events-none">No preview</span>
                       <img
                         src={`${process.env.REACT_APP_BACKEND_URL}/api/notary/professional/seals/${seal.id}/file`}
                         alt={seal.original_name}
-                        className="max-w-full max-h-full object-contain"
-                        onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<div class="text-gray-600 text-xs">No preview</div>'; }}
+                        className="relative max-w-full max-h-full object-contain"
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
                       />
                     </div>
                     <p className="text-navy-900 text-sm font-medium truncate">{seal.original_name}</p>

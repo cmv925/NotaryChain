@@ -37,9 +37,15 @@ class CacheService:
 
     @staticmethod
     def _make_key(*args, **kwargs) -> str:
-        """Build a deterministic cache key from arguments."""
+        """Build a deterministic cache key from arguments.
+
+        SHA-256 is overkill for cache keying (no security threat model here) but
+        we use it instead of MD5 to keep static analyzers happy and avoid any
+        cryptographic-weakness flags. Performance cost is negligible at this
+        call volume.
+        """
         raw = json.dumps({"a": args, "k": kwargs}, sort_keys=True, default=str)
-        return hashlib.md5(raw.encode()).hexdigest()
+        return hashlib.sha256(raw.encode()).hexdigest()
 
     def get(self, namespace: str, key: str) -> Optional[Any]:
         cache = self._get_cache(namespace)
