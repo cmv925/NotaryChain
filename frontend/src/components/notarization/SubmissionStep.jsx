@@ -173,6 +173,29 @@ export const SubmissionStep = ({
                 ))}
               </select>
             </div>
+
+            <div>
+              <Label htmlFor="state_code" className="text-white mb-2 block">
+                State Jurisdiction *
+              </Label>
+              <select
+                id="state_code"
+                name="state_code"
+                required
+                value={formData.state_code || 'FL'}
+                onChange={onChange}
+                className="w-full bg-[#0a0f1a] border border-gray-700 rounded-md px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
+                disabled={loading}
+                data-testid="state-code-select"
+              >
+                <option value="FL">Florida (FL) — live</option>
+                <option value="TX">Texas (TX) — Phase 2 pipeline</option>
+                <option value="NY">New York (NY) — Phase 2 pipeline</option>
+                <option value="CA">California (CA) — Phase 2 pipeline</option>
+                <option value="VA">Virginia (VA) — Phase 2 pipeline</option>
+              </select>
+              <p className="text-[10px] text-gray-400 mt-1">Determines which state's RON compliance gates apply at seal time.</p>
+            </div>
           </div>
         </div>
 

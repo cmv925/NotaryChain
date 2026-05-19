@@ -38,7 +38,7 @@
   "seed_data_creation": "",
   "retest_needed": false,
   "should_main_agent_self_test": false,
-  "context_for_next_testing_agent": "Okta SSO integration is now fully functional. The fix involved updating OKTA_CLIENT_ID and OKTA_CLIENT_SECRET in backend/.env. Clicking 'Sign in with Okta' button correctly redirects to Okta login page at trial-1257751.okta.com with proper client_id=0oa110cnei9quynQC698 and redirect_uri=https://notary-chain-preview-1.preview.emergentagent.com/auth/okta/callback",
+  "context_for_next_testing_agent": "Okta SSO integration is now fully functional. The fix involved updating OKTA_CLIENT_ID and OKTA_CLIENT_SECRET in backend/.env. Clicking 'Sign in with Okta' button correctly redirects to Okta login page at trial-1257751.okta.com with proper client_id=0oa110cnei9quynQC698 and redirect_uri=https://notary-vault-dev.preview.emergentagent.com/auth/okta/callback",
   "features_tested": {
     "okta_status": {
       "endpoint": "GET /api/sso/okta/status",

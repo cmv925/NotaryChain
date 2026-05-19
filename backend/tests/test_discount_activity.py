@@ -18,7 +18,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://notary-chain-preview-1.preview.emergentagent.com")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://notary-vault-dev.preview.emergentagent.com")
 
 # Module-scoped session to avoid rate limiting with multiple logins
 _session_cache = {}

@@ -250,9 +250,19 @@ async def create_notarization_request(
     request_data: NotarizationRequestCreate,
     current_user: User = Depends(get_current_user)
 ):
+    # Normalize + validate state_code against the multi-state evaluator
+    from services.multistate_evaluator import supported_state_codes
+    state_code = (request_data.state_code or "").strip().upper() or None
+    if state_code and state_code not in supported_state_codes():
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported state_code '{state_code}'. Supported: {supported_state_codes()}",
+        )
+    payload = request_data.dict()
+    payload["state_code"] = state_code
     request = NotarizationRequest(
         user_id=current_user.id,
-        **request_data.dict()
+        **payload,
     )
     
     # Create HCS topic for this notarization session
@@ -551,7 +561,46 @@ async def complete_notarization(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Request not found"
         )
-    
+
+    # ─── Multi-state pre-seal gate evaluator ──────────────────────
+    # Auto-route to the right state evaluator. FL keeps its existing pipeline.
+    # For TX/NY/CA/VA, block completion if any gate fails.
+    state_code = (request.get("state_code") or "").upper()
+    if state_code and state_code != "FL":
+        try:
+            from services.multistate_evaluator import evaluate_preseal, supported_state_codes
+            if state_code in supported_state_codes():
+                ev = await evaluate_preseal(
+                    state_code=state_code,
+                    ceremony_id=request_id,
+                    user_id=request.get("user_id", current_user.id),
+                    db=db,
+                    document_type=request.get("document_type", "general"),
+                )
+                if not ev.get("ready"):
+                    await db.notarization_requests.update_one(
+                        {"id": request_id},
+                        {"$set": {
+                            "status": f"{state_code.lower()}_blocked",
+                            "blocked_reasons": ev.get("blocked_reasons", []),
+                            "blocked_evaluator": ev.get("schema_version"),
+                            "blocked_at": datetime.now(timezone.utc).isoformat(),
+                        }}
+                    )
+                    raise HTTPException(
+                        status_code=status.HTTP_412_PRECONDITION_FAILED,
+                        detail={
+                            "error": "preseal_gate_failed",
+                            "state_code": state_code,
+                            "blocked_reasons": ev.get("blocked_reasons", []),
+                            "gates": ev.get("gates", {}),
+                        },
+                    )
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"multistate evaluator error for ceremony {request_id}: {e}")
+
     # Update request
     result = await db.notarization_requests.update_one(
         {"id": request_id, "notary_id": current_user.id},

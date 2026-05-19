@@ -174,7 +174,15 @@ async def analytics_state_breakdown(current_user: User = Depends(get_current_use
             "_id": {"$ifNull": ["$state_code", {"$ifNull": ["$jurisdiction", "UNSPECIFIED"]}]},
             "total": {"$sum": 1},
             "sealed": {"$sum": {"$cond": [{"$in": ["$status", ["completed", "sealed"]]}, 1, 0]}},
-            "blocked": {"$sum": {"$cond": [{"$eq": ["$status", "fl_blocked"]}, 1, 0]}},
+            "blocked": {"$sum": {"$cond": [
+                {"$or": [
+                    {"$eq": ["$status", "fl_blocked"]},
+                    {"$eq": ["$status", "tx_blocked"]},
+                    {"$eq": ["$status", "ny_blocked"]},
+                    {"$eq": ["$status", "ca_blocked"]},
+                    {"$eq": ["$status", "va_blocked"]},
+                ]},
+                1, 0]}},
         }},
         {"$sort": {"total": -1}},
         {"$limit": 25},
@@ -232,3 +240,52 @@ async def analytics_gate_failures(current_user: User = Depends(get_current_user)
         reverse=True,
     )
     return {"failures": rows, "total_blocked_ceremonies": sum(r["count"] for r in rows)}
+
+
+
+@router.post("/admin/compliance/backfill-state-codes")
+async def backfill_state_codes(
+    default_state: str = Query("FL", description="State code to assign to ceremonies missing one"),
+    dry_run: bool = Query(False),
+    current_user: User = Depends(get_current_user),
+):
+    """Populate state_code on existing notarization_requests that don't have one.
+    Priority: notary's commission_state → default_state (default FL since the live
+    pipeline was FL-only until Phase 2)."""
+    await _require_admin(current_user)
+    code = (default_state or "FL").upper()
+
+    missing = await db.notarization_requests.count_documents({
+        "$or": [{"state_code": {"$exists": False}}, {"state_code": None}, {"state_code": ""}],
+    })
+    if missing == 0:
+        return {"missing": 0, "updated": 0, "default_state": code, "dry_run": dry_run}
+
+    updated = 0
+    if not dry_run:
+        # First pass: copy from notary's commission_state if available
+        async for req in db.notarization_requests.find(
+            {"$or": [{"state_code": {"$exists": False}}, {"state_code": None}, {"state_code": ""}],
+             "notary_id": {"$exists": True, "$ne": None}},
+            {"_id": 0, "id": 1, "notary_id": 1}
+        ):
+            notary = await db.users.find_one(
+                {"id": req["notary_id"]},
+                {"_id": 0, "commission_state": 1, "notary_state": 1, "state": 1}
+            )
+            ns = (notary or {}).get("commission_state") or (notary or {}).get("notary_state") or (notary or {}).get("state")
+            if ns:
+                ns = ns.upper()[:2]
+                await db.notarization_requests.update_one(
+                    {"id": req["id"]},
+                    {"$set": {"state_code": ns, "state_code_source": "notary_commission"}}
+                )
+                updated += 1
+        # Second pass: default for the rest
+        bulk_default = await db.notarization_requests.update_many(
+            {"$or": [{"state_code": {"$exists": False}}, {"state_code": None}, {"state_code": ""}]},
+            {"$set": {"state_code": code, "state_code_source": "backfill_default"}}
+        )
+        updated += bulk_default.modified_count
+
+    return {"missing": missing, "updated": updated, "default_state": code, "dry_run": dry_run}

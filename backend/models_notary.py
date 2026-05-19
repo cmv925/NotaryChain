@@ -68,6 +68,7 @@ class NotarizationRequest(BaseModel):
     document_name: str
     document_type: str  # power_of_attorney, real_estate, affidavit, etc.
     notarization_type: str  # traditional, ron, mobile
+    state_code: Optional[str] = None  # FL/TX/NY/CA/VA — routes pre-seal evaluator
     status: str = "pending"  # pending, assigned, in_progress, reviewing, completed, cancelled
     scheduled_time: Optional[datetime] = None
     signers: List[dict] = []  # [{name, email, verified}]
@@ -82,6 +83,7 @@ class NotarizationRequestCreate(BaseModel):
     document_name: str
     document_type: str
     notarization_type: str
+    state_code: Optional[str] = None  # FL/TX/NY/CA/VA (2-letter code)
     scheduled_time: Optional[str] = None
     signers: List[dict] = []
     notes: str = ""

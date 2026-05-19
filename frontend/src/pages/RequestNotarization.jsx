@@ -38,6 +38,7 @@ const RequestNotarization = () => {
       document_name: '',
       document_type: 'general',
       notarization_type: 'ron',
+      state_code: 'FL',
       scheduled_time: '',
       signers: [{ name: '', email: '' }],
       notes: '',
