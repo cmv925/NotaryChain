@@ -171,8 +171,9 @@ async def upload_asset_document(
     content = await file.read()
     if len(content) > MAX_BYTES:
         raise HTTPException(status_code=413, detail=f"File exceeds {MAX_BYTES // 1024 // 1024} MB limit")
-    if file.content_type and not file.content_type.startswith(ALLOWED_MIME_PREFIXES):
-        raise HTTPException(status_code=400, detail=f"Unsupported content_type: {file.content_type}")
+    ct = (file.content_type or "").lower()
+    if not ct or not ct.startswith(ALLOWED_MIME_PREFIXES):
+        raise HTTPException(status_code=400, detail=f"Unsupported or missing content_type: {ct or '(none)'}")
 
     plaintext_sha256 = hashlib.sha256(content).hexdigest()
     enc = _encrypt(content, asset_id)
