@@ -599,7 +599,26 @@ async def complete_notarization(
         except HTTPException:
             raise
         except Exception as e:
+            # Fail CLOSED: if the evaluator itself errors out (DB outage, bug,
+            # missing collection, etc.) we must NOT silently seal a non-FL
+            # ceremony — that would defeat the entire pre-seal gate guarantee.
             logger.error(f"multistate evaluator error for ceremony {request_id}: {e}")
+            await db.notarization_requests.update_one(
+                {"id": request_id},
+                {"$set": {
+                    "status": f"{state_code.lower()}_evaluator_error",
+                    "blocked_evaluator_error": str(e),
+                    "blocked_at": datetime.now(timezone.utc).isoformat(),
+                }}
+            )
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail={
+                    "error": "preseal_evaluator_unavailable",
+                    "state_code": state_code,
+                    "message": "Compliance evaluator failed — ceremony cannot be sealed until the evaluator is healthy. Please retry.",
+                },
+            )
 
     # Update request
     result = await db.notarization_requests.update_one(
