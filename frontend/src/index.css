@@ -2,6 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ───────────────────────────────────────────────────────────────────────────
+ * READABILITY BASELINE (accommodates older users + readers with glasses).
+ *
+ * 1. Root rem unit bumped from 16px → 17px. All Tailwind rem-based sizes
+ *    scale proportionally (text-xs → ~12.75px, text-sm → ~14.9px, text-base
+ *    → 17px, text-lg → ~19.1px, headings up by ~6.25%). No layout breakage.
+ *
+ * 2. Absolute-px micro-text (text-[7px] … text-[12px]) is floored at 13px so
+ *    KPI eyebrows, status meta, and tiny badges stay readable for everyone.
+ *
+ * Audited usage before this change:
+ *   text-sm     879×     text-xs      844×     text-[10px]  413×
+ *   text-[11px] 151×     text-[9px]    58×     text-[8px]    14×
+ *   text-[7px]    2×     text-[12px]   28×
+ * ──────────────────────────────────────────────────────────────────────── */
+html {
+    font-size: 17px;
+}
+
+/* Floor every absolute-pixel size below 13px to 13px. !important is needed
+ * because Tailwind's arbitrary-value utilities have high specificity. */
+.text-\[7px\],
+.text-\[8px\],
+.text-\[9px\],
+.text-\[10px\],
+.text-\[11px\],
+.text-\[12px\] {
+    font-size: 13px !important;
+}
+
 body {
     margin: 0;
     font-family:
@@ -10,6 +40,57 @@ body {
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+ * DARK PAGE HEADERS — anchor every page with an ink-900 (#131314) top bar.
+ * Targets the standard header pattern used across Dashboard, MyDocuments,
+ * AssetVault, AdminCeremonyAnalytics, UserGuide, CompliancePublicSnapshot,
+ * StateComparison, etc. White card bg + slate-200 bottom border is swapped
+ * for ink + ink-700 border, and text descendants flip to cream/light tones.
+ *
+ * Coral and emerald accent colors are preserved so brand CTAs still pop.
+ * ──────────────────────────────────────────────────────────────────────── */
+header.bg-white,
+header[class*="bg-white/"] {
+    background-color: #131314 !important;
+    border-bottom-color: #2A2A2C !important;
+}
+
+/* Logo wordmark + primary navy text → cream */
+header.bg-white .text-navy-900,
+header.bg-white .text-navy-700,
+header.bg-white .text-slate-700,
+header.bg-white .text-slate-900,
+header[class*="bg-white/"] .text-navy-900,
+header[class*="bg-white/"] .text-navy-700,
+header[class*="bg-white/"] .text-slate-700,
+header[class*="bg-white/"] .text-slate-900 {
+    color: #FDFCF8;
+}
+
+/* Secondary muted text inside dark header */
+header.bg-white .text-slate-500,
+header.bg-white .text-slate-600,
+header[class*="bg-white/"] .text-slate-500,
+header[class*="bg-white/"] .text-slate-600 {
+    color: #C9C9CB; /* ink-200 */
+}
+
+/* Hover states + icon buttons inside dark header */
+header.bg-white .hover\:bg-cream-200\/50:hover,
+header.bg-white .hover\:bg-cream-100:hover,
+header[class*="bg-white/"] .hover\:bg-cream-200\/50:hover,
+header[class*="bg-white/"] .hover\:bg-cream-100:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Avatar / icon button containers that used bg-cream-* turn into subtle dark */
+header.bg-white .bg-cream-100,
+header.bg-white .bg-cream-200,
+header[class*="bg-white/"] .bg-cream-100,
+header[class*="bg-white/"] .bg-cream-200 {
+    background-color: rgba(255, 255, 255, 0.06);
 }
 
 code {
