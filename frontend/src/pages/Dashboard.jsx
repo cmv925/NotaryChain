@@ -180,9 +180,9 @@ const Dashboard = () => {
         <DashboardHero token={token} user={user} role={role} />
 
         {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
-          {/* Core Actions — spans 2 cols */}
-          <div className="col-span-1 md:col-span-2 bg-white border border-slate-200 p-6 rounded-lg relative overflow-hidden" data-testid="core-actions">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 items-start">
+          {/* Core Actions */}
+          <div className="bg-white border border-slate-200 p-6 rounded-lg relative overflow-hidden" data-testid="core-actions">
             <div className="absolute inset-0 opacity-[0.04] bg-cover bg-center mix-blend-overlay" style={{ backgroundImage: "url('https://images.pexels.com/photos/3612932/pexels-photo-3612932.jpeg?auto=compress&cs=tinysrgb&dpr=1&h=400&w=600')" }} />
             <div className="relative z-10">
               <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-5">Core Actions</h3>
