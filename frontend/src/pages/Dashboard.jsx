@@ -11,6 +11,7 @@ import { NotificationBell } from '../components/NotificationBell';
 import { ExpiryWidget, ExpiryBadge, SetExpiryButton } from '../components/ExpiryTracker';
 import BlockchainAuditTrail from '../components/BlockchainAuditTrail';
 import StatePickabilityWidget from '../components/StatePickabilityWidget';
+import DashboardHero from '../components/DashboardHero';
 import { OnboardingTour } from '../components/OnboardingTour';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
@@ -175,23 +176,8 @@ const Dashboard = () => {
       </header>
 
       <div className="max-w-7xl mx-auto px-6">
-        {/* Stats Strip */}
-        <div className="grid grid-cols-1 md:grid-cols-3 border-b border-slate-200" data-testid="stats-section">
-          <div className="p-8 md:border-r border-slate-200 hover:bg-cream-200/10 transition-colors">
-            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-2">Total Seals</p>
-            <p className="text-4xl font-light tracking-tighter text-navy-900" data-testid="total-seals">{stats.total_seals}</p>
-          </div>
-          <div className="p-8 md:border-r border-slate-200 hover:bg-cream-200/10 transition-colors">
-            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-2">Last 30 Days</p>
-            <p className="text-4xl font-light tracking-tighter text-navy-900" data-testid="recent-seals">{stats.recent_seals}</p>
-          </div>
-          <div className="p-8 hover:bg-cream-200/10 transition-colors">
-            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-2">Member Since</p>
-            <p className="text-xl font-light tracking-tight text-navy-900">
-              {new Date(stats.user_since).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-            </p>
-          </div>
-        </div>
+        {/* Personalized Hero (role-aware welcome + KPIs + suggestion) */}
+        <DashboardHero token={token} user={user} role={role} />
 
         {/* Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
