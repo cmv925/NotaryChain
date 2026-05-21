@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/button';
@@ -25,8 +25,7 @@ const statusConfig = {
 const RONComplianceDashboard = () => {
   const navigate = useNavigate();
   const { token } = useAuth();
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const [activeTab, setActiveTab] = useState('map');
   const [states, setStates] = useState([]);
   const [stats, setStats] = useState(null);
@@ -51,19 +50,20 @@ const RONComplianceDashboard = () => {
       const res = await axios.get(`${API}/compliance/ron/violations?page_size=30`, { headers });
       setViolations(res.data.violations || []);
     } catch {}
-  }, [token]);
+  }, [headers]);
 
   const fetchActivity = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/compliance/ron/activity?page_size=30`, { headers });
       setActivity(res.data);
     } catch {}
-  }, [token]);
+  }, [headers]);
 
   useEffect(() => { fetchStates(); }, [fetchStates]);
   useEffect(() => {
     if (activeTab === 'violations') fetchViolations();
     if (activeTab === 'activity') fetchActivity();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [activeTab]);
 
   const filteredStates = states.filter(s => {

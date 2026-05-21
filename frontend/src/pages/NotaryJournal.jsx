@@ -36,6 +36,7 @@ const NotaryJournal = () => {
 
   const pageSize = 15;
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   useEffect(() => { fetchEntries(); fetchStats(); }, [page, search]);
 
   const fetchEntries = async () => {

@@ -33,6 +33,7 @@ export default function CertificateExpiration() {
     setLoading(false);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   useEffect(() => { fetchExpiring(); }, [token, daysAhead]);
 
   const setExpiration = async () => {

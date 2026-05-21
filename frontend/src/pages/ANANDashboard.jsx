@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/button';
@@ -84,8 +84,7 @@ export default function ANANDashboard() {
   const [showBadge, setShowBadge] = useState(false);
   const [reputation, setReputation] = useState(null);
 
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const fetchList = useCallback(async () => {
     try {
       const [cRes, sRes, bRes, repRes] = await Promise.all([
@@ -100,7 +99,7 @@ export default function ANANDashboard() {
       setReputation(repRes.data);
     } catch { /* ignore */ }
     setLoading(false);
-  }, [token]);
+  }, [headers]);
 
   const fetchDetail = useCallback(async (id) => {
     try {
@@ -109,14 +108,14 @@ export default function ANANDashboard() {
     } catch {
       toast({ title: 'Error', description: 'Failed to load ceremony', variant: 'destructive' });
     }
-  }, [token]);
+  }, [headers]);
 
   const fetchEscalations = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/anan/escalations`, { headers });
       setEscalations(res.data.escalations);
     } catch { /* ignore */ }
-  }, [token]);
+  }, [headers]);
 
   useEffect(() => {
     if (!token) return;
@@ -127,6 +126,7 @@ export default function ANANDashboard() {
       fetchList();
       fetchEscalations();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [token, ceremonyId]);
 
   // ─── Create Ceremony ───

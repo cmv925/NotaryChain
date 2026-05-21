@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -27,8 +27,7 @@ const OrgWebhooks = ({ orgId, token }) => {
   const [expandedWebhook, setExpandedWebhook] = useState(null);
   const [deliveries, setDeliveries] = useState({});
   const [loadingDeliveries, setLoadingDeliveries] = useState({});
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const fetchData = useCallback(async () => {
     try {
       const [whRes, evRes] = await Promise.all([
@@ -42,7 +41,7 @@ const OrgWebhooks = ({ orgId, token }) => {
     } finally {
       setLoading(false);
     }
-  }, [orgId, token]);
+  }, [orgId, headers]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -249,8 +248,7 @@ const WebhookEditor = ({ orgId, token, webhook, allEvents, onClose, onSaved }) =
   const [description, setDescription] = useState(webhook?.description || '');
   const [selectedEvents, setSelectedEvents] = useState(new Set(webhook?.events || []));
   const [saving, setSaving] = useState(false);
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const toggleEvent = (key) => {
     setSelectedEvents(prev => {
       const next = new Set(prev);

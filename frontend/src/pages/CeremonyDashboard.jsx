@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/button';
@@ -295,8 +295,7 @@ const CeremonyDashboard = () => {
   const { ceremonyId } = useParams();
   const navigate = useNavigate();
   const { token } = useAuth();
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const [ceremony, setCeremony] = useState(null);
   const [loading, setLoading] = useState(false);
   const [executing, setExecuting] = useState(false);
@@ -316,7 +315,7 @@ const CeremonyDashboard = () => {
     } catch {
       toast({ title: 'Error', description: 'Failed to load ceremony', variant: 'destructive' });
     }
-  }, [token]);
+  }, [headers]);
 
   // Fetch ceremony list
   const fetchList = useCallback(async () => {
@@ -324,11 +323,12 @@ const CeremonyDashboard = () => {
       const res = await axios.get(`${API}/ceremony/list/my`, { headers });
       setCeremonies(res.data.ceremonies || []);
     } catch {}
-  }, [token]);
+  }, [headers]);
 
   useEffect(() => {
     fetchList();
     if (ceremonyId) { fetchCeremony(ceremonyId); setShowNew(false); }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [ceremonyId]);
 
   // Start new ceremony

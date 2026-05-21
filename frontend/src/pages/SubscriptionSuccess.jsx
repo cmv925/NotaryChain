@@ -25,6 +25,7 @@ const SubscriptionSuccess = () => {
     } else {
       setStatus('failed');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [sessionId, token]);
 
   const pollStatus = async () => {

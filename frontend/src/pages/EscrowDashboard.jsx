@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useWS } from '../contexts/WebSocketContext';
@@ -53,15 +53,14 @@ export default function EscrowDashboard() {
   const [showBiometricModal, setShowBiometricModal] = useState(false);
   const [liveEvents, setLiveEvents] = useState([]);
 
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const fetchEscrows = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/escrow/list`, { headers });
       setEscrows(res.data.escrows);
     } catch { /* ignore */ }
     setLoading(false);
-  }, [token]);
+  }, [headers]);
 
   const fetchEscrow = useCallback(async (id) => {
     try {
@@ -70,12 +69,13 @@ export default function EscrowDashboard() {
     } catch {
       toast({ title: 'Error', description: 'Failed to load escrow', variant: 'destructive' });
     }
-  }, [token]);
+  }, [headers]);
 
   useEffect(() => {
     if (!token) return;
     if (escrowId) { fetchEscrow(escrowId); setView('detail'); }
     else fetchEscrows();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [token, escrowId]);
 
   // WebSocket subscriptions for real-time escrow events
@@ -136,6 +136,7 @@ export default function EscrowDashboard() {
     unsubs.push(subscribe('escrow_photo_verified', handleEvent));
 
     return () => unsubs.forEach(u => u && u());
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [subscribe, currentEscrow?.escrow_id]);
 
   const openEscrow = (id) => navigate(`/escrow/${id}`);

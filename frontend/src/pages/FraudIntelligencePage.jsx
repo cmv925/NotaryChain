@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
@@ -41,8 +41,7 @@ export default function FraudIntelligencePage() {
   const [expandedRule, setExpandedRule] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const fetchData = useCallback(async () => {
     try {
       const [pRes, rRes, sRes] = await Promise.all([
@@ -55,8 +54,9 @@ export default function FraudIntelligencePage() {
       setStats(sRes.data);
     } catch { /* ignore */ }
     setLoading(false);
-  }, [token]);
+  }, [headers]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   useEffect(() => { if (token) fetchData(); }, [token]);
 
   // Create pattern

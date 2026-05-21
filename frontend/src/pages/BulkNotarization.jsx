@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
@@ -35,15 +35,14 @@ const BulkNotarization = () => {
   const [loadingBatches, setLoadingBatches] = useState(true);
   const [view, setView] = useState('list'); // 'list' | 'create'
   const [selectedBatch, setSelectedBatch] = useState(null);
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const fetchBatches = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/bulk/batches`, { headers });
       setBatches(res.data.batches || []);
     } catch { }
     setLoadingBatches(false);
-  }, [token]);
+  }, [headers]);
 
   React.useEffect(() => { fetchBatches(); }, [fetchBatches]);
 

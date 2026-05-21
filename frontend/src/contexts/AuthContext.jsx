@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
     } else {
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [token]);
 
   const fetchUser = async () => {

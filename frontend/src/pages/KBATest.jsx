@@ -25,6 +25,7 @@ export default function KBATest() {
     setLoading(false);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   useEffect(() => { if (isAuthenticated) load(); else setLoading(false); }, [isAuthenticated]);
 
   if (!isAuthenticated) {

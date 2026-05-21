@@ -31,6 +31,7 @@ const SubscriptionPage = () => {
   const [discountInfo, setDiscountInfo] = useState(null);
   const headers = { Authorization: `Bearer ${token}` };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   useEffect(() => { fetchSubscription(); fetchDiscount(); }, []);
 
   const fetchSubscription = async () => {

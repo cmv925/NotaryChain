@@ -33,6 +33,7 @@ const SecuritySettings = () => {
 
   const headers = { Authorization: `Bearer ${token}` };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   useEffect(() => { fetch2FAStatus(); }, []);
 
   const fetch2FAStatus = async () => {

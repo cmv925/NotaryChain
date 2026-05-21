@@ -33,6 +33,7 @@ const CompliancePage = () => {
 
   useEffect(() => {
     Promise.all([fetchPrivacy(), fetchDeletionStatus()]).finally(() => setLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, []);
 
   const fetchPrivacy = async () => {

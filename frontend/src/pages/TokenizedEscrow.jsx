@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useWS } from '../contexts/WebSocketContext';
 import { Button } from '../components/ui/button';
@@ -55,27 +55,27 @@ export default function TokenizedEscrow() {
   const [transferForm, setTransferForm] = useState({ amount: '', to_party: 'seller' });
   const [showTransfer, setShowTransfer] = useState(false);
 
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const fetchTokens = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/hts/tokens`, { headers });
       setTokens(res.data.tokens || []);
     } catch { /* ignore */ }
     setLoading(false);
-  }, [token]);
+  }, [headers]);
 
   const fetchEscrows = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/escrow/list`, { headers });
       setEscrows(res.data.escrows || []);
     } catch { /* ignore */ }
-  }, [token]);
+  }, [headers]);
 
   useEffect(() => {
     if (!token) return;
     fetchTokens();
     fetchEscrows();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [token]);
 
   // WebSocket subscriptions for real-time HTS events
@@ -109,6 +109,7 @@ export default function TokenizedEscrow() {
     unsubs.push(subscribe('hts_burn', handleHtsEvent));
 
     return () => unsubs.forEach(u => u && u());
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [subscribe, selectedToken?.escrow_id]);
 
   const handleTokenize = async () => {

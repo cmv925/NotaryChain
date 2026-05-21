@@ -24,6 +24,7 @@ const MyDrafts = () => {
 
   useEffect(() => {
     if (token) fetchDrafts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [token]);
 
   const fetchDrafts = async () => {

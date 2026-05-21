@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
@@ -24,7 +24,7 @@ const DETAIL_LEVELS = [
 const AIDocumentSummarizer = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
-  const headers = { Authorization: `Bearer ${token}` };
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const fileRef = useRef(null);
 
   const [file, setFile] = useState(null);
@@ -39,7 +39,7 @@ const AIDocumentSummarizer = () => {
       const res = await axios.get(`${API}/ai-summarizer/history`, { headers });
       setHistory(res.data.summaries || []);
     } catch {}
-  }, [token]);
+  }, [headers]);
 
   useEffect(() => { fetchHistory(); }, [fetchHistory]);
 

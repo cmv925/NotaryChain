@@ -98,6 +98,7 @@ export default function TransactionRoom() {
     } else if (event.type === 'presence') {
       setRoomData(prev => prev ? { ...prev, online_users: event.online_users || [] } : prev);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, []);
 
   const { connected, onlineUsers, sendTyping } = useTransactionWebSocket(transactionId, token, handleWsEvent);
@@ -107,6 +108,7 @@ export default function TransactionRoom() {
     // Fallback polling at 60s (WebSocket handles real-time)
     const interval = setInterval(fetchRoomData, 60000);
     return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [transactionId]);
 
   useEffect(() => {

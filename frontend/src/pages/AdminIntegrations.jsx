@@ -60,7 +60,8 @@ export default function AdminIntegrations() {
     setLoading(false);
   };
 
-  useEffect(() => { loadAll(); /* eslint-disable-next-line */ }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect
+  useEffect(() => { loadAll(); }, []);
 
   const handleTestContact = async () => {
     if (!testEmail) { toast.error('Enter an email'); return; }

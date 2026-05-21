@@ -51,6 +51,7 @@ const NotaryDashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, []);
 
   // Real-time: auto-refresh when new requests arrive or are assigned/completed
@@ -59,6 +60,7 @@ const NotaryDashboard = () => {
     const unsub2 = subscribe('request_assigned', () => fetchDashboardData());
     const unsub3 = subscribe('request_completed', () => fetchDashboardData());
     return () => { unsub1(); unsub2(); unsub3(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [subscribe]);
 
   const fetchDashboardData = async () => {

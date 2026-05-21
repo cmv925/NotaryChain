@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/button';
@@ -21,8 +21,7 @@ const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 const DeveloperPage = () => {
   const navigate = useNavigate();
   const { token, user } = useAuth();
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const [activeTab, setActiveTab] = useState('docs');
   const [keys, setKeys] = useState([]);
   const [usage, setUsage] = useState(null);
@@ -46,32 +45,33 @@ const DeveloperPage = () => {
       const res = await axios.get(`${API}/developer/keys`, { headers });
       setKeys(res.data.keys || []);
     } catch {}
-  }, [token]);
+  }, [headers]);
 
   const fetchUsage = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/developer/usage`, { headers });
       setUsage(res.data);
     } catch {}
-  }, [token]);
+  }, [headers]);
 
   const fetchWebhooks = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/developer/webhooks`, { headers });
       setWebhooks(res.data.webhooks || []);
     } catch {}
-  }, [token]);
+  }, [headers]);
 
   const fetchWebhookDetails = useCallback(async (id) => {
     try {
       const res = await axios.get(`${API}/developer/webhooks/${id}`, { headers });
       setWebhookDetails(res.data);
     } catch {}
-  }, [token]);
+  }, [headers]);
 
   useEffect(() => {
     if (token && activeTab === 'keys') { fetchKeys(); fetchUsage(); }
     if (token && activeTab === 'webhooks') { fetchWebhooks(); }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [token, activeTab]);
 
   const handleCreateKey = async () => {

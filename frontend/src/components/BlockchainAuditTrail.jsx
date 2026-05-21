@@ -44,6 +44,7 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
     if (topicId) {
       fetchTopicData();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [topicId]);
 
   const fetchTopicData = async () => {

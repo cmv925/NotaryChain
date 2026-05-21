@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
@@ -29,8 +29,7 @@ const MyBookings = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [cancelling, setCancelling] = useState(null);
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const fetchBookings = useCallback(async () => {
     try {
       const params = filter !== 'all' ? `?status=${filter}` : '';
@@ -38,7 +37,7 @@ const MyBookings = () => {
       setBookings(res.data.bookings || []);
     } catch {}
     setLoading(false);
-  }, [token, filter]);
+  }, [filter, headers]);
 
   useEffect(() => { fetchBookings(); }, [fetchBookings]);
 

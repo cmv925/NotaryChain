@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { AlertTriangle, Clock, CalendarClock, CheckCircle2, XCircle, ChevronRight, RefreshCw } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -19,8 +19,7 @@ export function ExpiryWidget({ token }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [renewingId, setRenewingId] = useState(null);
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const fetchExpiry = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/expiry/dashboard`, { headers });
@@ -30,7 +29,7 @@ export function ExpiryWidget({ token }) {
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [headers]);
 
   useEffect(() => { fetchExpiry(); }, [fetchExpiry]);
 
@@ -192,8 +191,7 @@ export function SetExpiryButton({ requestId, currentExpiry, token, onUpdate }) {
   const [show, setShow] = useState(false);
   const [date, setDate] = useState(currentExpiry ? currentExpiry.split('T')[0] : '');
   const [saving, setSaving] = useState(false);
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const handleSave = async () => {
     if (!date) return;
     setSaving(true);

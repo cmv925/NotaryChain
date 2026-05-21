@@ -124,6 +124,7 @@ const BiometricVerification = ({ onVerificationComplete, onError }) => {
         detectorRef.current = null;
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, []);
 
   // Start camera
@@ -242,6 +243,7 @@ const BiometricVerification = ({ onVerificationComplete, onError }) => {
     };
 
     detectFaces();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, []);
 
   // Track face for liveness detection

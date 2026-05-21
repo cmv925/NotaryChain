@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '../components/ui/button';
 import {
   FileBarChart, Download, Trash2, Loader2, Settings, Plus,
@@ -27,8 +27,7 @@ const OrgReports = ({ orgId, token }) => {
   const [showConfig, setShowConfig] = useState(false);
   const [expandedReport, setExpandedReport] = useState(null);
   const [reportDetail, setReportDetail] = useState({});
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   // Config form state
   const [cfgFrequency, setCfgFrequency] = useState('weekly');
   const [cfgSections, setCfgSections] = useState(new Set());
@@ -55,7 +54,7 @@ const OrgReports = ({ orgId, token }) => {
     } finally {
       setLoading(false);
     }
-  }, [orgId, token]);
+  }, [orgId, headers]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 

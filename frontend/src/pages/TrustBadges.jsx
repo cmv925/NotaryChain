@@ -275,7 +275,8 @@ function VerifyDomainModal({ badge, onClose, token }) {
     } catch (e) { toast.error(e.message); }
     setVerifying(false);
   };
-  useEffect(() => { verify(); /* eslint-disable-next-line */ }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect
+  useEffect(() => { verify(); }, []);
 
   const copy = (text) => { navigator.clipboard.writeText(text); toast.success('Copied'); };
 

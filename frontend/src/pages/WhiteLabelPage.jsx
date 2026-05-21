@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
@@ -24,8 +24,7 @@ const WhiteLabelPage = () => {
   const [creating, setCreating] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [selectedConfig, setSelectedConfig] = useState(null);
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   // Create form state
   const [formName, setFormName] = useState('');
   const [formOrigins, setFormOrigins] = useState('');
@@ -39,7 +38,7 @@ const WhiteLabelPage = () => {
       setConfigs(res.data.configs || []);
     } catch {}
     setLoading(false);
-  }, [token]);
+  }, [headers]);
 
   useEffect(() => { fetchConfigs(); }, [fetchConfigs]);
 

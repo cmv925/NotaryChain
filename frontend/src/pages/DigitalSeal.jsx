@@ -24,6 +24,7 @@ const DigitalSeal = () => {
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(null);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   useEffect(() => { fetchSeals(); }, []);
 
   const fetchSeals = async () => {

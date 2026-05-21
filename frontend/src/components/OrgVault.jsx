@@ -288,6 +288,7 @@ export const OrgVault = ({ orgId, myRole, token, userPerms = [] }) => {
   useEffect(() => {
     fetchDocs();
     fetchStats();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [orgId, activeCategory, searchQuery]);
 
   const fetchDocs = async () => {

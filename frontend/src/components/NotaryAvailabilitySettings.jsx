@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import {
@@ -30,8 +30,7 @@ const NotaryAvailabilitySettings = ({ token }) => {
   const [breakTime, setBreakTime] = useState(15);
   const [blockDate, setBlockDate] = useState('');
   const [blockReason, setBlockReason] = useState('');
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const fetchAvailability = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/bookings/availability`, { headers });
@@ -43,7 +42,7 @@ const NotaryAvailabilitySettings = ({ token }) => {
       setBlockedDates(res.data.blocked_dates || []);
     } catch {}
     setLoading(false);
-  }, [token]);
+  }, [headers]);
 
   useEffect(() => { fetchAvailability(); }, [fetchAvailability]);
 

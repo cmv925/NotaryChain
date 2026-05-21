@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, CheckCheck, X, ExternalLink } from 'lucide-react';
 import { useWS } from '../contexts/WebSocketContext';
@@ -14,14 +14,13 @@ export function NotificationBell({ token }) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef(null);
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const fetchUnreadCount = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/notifications/unread-count`, { headers });
       setUnreadCount(res.data.count);
     } catch {}
-  }, [token]);
+  }, [headers]);
 
   const fetchNotifications = useCallback(async () => {
     setLoading(true);
@@ -30,7 +29,7 @@ export function NotificationBell({ token }) {
       setNotifications(res.data.notifications || []);
     } catch {}
     setLoading(false);
-  }, [token]);
+  }, [headers]);
 
   // Initial load + fallback polling at 60s (WebSocket handles real-time)
   useEffect(() => {

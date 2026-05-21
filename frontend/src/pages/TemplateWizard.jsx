@@ -206,6 +206,7 @@ const TemplateWizard = () => {
 
   useEffect(() => {
     if (token && templateId) fetchTemplate();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [token, templateId]);
 
   const fetchTemplate = async () => {

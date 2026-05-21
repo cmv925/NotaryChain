@@ -64,6 +64,7 @@ export default function MultiSignature() {
     setLoading(false);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   useEffect(() => { fetchCeremonies(); }, [token]);
 
   const addSigner = () => setSigners([...signers, { name: '', email: '' }]);

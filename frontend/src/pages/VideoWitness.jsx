@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
@@ -18,8 +18,7 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const VideoWitness = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const [instructions, setInstructions] = useState([]);
   const [selectedType, setSelectedType] = useState('standard');
   const [requestId, setRequestId] = useState('');
@@ -50,7 +49,7 @@ const VideoWitness = () => {
       setRequests((reqRes.data || []).filter(r => r.status !== 'cancelled'));
       setRecordings(recRes.data.recordings || []);
     } catch {}
-  }, [token]);
+  }, [headers]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -122,6 +121,7 @@ const VideoWitness = () => {
     setUploading(false);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   useEffect(() => { return () => { stopCamera(); }; }, []);
 
   const currentInstr = instructions.find(i => i.id === selectedType);

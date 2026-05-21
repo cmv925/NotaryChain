@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
@@ -19,8 +19,7 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const AIDocumentGenerator = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
-  const headers = { Authorization: `Bearer ${token}` };
-
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const [docTypes, setDocTypes] = useState([]);
   const [description, setDescription] = useState('');
   const [selectedType, setSelectedType] = useState('');
@@ -37,14 +36,14 @@ const AIDocumentGenerator = () => {
       const res = await axios.get(`${API}/ai-generator/types`, { headers });
       setDocTypes(res.data.types || []);
     } catch {}
-  }, [token]);
+  }, [headers]);
 
   const fetchHistory = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/ai-generator/my-documents`, { headers });
       setHistory(res.data.documents || []);
     } catch {}
-  }, [token]);
+  }, [headers]);
 
   useEffect(() => { fetchTypes(); fetchHistory(); }, [fetchTypes, fetchHistory]);
 

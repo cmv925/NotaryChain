@@ -61,12 +61,14 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, []);
 
   useEffect(() => {
     const unsub1 = subscribe('request_assigned', () => fetchDashboardData());
     const unsub2 = subscribe('request_completed', () => fetchDashboardData());
     return () => { unsub1(); unsub2(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [subscribe]);
 
   const fetchDashboardData = async () => {

@@ -1494,6 +1494,7 @@ function DeckPresentation() {
     if (!autoPlay) return;
     const timer = setInterval(() => setCurrent((c) => (c < totalSlides - 1 ? c + 1 : c)), 6000);
     return () => clearInterval(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [autoPlay]);
 
   useEffect(() => {
@@ -1503,6 +1504,7 @@ function DeckPresentation() {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, []);
 
   useEffect(() => {
@@ -1518,6 +1520,7 @@ function DeckPresentation() {
     const el = containerRef.current;
     el?.addEventListener('wheel', handler, { passive: false });
     return () => el?.removeEventListener('wheel', handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, []);
 
   const goTo = (i) => { setAutoPlay(false); setCurrent(i); };

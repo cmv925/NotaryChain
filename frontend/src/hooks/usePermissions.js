@@ -49,6 +49,7 @@ export function usePermissions(orgId, token) {
     fetchedRef.current = key;
     setLoading(true);
     fetchPermissions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [fetchPermissions]);
 
   const hasPermission = useCallback((perm) => permissions.includes(perm), [permissions]);

@@ -37,6 +37,7 @@ const SharedDraftViewer = () => {
 
   useEffect(() => {
     if (token && shareToken) fetchSharedDraft();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [token, shareToken]);
 
   // Handle remote edits from collaborators

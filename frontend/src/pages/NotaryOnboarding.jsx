@@ -67,6 +67,7 @@ const NotaryOnboarding = () => {
 
   useEffect(() => {
     checkExistingApplication();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, []);
 
   const checkExistingApplication = async () => {

@@ -37,6 +37,7 @@ export default function AdminTrustLayer() {
     setLoading(false);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   useEffect(() => { if (isAdmin && token) load(); else setLoading(false); }, [isAdmin, token]);
 
   if (!isAdmin) {

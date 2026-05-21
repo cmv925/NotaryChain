@@ -177,6 +177,7 @@ const SSOSettings = ({ orgId, myRole, token }) => {
 
   useEffect(() => {
     fetchSSO();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [orgId]);
 
   const fetchSSO = async () => {
@@ -371,10 +372,12 @@ const OrganizationPage = () => {
 
   useEffect(() => {
     if (token) fetchOrgs();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [token]);
 
   useEffect(() => {
     if (token) fetchPendingInvites();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [token]);
 
   const fetchOrgs = async () => {

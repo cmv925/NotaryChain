@@ -183,6 +183,7 @@ const TemplateLibrary = () => {
 
   useEffect(() => {
     if (token) fetchTemplates();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [activeCategory, searchQuery, token]);
 
   const fetchTemplates = async () => {
