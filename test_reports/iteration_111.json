@@ -1,0 +1,36 @@
+{
+  "summary": "Regression-tested the admin analytics refactor (analytics_service.py) and marketplace quote Pydantic validation. Created /app/backend/tests/test_admin_analytics_refactor.py with 14 tests covering response shape, summary cross-consistency, array length == days, caching identity, auth enforcement, days validation, and smoke checks on /api/admin/{stats,users,notaries,notaries/pending,analytics/revenue}. Also re-ran existing /app/backend/tests/test_marketplace_pricing.py (45 tests). Result: 14/14 new tests PASS and 45/45 marketplace tests PASS (one transient 502 on first run passed on retry).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/marketplace/notaries/{id}/reviews (DELETE)", "issue": "Flaky 502 Bad Gateway observed once during full-suite run; passed immediately on retry. Likely preview-env ingress/cold-start, not code."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_admin_analytics_refactor.py",
+    "/app/test_reports/pytest/iter111_admin_analytics.xml",
+    "/app/test_reports/pytest/iter111_marketplace_regression.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "analytics_service.py is clean: pure async builders, no _id leakage, divisor handled for cents→dollars, summary cross-consistent with arrays (verified via assertions).",
+    "Endpoint /api/admin/analytics/comprehensive correctly delegates to builders, preserves cache_service usage, identical payload shape vs. pre-refactor expectations (all 9 top-level keys + 8 summary keys present).",
+    "Cache verified: second identical call returns byte-identical payload in <1s.",
+    "Marketplace QuoteRequest correctly rejects empty state_code (min_length=2) and invalid urgency Literal with 422; valid path returns full price breakdown.",
+    "Minor: build_summary recomputes total_stripe/total_crypto from rounded array values; route handler ALSO computes total_stripe (line 724) and passes to build_payment_distribution — values may differ from summary.stripe_revenue by ≤$0.01 due to rounding of per-day entries vs. raw sum. Cosmetic only; not a regression."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_admin_analytics_refactor.py (new)"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "N/A (skipped per request)"},
+  "test_credentials": "admin@notarychain.com / Admin123! (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "None. Used existing approved notary fetched from /api/marketplace/notaries.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Analytics refactor (services/analytics_service.py) is regression-clean. Reusable test file at /app/backend/tests/test_admin_analytics_refactor.py covers all admin analytics + smoke endpoints + marketplace quote validation. Re-run before any further admin/analytics changes."
+}
