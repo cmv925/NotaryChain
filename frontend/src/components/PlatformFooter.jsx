@@ -22,11 +22,11 @@ const HIDDEN_PATH_PREFIXES = [
 
 const QUICK_LINKS = [
   { label: 'Verify a document', to: '/verify', icon: Search },
+  { label: 'Marketplace', to: '/marketplace', icon: Network },
   { label: 'Trust Hub', to: '/trust-hub', icon: Network },
   { label: 'Asset Vault', to: '/asset-vault', icon: Vault },
   { label: 'User Guide', to: '/docs', icon: BookOpen },
   { label: 'State Compliance', to: '/compliance/states', icon: Shield },
-  { label: 'Find Notaries', to: '/notaries', icon: Network },
 ];
 
 const RESOURCE_LINKS = [

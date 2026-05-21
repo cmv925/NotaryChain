@@ -61,7 +61,7 @@ class TestOktaLoginURL:
         """GET /api/sso/okta/login - should return auth_url with correct parameters"""
         response = requests.get(
             f"{BASE_URL}/api/sso/okta/login",
-            headers={"Origin": "https://notary-vault-dev.preview.emergentagent.com"}
+            headers={"Origin": "https://trust-seal-staging.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         data = response.json()
@@ -76,7 +76,7 @@ class TestOktaLoginURL:
         """Verify Okta auth_url contains correct redirect_uri parameter"""
         response = requests.get(
             f"{BASE_URL}/api/sso/okta/login",
-            headers={"Origin": "https://notary-vault-dev.preview.emergentagent.com"}
+            headers={"Origin": "https://trust-seal-staging.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         auth_url = response.json()["auth_url"]
@@ -86,7 +86,7 @@ class TestOktaLoginURL:
         query_params = parse_qs(parsed.query)
         
         # Verify redirect_uri
-        expected_redirect = "https://notary-vault-dev.preview.emergentagent.com/auth/okta/callback"
+        expected_redirect = "https://trust-seal-staging.preview.emergentagent.com/auth/okta/callback"
         assert "redirect_uri" in query_params
         actual_redirect = query_params["redirect_uri"][0]
         assert actual_redirect == expected_redirect, f"Expected redirect_uri={expected_redirect}, got {actual_redirect}"
@@ -96,7 +96,7 @@ class TestOktaLoginURL:
         """Verify Okta auth_url has all required OAuth2 parameters"""
         response = requests.get(
             f"{BASE_URL}/api/sso/okta/login",
-            headers={"Origin": "https://notary-vault-dev.preview.emergentagent.com"}
+            headers={"Origin": "https://trust-seal-staging.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         auth_url = response.json()["auth_url"]
@@ -136,7 +136,7 @@ class TestOktaAuthURLAcceptance:
         # Step 1: Get the auth_url from our backend
         response = requests.get(
             f"{BASE_URL}/api/sso/okta/login",
-            headers={"Origin": "https://notary-vault-dev.preview.emergentagent.com"}
+            headers={"Origin": "https://trust-seal-staging.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         auth_url = response.json()["auth_url"]
@@ -173,7 +173,7 @@ class TestAuth0LoginURL:
         """GET /api/sso/auth0/login - should return auth_url with correct parameters"""
         response = requests.get(
             f"{BASE_URL}/api/sso/auth0/login",
-            headers={"Origin": "https://notary-vault-dev.preview.emergentagent.com"}
+            headers={"Origin": "https://trust-seal-staging.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         data = response.json()
@@ -188,7 +188,7 @@ class TestAuth0LoginURL:
         """Verify Auth0 auth_url contains correct redirect_uri parameter"""
         response = requests.get(
             f"{BASE_URL}/api/sso/auth0/login",
-            headers={"Origin": "https://notary-vault-dev.preview.emergentagent.com"}
+            headers={"Origin": "https://trust-seal-staging.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         auth_url = response.json()["auth_url"]
@@ -198,7 +198,7 @@ class TestAuth0LoginURL:
         query_params = parse_qs(parsed.query)
         
         # Verify redirect_uri
-        expected_redirect = "https://notary-vault-dev.preview.emergentagent.com/auth/callback"
+        expected_redirect = "https://trust-seal-staging.preview.emergentagent.com/auth/callback"
         assert "redirect_uri" in query_params
         actual_redirect = query_params["redirect_uri"][0]
         assert actual_redirect == expected_redirect, f"Expected redirect_uri={expected_redirect}, got {actual_redirect}"
@@ -208,7 +208,7 @@ class TestAuth0LoginURL:
         """Verify Auth0 auth_url has all required OAuth2 parameters"""
         response = requests.get(
             f"{BASE_URL}/api/sso/auth0/login",
-            headers={"Origin": "https://notary-vault-dev.preview.emergentagent.com"}
+            headers={"Origin": "https://trust-seal-staging.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         auth_url = response.json()["auth_url"]

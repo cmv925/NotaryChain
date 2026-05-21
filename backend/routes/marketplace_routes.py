@@ -235,3 +235,108 @@ async def delete_review(
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Review not found")
     return {"message": "Review deleted"}
+
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Dynamic Pricing — transparent breakdown so prospects see *why* a price is
+# what it is (state surcharge × doc complexity × urgency × rating premium).
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Calibrated against published average notary fees + RON adoption / supply.
+STATE_MULTIPLIER = {
+    "NY": 1.20, "CA": 1.15, "FL": 1.00, "TX": 1.00, "VA": 1.00,
+}
+
+DOC_MULTIPLIER = {
+    "real_estate":       1.50,
+    "deed":              1.50,
+    "mortgage":          1.45,
+    "lien_release":      1.30,
+    "power_of_attorney": 1.30,
+    "will":              1.30,
+    "trust":             1.30,
+    "affidavit":         1.00,
+    "acknowledgment":    1.00,
+    "general":           1.00,
+}
+
+URGENCY_MULTIPLIER = {
+    "standard":    1.00,
+    "same_day":    1.30,
+    "after_hours": 1.25,
+    "weekend":     1.20,
+    "rush":        1.40,
+}
+
+DEFAULT_BASE_RATE_USD = 25.0
+
+
+def _rating_premium(avg_rating: float, review_count: int) -> float:
+    """≥4.5 stars w/ 5+ reviews → +10% premium; ≥4.8 → +15%."""
+    if review_count < 5:
+        return 1.00
+    if avg_rating >= 4.8:
+        return 1.15
+    if avg_rating >= 4.5:
+        return 1.10
+    return 1.00
+
+
+class QuoteRequest(BaseModel):
+    notary_id: str
+    state_code: str
+    document_type: str
+    urgency: str = "standard"  # standard | same_day | after_hours | weekend | rush
+
+
+@router.post("/quote")
+async def get_dynamic_quote(req: QuoteRequest):
+    """Return a transparent price breakdown for a notary + ceremony combo.
+    Public (no auth) so prospects can see prices before signing up.
+    """
+    # Notary could be referenced by either profile-id or user-id (existing
+    # list endpoint exposes `notary_id` = user_id), so resolve both.
+    profile = await db.notary_profiles.find_one(
+        {"$or": [{"id": req.notary_id}, {"user_id": req.notary_id}], "status": "approved"},
+        {"_id": 0}
+    )
+    if not profile:
+        raise HTTPException(404, "Notary not found or not yet approved")
+
+    base = float(profile.get("hourly_rate") or 0) or DEFAULT_BASE_RATE_USD
+
+    # Pull rating for premium calc
+    reviews = await db.notary_reviews.find(
+        {"notary_id": profile["user_id"]}, {"_id": 0, "rating": 1}
+    ).to_list(500)
+    avg = round(sum(r["rating"] for r in reviews) / len(reviews), 2) if reviews else 0.0
+    count = len(reviews)
+
+    state_m = STATE_MULTIPLIER.get(req.state_code.upper(), 1.0)
+    doc_m = DOC_MULTIPLIER.get((req.document_type or "general").lower(), 1.0)
+    urg_m = URGENCY_MULTIPLIER.get((req.urgency or "standard").lower(), 1.0)
+    rating_m = _rating_premium(avg, count)
+    total = round(base * state_m * doc_m * urg_m * rating_m, 2)
+
+    return {
+        "notary_id": profile["user_id"],
+        "state_code": req.state_code.upper(),
+        "document_type": req.document_type,
+        "urgency": req.urgency,
+        "base_usd": round(base, 2),
+        "state_multiplier": state_m,
+        "document_multiplier": doc_m,
+        "urgency_multiplier": urg_m,
+        "rating_premium": rating_m,
+        "total_usd": total,
+        "breakdown": [
+            {"label": "Base rate", "value": round(base, 2), "multiplier": 1.0},
+            {"label": f"{req.state_code.upper()} state surcharge", "value": round(base * (state_m - 1), 2), "multiplier": state_m},
+            {"label": f"{req.document_type} complexity", "value": round(base * state_m * (doc_m - 1), 2), "multiplier": doc_m},
+            {"label": f"{req.urgency} urgency", "value": round(base * state_m * doc_m * (urg_m - 1), 2), "multiplier": urg_m},
+            {"label": "Rating premium" if rating_m > 1 else "Rating premium (none — needs 5+ reviews at ≥4.5★)", "value": round(base * state_m * doc_m * urg_m * (rating_m - 1), 2), "multiplier": rating_m},
+        ],
+        "valid_for_minutes": 30,
+        "issued_at": datetime.now(timezone.utc).isoformat(),
+    }
