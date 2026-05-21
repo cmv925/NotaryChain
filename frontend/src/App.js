@@ -9,6 +9,7 @@ import { GatedRoute } from './components/GatedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { Toaster } from './components/ui/toaster';
+import PlatformFooter from './components/PlatformFooter';
 import './i18n';
 
 // Eager-loaded (critical path)
@@ -781,6 +782,7 @@ function App() {
             />
           </Routes>
           </Suspense>
+          <PlatformFooter />
         </BrowserRouter>
         </WebSocketProvider>
         </SubscriptionProvider>
