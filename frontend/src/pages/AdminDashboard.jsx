@@ -43,6 +43,8 @@ const AdminDashboard = () => {
   const [analyticsPeriod, setAnalyticsPeriod] = useState(30);
   const [loadingAnalytics, setLoadingAnalytics] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [userRoleFilter, setUserRoleFilter] = useState('all');
+  const [notaryStatusFilter, setNotaryStatusFilter] = useState('all');
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUserModal, setShowUserModal] = useState(false);
   const [processingAction, setProcessingAction] = useState(null);
@@ -1856,124 +1858,259 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === 'users' && (
-          <Card className="bg-white border-slate-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-bold text-navy-900">All Users</h3>
-                <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" />
-                  <Input
-                    placeholder="Search users..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 bg-cream-100 border-slate-200 text-navy-900 w-64"
-                  />
+          <Card className="bg-white border-slate-200" data-testid="users-tab">
+            <CardContent className="p-0">
+              {/* Toolbar */}
+              <div className="px-6 py-5 border-b border-slate-200 flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                  <h3 className="font-serif text-2xl text-ink-900 tracking-tight">All Users</h3>
+                  <p className="text-slate-600 text-sm mt-0.5">{users.length} registered · {users.filter(u => u.is_notary).length} are notaries</p>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {[
+                    { id: 'all', label: 'All' },
+                    { id: 'admin', label: 'Admins' },
+                    { id: 'notary', label: 'Notaries' },
+                    { id: 'user', label: 'Clients' },
+                  ].map(f => (
+                    <button
+                      key={f.id}
+                      onClick={() => setUserRoleFilter(f.id)}
+                      className={`px-3 py-1.5 rounded-full text-[12px] font-semibold uppercase tracking-wider transition-colors ${
+                        (userRoleFilter || 'all') === f.id
+                          ? 'bg-ink-900 text-cream-100'
+                          : 'bg-cream-200 text-slate-700 hover:bg-cream-100'
+                      }`}
+                      data-testid={`users-filter-${f.id}`}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                  <div className="relative ml-2">
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" />
+                    <Input
+                      placeholder="Search name or email…"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10 bg-cream-100 border-slate-200 text-ink-900 w-64 h-9 text-sm"
+                      data-testid="users-search"
+                    />
+                  </div>
                 </div>
               </div>
+
+              {/* Table */}
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-slate-200">
-                      <th className="text-left text-slate-500 text-sm py-3 px-4">User</th>
-                      <th className="text-left text-slate-500 text-sm py-3 px-4">Role</th>
-                      <th className="text-left text-slate-500 text-sm py-3 px-4">Status</th>
-                      <th className="text-left text-slate-500 text-sm py-3 px-4">Notary</th>
-                      <th className="text-left text-slate-500 text-sm py-3 px-4">Joined</th>
-                      <th className="text-right text-slate-500 text-sm py-3 px-4">Actions</th>
+                  <thead className="bg-cream-200/60 sticky top-0">
+                    <tr>
+                      <th className="text-left text-[11px] uppercase tracking-[0.18em] font-bold text-slate-600 py-3 px-6">User</th>
+                      <th className="text-left text-[11px] uppercase tracking-[0.18em] font-bold text-slate-600 py-3 px-3">Role</th>
+                      <th className="text-left text-[11px] uppercase tracking-[0.18em] font-bold text-slate-600 py-3 px-3">Status</th>
+                      <th className="text-left text-[11px] uppercase tracking-[0.18em] font-bold text-slate-600 py-3 px-3">Notary</th>
+                      <th className="text-left text-[11px] uppercase tracking-[0.18em] font-bold text-slate-600 py-3 px-3">Joined</th>
+                      <th className="text-right text-[11px] uppercase tracking-[0.18em] font-bold text-slate-600 py-3 px-6">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {users
-                      .filter(u => 
-                        u.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        u.full_name?.toLowerCase().includes(searchQuery.toLowerCase())
-                      )
-                      .map((user) => (
-                      <tr key={user.id} className="border-b border-slate-200/50 hover:bg-cream-100">
-                        <td className="py-3 px-4">
-                          <p className="text-navy-900 font-medium">{user.full_name || 'N/A'}</p>
-                          <p className="text-slate-500 text-sm">{user.email}</p>
-                        </td>
-                        <td className="py-3 px-4">
-                          <span className={`px-2 py-1 rounded text-xs ${
-                            user.role === 'admin' ? 'bg-red-500/20 text-red-400' :
-                            user.role === 'notary' ? 'bg-blue-500/20 text-blue-400' :
-                            'bg-gray-500/20 text-slate-500'
-                          }`}>
-                            {user.role || 'user'}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4">
-                          <span className={`px-2 py-1 rounded text-xs ${
-                            user.status === 'active' ? 'bg-green-500/20 text-green-400' :
-                            'bg-red-500/20 text-red-400'
-                          }`}>
-                            {user.status || 'active'}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4">
-                          {user.is_notary ? (
-                            <CheckCircle className="w-4 h-4 text-green-400" />
-                          ) : (
-                            <XCircle className="w-4 h-4 text-slate-600" />
-                          )}
-                        </td>
-                        <td className="py-3 px-4 text-slate-500 text-sm">
-                          {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
-                        </td>
-                        <td className="py-3 px-4 text-right">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => viewUserDetails(user.id)}
-                            className="text-slate-500 hover:text-navy-900"
+                      .filter(u => (
+                        (u.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         u.full_name?.toLowerCase().includes(searchQuery.toLowerCase()))
+                        && (!userRoleFilter || userRoleFilter === 'all' ||
+                            (userRoleFilter === 'admin' && u.role === 'admin') ||
+                            (userRoleFilter === 'notary' && (u.role === 'notary' || u.is_notary)) ||
+                            (userRoleFilter === 'user' && u.role !== 'admin' && !u.is_notary))
+                      ))
+                      .map((user, i) => {
+                        const initials = (user.full_name || user.email || '?')
+                          .split(' ').map(s => s[0]).join('').slice(0, 2).toUpperCase();
+                        const avatarBg = user.role === 'admin' ? 'bg-coral-100 text-coral-700'
+                          : (user.role === 'notary' || user.is_notary) ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-cream-200 text-slate-700';
+                        return (
+                          <tr
+                            key={user.id}
+                            className={`border-b border-slate-100 hover:bg-cream-100 transition-colors ${i % 2 === 1 ? 'bg-cream-100/40' : ''}`}
+                            data-testid={`users-row-${user.id}`}
                           >
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
+                            <td className="py-3.5 px-6">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-[12px] ${avatarBg}`}>
+                                  {initials}
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-ink-900 font-semibold text-[15px] truncate">{user.full_name || 'Unnamed user'}</p>
+                                  <p className="text-slate-600 text-[13px] truncate">{user.email}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-3.5 px-3">
+                              <span className={`inline-flex px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${
+                                user.role === 'admin' ? 'bg-coral-100 text-coral-700'
+                                  : user.role === 'notary' ? 'bg-emerald-100 text-emerald-700'
+                                  : 'bg-cream-200 text-slate-700'
+                              }`}>
+                                {user.role || 'client'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-3">
+                              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${
+                                user.status === 'active' || !user.status
+                                  ? 'bg-emerald-100 text-emerald-700'
+                                  : 'bg-coral-100 text-coral-700'
+                              }`}>
+                                <span className={`w-1.5 h-1.5 rounded-full ${user.status === 'active' || !user.status ? 'bg-emerald-500' : 'bg-coral-500'}`} />
+                                {user.status || 'active'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-3">
+                              {user.is_notary ? (
+                                <span className="inline-flex items-center gap-1.5 text-emerald-700 text-[13px] font-medium">
+                                  <CheckCircle className="w-4 h-4" /> Yes
+                                </span>
+                              ) : (
+                                <span className="text-slate-400 text-[13px]">—</span>
+                              )}
+                            </td>
+                            <td className="py-3.5 px-3 text-slate-700 text-[13px]">
+                              {user.created_at ? new Date(user.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : '—'}
+                            </td>
+                            <td className="py-3.5 px-6 text-right">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => viewUserDetails(user.id)}
+                                className="border-slate-300 text-ink-900 hover:bg-cream-200 h-8 text-[12px]"
+                                data-testid={`users-view-${user.id}`}
+                              >
+                                <Eye className="w-3.5 h-3.5 mr-1.5" /> View
+                              </Button>
+                            </td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
+                {users.filter(u => (u.email?.toLowerCase().includes(searchQuery.toLowerCase()) || u.full_name?.toLowerCase().includes(searchQuery.toLowerCase()))).length === 0 && (
+                  <div className="text-center py-12 text-slate-500 text-sm">No users match this filter.</div>
+                )}
               </div>
             </CardContent>
           </Card>
         )}
 
         {activeTab === 'notaries' && (
-          <Card className="bg-white border-slate-200">
-            <CardContent className="p-6">
-              <h3 className="text-lg font-bold text-navy-900 mb-6">Notary Profiles</h3>
-              <div className="space-y-4">
-                {notaries.map((notary) => (
-                  <div key={notary.id} className="bg-cream-100 rounded-lg p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center">
-                        <UserCheck className="w-6 h-6 text-blue-400" />
-                      </div>
-                      <div>
-                        <p className="text-navy-900 font-medium">{notary.user_full_name || 'Unknown'}</p>
-                        <p className="text-slate-500 text-sm">{notary.user_email}</p>
-                        <div className="flex gap-2 mt-1">
-                          <span className="text-xs text-slate-500">
-                            Commission: {notary.commission_number || 'N/A'}
-                          </span>
-                          <span className="text-xs text-slate-500">|</span>
-                          <span className="text-xs text-slate-500">
-                            State: {notary.state || 'N/A'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <span className={`px-3 py-1 rounded-full text-sm ${
-                      notary.status === 'approved' ? 'bg-green-500/20 text-green-400' :
-                      notary.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
-                      'bg-red-500/20 text-red-400'
-                    }`}>
-                      {notary.status}
-                    </span>
-                  </div>
-                ))}
+          <Card className="bg-white border-slate-200" data-testid="notaries-tab">
+            <CardContent className="p-0">
+              {/* Toolbar */}
+              <div className="px-6 py-5 border-b border-slate-200 flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                  <h3 className="font-serif text-2xl text-ink-900 tracking-tight">Notary Profiles</h3>
+                  <p className="text-slate-600 text-sm mt-0.5">
+                    {notaries.length} total · {notaries.filter(n => n.status === 'approved').length} approved ·
+                    {' '}{notaries.filter(n => n.status === 'pending').length} pending review
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {[
+                    { id: 'all', label: 'All' },
+                    { id: 'approved', label: 'Approved' },
+                    { id: 'pending', label: 'Pending' },
+                    { id: 'rejected', label: 'Rejected' },
+                  ].map(f => (
+                    <button
+                      key={f.id}
+                      onClick={() => setNotaryStatusFilter(f.id)}
+                      className={`px-3 py-1.5 rounded-full text-[12px] font-semibold uppercase tracking-wider transition-colors ${
+                        (notaryStatusFilter || 'all') === f.id
+                          ? 'bg-ink-900 text-cream-100'
+                          : 'bg-cream-200 text-slate-700 hover:bg-cream-100'
+                      }`}
+                      data-testid={`notaries-filter-${f.id}`}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-cream-200/60">
+                    <tr>
+                      <th className="text-left text-[11px] uppercase tracking-[0.18em] font-bold text-slate-600 py-3 px-6">Notary</th>
+                      <th className="text-left text-[11px] uppercase tracking-[0.18em] font-bold text-slate-600 py-3 px-3">Commission</th>
+                      <th className="text-left text-[11px] uppercase tracking-[0.18em] font-bold text-slate-600 py-3 px-3">State</th>
+                      <th className="text-left text-[11px] uppercase tracking-[0.18em] font-bold text-slate-600 py-3 px-3">Status</th>
+                      <th className="text-right text-[11px] uppercase tracking-[0.18em] font-bold text-slate-600 py-3 px-6">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {notaries
+                      .filter(n => !notaryStatusFilter || notaryStatusFilter === 'all' || n.status === notaryStatusFilter)
+                      .map((notary, i) => {
+                        const initials = (notary.user_full_name || notary.user_email || '?')
+                          .split(' ').map(s => s[0]).join('').slice(0, 2).toUpperCase();
+                        const statusStyle = notary.status === 'approved'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : notary.status === 'pending'
+                          ? 'bg-amber-100 text-amber-700'
+                          : 'bg-coral-100 text-coral-700';
+                        const statusDot = notary.status === 'approved' ? 'bg-emerald-500'
+                          : notary.status === 'pending' ? 'bg-amber-500'
+                          : 'bg-coral-500';
+                        return (
+                          <tr
+                            key={notary.id}
+                            className={`border-b border-slate-100 hover:bg-cream-100 transition-colors ${i % 2 === 1 ? 'bg-cream-100/40' : ''}`}
+                            data-testid={`notaries-row-${notary.id}`}
+                          >
+                            <td className="py-3.5 px-6">
+                              <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[12px]">
+                                  {initials}
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-ink-900 font-semibold text-[15px] truncate">{notary.user_full_name || 'Unknown notary'}</p>
+                                  <p className="text-slate-600 text-[13px] truncate">{notary.user_email}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-3.5 px-3 text-ink-900 text-[14px] font-mono">
+                              {notary.commission_number || <span className="text-slate-400">—</span>}
+                            </td>
+                            <td className="py-3.5 px-3">
+                              <span className="inline-block px-2 py-0.5 bg-cream-200 text-ink-900 rounded text-[12px] font-bold tracking-wider">
+                                {notary.state || 'N/A'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-3">
+                              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${statusStyle}`}>
+                                <span className={`w-1.5 h-1.5 rounded-full ${statusDot}`} />
+                                {notary.status}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-6 text-right">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => viewUserDetails(notary.user_id)}
+                                className="border-slate-300 text-ink-900 hover:bg-cream-200 h-8 text-[12px]"
+                                data-testid={`notaries-view-${notary.id}`}
+                              >
+                                <Eye className="w-3.5 h-3.5 mr-1.5" /> View
+                              </Button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+                {notaries.filter(n => !notaryStatusFilter || notaryStatusFilter === 'all' || n.status === notaryStatusFilter).length === 0 && (
+                  <div className="text-center py-12 text-slate-500 text-sm">No notaries match this filter.</div>
+                )}
               </div>
             </CardContent>
           </Card>
