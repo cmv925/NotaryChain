@@ -43,7 +43,8 @@ const LoginPage = () => {
 
     if (result.success) {
       toast({ title: 'Login Successful', description: 'Welcome back to NotaryChain!' });
-      setTimeout(() => navigate('/dashboard'), 500);
+      const dest = result.user?.role === 'admin' ? '/admin' : '/dashboard';
+      setTimeout(() => navigate(dest), 500);
     } else if (result.requires_2fa) {
       setTempToken(result.temp_token);
       setShow2FA(true);
@@ -65,7 +66,8 @@ const LoginPage = () => {
 
     if (result.success) {
       toast({ title: 'Login Successful', description: 'Two-factor authentication verified!' });
-      setTimeout(() => navigate('/dashboard'), 500);
+      const dest = result.user?.role === 'admin' ? '/admin' : '/dashboard';
+      setTimeout(() => navigate(dest), 500);
     } else {
       toast({ title: 'Verification Failed', description: result.error || 'Invalid code', variant: 'destructive' });
       setTotpCode(['', '', '', '', '', '']);

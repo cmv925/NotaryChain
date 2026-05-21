@@ -51,7 +51,19 @@ export const AuthProvider = ({ children }) => {
       const { access_token } = data;
       localStorage.setItem('token', access_token);
       setToken(access_token);
-      return { success: true };
+
+      // Fetch the user object so callers can route based on role
+      // (admins → /admin, everyone else → /dashboard).
+      let userObj = null;
+      try {
+        const me = await axios.get(`${API}/auth/me`, {
+          headers: { Authorization: `Bearer ${access_token}` },
+        });
+        userObj = me.data;
+      } catch (_e) {
+        // non-fatal — useEffect will retry via fetchUser()
+      }
+      return { success: true, user: userObj };
     } catch (error) {
       return {
         success: false,
@@ -69,7 +81,14 @@ export const AuthProvider = ({ children }) => {
       const { access_token } = response.data;
       localStorage.setItem('token', access_token);
       setToken(access_token);
-      return { success: true };
+      let userObj = null;
+      try {
+        const me = await axios.get(`${API}/auth/me`, {
+          headers: { Authorization: `Bearer ${access_token}` },
+        });
+        userObj = me.data;
+      } catch (_e) { /* non-fatal */ }
+      return { success: true, user: userObj };
     } catch (error) {
       return {
         success: false,

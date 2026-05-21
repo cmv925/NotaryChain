@@ -10,6 +10,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { Toaster } from './components/ui/toaster';
 import PlatformFooter from './components/PlatformFooter';
+import GlobalSubheader from './components/GlobalSubheader';
 import './i18n';
 
 // Eager-loaded (critical path)
@@ -137,6 +138,7 @@ function App() {
         <SubscriptionProvider>
         <WebSocketProvider>
         <BrowserRouter>
+          <GlobalSubheader />
           <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/" element={<NotaryLanding />} />
