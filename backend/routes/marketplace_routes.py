@@ -5,8 +5,8 @@ Browse notaries, reviews, ratings, and profiles.
 
 from fastapi import APIRouter, HTTPException, Depends, Query
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from pydantic import BaseModel
-from typing import Optional, List
+from pydantic import BaseModel, Field
+from typing import Optional, List, Literal
 from datetime import datetime, timezone
 import uuid
 import logging
@@ -284,10 +284,10 @@ def _rating_premium(avg_rating: float, review_count: int) -> float:
 
 
 class QuoteRequest(BaseModel):
-    notary_id: str
-    state_code: str
-    document_type: str
-    urgency: str = "standard"  # standard | same_day | after_hours | weekend | rush
+    notary_id: str = Field(..., min_length=1)
+    state_code: str = Field(..., min_length=2, max_length=2)
+    document_type: str = Field(..., min_length=1)
+    urgency: Literal["standard", "same_day", "after_hours", "weekend", "rush"] = "standard"
 
 
 @router.post("/quote")
