@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   ShieldCheck, Award, FileSignature, Stamp, Sparkles, ChevronRight,
   CheckCircle2, ArrowRight, Lock, Users, MapPin, Camera,
+  Brain, Link2, Eye, Fingerprint, FileSearch, Zap,
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -52,16 +53,17 @@ export default function NotaryLanding() {
           <div className="lg:col-span-7">
             <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-white border border-slate-200">
               <span className="w-1.5 h-1.5 rounded-full bg-coral-500" />
-              <span className="text-[11px] font-semibold text-navy-900 tracking-wide">Florida RON-compliant · Hedera blockchain sealed</span>
+              <span className="text-[11px] font-semibold text-navy-900 tracking-wide">AI-verified · Hedera blockchain sealed · Florida RON-compliant</span>
             </div>
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight text-navy-900 leading-[1.05] mb-6">
               Notarization, <span className="italic text-coral-600">done right.</span>
               <br />Online, in minutes.
             </h1>
             <p className="text-lg text-slate-600 leading-relaxed mb-8 max-w-2xl">
-              The trusted online notary platform for real estate, estate planning, and business. Every signing is
-              identity-verified, audio-video recorded, and permanently sealed on the Hedera public ledger — admissible
-              evidence the moment it's complete.
+              The first notary platform built on <strong className="text-navy-900">AI forensics</strong> and the
+              <strong className="text-navy-900"> Hedera public blockchain</strong>. Every document is scanned by
+              GPT-5 Vision for tampering, every signer is biometrically identity-proofed, and every seal is
+              cryptographically anchored on-chain — admissible evidence the moment it&apos;s complete.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
               <Link to="/request-notarization" data-testid="hero-cta-notarize">
@@ -81,10 +83,10 @@ export default function NotaryLanding() {
               <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-2 text-sm text-slate-600">
-              <Bullet text="KBA identity proofing" />
-              <Bullet text="HD audio-video record" />
+              <Bullet text="GPT-5 forgery scan" />
+              <Bullet text="KBA + biometric ID" />
               <Bullet text="Hedera-anchored seals" />
-              <Bullet text="10-yr record retention" />
+              <Bullet text="10-yr Object-Lock vault" />
             </div>
           </div>
 
@@ -155,18 +157,41 @@ export default function NotaryLanding() {
       <section className="bg-white py-20" data-testid="how-it-works">
         <div className="max-w-7xl mx-auto px-6">
           <p className="text-xs font-bold tracking-[0.2em] text-coral-600 uppercase mb-3 text-center">How it works</p>
-          <h2 className="font-serif text-3xl sm:text-4xl text-navy-900 mb-14 text-center max-w-3xl mx-auto">Four steps from upload to sealed.</h2>
+          <h2 className="font-serif text-3xl sm:text-4xl text-navy-900 mb-4 text-center max-w-3xl mx-auto">Four steps from upload to sealed.</h2>
+          <p className="text-slate-600 text-center max-w-2xl mx-auto mb-14">Most ceremonies complete in under 15 minutes. Every step is logged, every artifact is hash-pinned, every record is admissible in court.</p>
           <div className="grid md:grid-cols-4 gap-6">
             {[
-              { n: 1, t: 'Upload', d: 'Drop the document. AI scans for tampering and surfaces missing fields.' },
-              { n: 2, t: 'Verify your identity', d: 'KBA quiz + government-ID match + biometric face capture.' },
-              { n: 3, t: 'Meet your notary', d: 'Audio-video session with a commissioned notary. Both signers and witnesses join.' },
-              { n: 4, t: 'Sealed & filed', d: 'Hedera-anchored seal, 10-year retention, downloadable certificate.' },
+              {
+                n: 1, t: 'Upload', icon: FileSearch,
+                d: 'Drop your document. Our GPT-5 Vision pipeline scans for tampered pixels, missing signature blocks, and altered text — flagging issues before a notary ever sees it.',
+                tech: 'AI · GPT-5 Vision',
+              },
+              {
+                n: 2, t: 'Prove who you are', icon: Fingerprint,
+                d: 'Government-ID match + 4-question KBA quiz + live face biometric. Our Living Identity engine continuously re-scores trust during the session — drift triggers an alert.',
+                tech: 'AI · Biometric + KBA',
+              },
+              {
+                n: 3, t: 'Meet your notary', icon: Users,
+                d: 'HD audio-video session with a commissioned notary. Witnesses join via magic-link. A/V quality is enforced in real time — 720p, 16kHz, ≥30s segments per Florida statute.',
+                tech: 'Compliance · FL 117.245',
+              },
+              {
+                n: 4, t: 'Sealed on-chain', icon: Link2,
+                d: 'A canonical SHA-256 hash of the executed packet is submitted to a Hedera Consensus Service topic on mainnet. You get a permanent transaction ID, a downloadable certificate, and a 10-year Object-Locked S3 vault.',
+                tech: 'Blockchain · Hedera HCS',
+              },
             ].map((s) => (
               <div key={s.n} className="relative" data-testid={`step-${s.n}`}>
-                <div className="w-10 h-10 rounded-full bg-navy-900 text-white font-serif text-lg flex items-center justify-center mb-4 font-bold">{s.n}</div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-navy-900 text-white font-serif text-lg flex items-center justify-center font-bold flex-shrink-0">{s.n}</div>
+                  <s.icon className="w-5 h-5 text-coral-500" strokeWidth={1.5} />
+                </div>
                 <h3 className="font-serif text-lg text-navy-900 font-bold mb-2">{s.t}</h3>
-                <p className="text-sm text-slate-600 leading-relaxed">{s.d}</p>
+                <p className="text-sm text-slate-600 leading-relaxed mb-3">{s.d}</p>
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.15em] uppercase text-coral-700 bg-coral-50 border border-coral-200 px-2 py-1 rounded">
+                  {s.tech}
+                </span>
               </div>
             ))}
           </div>
@@ -176,6 +201,150 @@ export default function NotaryLanding() {
                 Start your first notarization <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* TECHNOLOGY — AI + BLOCKCHAIN */}
+      <section className="bg-navy-900 text-white py-24 relative overflow-hidden" data-testid="technology">
+        <div className="absolute inset-0 opacity-[0.04]" style={{
+          backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)',
+          backgroundSize: '32px 32px',
+        }} />
+        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-coral-500/10 blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-gold-500/10 blur-3xl" />
+
+        <div className="max-w-7xl mx-auto px-6 relative">
+          <div className="max-w-3xl mb-16">
+            <p className="text-xs font-bold tracking-[0.2em] text-coral-300 uppercase mb-3">Under the hood</p>
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl mb-5 leading-tight">
+              Built on <span className="italic text-coral-300">AI forensics</span> and
+              <span className="italic text-coral-300"> public blockchain</span>.
+            </h2>
+            <p className="text-slate-300 text-lg leading-relaxed">
+              Legacy notaries rely on a stamp and a signature. We replace that with continuous machine verification
+              and an immutable public ledger — so the proof outlasts the notary, the platform, and even us.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-5">
+            {/* AI column */}
+            <div className="bg-white/[0.04] border border-white/10 rounded-lg p-7 backdrop-blur-sm hover:bg-white/[0.06] transition-colors">
+              <div className="w-11 h-11 rounded-md bg-coral-500/20 border border-coral-400/30 flex items-center justify-center mb-5">
+                <Brain className="w-5 h-5 text-coral-300" strokeWidth={1.5} />
+              </div>
+              <h3 className="font-serif text-xl mb-3">AI Document Forensics</h3>
+              <p className="text-slate-300 text-sm leading-relaxed mb-5">
+                Every uploaded document is dissected by GPT-5 Vision before it touches a notary&apos;s desk. We detect
+                copy-paste seals, font mismatches, pixel-level tampering, missing notary blocks, and conflicts with
+                prior sealed versions.
+              </p>
+              <ul className="space-y-2 text-sm text-slate-300">
+                <TechBullet text="Multi-modal forgery detection" />
+                <TechBullet text="Doc-vs-doc semantic diff" />
+                <TechBullet text="Prior-seal collision check" />
+                <TechBullet text="AI-generated summary & risk score" />
+              </ul>
+            </div>
+
+            {/* Blockchain column */}
+            <div className="bg-white/[0.04] border border-white/10 rounded-lg p-7 backdrop-blur-sm hover:bg-white/[0.06] transition-colors lg:scale-[1.02] lg:shadow-2xl">
+              <div className="w-11 h-11 rounded-md bg-gold-500/20 border border-gold-400/30 flex items-center justify-center mb-5">
+                <Link2 className="w-5 h-5 text-gold-300" strokeWidth={1.5} />
+              </div>
+              <h3 className="font-serif text-xl mb-3">Hedera Public Ledger</h3>
+              <p className="text-slate-300 text-sm leading-relaxed mb-5">
+                Every sealed packet is hashed (SHA-256) and submitted to Hedera Consensus Service on
+                <strong className="text-white"> mainnet</strong>. The result: a globally-verifiable, tamper-proof
+                receipt that any third party can independently confirm without trusting NotaryChain.
+              </p>
+              <ul className="space-y-2 text-sm text-slate-300">
+                <TechBullet text="Hedera mainnet HCS topic" />
+                <TechBullet text="Ed25519 partner signatures" />
+                <TechBullet text="Public transaction ID per seal" />
+                <TechBullet text="Verifiable via Hedera Mirror Node" />
+              </ul>
+            </div>
+
+            {/* Continuous trust column */}
+            <div className="bg-white/[0.04] border border-white/10 rounded-lg p-7 backdrop-blur-sm hover:bg-white/[0.06] transition-colors">
+              <div className="w-11 h-11 rounded-md bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center mb-5">
+                <Eye className="w-5 h-5 text-emerald-300" strokeWidth={1.5} />
+              </div>
+              <h3 className="font-serif text-xl mb-3">Living Identity Trust</h3>
+              <p className="text-slate-300 text-sm leading-relaxed mb-5">
+                Identity isn&apos;t a one-time check — it&apos;s a continuous biometric score. We re-attest signers over
+                time, detect behavioral drift, and trigger alerts if a notarized identity later shows
+                signs of compromise.
+              </p>
+              <ul className="space-y-2 text-sm text-slate-300">
+                <TechBullet text="Continuous biometric re-attestation" />
+                <TechBullet text="Drift + behavioral signal scoring" />
+                <TechBullet text="WebSocket trust-change alerts" />
+                <TechBullet text="Federated TrustLayer network" />
+              </ul>
+            </div>
+          </div>
+
+          {/* Pipeline diagram */}
+          <div className="mt-16 bg-white/[0.03] border border-white/10 rounded-lg p-6 sm:p-8">
+            <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-coral-300 mb-5">The end-to-end pipeline</p>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+              {[
+                { l: 'Document upload', c: 'bg-white/10' },
+                { l: 'AI forgery scan', c: 'bg-coral-500/30' },
+                { l: 'KBA + biometric', c: 'bg-coral-500/30' },
+                { l: 'Live A/V ceremony', c: 'bg-white/10' },
+                { l: 'Multi-state evaluator', c: 'bg-white/10' },
+                { l: 'SHA-256 canonical hash', c: 'bg-gold-500/30' },
+                { l: 'Hedera HCS anchor', c: 'bg-gold-500/30' },
+                { l: 'S3 Object-Lock vault', c: 'bg-emerald-500/30' },
+              ].map((step, i, arr) => (
+                <React.Fragment key={i}>
+                  <span className={`${step.c} border border-white/20 px-3 py-1.5 rounded-full font-medium whitespace-nowrap`}>{step.l}</span>
+                  {i < arr.length - 1 && <ArrowRight className="w-3 h-3 text-slate-500 flex-shrink-0" />}
+                </React.Fragment>
+              ))}
+            </div>
+            <p className="text-slate-400 text-xs mt-5 leading-relaxed">
+              Each box is logged with a timestamp, hash, and actor ID. The full chain is exportable as a single
+              evidence packet — admissible in any U.S. court, verifiable by any third-party auditor.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* WHY IT MATTERS — TRUST CONTRAST */}
+      <section className="bg-white py-20" data-testid="why-it-matters">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-14">
+            <p className="text-xs font-bold tracking-[0.2em] text-coral-600 uppercase mb-3">Why it matters</p>
+            <h2 className="font-serif text-3xl sm:text-4xl text-navy-900 max-w-3xl mx-auto leading-tight">
+              The proof outlasts the paper.
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            <div className="bg-cream-200/40 border border-slate-200 rounded-md p-7">
+              <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-500 mb-4">Traditional notary</p>
+              <ul className="space-y-3 text-sm text-slate-700">
+                <ContrastRow neg text="Ink stamp on paper — easily forged or scanned away" />
+                <ContrastRow neg text="Identity checked once, never re-verified" />
+                <ContrastRow neg text="Records sit in a notary&apos;s file cabinet" />
+                <ContrastRow neg text="Verification requires phoning the original notary" />
+                <ContrastRow neg text="If the notary loses records, the proof is gone" />
+              </ul>
+            </div>
+            <div className="bg-navy-900 border border-navy-900 rounded-md p-7 text-white relative overflow-hidden">
+              <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-coral-500/20 blur-3xl" />
+              <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-coral-300 mb-4">NotaryChain</p>
+              <ul className="space-y-3 text-sm text-slate-200 relative">
+                <ContrastRow pos text="Cryptographic seal anchored to a public blockchain" />
+                <ContrastRow pos text="Continuous biometric trust — drift triggers alerts" />
+                <ContrastRow pos text="10-year Object-Locked vault, replicated across regions" />
+                <ContrastRow pos text="One-click verify via any Hedera Mirror Node — no calls" />
+                <ContrastRow pos text="Even if NotaryChain disappears, your proof remains on-chain" />
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -272,6 +441,32 @@ function Bullet({ text }) {
       <CheckCircle2 className="w-3.5 h-3.5 text-green-700 flex-shrink-0" />
       {text}
     </span>
+  );
+}
+
+function TechBullet({ text }) {
+  return (
+    <li className="flex items-start gap-2">
+      <Zap className="w-3.5 h-3.5 text-coral-300 flex-shrink-0 mt-0.5" strokeWidth={2} />
+      <span>{text}</span>
+    </li>
+  );
+}
+
+function ContrastRow({ pos, neg, text }) {
+  const Icon = pos ? CheckCircle2 : Lock;
+  const color = pos ? 'text-emerald-400' : 'text-slate-500';
+  return (
+    <li className="flex items-start gap-2.5">
+      {neg ? (
+        <span className="w-4 h-4 rounded-full border-2 border-slate-400 flex-shrink-0 mt-0.5 flex items-center justify-center">
+          <span className="w-1.5 h-0.5 bg-slate-400 block" />
+        </span>
+      ) : (
+        <Icon className={`w-4 h-4 ${color} flex-shrink-0 mt-0.5`} />
+      )}
+      <span>{text}</span>
+    </li>
   );
 }
 
