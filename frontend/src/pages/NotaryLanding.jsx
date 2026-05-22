@@ -22,12 +22,12 @@ export default function NotaryLanding() {
     <div className="min-h-screen bg-cream-100 font-sans text-navy-900">
       {/* Top nav */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-50" data-testid="public-nav">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-6">
-          <Link to="/" className="flex items-center gap-2.5" data-testid="brand-home">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3 sm:gap-6">
+          <Link to="/" className="flex items-center gap-2.5 flex-shrink-0" data-testid="brand-home">
             <Seal className="w-8 h-8" />
             <span className="font-serif text-xl font-bold text-navy-900">NotaryChain</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-7 text-sm">
+          <nav className="hidden lg:flex items-center gap-7 text-sm">
             <Link to="/florida" className="text-slate-700 hover:text-navy-900" data-testid="nav-florida">Florida</Link>
             <Link to="/notaries" className="text-slate-700 hover:text-navy-900" data-testid="nav-notaries">Notary directory</Link>
             <Link to="/scanner/demo" className="text-slate-700 hover:text-navy-900 inline-flex items-center gap-1" data-testid="nav-scanner-demo">
@@ -36,11 +36,12 @@ export default function NotaryLanding() {
             <Link to="/trust-badge" className="text-slate-700 hover:text-navy-900" data-testid="nav-trust-badge">Trust badge</Link>
             <Link to="/verify" className="text-slate-700 hover:text-navy-900" data-testid="nav-verify">Verify a document</Link>
           </nav>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <Link to="/login" className="hidden sm:inline-block text-sm text-navy-900 px-3 py-2 hover:bg-cream-200 rounded-md" data-testid="nav-signin">Sign in</Link>
             <Link to="/request-notarization" data-testid="nav-cta">
-              <button className="bg-coral-500 hover:bg-coral-600 text-white text-sm font-medium px-5 h-10 rounded-md shadow-sm transition-colors">
-                Start notarization
+              <button className="bg-coral-500 hover:bg-coral-600 text-white text-sm font-medium px-3 sm:px-5 h-10 rounded-md shadow-sm transition-colors whitespace-nowrap">
+                <span className="sm:hidden">Start</span>
+                <span className="hidden sm:inline">Start notarization</span>
               </button>
             </Link>
           </div>
@@ -48,11 +49,11 @@ export default function NotaryLanding() {
       </header>
 
       {/* HERO */}
-      <section className="bg-cream-100" data-testid="hero">
-        <div className="max-w-7xl mx-auto px-6 py-16 sm:py-24 lg:py-28 grid lg:grid-cols-12 gap-12 items-center">
+      <section className="bg-cream-100 relative overflow-hidden" data-testid="hero">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24 lg:py-28 grid lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7">
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-white border border-slate-200">
-              <span className="w-1.5 h-1.5 rounded-full bg-coral-500" />
+            <div className="inline-flex flex-wrap items-center gap-2 px-3 py-1 mb-6 rounded-full bg-white border border-slate-200 max-w-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-coral-500 flex-shrink-0" />
               <span className="text-[11px] font-semibold text-navy-900 tracking-wide">AI-verified · Hedera blockchain sealed · Florida RON-compliant</span>
             </div>
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight text-navy-900 leading-[1.05] mb-6">
