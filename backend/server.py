@@ -111,6 +111,14 @@ compliance_states_routes.set_db(db)
 salv_phase2_routes.set_db(db)
 compliance_phase2_routes.set_db(db)
 
+# PCV service + routes
+from routes import pcv_routes
+from services import pcv_service
+from services.hedera_service import hedera_service as _hedera_for_pcv
+from services import email_service as _email_for_pcv
+pcv_routes.set_db(db)
+pcv_service.set_dependencies(db, hedera_svc=_hedera_for_pcv, email_svc=_email_for_pcv)
+
 # Feature gate middleware needs db
 from middleware.feature_gate import set_db as set_gate_db
 set_gate_db(db)
@@ -253,6 +261,7 @@ app.include_router(sdk_routes.router)
 app.include_router(compliance_states_routes.router)
 app.include_router(salv_phase2_routes.router)
 app.include_router(compliance_phase2_routes.router)
+app.include_router(pcv_routes.router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -41,6 +41,7 @@ import {
   Auth0Callback, OktaCallback, OnboardingPage, InvestorDeck, CeremonyDashboard,
   VerifyCertificate, EscrowDashboard, ANANDashboard, FraudIntelligencePage, AIIntelligenceHub,
   PublicAuditTrail, CeremonyReplay, MultiSignature, CertificateExpiration, TokenizedEscrow,
+  PCVDashboard, PCVPublicVerify,
 } from './lazyRoutes';
 
 const PageLoader = () => (
@@ -706,6 +707,15 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/pcv"
+              element={
+                <ProtectedRoute>
+                  <PCVDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/pcv/verify/:packetId" element={<PCVPublicVerify />} />
           </Routes>
           </Suspense>
           <PlatformFooter />

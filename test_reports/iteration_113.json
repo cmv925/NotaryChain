@@ -1,0 +1,36 @@
+{
+  "summary": "Comprehensive backend test suite for Predictive Compliance Vault (PCV) — all 5 sub-systems covered (BackgroundIntegrityDaemon, RegulatoryOracleNetwork, SmartRemediationAgent, PortfolioIntegrityGraph, EvidencePacketBuilder). 41/41 tests passed in 7.3s. Public verifier confirmed to work without Authorization header and stored_hash == recomputed_hash byte-for-byte.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/pcv/portfolio/graph/{anchor_id}/anchor-hedera", "issue": "Returns 200 with {ok:false} on nonexistent anchor instead of 404. Inconsistent with other PCV not-found endpoints (e.g. /remediation/tasks/{id} which raises 404). Consider returning 404 for consistency."}
+    ]
+  },
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_pcv_predictive_compliance_vault.py",
+    "/app/test_reports/pytest/iter113_pcv.xml"
+  ],
+  "action_items": [
+    "(Optional) Make POST /portfolio/graph/{anchor_id}/anchor-hedera raise HTTPException(404) on missing anchor instead of returning {ok:false} body for HTTP-consistency."
+  ],
+  "critical_code_review_comments": [
+    "pcv_service.py is 909 lines — file size exceeds the 700-line guideline. Recommend splitting into 5 modules matching the 5 sub-systems (integrity_daemon.py, regulatory_oracle.py, remediation_agent.py, portfolio_graph.py, evidence_packet.py) plus a shared utils module.",
+    "pcv_routes.py line 167-174: list_scores constructs Mongo query inline rather than going through pcv_service. Other endpoints delegate to the service layer — inconsistent abstraction. Move to pcv_service.list_compliance_scores().",
+    "pcv_routes.py line 67-71: list_integrity_scans also queries db directly — same inconsistency, should delegate to service.",
+    "pcv_service.score_portfolio_against_rules (line 414-428): uses $set with a fresh uuid.uuid4().hex on every upsert call. On re-scoring, the score id changes even if the doc already existed — should use $setOnInsert for the id field or stable id (e.g. notarization_id) to keep stable identity.",
+    "pcv_service._record_integrity_issue lacks 'auto_resolve match' — on re-scan, if same notarization with same hash mismatch persists, a duplicate issue row is inserted each scan. Consider deduping by (notarization_id, kind, recorded_hash, current_hash) before insert.",
+    "Hedera fallback (line 697 & 801) generates simulated tx_id but never marks the row as simulated=True. Court-readiness suggests adding a boolean 'simulated' flag so verifiers/auditors can distinguish real Hedera anchors from fallbacks.",
+    "pcv_service.set_dependencies stores hedera_service & email_service as module-level globals. acceptable for MVP but consider DI container for testability."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_pcv_predictive_compliance_vault.py"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "N/A (skipped per request)"},
+  "test_credentials": "admin@notarychain.com / Admin123! (worked, /api/auth/login returns access_token)",
+  "seed_data_creation": "Tests use existing portfolio. Idempotent regulatory seed (7 rules) confirmed: rerunning POST /api/pcv/regulatory/seed returns inserted_or_updated=0. One TEST_ regulatory change event recorded, one TEST_ evidence packet generated, remediation tasks approved+completed. All test artifacts prefixed TEST_.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "PCV is fully functional. 41 pytest cases cover happy paths + 422 Pydantic validation + 404 not-found + idempotency + public verifier (no auth) + hash byte-for-byte match. The only nit is the anchor-hedera not-found path returns 200+{ok:false} instead of 404 — flagged but not blocking. Hedera SDK in this env throws on submit_message, so simulated tx_ids in format '0.0.10373605@ts.nonce' are observed (expected per problem statement).",
+  "rca of the issue": "N/A — no bugs found, only minor design nits."
+}

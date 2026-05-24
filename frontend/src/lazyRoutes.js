@@ -103,3 +103,5 @@ export const CeremonyReplay = lazy(() => import('./pages/CeremonyReplay'));
 export const MultiSignature = lazy(() => import('./pages/MultiSignature'));
 export const CertificateExpiration = lazy(() => import('./pages/CertificateExpiration'));
 export const TokenizedEscrow = lazy(() => import('./pages/TokenizedEscrow'));
+export const PCVDashboard = lazy(() => import('./pages/PCVDashboard'));
+export const PCVPublicVerify = lazy(() => import('./pages/PCVPublicVerify'));
