@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
+import SmartContractPanel from '../components/escrow/SmartContractPanel';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -408,6 +409,11 @@ export default function EscrowDashboard() {
             </div>
           </div>
         )}
+
+        {/* Smart Contract Inspector — Hedera HSCS-style (mock) */}
+        <div className="mb-6">
+          <SmartContractPanel escrowId={e.escrow_id} onAfterAction={() => fetchEscrow(e.escrow_id)} />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* LEFT — Main Content */}

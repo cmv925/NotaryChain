@@ -140,6 +140,7 @@ async def create_escrow(request: Request):
             "biometric_gate_at": None,
             "biometric_gate_by": None,
         },
+        "smart_contract": _mint_mock_contract(escrow_id),
         "timeline": [{
             "event": "escrow_created",
             "timestamp": now,
@@ -510,6 +511,9 @@ async def deposit_funds(escrow_id: str, request: Request):
             "financial.hts_escrow_account": mock_account,
             "financial.deposited_at": now,
             "blockchain.creation_hash": deposit_hash,
+            "smart_contract.state": "FUNDED",
+            "smart_contract.balance_usd": amount,
+            "smart_contract.balance_hbar": round(float(amount) / 0.07, 2),
             "updated_at": now,
         },
         "$push": {"timeline": {
@@ -518,6 +522,13 @@ async def deposit_funds(escrow_id: str, request: Request):
             "actor": user["email"],
             "details": f"${amount:,.2f} deposited into smart vault. Stripe PI: {mock_pi}. HTS Token: {mock_token}.",
             "category": "financial",
+        }, "smart_contract.operations": {
+            "opcode": "FUND",
+            "tx_hash": "0x" + hashlib.sha256(f"fund::{escrow_id}::{now}".encode()).hexdigest()[:40],
+            "timestamp": now,
+            "gas_used": 64_820,
+            "actor": user["email"],
+            "args": {"amount_usd": amount, "stripe_pi": mock_pi, "hts_token": mock_token},
         }}}
     )
 
@@ -1024,6 +1035,9 @@ async def settle_escrow(escrow_id: str, request: Request):
             "blockchain.settlement_hash": settlement_hash,
             "blockchain.hcs_topic_id": settlement_tx["topic_id"],
             "blockchain.settlement_tx": settlement_tx,
+            "smart_contract.state": "RELEASED",
+            "smart_contract.balance_usd": 0.0,
+            "smart_contract.balance_hbar": 0.0,
             "updated_at": now,
         },
         "$push": {"timeline": {
@@ -1032,6 +1046,14 @@ async def settle_escrow(escrow_id: str, request: Request):
             "actor": "Smart Contract",
             "details": f"Settlement executed. ${escrow['financial']['escrow_amount']:,.2f} released to seller. Lifecycle hash: {settlement_hash[:16]}... sealed on Hedera {'Mainnet' if settlement_tx.get('hcs_submitted') else '(pending)'}.",
             "category": "settlement",
+        }, "smart_contract.operations": {
+            "opcode": "RELEASE",
+            "tx_hash": "0x" + settlement_hash[:40],
+            "timestamp": now,
+            "gas_used": 84_120,
+            "actor": user["email"],
+            "args": {"amount_usd": escrow["financial"]["escrow_amount"], "settlement_hash": settlement_hash,
+                     "hcs_submitted": settlement_tx.get("hcs_submitted", False)},
         }}}
     )
 
@@ -1079,3 +1101,237 @@ async def get_escrow_timeline(escrow_id: str, request: Request):
     if not escrow:
         raise HTTPException(status_code=404, detail="Escrow not found")
     return {"escrow_id": escrow_id, "timeline": escrow.get("timeline", [])}
+
+
+# ═══════════════════════════════════════════════════════
+#  MOCK SMART CONTRACT LAYER (Hedera HSCS-style — simulated)
+# ═══════════════════════════════════════════════════════
+#
+# Each escrow is paired with a synthetic Hedera-format contract address (0.0.X)
+# and a tiny on-chain-style state machine:
+#     DRAFT → FUNDED → CONDITIONS_MET → RELEASED
+#                         └─────────→ REFUNDED
+# Every state-changing call ("opcode") is recorded with a deterministic tx hash.
+# This is mock-only (no real contract is deployed) but is shaped exactly like
+# the real Hedera HSCS / contractCall flow so a future real implementation is
+# a drop-in replacement.
+
+def _mint_mock_contract(escrow_id: str) -> dict:
+    """Deterministically mint a mock contract address + bytecode hash."""
+    seed = hashlib.sha256(f"contract::{escrow_id}".encode()).hexdigest()
+    # Hedera-style address — realm.shard.num
+    contract_num = int(seed[:10], 16) % 9_000_000 + 1_000_000
+    bytecode_hash = "0x" + seed[:64]
+    return {
+        "contract_address": f"0.0.{contract_num}",
+        "bytecode_hash": bytecode_hash,
+        "abi_version": "1.0.0",
+        "network": "Hedera Testnet (Mocked)",
+        "deployed_at": datetime.now(timezone.utc).isoformat(),
+        "state": "DRAFT",
+        "balance_hbar": 0.0,
+        "balance_usd": 0.0,
+        "operations": [{
+            "opcode": "CONSTRUCTOR",
+            "tx_hash": "0x" + hashlib.sha256(f"constructor::{escrow_id}".encode()).hexdigest()[:40],
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "gas_used": 142_310,
+            "actor": "system",
+            "args": {"escrow_id": escrow_id},
+        }],
+    }
+
+
+def _mock_tx_hash(escrow_id: str, opcode: str, nonce: int) -> str:
+    return "0x" + hashlib.sha256(f"{escrow_id}::{opcode}::{nonce}::{datetime.now(timezone.utc).isoformat()}".encode()).hexdigest()[:40]
+
+
+async def _append_contract_op(escrow_id: str, opcode: str, actor: str, **extra) -> dict:
+    """Append an operation to the escrow's mock smart contract log + return the op."""
+    escrow = await db.escrow_agreements.find_one({"escrow_id": escrow_id}, {"_id": 0, "smart_contract": 1})
+    sc = (escrow or {}).get("smart_contract") or _mint_mock_contract(escrow_id)
+    nonce = len(sc.get("operations", []))
+    op = {
+        "opcode": opcode,
+        "tx_hash": _mock_tx_hash(escrow_id, opcode, nonce),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "gas_used": 21_000 + nonce * 5_000,
+        "actor": actor,
+        "nonce": nonce,
+        **extra,
+    }
+    return op
+
+
+@router.post("/{escrow_id}/refund")
+async def refund_escrow(escrow_id: str, request: Request):
+    """
+    Mock smart contract refund — returns the held amount to the buyer.
+    Allowed when the escrow is funded but not yet released, OR explicitly
+    disputed. Cannot refund an already-settled escrow.
+    """
+    user = await _get_user(request)
+    escrow = await db.escrow_agreements.find_one({"escrow_id": escrow_id}, {"_id": 0})
+    if not escrow:
+        raise HTTPException(status_code=404, detail="Escrow not found")
+
+    # Authorization — only parties or admin
+    email = user["email"]
+    is_party = (escrow.get("created_by") == email
+                or escrow.get("parties", {}).get("buyer", {}).get("email") == email
+                or escrow.get("parties", {}).get("seller", {}).get("email") == email)
+    if not is_party and user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Only escrow parties can refund")
+
+    if escrow["status"] == "settled":
+        raise HTTPException(status_code=400, detail="Escrow already settled — cannot refund")
+    if escrow["status"] == "refunded":
+        raise HTTPException(status_code=400, detail="Escrow already refunded")
+    if escrow.get("financial", {}).get("deposit_status") != "held":
+        raise HTTPException(status_code=400, detail="No funds held in escrow to refund")
+
+    body = {}
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    reason = body.get("reason") or "Buyer requested refund"
+    now = datetime.now(timezone.utc).isoformat()
+    amount = escrow["financial"]["amount_held"] or escrow["financial"]["escrow_amount"]
+
+    op = await _append_contract_op(
+        escrow_id, "REFUND", email,
+        args={"amount_hbar_equiv": round(float(amount) / 0.07, 2), "amount_usd": amount, "reason": reason},
+    )
+
+    # Try real HCS submission of refund event
+    try:
+        from services.hedera_service import hedera_service
+        await hedera_service.submit_message(
+            hedera_service.default_topic_id,
+            {"type": "ESCROW_REFUND", "escrow_id": escrow_id, "amount_usd": amount,
+             "tx_hash": op["tx_hash"], "reason": reason, "actor": email},
+        )
+    except Exception:
+        pass
+
+    await db.escrow_agreements.update_one(
+        {"escrow_id": escrow_id},
+        {
+            "$set": {
+                "status": "refunded",
+                "financial.deposit_status": "refunded",
+                "financial.amount_held": 0,
+                "financial.refunded_at": now,
+                "financial.refund_amount": amount,
+                "financial.refund_reason": reason,
+                "smart_contract.state": "REFUNDED",
+                "smart_contract.balance_hbar": 0.0,
+                "smart_contract.balance_usd": 0.0,
+                "updated_at": now,
+            },
+            "$push": {
+                "smart_contract.operations": op,
+                "timeline": {
+                    "event": "escrow_refunded",
+                    "timestamp": now,
+                    "actor": email,
+                    "details": f"Smart contract refund executed. ${amount:,.2f} returned to buyer. tx={op['tx_hash'][:14]}…",
+                    "category": "settlement",
+                },
+                "blockchain.audit_trail": {
+                    "action": "refund",
+                    "tx_hash": op["tx_hash"],
+                    "amount": amount,
+                    "timestamp": now,
+                },
+            },
+        },
+    )
+
+    # Real-time emit
+    await _emit_escrow_event(escrow, "escrow_refund", {
+        "status": "refunded", "amount": amount, "tx_hash": op["tx_hash"], "reason": reason,
+    })
+
+    return {
+        "escrow_id": escrow_id,
+        "status": "refunded",
+        "amount_refunded": amount,
+        "tx_hash": op["tx_hash"],
+        "contract_address": (escrow.get("smart_contract") or {}).get("contract_address"),
+        "reason": reason,
+    }
+
+
+@router.get("/{escrow_id}/contract-state")
+async def get_contract_state(escrow_id: str, request: Request):
+    """
+    Smart-contract-style state view of an escrow.
+    Returns the synthetic contract address, current state, balance, ABI, and
+    the full operation log (CONSTRUCTOR, FUND, RELEASE, REFUND, …).
+    """
+    user = await _get_user(request)
+    escrow = await db.escrow_agreements.find_one({"escrow_id": escrow_id}, {"_id": 0})
+    if not escrow:
+        raise HTTPException(status_code=404, detail="Escrow not found")
+
+    # Access check
+    email = user["email"]
+    is_party = (escrow.get("created_by") == email
+                or escrow.get("parties", {}).get("buyer", {}).get("email") == email
+                or escrow.get("parties", {}).get("seller", {}).get("email") == email)
+    if not is_party and user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    # Lazily mint if the escrow predates the smart-contract layer
+    sc = escrow.get("smart_contract")
+    if not sc:
+        sc = _mint_mock_contract(escrow_id)
+        await db.escrow_agreements.update_one(
+            {"escrow_id": escrow_id}, {"$set": {"smart_contract": sc}}
+        )
+
+    # Reconcile state with escrow lifecycle
+    status_to_state = {
+        "draft": "DRAFT",
+        "active": "FUNDED" if escrow.get("financial", {}).get("deposit_status") == "held" else "DRAFT",
+        "conditions_met": "CONDITIONS_MET",
+        "settled": "RELEASED",
+        "refunded": "REFUNDED",
+    }
+    sc["state"] = status_to_state.get(escrow.get("status"), sc.get("state", "DRAFT"))
+    amount_held = escrow.get("financial", {}).get("amount_held") or 0
+    sc["balance_usd"] = float(amount_held)
+    # rough HBAR conversion just for the demo dashboard
+    sc["balance_hbar"] = round(float(amount_held) / 0.07, 2) if amount_held else 0.0
+
+    abi = [
+        {"name": "constructor", "type": "constructor", "inputs": ["escrow_id"]},
+        {"name": "fund", "type": "function", "inputs": ["amount"], "state_change": "DRAFT→FUNDED"},
+        {"name": "verifyCondition", "type": "function", "inputs": ["condition_id"], "state_change": "FUNDED→CONDITIONS_MET (when all met)"},
+        {"name": "release", "type": "function", "inputs": ["biometric_proof"], "state_change": "CONDITIONS_MET→RELEASED"},
+        {"name": "refund", "type": "function", "inputs": ["reason"], "state_change": "FUNDED→REFUNDED"},
+    ]
+
+    return {
+        "escrow_id": escrow_id,
+        "contract_address": sc.get("contract_address"),
+        "bytecode_hash": sc.get("bytecode_hash"),
+        "abi_version": sc.get("abi_version"),
+        "network": sc.get("network"),
+        "deployed_at": sc.get("deployed_at"),
+        "state": sc["state"],
+        "balance_hbar": sc["balance_hbar"],
+        "balance_usd": sc["balance_usd"],
+        "operations": sc.get("operations", []),
+        "abi": abi,
+        "mock": True,
+        "buyer": escrow.get("parties", {}).get("buyer", {}).get("email"),
+        "seller": escrow.get("parties", {}).get("seller", {}).get("email"),
+        "amount_usd": escrow.get("financial", {}).get("escrow_amount"),
+        "currency": escrow.get("financial", {}).get("currency", "USD"),
+        "conditions_total": escrow.get("conditions_total", 0),
+        "conditions_met": escrow.get("conditions_met_count", 0),
+    }
+

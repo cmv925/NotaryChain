@@ -1,0 +1,52 @@
+{
+  "summary": "Tested all 3 P3 features (Batch Cert, Audit Export, Smart Contract Escrow). 19/19 backend pytest passed. Batch Certificates page renders 36 sealed ceremonies + filter + Select-all + Download ZIP. Admin Dashboard \u2192 Audit Logs tab renders Batch Cert link card AND AuditExportPanel with date filters + Preview + Export ZIP (34 rows) + History. Hash chain verified byte-for-byte: every row's row_hash == sha256(prev_hash || canonical_json(row\\{hashes})) and rows[-1].row_hash == export root_hash. Found one Smart Contract state-machine inconsistency bug.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "POST /api/escrow/{id}/deposit + GET /api/escrow/{id}/contract-state",
+        "issue": "After a successful /deposit, the contract-state endpoint reports state='DRAFT' instead of 'FUNDED'. Root cause: /deposit sets financial.deposit_status='held' but does NOT change escrow.status (still 'draft'). The contract-state reconcile map at escrow_routes.py:1296 maps status='draft' -> 'DRAFT' regardless of deposit_status. The smart_contract.state field written by /deposit ('FUNDED') is overwritten by the reconcile. FUND opcode IS pushed correctly to operations[] and balance_usd is correct, but the surfaced state is wrong. Fix options: (a) /deposit also sets escrow.status='active'; (b) reconcile maps status='draft' + deposit_status='held' -> 'FUNDED'; (c) trust stored smart_contract.state when status='draft' and an explicit FUND op is present."
+      },
+      {
+        "endpoint": "POST /api/admin/audit-export/generate (no filters)",
+        "issue": "When the full audit_logs collection is exported (no date filter), the request times out at the kubernetes ingress (502 after ~60s). Hedera HCS submit + reportlab-free pure-Python hashing of all rows is slow for large datasets. Recommend either streaming the response (StreamingResponse + chunked ZIP) or rejecting unfiltered exports above N rows."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Admin Dashboard \u2192 Audit Logs \u2192 SOC2 Export panel",
+        "issues": ["Uses native HTML5 date inputs (mm/dd/yyyy) instead of shadcn Calendar component. Consistent with rest of admin but worth noting per QA design rules."]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_batch_audit_escrow_p3.py",
+    "/app/test_reports/pytest/iter114_p3.xml"
+  ],
+  "action_items": [
+    "Fix Smart Contract state reconciliation: ensure /deposit either sets escrow.status='active' OR update reconcile map at escrow_routes.py:1296 so deposit_status='held' yields state='FUNDED' even when escrow.status='draft'. This is the only blocker for the SmartContractPanel UI showing the correct state machine position after fund.",
+    "(Optional) Audit export: cap row count or stream the ZIP to avoid 502 on unfiltered exports.",
+    "(Optional) Test SmartContractPanel UI rendering manually \u2014 backend contract-state contract was fully validated; couldn't auto-click escrow card in time but page route is wired in EscrowDashboard.jsx (per request)."
+  ],
+  "critical_code_review_comments": [
+    "escrow_routes.py is 1338 lines \u2014 exceeds 700-line guideline. Recommend splitting smart-contract layer (_mint_mock_contract, _append_contract_op, /contract-state, /refund) into a new escrow_smart_contract_routes.py module.",
+    "audit_export_routes.py L89: end_date concatenation 'T23:59:59.999999+00:00' assumes ISO timestamps stored as strings; if any audit_log row stored timestamp as datetime object the $lte comparison will misbehave. Consider normalising before filter.",
+    "admin_certs_routes.py L173 _safe_filename: not truly safe against double-dots/leading-dash; reportlab.platypus also doesn't escape document_name in cover PDF \u2014 low risk (admin-only) but worth a Paragraph escape pass.",
+    "escrow_routes.py /refund L1190 'No funds held' check relies on deposit_status=='held'; if a future flow has partial release (amount_held>0 but deposit_status='partial'), refund would be incorrectly blocked. Consider checking amount_held>0 directly.",
+    "Both new routes register set_db side-effect modules at import \u2014 standard pattern but make sure server.py also wires audit_log_exports collection index (e.g. on export_id) for the /history endpoint at scale."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_batch_audit_escrow_p3.py"
+  ],
+  "success_rate": {"backend": "100% (19/19)", "frontend": "Batch Cert page and Audit Export Panel verified visually \u2014 not all DOM selectors clicked"},
+  "test_credentials": "admin@notarychain.com / Admin123! works. demo@test.com / Demo123! works (escrow_intelligence requires Enterprise so used admin for /escrow/create).",
+  "seed_data_creation": "Created 1 TEST escrow (title TEST_p3_smart_contract escrow, $250). Funded and refunded as part of test. 1 audit_log_export row recorded.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All 3 P3 features functionally work end-to-end on backend. Frontend renders correctly for Batch Cert page (/admin/batch-certificates) and Audit tab. The one functional bug is the state-machine mapping in /contract-state after /deposit (state stays DRAFT instead of FUNDED) \u2014 fix in escrow_routes.py:1296-1303. The refund flow itself works (returns 200, sets status=refunded, state=REFUNDED, pushes REFUND op).",
+  "rca of the issue": "Smart Contract state bug RCA: (1) /escrow/{id}/deposit sets smart_contract.state='FUNDED' via $set and pushes FUND op via $push to smart_contract.operations \u2014 these writes DO persist correctly in MongoDB. (2) /escrow/{id}/contract-state reads back the escrow, then OVERWRITES the persisted smart_contract.state by mapping escrow.status (which is still 'draft' since /deposit never touched it) through status_to_state dict at line 1296-1303 which has no 'draft + deposit_status=held' branch. (3) Reconcile result is returned to client, masking the correctly-stored FUNDED state. Reproduction: POST /escrow/create -> POST /{id}/deposit -> GET /{id}/contract-state \u2014 expected state=FUNDED, actual state=DRAFT. Mitigation: add 'if escrow.status==\"draft\" and financial.deposit_status==\"held\": state=\"FUNDED\"' branch, OR set escrow.status='active' inside deposit_funds()."
+}

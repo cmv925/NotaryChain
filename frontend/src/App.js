@@ -42,6 +42,7 @@ import {
   VerifyCertificate, EscrowDashboard, ANANDashboard, FraudIntelligencePage, AIIntelligenceHub,
   PublicAuditTrail, CeremonyReplay, MultiSignature, CertificateExpiration, TokenizedEscrow,
   PCVDashboard, PCVPublicVerify,
+  BatchCertificates,
 } from './lazyRoutes';
 
 const PageLoader = () => (
@@ -716,6 +717,14 @@ function App() {
               }
             />
             <Route path="/pcv/verify/:packetId" element={<PCVPublicVerify />} />
+            <Route
+              path="/admin/batch-certificates"
+              element={
+                <ProtectedRoute>
+                  <BatchCertificates />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
           </Suspense>
           <PlatformFooter />

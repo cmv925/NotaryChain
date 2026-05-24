@@ -15,8 +15,30 @@ import {
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart as RechartsPie, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
+import AuditExportPanel from '../AuditExportPanel';
+import { Link } from 'react-router-dom';
 
 export const AuditTab = ({ auditLogs }) => (
+        <div className="space-y-6">
+          {/* Quick-link to companion admin report tools */}
+          <Link
+            to="/admin/batch-certificates"
+            className="block bg-gradient-to-r from-coral-500/10 to-coral-500/5 hover:from-coral-500/15 hover:to-coral-500/10 border border-coral-200 rounded-lg p-4 transition-colors group"
+            data-testid="batch-cert-link-card"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-coral-500/15 flex items-center justify-center">
+                <FileText className="w-5 h-5 text-coral-600" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-navy-900">Batch Certificate Generator</p>
+                <p className="text-xs text-slate-600">Bundle multiple ceremony certificates into a single ZIP — perfect for legal handovers.</p>
+              </div>
+              <ChevronDown className="w-4 h-4 text-coral-600 -rotate-90 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          <AuditExportPanel />
           <Card className="bg-white border-slate-200">
             <CardContent className="p-6">
               <h3 className="text-lg font-bold text-navy-900 mb-6">Audit Logs</h3>
@@ -48,6 +70,7 @@ export const AuditTab = ({ auditLogs }) => (
               </div>
             </CardContent>
           </Card>
+        </div>
 );
 
 export default AuditTab;
