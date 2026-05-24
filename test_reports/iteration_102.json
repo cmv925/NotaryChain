@@ -31,7 +31,7 @@
     "(LOW) Investigate React 'unique key prop' warning on /dashboard render (unrelated to SDK Phase 1, found incidentally)."
   ],
   "critical_code_review_comments": [
-    "sdk_routes.py L226: embed_url = `{PUBLIC_BACKEND_URL}/embed/ceremony/{token}` — PUBLIC_BACKEND_URL is correctly populated from .env (https://trust-seal-staging.preview.emergentagent.com), so embed URLs work. Good defensive fallback chain (PUBLIC_BACKEND_URL → REACT_APP_BACKEND_URL → '').",
+    "sdk_routes.py L226: embed_url = `{PUBLIC_BACKEND_URL}/embed/ceremony/{token}` — PUBLIC_BACKEND_URL is correctly populated from .env (https://merkle-dag-vault.preview.emergentagent.com), so embed URLs work. Good defensive fallback chain (PUBLIC_BACKEND_URL → REACT_APP_BACKEND_URL → '').",
     "sdk_routes.py emit_session_event (L261-304): event endpoint is fully public and unauthenticated. Anyone with a session_token can post arbitrary status transitions (e.g. mark sealed with fake hashes). For Phase 1 this is acceptable since simulation is the goal, but production must require a signed origin or pk validation. Tag as M2/M3 follow-up.",
     "sdk_routes.py L264: lookup uses find_one but full doc loaded just to get owner_user_id/publishable_key — fine at current scale, consider projection for hot path.",
     "Webhook dispatcher (_dispatch_webhooks): does not retry on 5xx/timeout. Fine for MVP but worth a retry-with-backoff for production reliability. Also no per-event delivery log doc — only counters on the webhook doc — making debugging harder.",

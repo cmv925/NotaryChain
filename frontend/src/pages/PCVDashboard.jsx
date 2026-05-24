@@ -12,6 +12,7 @@ import {
   Sparkles, Scale, Network, Zap, ArrowRight, ExternalLink,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import MerkleDagVisualizer from '../components/MerkleDagVisualizer';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api/pcv`;
@@ -709,29 +710,37 @@ function GraphTab({ headers, onChanged, dashboard }) {
       </div>
 
       {graph?.anchor ? (
-        <Card className="border-slate-200">
-          <CardContent className="p-6">
-            <div className="grid sm:grid-cols-2 gap-4 mb-4">
-              <div>
-                <p className="text-xs font-bold tracking-wider uppercase text-slate-500 mb-1">Merkle Root</p>
-                <code className="text-[10px] text-coral-700 break-all block bg-cream-200/50 p-2 rounded">{graph.anchor.root}</code>
+        <>
+          <Card className="border-slate-200">
+            <CardContent className="p-2 sm:p-3">
+              <MerkleDagVisualizer graph={graph} height={460} />
+            </CardContent>
+          </Card>
+
+          <Card className="border-slate-200">
+            <CardContent className="p-6">
+              <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <p className="text-xs font-bold tracking-wider uppercase text-slate-500 mb-1">Merkle Root</p>
+                  <code className="text-[10px] text-coral-700 break-all block bg-cream-200/50 p-2 rounded">{graph.anchor.root}</code>
+                </div>
+                <div>
+                  <p className="text-xs font-bold tracking-wider uppercase text-slate-500 mb-1">Hedera Anchor</p>
+                  {graph.anchor.hedera_transaction_id ? (
+                    <code className="text-[10px] text-emerald-700 break-all block bg-emerald-50 p-2 rounded">{graph.anchor.hedera_transaction_id}</code>
+                  ) : (
+                    <p className="text-sm text-amber-700">Not yet anchored</p>
+                  )}
+                </div>
               </div>
-              <div>
-                <p className="text-xs font-bold tracking-wider uppercase text-slate-500 mb-1">Hedera Anchor</p>
-                {graph.anchor.hedera_transaction_id ? (
-                  <code className="text-[10px] text-emerald-700 break-all block bg-emerald-50 p-2 rounded">{graph.anchor.hedera_transaction_id}</code>
-                ) : (
-                  <p className="text-sm text-amber-700">Not yet anchored</p>
-                )}
+              <div className="grid grid-cols-3 gap-4 text-center pt-4 border-t border-slate-200">
+                <div><p className="text-2xl font-serif text-navy-900">{graph.node_count}</p><p className="text-xs text-slate-500">Nodes</p></div>
+                <div><p className="text-2xl font-serif text-navy-900">{graph.anchor.built_at?.slice(0, 10)}</p><p className="text-xs text-slate-500">Built</p></div>
+                <div><p className="text-2xl font-serif text-navy-900">{graph.anchor.hedera_topic_id || '—'}</p><p className="text-xs text-slate-500">Topic</p></div>
               </div>
-            </div>
-            <div className="grid grid-cols-3 gap-4 text-center pt-4 border-t border-slate-200">
-              <div><p className="text-2xl font-serif text-navy-900">{graph.node_count}</p><p className="text-xs text-slate-500">Nodes</p></div>
-              <div><p className="text-2xl font-serif text-navy-900">{graph.anchor.built_at?.slice(0, 10)}</p><p className="text-xs text-slate-500">Built</p></div>
-              <div><p className="text-2xl font-serif text-navy-900">{graph.anchor.hedera_topic_id || '—'}</p><p className="text-xs text-slate-500">Topic</p></div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </>
       ) : (
         <Card className="border-slate-200">
           <CardContent className="p-6 text-center">

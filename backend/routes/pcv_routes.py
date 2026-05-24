@@ -261,6 +261,8 @@ async def get_graph(max_nodes: int = Query(500, ge=1, le=10000), current_user: U
 async def anchor_graph(anchor_id: str, current_user: User = Depends(get_current_user)):
     await _require_admin_or_member(current_user)
     res = await pcv_service.anchor_graph_to_hedera(anchor_id)
+    if not res.get("ok"):
+        raise HTTPException(404, res.get("error", "Anchor not found"))
     return res
 
 

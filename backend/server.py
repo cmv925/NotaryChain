@@ -473,6 +473,7 @@ async def create_indexes():
         asyncio.create_task(scheduled_reports_routes.start_report_scheduler())
         asyncio.create_task(hbar_alert_service.run_balance_checker())
         asyncio.create_task(service_health_monitor.run_service_monitor())
+        asyncio.create_task(pcv_service.run_pcv_scheduler())
 
         logger.info("Database indexes created/verified successfully")
     except Exception as e:

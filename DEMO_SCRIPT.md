@@ -10,12 +10,12 @@
 
 ### Pre-flight checklist
 - [ ] Open these tabs in order, in a fresh Chrome window:
-  1. `https://trust-seal-staging.preview.emergentagent.com/` (homepage)
-  2. `https://trust-seal-staging.preview.emergentagent.com/verify` (public verifier)
-  3. `https://trust-seal-staging.preview.emergentagent.com/marketplace` (notary marketplace)
-  4. `https://trust-seal-staging.preview.emergentagent.com/trust-graph/demo` (trust graph demo)
+  1. `https://merkle-dag-vault.preview.emergentagent.com/` (homepage)
+  2. `https://merkle-dag-vault.preview.emergentagent.com/verify` (public verifier)
+  3. `https://merkle-dag-vault.preview.emergentagent.com/marketplace` (notary marketplace)
+  4. `https://merkle-dag-vault.preview.emergentagent.com/trust-graph/demo` (trust graph demo)
   5. `https://hashscan.io/mainnet/topic/0.0.10373605` (Hedera mainnet — open in background)
-  6. `https://trust-seal-staging.preview.emergentagent.com/login` (login page, pre-fill admin creds)
+  6. `https://merkle-dag-vault.preview.emergentagent.com/login` (login page, pre-fill admin creds)
 
 - [ ] Confirm credentials work:
   - Admin: `admin@notarychain.com` / `Admin123!`

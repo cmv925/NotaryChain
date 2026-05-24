@@ -16,6 +16,7 @@ All persistence is in MongoDB. Hedera operations use the existing
 """
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import logging
@@ -114,9 +115,8 @@ async def run_integrity_scan(org_id: Optional[str] = None, manual: bool = False,
         if not current_hash:
             current_hash = recorded_hash
 
-        status = "intact"
+        # status indicator (kept implicit; logged via issue records)
         if recorded_hash and current_hash and recorded_hash != current_hash:
-            status = "mismatch"  # noqa: F841 — kept for logging/debugging
             issues_found += 1
             await _record_integrity_issue(
                 scan_id=scan_id,
@@ -131,7 +131,6 @@ async def run_integrity_scan(org_id: Optional[str] = None, manual: bool = False,
             )
         elif not hedera_tx and recorded_hash:
             # Sealed doc missing its Hedera anchor reference — soft issue
-            status = "missing_anchor"
             issues_found += 1
             await _record_integrity_issue(
                 scan_id=scan_id,
@@ -172,6 +171,21 @@ async def run_integrity_scan(org_id: Optional[str] = None, manual: bool = False,
 
 
 async def _record_integrity_issue(**kwargs) -> None:
+    # Dedupe: if an open issue with same (notarization_id, kind, recorded_hash, current_hash) already exists, skip
+    existing = await _db.pcv_integrity_issues.find_one({
+        "notarization_id": kwargs.get("notarization_id"),
+        "kind": kwargs.get("kind"),
+        "recorded_hash": kwargs.get("recorded_hash"),
+        "current_hash": kwargs.get("current_hash"),
+        "status": "open",
+    }, {"_id": 0, "id": 1})
+    if existing:
+        # Update its scan_id to the latest scan but don't insert duplicate row
+        await _db.pcv_integrity_issues.update_one(
+            {"id": existing["id"]},
+            {"$set": {"scan_id": kwargs.get("scan_id"), "last_seen_at": _iso()}},
+        )
+        return
     issue = {
         "id": uuid.uuid4().hex,
         "scan_id": kwargs.get("scan_id"),
@@ -413,17 +427,19 @@ async def score_portfolio_against_rules(organization_id: Optional[str] = None) -
 
         await _db.pcv_compliance_scores.update_one(
             {"notarization_id": doc.get("id"), "organization_id": doc.get("organization_id")},
-            {"$set": {
-                "id": uuid.uuid4().hex,
-                "notarization_id": doc.get("id"),
-                "organization_id": doc.get("organization_id"),
-                "state_code": state,
-                "document_type": doc_type,
-                "score": round(avg, 1),
-                "status": status,
-                "rule_scores": rule_scores,
-                "scored_at": _iso(),
-            }},
+            {
+                "$setOnInsert": {"id": uuid.uuid4().hex},
+                "$set": {
+                    "notarization_id": doc.get("id"),
+                    "organization_id": doc.get("organization_id"),
+                    "state_code": state,
+                    "document_type": doc_type,
+                    "score": round(avg, 1),
+                    "status": status,
+                    "rule_scores": rule_scores,
+                    "scored_at": _iso(),
+                },
+            },
             upsert=True,
         )
 
@@ -494,7 +510,10 @@ async def _create_remediation_task(score: Dict[str, Any]) -> Dict[str, Any]:
             "action": _action_for_rule(fr["rule_id"]),
         })
 
-    summary = _generate_plan_summary(score, failing_rules)
+    # Try AI-generated context-aware summary first; fall back to deterministic template.
+    summary = await _generate_plan_summary_ai(score, failing_rules)
+    if not summary:
+        summary = _generate_plan_summary(score, failing_rules)
 
     task = {
         "id": uuid.uuid4().hex,
@@ -505,6 +524,7 @@ async def _create_remediation_task(score: Dict[str, Any]) -> Dict[str, Any]:
         "current_score": score.get("score"),
         "status": "pending",
         "ai_summary": summary,
+        "ai_model": "gpt-5.2" if summary != _generate_plan_summary(score, failing_rules) else "template",
         "plan_steps": plan_steps,
         "drafted_at": _iso(),
         "created_at": _iso(),
@@ -512,6 +532,51 @@ async def _create_remediation_task(score: Dict[str, Any]) -> Dict[str, Any]:
     await _db.pcv_remediation_tasks.insert_one(dict(task))
     task.pop("_id", None)
     return task
+
+
+async def _generate_plan_summary_ai(score: Dict[str, Any], failing_rules: List[Dict[str, Any]]) -> Optional[str]:
+    """
+    Use GPT-5.2 to draft a 2-3 sentence, context-aware remediation summary.
+    Falls back gracefully (returns None) if EMERGENT_LLM_KEY is missing or the call fails.
+    The caller substitutes a deterministic template when this returns None.
+    """
+    if not failing_rules:
+        return None
+    api_key = os.environ.get("EMERGENT_LLM_KEY")
+    if not api_key:
+        return None
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+    except Exception:
+        return None
+
+    rule_lines = "\n".join([
+        f"- [{fr['severity'].upper()}] {fr['title']} ({fr['rule_id']}): {_action_for_rule(fr['rule_id'])}"
+        for fr in failing_rules
+    ])
+    prompt = (
+        f"You are a senior notary-law compliance officer drafting a remediation summary for an enterprise client. "
+        f"A notarized {score.get('document_type', 'document')} in {score.get('state_code', 'UNKNOWN')} "
+        f"scored {score.get('score', 0):.0f}/100 against current regulatory rules. "
+        f"The following rules failed:\n\n{rule_lines}\n\n"
+        f"Write 2-3 sentences (max 60 words) explaining what's wrong, the business risk, and "
+        f"that an AI plan is ready for review. Use a calm, professional tone. Plain text only, no markdown."
+    )
+    try:
+        chat = LlmChat(
+            api_key=api_key,
+            session_id=f"pcv-remediation-{uuid.uuid4().hex[:8]}",
+            system_message="You are a senior notary-law compliance officer. Write concise, plain-text remediation summaries for enterprise clients. No markdown, no preamble.",
+        ).with_model("openai", "gpt-5.2")
+        response = await chat.send_message(UserMessage(text=prompt))
+        text = (response or "").strip().strip('"').strip("'")
+        # Guard against runaway responses
+        if len(text) < 30 or len(text) > 600:
+            return None
+        return text
+    except Exception as e:
+        logger.warning("[PCV.remediation] AI summary failed, falling back to template: %s", e)
+        return None
 
 
 def _action_for_rule(rule_id: str) -> str:
@@ -693,14 +758,16 @@ async def anchor_graph_to_hedera(anchor_id: str) -> Dict[str, Any]:
             logger.warning("[PCV.graph] Hedera submission failed: %s", e)
 
     if not tx_id:
-        # Fallback simulated tx id (mainnet topic 0.0.10373605 format)
         tx_id = f"0.0.10373605@{int(_now().timestamp())}.{secrets.randbelow(1_000_000_000):09d}"
+        simulated = True
+    else:
+        simulated = False
 
     await _db.pcv_portfolio_graph_anchors.update_one(
         {"id": anchor_id},
-        {"$set": {"hedera_transaction_id": tx_id, "anchored_at": _iso()}},
+        {"$set": {"hedera_transaction_id": tx_id, "anchored_at": _iso(), "simulated_anchor": simulated}},
     )
-    return {"ok": True, "transaction_id": tx_id, "already_anchored": False}
+    return {"ok": True, "transaction_id": tx_id, "already_anchored": False, "simulated": simulated}
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -907,3 +974,101 @@ async def dashboard_summary(organization_id: Optional[str] = None) -> Dict[str, 
             "packets_generated": packets_generated,
         },
     }
+
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# DAILY SCHEDULER
+# ═════════════════════════════════════════════════════════════════════════════
+
+# Default cadence in seconds. Override via PCV_SCAN_INTERVAL_SECONDS env var
+# (mainly useful for staging/integration tests).
+_DEFAULT_SCAN_INTERVAL = 24 * 60 * 60   # 24 hours
+_DEFAULT_RESCORE_INTERVAL = 6 * 60 * 60  # 6 hours
+_DEFAULT_GRAPH_REBUILD_INTERVAL = 12 * 60 * 60  # 12 hours
+_INITIAL_DELAY = 5 * 60  # 5 min after boot to let services warm up
+
+_scheduler_started = False
+
+
+async def run_pcv_scheduler() -> None:
+    """
+    Long-running coroutine launched from FastAPI startup that periodically:
+      1. Re-hashes every sealed document and cross-checks against Hedera (24h cadence)
+      2. Re-scores portfolio against current regulatory rules (6h cadence)
+      3. Rebuilds the portfolio integrity graph (12h cadence)
+
+    Each cycle is independent — a failure in one does not stop the others.
+    Per-org scope is determined by the documents themselves; the scheduler runs
+    a single global pass per cycle, which the existing functions partition by
+    `organization_id` on the underlying records.
+    """
+    global _scheduler_started
+    if _scheduler_started:
+        logger.warning("[PCV.scheduler] Already started — refusing to double-launch")
+        return
+    _scheduler_started = True
+
+    scan_interval = int(os.environ.get("PCV_SCAN_INTERVAL_SECONDS", _DEFAULT_SCAN_INTERVAL))
+    rescore_interval = int(os.environ.get("PCV_RESCORE_INTERVAL_SECONDS", _DEFAULT_RESCORE_INTERVAL))
+    graph_interval = int(os.environ.get("PCV_GRAPH_REBUILD_INTERVAL_SECONDS", _DEFAULT_GRAPH_REBUILD_INTERVAL))
+    initial_delay = int(os.environ.get("PCV_SCHEDULER_INITIAL_DELAY_SECONDS", _INITIAL_DELAY))
+
+    logger.info(
+        "[PCV.scheduler] Starting — scan=%ds rescore=%ds graph=%ds initial_delay=%ds",
+        scan_interval, rescore_interval, graph_interval, initial_delay,
+    )
+    await asyncio.sleep(initial_delay)
+
+    # Track last-run timestamps so each cycle wakes up independently
+    next_scan_at = _now()
+    next_rescore_at = _now()
+    next_graph_at = _now()
+
+    while True:
+        now = _now()
+        try:
+            if now >= next_scan_at:
+                logger.info("[PCV.scheduler] Daily integrity scan starting")
+                result = await run_integrity_scan(manual=False)
+                logger.info(
+                    "[PCV.scheduler] Integrity scan complete — docs=%d issues=%d",
+                    result.get("documents_scanned", 0), result.get("issues_found", 0),
+                )
+                next_scan_at = now + timedelta(seconds=scan_interval)
+
+            if now >= next_rescore_at:
+                logger.info("[PCV.scheduler] Portfolio re-score starting")
+                result = await score_portfolio_against_rules()
+                # Auto-draft remediation tasks for newly-flagged docs
+                drafted = await draft_remediation_for_low_scores()
+                logger.info(
+                    "[PCV.scheduler] Re-score complete — scored=%d flagged=%d drafted=%d",
+                    result.get("scored", 0), result.get("flagged", 0), drafted,
+                )
+                next_rescore_at = now + timedelta(seconds=rescore_interval)
+
+            if now >= next_graph_at:
+                logger.info("[PCV.scheduler] Portfolio graph rebuild starting")
+                # Rebuild graph per distinct organization_id seen in the portfolio
+                org_ids = await _db.notarization_requests.distinct(
+                    "organization_id", {"status": "completed"},
+                )
+                org_ids = [o for o in org_ids if o is not None] + [None]  # also rebuild global
+                for org_id in org_ids:
+                    try:
+                        await rebuild_portfolio_graph(organization_id=org_id)
+                    except Exception as e:
+                        logger.warning("[PCV.scheduler] Graph rebuild org=%s failed: %s", org_id, e)
+                next_graph_at = now + timedelta(seconds=graph_interval)
+        except Exception as e:
+            logger.exception("[PCV.scheduler] Cycle failed (will retry next tick): %s", e)
+
+        # Sleep until the next earliest deadline (cap at 60s for responsiveness)
+        sleep_for = min(
+            (next_scan_at - _now()).total_seconds(),
+            (next_rescore_at - _now()).total_seconds(),
+            (next_graph_at - _now()).total_seconds(),
+            60.0,
+        )
+        await asyncio.sleep(max(sleep_for, 5.0))
