@@ -109,6 +109,38 @@ function jsxNameOf(openingEl, t) {
 const PORTAL_SUFFIX_RE =
   /(Trigger|Portal|Content|Overlay|Viewport|Anchor|Arrow)$/;
 
+// SVG element names — wrapping their dynamic children in <span display:contents>
+// breaks rendering because <span> is foreign content inside the SVG namespace.
+const SVG_ELEMENTS = new Set([
+  "svg", "g", "defs", "symbol", "use", "marker", "mask", "clipPath", "pattern",
+  "filter", "foreignObject", "switch", "view",
+  "circle", "ellipse", "line", "path", "polygon", "polyline", "rect",
+  "text", "tspan", "textPath", "desc", "title",
+  "linearGradient", "radialGradient", "stop",
+  "image", "animate", "animateMotion", "animateTransform", "set", "mpath",
+  "feBlend", "feColorMatrix", "feComponentTransfer", "feComposite",
+  "feConvolveMatrix", "feDiffuseLighting", "feDisplacementMap", "feDistantLight",
+  "feDropShadow", "feFlood", "feFuncA", "feFuncB", "feFuncG", "feFuncR",
+  "feGaussianBlur", "feImage", "feMerge", "feMergeNode", "feMorphology",
+  "feOffset", "fePointLight", "feSpecularLighting", "feSpotLight", "feTile",
+  "feTurbulence",
+]);
+
+// Returns true if this JSX path is inside an <svg> ancestor (or is the <svg> itself).
+function isInsideSvgContext(jsxPath, t) {
+  let p = jsxPath;
+  while (p) {
+    if (t.isJSXElement(p.node)) {
+      const open = p.node.openingElement;
+      if (open && t.isJSXIdentifier(open.name) && open.name.name === "svg") {
+        return true;
+      }
+    }
+    p = p.parentPath;
+  }
+  return false;
+}
+
 function isPortalishName(name, RADIX_ROOTS) {
   if (!name) return false;
   return RADIX_ROOTS.has(name) || PORTAL_SUFFIX_RE.test(name);
@@ -933,7 +965,9 @@ const babelMetadataPlugin = ({ types: t }) => {
           if (!localName) return;
 
           // Search for usages of this component
-          importPath.parentPath.parentPath.traverse({
+          const searchRoot = importPath.parentPath?.parentPath;
+          if (!searchRoot) return;
+          searchRoot.traverse({
             JSXOpeningElement(jsxPath) {
               if (result) return;
 
@@ -1717,6 +1751,12 @@ const babelMetadataPlugin = ({ types: t }) => {
         // Only process capitalized components (React components)
         if (!/^[A-Z]/.test(elementName)) {
           if (hasProp(openingElement, "data-ve-dynamic") || hasProp(openingElement, "x-excluded")) {
+            return;
+          }
+          // Skip SVG elements — wrapping dynamic children in <span style="display:contents">
+          // breaks rendering because <span> inside an SVG namespace is foreign content
+          // and its SVG descendants do not get painted.
+          if (SVG_ELEMENTS.has(elementName) || isInsideSvgContext(jsxPath, t)) {
             return;
           }
           wrapDynamicExpressionChildren(jsxPath, t);
