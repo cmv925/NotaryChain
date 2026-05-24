@@ -1292,15 +1292,26 @@ async def get_contract_state(escrow_id: str, request: Request):
             {"escrow_id": escrow_id}, {"$set": {"smart_contract": sc}}
         )
 
-    # Reconcile state with escrow lifecycle
-    status_to_state = {
-        "draft": "DRAFT",
-        "active": "FUNDED" if escrow.get("financial", {}).get("deposit_status") == "held" else "DRAFT",
-        "conditions_met": "CONDITIONS_MET",
-        "settled": "RELEASED",
-        "refunded": "REFUNDED",
-    }
-    sc["state"] = status_to_state.get(escrow.get("status"), sc.get("state", "DRAFT"))
+    # Reconcile state with escrow lifecycle.
+    # Priority: terminal lifecycle states (settled/refunded) > persisted sc.state
+    # > deposit_status > default DRAFT. This preserves FUNDED set by /deposit
+    # even though escrow.status may still read "active" or "draft".
+    persisted_state = sc.get("state") or "DRAFT"
+    escrow_status = escrow.get("status")
+    deposit_status = escrow.get("financial", {}).get("deposit_status")
+
+    if escrow_status == "settled":
+        sc["state"] = "RELEASED"
+    elif escrow_status == "refunded":
+        sc["state"] = "REFUNDED"
+    elif escrow_status == "conditions_met":
+        sc["state"] = "CONDITIONS_MET"
+    elif persisted_state in ("FUNDED", "CONDITIONS_MET"):
+        sc["state"] = persisted_state  # respect persisted progression
+    elif deposit_status == "held":
+        sc["state"] = "FUNDED"
+    else:
+        sc["state"] = "DRAFT"
     amount_held = escrow.get("financial", {}).get("amount_held") or 0
     sc["balance_usd"] = float(amount_held)
     # rough HBAR conversion just for the demo dashboard
