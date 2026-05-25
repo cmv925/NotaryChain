@@ -143,7 +143,7 @@ async def get_crypto_prices(crypto_ids: List[str]) -> Dict[str, float]:
                     _price_cache[crypto_id] = price
                     _price_cache_time[crypto_id] = now
                     result[crypto_id] = price
-        except Exception as e:
+        except Exception:
             # Fallback prices if API fails
             fallback_prices = {
                 "bitcoin": 95000.0,

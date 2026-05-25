@@ -115,7 +115,7 @@ async def create_hcs_topic(
         
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500, detail="Topic creation failed. Please try again.")
 
 
@@ -161,7 +161,7 @@ async def submit_topic_message(
         
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500, detail="Message submission failed. Please try again.")
 
 
@@ -215,7 +215,7 @@ async def get_topic_info(
             "explorer_url": f"https://hashscan.io/{hedera_service.network}/topic/{topic_id}"
         }
         
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500, detail="Failed to get topic. Please try again.")
 
 
@@ -275,7 +275,7 @@ async def seal_document(
         
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500, detail="Seal operation failed. Please try again.")
 
 
@@ -360,7 +360,7 @@ async def seal_file(
         
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500, detail="File seal failed. Please try again.")
 
 
@@ -394,7 +394,7 @@ async def verify_document(request: VerifyDocumentRequest):
             "network": blockchain_result.get("network")
         }
         
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500, detail="Verification failed. Please try again.")
 
 
@@ -436,7 +436,7 @@ async def verify_by_hash(document_hash: str):
             "network": seal_record.get("network")
         }
         
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500, detail="Verification failed. Please try again.")
 
 

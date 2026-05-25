@@ -210,7 +210,7 @@ async def create_checkout(
             amount=amount
         )
         
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500, detail="Failed to create checkout. Please try again.")
 
 
@@ -287,7 +287,7 @@ async def get_payment_status(
             "metadata": checkout_status.metadata
         }
         
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500, detail="Failed to check status. Please try again.")
 
 
@@ -344,5 +344,5 @@ async def stripe_webhook(request: Request):
         
         return {"status": "received"}
         
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=400, detail="Webhook processing error")

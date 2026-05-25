@@ -87,7 +87,7 @@ async def _check_expiring_documents():
                     title=title,
                     message=message,
                     notif_type=level,
-                    link=f"/dashboard",
+                    link="/dashboard",
                     metadata={"document_id": doc_id, "expiry_threshold": label},
                 )
 

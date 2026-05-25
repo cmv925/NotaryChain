@@ -101,7 +101,7 @@ Respond ONLY with a valid JSON object in this exact format:
             analysis_result = json.loads(response_text)
             return analysis_result
             
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             # Fallback if JSON parsing fails
             return {
                 "confidence_score": 50,

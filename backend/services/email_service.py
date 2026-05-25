@@ -514,13 +514,11 @@ class EmailService:
     ) -> dict:
         """Send notification when a document is nearing expiry or has expired"""
         if is_expired:
-            badge_class = "expired-badge"
             badge_text = "EXPIRED"
             heading = "Your Document Has Expired"
             body_text = f'Your document <span class="highlight">"{document_name}"</span> has expired. Please renew or re-notarize it to maintain its validity.'
             badge_bg = "#ff6b6b"
         else:
-            badge_class = "warning-badge"
             badge_text = f"EXPIRES IN {expiry_label.upper()}"
             heading = "Document Expiring Soon"
             body_text = f'Your document <span class="highlight">"{document_name}"</span> will expire in <strong>{expiry_label}</strong>. Please take action before it becomes invalid.'

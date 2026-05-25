@@ -136,7 +136,7 @@ async def match_notary_endpoint(body: MatchNotaryRequest, request: Request):
     """AI-powered notary recommendation engine."""
     from middleware.feature_gate import enforce_feature_gate
     await enforce_feature_gate(request, "ai_intelligence_hub")
-    user = await _get_user(request)
+    user = await _get_user(request)  # noqa: F841 - auth gate
     from services.ai_document_intelligence import match_notary
 
     result = await match_notary(db, body.document_type, body.jurisdiction, body.urgency)
@@ -151,7 +151,7 @@ async def match_notary_endpoint(body: MatchNotaryRequest, request: Request):
 @limiter.limit("20/minute")
 async def fraud_analytics_endpoint(request: Request):
     """Admin-facing fraud detection analytics dashboard data."""
-    user = await _require_admin_or_notary(request)
+    user = await _require_admin_or_notary(request)  # noqa: F841 - auth gate
     from services.ai_document_intelligence import get_fraud_analytics
 
     result = await get_fraud_analytics(db)

@@ -120,7 +120,7 @@ async def start_anan_ceremony(req: ANANCeremonyRequest, request: Request):
 @router.post("/ceremony/{ceremony_id}/execute")
 async def execute_anan_ceremony(ceremony_id: str, request: Request):
     """Execute the full ANAN blind scoring pipeline (non-streaming)."""
-    user = await _get_user(request)
+    user = await _get_user(request)  # noqa: F841 - auth gate
     ceremony = await db.anan_ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
     if not ceremony:
         raise HTTPException(status_code=404, detail="ANAN ceremony not found")
@@ -273,7 +273,7 @@ async def _stream_anan_pipeline(ceremony_id: str):
         yield _sse("error", {"message": f"Ceremony is already {ceremony['status']}"})
         return
 
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(timezone.utc).isoformat()  # noqa: F841 - reserved for future stage timestamps
     await db.anan_ceremonies.update_one({"ceremony_id": ceremony_id}, {"$set": {"status": "in_progress"}})
     yield _sse("ceremony_started", {"ceremony_id": ceremony_id, "protocol": "BLIND_2OF3"})
 

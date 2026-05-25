@@ -174,7 +174,7 @@ async def list_escrows(request: Request):
 @router.get("/templates")
 async def get_escrow_templates(request: Request):
     """Get available escrow templates."""
-    user = await _get_user(request)
+    user = await _get_user(request)  # noqa: F841 - auth gate
     templates = []
     for t in ESCROW_TEMPLATES.values():
         templates.append({

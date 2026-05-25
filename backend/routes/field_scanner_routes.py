@@ -78,7 +78,7 @@ async def public_demo_scan(body: PublicDemoScan, request: Request):
 
     used = await db.scanner_demo_quota.count_documents({"bucket": bucket})
     if used >= 5:
-        raise HTTPException(status_code=429, detail=f"Daily demo limit reached (5 per day). Sign up for unlimited scans.")
+        raise HTTPException(status_code=429, detail="Daily demo limit reached (5 per day). Sign up for unlimited scans.")
     await db.scanner_demo_quota.insert_one({"bucket": bucket, "ip": ip, "at": datetime.now(timezone.utc).isoformat()})
 
     page_b64_list = [p.image_base64 for p in body.pages]

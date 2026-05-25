@@ -148,7 +148,7 @@ class TransactionOrchestratorService:
         if transaction_data.get("target_completion_date"):
             try:
                 target_date = datetime.fromisoformat(transaction_data["target_completion_date"].replace('Z', '+00:00'))
-            except:
+            except (ValueError, TypeError, AttributeError):
                 target_date = datetime.now(timezone.utc) + timedelta(days=30)
         
         transaction = {
@@ -715,7 +715,7 @@ class TransactionOrchestratorService:
                         "action": "Expedite remaining tasks",
                         "priority": "high"
                     })
-            except:
+            except (ValueError, TypeError, KeyError):
                 pass
         
         risk_score = min(100, risk_score)

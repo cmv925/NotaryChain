@@ -299,7 +299,6 @@ async def generate_template_pdf(
     # Track generation
     await db.templates.update_one({"id": template_id}, {"$inc": {"usage_count": 1}})
 
-    filename = os.path.basename(filepath)
     return FileResponse(
         filepath,
         media_type="application/pdf",

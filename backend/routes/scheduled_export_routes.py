@@ -95,7 +95,8 @@ async def update_config(config_id: str, request: Request, current_user: User = D
     if not existing:
         raise HTTPException(status_code=404, detail="Config not found")
     updates: dict = {"updated_at": datetime.now(timezone.utc).isoformat()}
-    if "name" in body: updates["name"] = body["name"]
+    if "name" in body:
+        updates["name"] = body["name"]
     if "cadence_hours" in body:
         c = int(body["cadence_hours"])
         if c < 1 or c > 24 * 90:
@@ -106,8 +107,10 @@ async def update_config(config_id: str, request: Request, current_user: User = D
         if not recs:
             raise HTTPException(status_code=400, detail="At least one recipient required")
         updates["recipients"] = recs
-    if "filters" in body: updates["filters"] = body["filters"]
-    if "enabled" in body: updates["enabled"] = bool(body["enabled"])
+    if "filters" in body:
+        updates["filters"] = body["filters"]
+    if "enabled" in body:
+        updates["enabled"] = bool(body["enabled"])
     await db.scheduled_export_configs.update_one({"id": config_id}, {"$set": updates})
     fresh = await db.scheduled_export_configs.find_one({"id": config_id}, {"_id": 0})
     return fresh

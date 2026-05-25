@@ -48,7 +48,6 @@ async def summarize_document(
 ):
     """Upload a document and get an AI-generated summary with key terms."""
     file_ext = os.path.splitext(file.filename)[1].lower()
-    mime_type = MIME_MAP.get(file_ext, 'application/octet-stream')
 
     if file_ext not in MIME_MAP:
         raise HTTPException(status_code=400, detail=f"Unsupported file type: {file_ext}")

@@ -1,5 +1,28 @@
 # NotaryChain Changelog
 
+## May 25, 2026 — Code Quality Pass (Critical & Important findings from review)
+
+### Backend (Python — actionable fixes)
+- **🔴 CRITICAL crash bug**: `routes/ceremony_routes.py` was using `logger` on lines 585, 619, 675 without importing it — would crash on FL pre-seal gate errors, threat-analysis failures, and FL journal auto-log failures. **Fix**: added `import logging` + `logger = logging.getLogger(__name__)` at top of file.
+- **🟡 Bare except → specific**: `services/transaction_orchestrator.py` lines 151 & 718 changed from `except:` → `except (ValueError, TypeError, AttributeError)` and `except (ValueError, TypeError, KeyError)` respectively. Stops masking unrelated errors.
+- **🟡 PEP 8 fixes (E701)**: `routes/scheduled_export_routes.py` — split 5× `if cond: stmt` one-liners into multi-line blocks.
+- **🟡 Ambiguous variable names (E741)**: renamed `l` → `ln` in `ai_escrow_service.py` and `anan_swarm.py` list comprehensions.
+- **🟡 Dead code / F841 cleanup**: removed `mime_type`, `filename`, `snapshot`, `hbar_settings_exist`, `badge_class` unused locals; marked 6 intentional auth-gate `user = await _get_user(request)` calls with `# noqa: F841 - auth gate` (they trigger the auth side-effect, the var itself is unused).
+- **🟡 ruff auto-fixes** (14 issues): unused `except Exception as e` exception vars → bare `except Exception`, empty f-strings → plain strings.
+- Final ruff state: **All checks passed!** (was 36 errors → 0).
+
+### Code-review findings investigated and confirmed already-fixed / false-positives
+- ❌ "29 undefined variables" in Python — actually 3 `F821` (all `logger` in ceremony_routes.py, now fixed); rest were F841 unused locals (29 instances), not crashes.
+- ❌ "Insecure `random` in security contexts" — all flagged `random.*` calls in `escrow_routes`, `escrow_oracle_service`, `ceremony_routes`, `kba_routes` were for **mock/demo data** (synthetic Hedera mock IDs, fake processing-time ms, mock confidence scores) OR for a deterministic-by-design seeded RNG in `MockKBAProvider` (`random.Random(seed)`). NOT used for tokens/keys/passwords. No fix needed.
+- ❌ "Dynamic imports = RCE vector" — all dynamic imports flagged use **literal module paths** (`from services.notification_service import broadcast_event`, etc.). No user-controlled input is passed to importlib. Not a security risk.
+- ❌ "XSS via `dangerouslySetInnerHTML` (7 instances)" — actually **1 instance** total in the entire frontend (`ANANDashboard.jsx:727`), and it is **already protected** by `DOMPurify.sanitize()` with explicit HTML+SVG profile. False positive.
+- ❌ "TransactionTimeline WebSocket memory leak" — cleanup is **already correctly implemented** (lines 148-154: clears reconnect timeout + closes WS on unmount, nullifies `wsRef.current`). False positive.
+- ⚠️ "localStorage tokens → switch to httpOnly cookies" — out of scope; JWT-in-localStorage is the documented integration pattern from `integration_playbook_expert_v2`, and migrating to httpOnly cookies requires backend cookie middleware + SameSite/CSRF + refresh-token flow (major architecture change, not a "fix").
+- ⚠️ "234 missing hook deps" — already swept by Architecture Refactor Pass 2 (Feb 27, 2026, iteration 112). The remaining instances are documented mount-only effects with explicit `// eslint-disable-next-line react-hooks/exhaustive-deps` comments. Adding deps to mount-only effects would cause infinite loops.
+- ⚠️ "Oversized components" — out of scope refactor; deferred to a future architectural pass to avoid high-risk low-immediate-value changes.
+
+
+
 ## May 25, 2026 — Global Color Theme Audit + Brand Compliance Sweep
 - Reported issue: Quick Seal page (`/demo`) rendered with off-brand bright-blue "Choose File" CTA + step indicator + a broken duplicate footer (white text on cream bg).
 - Fix scope (aggressive sweep — user-approved): swept **all 228 .jsx/.js source files** in `frontend/src` and globally replaced off-brand Tailwind classes with brand palette (coral-500 / navy-900 / cream-100 / gold-500):

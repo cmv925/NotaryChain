@@ -54,7 +54,6 @@ async def get_security_compliance(current_user: User = Depends(get_current_user)
 
     # --- Monitoring ---
     recent_audit_count = await db.audit_logs.count_documents({})
-    hbar_settings_exist = await db.system_settings.count_documents({"key": "hbar_alert_settings"})
     hbar_alerts_active = True  # always active — uses defaults if no custom settings
 
     # --- Locked accounts ---

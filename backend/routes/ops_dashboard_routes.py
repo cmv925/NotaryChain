@@ -295,9 +295,6 @@ async def get_service_health(current_user: User = Depends(get_current_user)):
     """Get current service health status and recent alerts."""
     await _check_admin(current_user)
 
-    # Get latest snapshot
-    snapshot = await db.system_settings.find_one({"key": "service_health_snapshot"}, {"_id": 0})
-
     # Get recent alerts (last 24h)
     yesterday = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
     recent_alerts = await db.service_health_alerts.find(

@@ -326,7 +326,7 @@ async def burn_tokens(escrow_id: str, request: Request):
 @router.get("/token/{escrow_id}")
 async def get_token_info(escrow_id: str, request: Request):
     """Get HTS token details for an escrow."""
-    user = await _get_user(request)
+    user = await _get_user(request)  # noqa: F841 - auth gate
     token = await db.hts_tokens.find_one({"escrow_id": escrow_id}, {"_id": 0})
     if not token:
         raise HTTPException(status_code=404, detail="No HTS token found")
@@ -350,7 +350,7 @@ async def list_tokens(request: Request):
 @router.get("/token/{escrow_id}/verify")
 async def verify_token_on_chain(escrow_id: str, request: Request):
     """Verify token existence on Hedera mirror node."""
-    user = await _get_user(request)
+    user = await _get_user(request)  # noqa: F841 - auth gate
     token = await db.hts_tokens.find_one({"escrow_id": escrow_id}, {"_id": 0})
     if not token:
         raise HTTPException(status_code=404, detail="No HTS token found")

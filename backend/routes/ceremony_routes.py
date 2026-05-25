@@ -8,6 +8,9 @@ import asyncio
 import random
 import hashlib
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/ceremony", tags=["ceremony"])
 db = None
