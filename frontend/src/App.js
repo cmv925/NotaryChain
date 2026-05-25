@@ -43,6 +43,7 @@ import {
   PublicAuditTrail, CeremonyReplay, MultiSignature, CertificateExpiration, TokenizedEscrow,
   PCVDashboard, PCVPublicVerify,
   BatchCertificates,
+  ACNDashboard, ACNPublicVerify,
 } from './lazyRoutes';
 
 const PageLoader = () => (
@@ -725,6 +726,15 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/acn"
+              element={
+                <ProtectedRoute>
+                  <ACNDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/acn/verify/:packetId" element={<ACNPublicVerify />} />
           </Routes>
           </Suspense>
           <PlatformFooter />

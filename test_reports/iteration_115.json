@@ -1,0 +1,54 @@
+{
+  "summary": "Tested ACN (Autonomous Cross-Border Notarization Network). Backend: 12/15 pytest tests pass; 3 failures — 2 caused by a real bug where the User Pydantic model lacks a 'role' field so all ACN admin checks (getattr(current_user,'role','user')) always evaluate to 'user' and 403 every admin; 1 caused by seal endpoint exceeding ingress timeout (~100s for 4 PDFs). Frontend: ACN dashboard loads, 4 tabs render, detection produces correct US-TX/US-NY/EU/DE-de pills with risk scores, Seal-on-Hedera button appears with correct count.",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "POST /api/acn/rule-updates (and admin-override path on seal/get/reseal/cert/list)",
+        "issue": "Admin role check is permanently broken. acn_routes.py uses `getattr(current_user, 'role', 'user') != 'admin'` but the User Pydantic model in /app/backend/models.py does NOT declare a `role` field, so the value is dropped during `User(**user_doc)` construction in auth_routes.get_current_user and the getattr always returns the 'user' default. Verified: fresh admin@notarychain.com token → /api/auth/me returns role:'admin', but /api/acn/rule-updates returns 403 {detail:'Admin only'}. Same model gap will silently disable admin-override for seal/reseal/get_packet/download_certificate/list_packets only_mine=false.",
+        "priority": "CRITICAL"
+      },
+      {
+        "endpoint": "POST /api/acn/packets/{id}/seal",
+        "issue": "Sealing 4 jurisdictions takes >100s and causes a 502 from the preview ingress. Root cause: ReportLab PDF builds + Hedera HCS submit are awaited sequentially on the request thread (acn_service.seal_packet loops jurisdictions synchronously, and _generate_certificate_pdf is sync ReportLab on the event loop). Recommend running pdf generation in asyncio.to_thread and parallelising HCS submissions with asyncio.gather.",
+        "priority": "HIGH"
+      }
+    ],
+    "minor": [
+      {"endpoint": "POST /api/acn/analyze", "issue": "When ceremony_id is provided but doesn't exist AND no doc_text, returns 400 'doc_text or ceremony_id (with ingested text) is required' — message is correct but a 404 for missing ceremony might be more accurate."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "Public passport (/acn/verify/:packetId)", "issue": "Page renders network call ok (200 from /api/acn/public/verify/{id}) but my heuristic check for 'Passport'/'Cross-Border' text didn't match — looks like rendering style differs. Visually the page came up. Not blocking; needs visual confirmation by main agent.", "affected_selectors": []}
+    ],
+    "design_issues": [
+      {"screen": "ACN /acn (any tab)", "issues": ["React console hydration warnings: <span> cannot be a child of <select>/<option>. The source is Emergent's visual-editor wrapper spans (data-ve-dynamic) injected around <option> elements inside the source-jurisdiction <select>. Cosmetic console noise; not a functional bug."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_acn_cross_border.py",
+    "/app/test_reports/pytest/iter115_acn.xml"
+  ],
+  "action_items": [
+    "Add `role: str = 'user'` (and ideally `id: str`) to the User Pydantic model in /app/backend/models.py so admin-role gating in ACN routes (and any other route relying on current_user.role) works. Alternatively, refactor ACN routes to look up the user doc directly (pattern used by fl_journal_routes/compliance_states_routes/alert_settings_routes).",
+    "Make seal_packet concurrent: run PDF generation via asyncio.to_thread and submit HCS messages with asyncio.gather to avoid 100s+ wall time and ingress 502s on 4+ jurisdictions.",
+    "Optional: when a ceremony_id is supplied but the ceremony is not found, return 404 instead of 400 for clarity."
+  ],
+  "critical_code_review_comments": [
+    "models.User missing `role` field is a project-wide latent risk — anywhere that depends on `current_user.role` is silently broken; ACN routes are the latest victim.",
+    "acn_service.seal_packet keeps a `certificate_pdf_b64` (full base64 PDF) inside the proof_doc returned from the function but already strips it before returning to the route — fine, but the in-memory `proof_doc` is mutated by motor's insert_one (adds _id), already handled with `proof_doc.pop('_id', None)`. Good.",
+    "acn_service uses `asyncio` import only to satisfy a linter at the bottom (line 504) — dead code; safe to remove.",
+    "Frontend /acn renders an <option> tree wrapped in Emergent visual-editor <span>, which triggers React hydration warnings. Not blocking, but worth flagging the framework wrapper."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_acn_cross_border.py (new pytest file, 15 tests)"
+  ],
+  "success_rate": {"backend": "80% (12/15)", "frontend": "~95% (dashboard + detection + risk pills + tabs verified)"},
+  "test_credentials": "Admin: admin@notarychain.com / Admin123!  · User: demo@test.com / Demo123!  ·  Notary: notarytest@test.com / Test123!",
+  "seed_data_creation": "Created 2 ACN packets during testing for demo@test.com (multi-jurisdiction TX+NY+DE-de+EU) and 1 for notarytest@test.com (FL).",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "After main agent adds `role` to User model (or refactors ACN admin checks), re-run /app/backend/tests/test_acn_cross_border.py. Specifically the 2 currently-failing admin tests (test_rule_update_admin_flags_affected_packet, test_rule_update_invalid_code_400) should pass. test_seal_packet_generates_proofs failed with 502 due to seal latency — either bump test TIMEOUT >180s, parallelise seal_packet in service, or use ?jurisdictions=US-FL (single juris) for speed.",
+  "rca of the issue": "Admin 403: routes/auth_routes.py:53 does `return User(**user)` where User is models.User. models.User extends UserBase (email, full_name) + id/created_at/is_active. It NEVER declares `role`. Pydantic v2 defaults to strict and drops unknown kwargs unless `model_config = ConfigDict(extra='ignore')` — net effect: the role from MongoDB never reaches the request handler. ACN routes do `getattr(current_user, 'role', 'user')` → returns the 'user' fallback even for genuine admin accounts → admin endpoints permanently 403. Fix: add `role: str = 'user'` to models.User, OR change ACN admin checks to look up the user doc (`await db.users.find_one({'email': current_user.email})`) like every other admin route in the codebase. Seal 502: ReportLab is CPU-bound + Hedera HCS is I/O-bound, both run sequentially per-jurisdiction in seal_packet → 4 jurisdictions × ~25s each = >100s, exceeds ingress read timeout. Fix: asyncio.to_thread + asyncio.gather."
+}

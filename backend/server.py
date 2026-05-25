@@ -124,6 +124,10 @@ from routes import admin_certs_routes, audit_export_routes
 admin_certs_routes.set_db(db)
 audit_export_routes.set_db(db)
 
+# Autonomous Cross-Border Notarization Network (ACN)
+from routes import acn_routes
+acn_routes.set_db(db)
+
 # Feature gate middleware needs db
 from middleware.feature_gate import set_db as set_gate_db
 set_gate_db(db)
@@ -269,6 +273,8 @@ app.include_router(compliance_phase2_routes.router)
 app.include_router(pcv_routes.router)
 app.include_router(admin_certs_routes.router)
 app.include_router(audit_export_routes.router)
+app.include_router(acn_routes.router)
+app.include_router(acn_routes.public_router)
 
 app.add_middleware(
     CORSMiddleware,
