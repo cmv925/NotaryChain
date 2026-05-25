@@ -138,6 +138,162 @@ JURISDICTION_RULES: dict[str, dict] = {
 }
 
 
+# ────────────────────────────────────────────────────────────────────────────
+# EXPANDED COVERAGE — all 50 US states + 10 ASEAN
+# Programmatic builder so the seed stays maintainable.
+# ────────────────────────────────────────────────────────────────────────────
+
+# All 50 US states + DC. The 7 already hand-crafted above (FL/TX/NY/CA/VA/DE/IL)
+# are excluded so we don't overwrite their bespoke jurat templates.
+_US_STATE_TABLE: list[tuple[str, str, bool, bool, str]] = [
+    # (state_code, full_name, ron_authorised, witness_required, effective_date)
+    ("AL", "Alabama", True, False, "2021-07-01"),
+    ("AK", "Alaska", True, False, "2020-01-01"),
+    ("AZ", "Arizona", True, False, "2019-07-01"),
+    ("AR", "Arkansas", True, False, "2021-07-28"),
+    ("CO", "Colorado", True, False, "2021-01-01"),
+    ("CT", "Connecticut", True, False, "2022-10-01"),
+    ("GA", "Georgia", True, False, "2024-07-01"),
+    ("HI", "Hawaii", True, False, "2020-01-01"),
+    ("ID", "Idaho", True, False, "2017-07-01"),
+    ("IN", "Indiana", True, False, "2019-07-01"),
+    ("IA", "Iowa", True, False, "2020-07-01"),
+    ("KS", "Kansas", True, False, "2021-01-01"),
+    ("KY", "Kentucky", True, False, "2020-01-01"),
+    ("LA", "Louisiana", True, False, "2020-08-01"),
+    ("ME", "Maine", True, False, "2023-07-01"),
+    ("MD", "Maryland", True, False, "2020-10-01"),
+    ("MA", "Massachusetts", True, False, "2023-01-01"),
+    ("MI", "Michigan", True, False, "2018-09-18"),
+    ("MN", "Minnesota", True, False, "2019-01-01"),
+    ("MS", "Mississippi", True, False, "2020-07-01"),
+    ("MO", "Missouri", True, False, "2020-12-31"),
+    ("MT", "Montana", True, False, "2015-10-01"),
+    ("NE", "Nebraska", True, False, "2020-07-01"),
+    ("NV", "Nevada", True, False, "2018-07-01"),
+    ("NH", "New Hampshire", True, False, "2023-01-01"),
+    ("NJ", "New Jersey", True, False, "2021-10-22"),
+    ("NM", "New Mexico", True, False, "2021-01-01"),
+    ("NC", "North Carolina", True, False, "2023-07-01"),
+    ("ND", "North Dakota", True, False, "2019-08-01"),
+    ("OH", "Ohio", True, False, "2019-09-20"),
+    ("OK", "Oklahoma", True, False, "2020-01-01"),
+    ("OR", "Oregon", True, False, "2022-01-01"),
+    ("PA", "Pennsylvania", True, False, "2020-10-29"),
+    ("RI", "Rhode Island", True, False, "2022-01-01"),
+    ("SC", "South Carolina", True, False, "2024-08-01"),
+    ("SD", "South Dakota", True, False, "2018-07-01"),
+    ("TN", "Tennessee", True, False, "2019-07-01"),
+    ("UT", "Utah", True, False, "2017-11-01"),
+    ("VT", "Vermont", True, False, "2019-07-01"),
+    ("WA", "Washington", True, False, "2020-10-01"),
+    ("WV", "West Virginia", True, False, "2021-06-04"),
+    ("WI", "Wisconsin", True, False, "2020-05-01"),
+    ("WY", "Wyoming", True, False, "2021-07-01"),
+    ("DC", "District of Columbia", True, False, "2021-04-27"),
+]
+
+# ASEAN — 10 sovereign states. RON laws vary widely; we mark which have
+# operational e-notary statutes today.
+_ASEAN_TABLE: list[tuple[str, str, bool, str, str]] = [
+    # (code, name, ron_authorised, effective_date, registry)
+    ("SG",  "Singapore", True,  "2023-01-15", "Singapore Academy of Law (Notaries Public Rules)"),
+    ("ID",  "Indonesia", False, "2014-03-15", "Notaris Indonesia (Ikatan Notaris Indonesia)"),
+    ("TH",  "Thailand",  False, "2003-01-01", "Lawyers Council of Thailand"),
+    ("VN",  "Vietnam",   False, "2014-06-20", "Ministry of Justice — Notary Department"),
+    ("MY",  "Malaysia",  True,  "2024-01-01", "Notaries Public Act 1959 (Akta 115)"),
+    ("PH",  "Philippines", True, "2020-07-14", "Office of the Court Administrator (A.M. No. 02-8-13-SC)"),
+    ("MM",  "Myanmar",   False, "2013-01-01", "Notarial Services Office"),
+    ("KH",  "Cambodia",  False, "2017-05-01", "Ministry of Justice of Cambodia"),
+    ("LA",  "Laos",      False, "2013-12-01", "Ministry of Justice — Lao PDR"),
+    ("BN",  "Brunei",    False, "2003-06-01", "Notaries Public Act (Cap. 168)"),
+]
+
+
+def _build_us_state_rule(code: str, name: str, ron_authorised: bool, witness_required: bool, effective_date: str) -> dict:
+    """Standard US-state RON entry — sensible defaults adapted from the
+    most common state RON statute language."""
+    witnesses = 2 if witness_required else 0
+    note = None if ron_authorised else "Jurisdiction does not authorise permanent RON; in-person execution may still be required."
+    jurat = (
+        f"State of {name}\n"
+        f"County of {{county}}\n\n"
+        f"{'Sworn to (or affirmed) and subscribed' if ron_authorised else 'Acknowledged'} "
+        f"before me by means of {'remote online notarisation' if ron_authorised else 'electronic record'} "
+        f"this {{date}} by {{signer_name}}, identified by {{id_form}}.\n\n"
+        f"____________________________\n"
+        f"{{notary_name}}\n"
+        f"Notary Public — State of {name}\n"
+        f"Commission #{{commission_id}}"
+    )
+    return {
+        "code": f"US-{code}", "name": name, "country": "US",
+        "ron_rules": {
+            "witnesses_required": witnesses,
+            "recording_required": ron_authorised,
+            "id_forms_accepted": ["DL", "passport", "state-id"],
+            "session_min_minutes": 0,
+            "registry": f"{code} Secretary of State",
+            **({"in_person_only_today": True, "note": note} if not ron_authorised else {}),
+        },
+        "jurat_template": jurat,
+        "effective_date": effective_date,
+    }
+
+
+def _build_asean_rule(code: str, name: str, ron_authorised: bool, effective_date: str, registry: str) -> dict:
+    note = None if ron_authorised else f"{name} does not authorise permanent online notarisation; in-person or hybrid execution may be required for full local effect."
+    jurat = (
+        f"{name}\n\n"
+        f"This notarial act was {'completed via remote video link' if ron_authorised else 'prepared for in-person execution'} "
+        f"on {{date}} for {{signer_name}} (identified by {{id_form}}). "
+        f"It is registered with the {registry}.\n\n"
+        f"____________________________\n"
+        f"{{notary_name}}\n"
+        f"Notary — {name}\n"
+        f"Registration #{{commission_id}}"
+    )
+    return {
+        "code": code, "name": name, "country": code,
+        "ron_rules": {
+            "witnesses_required": 0,
+            "recording_required": ron_authorised,
+            "id_forms_accepted": ["national-id", "passport", "driver-licence"],
+            "session_min_minutes": 0,
+            "registry": registry,
+            **({"in_person_only_today": True, "note": note} if not ron_authorised else {}),
+        },
+        "jurat_template": jurat,
+        "effective_date": effective_date,
+    }
+
+
+# Materialise the expanded jurisdiction set (no clobbering of hand-crafted rules)
+for _row in _US_STATE_TABLE:
+    _code = f"US-{_row[0]}"
+    if _code not in JURISDICTION_RULES:
+        JURISDICTION_RULES[_code] = _build_us_state_rule(*_row)
+
+for _row in _ASEAN_TABLE:
+    _code = _row[0]
+    if _code not in JURISDICTION_RULES:
+        JURISDICTION_RULES[_code] = _build_asean_rule(*_row)
+
+# Extend detection tokens with the new state/country names so heuristic
+# detection can spot them in document text.
+for _code, _name, *_ in _US_STATE_TABLE:
+    _full_code = f"US-{_code}"
+    if not any(c == _full_code for c, _ in _DETECTION_TOKENS):
+        _DETECTION_TOKENS.append((_full_code, [
+            rf"\bState of {_name}\b",
+            rf"\b{_name}\b(?!.{{0,20}}(Tech|University))",  # avoid common false positives
+            rf"\b{_code}\b(?:\s*notary|\s*statute|,?\s*USA)",
+        ]))
+for _code, _name, *_ in _ASEAN_TABLE:
+    if not any(c == _code for c, _ in _DETECTION_TOKENS):
+        _DETECTION_TOKENS.append((_code, [rf"\b{_name}\b"]))
+
+
 def _rule_version_hash(code: str) -> str:
     """Stable hash of the jurisdiction's current rule set — changes when rules change."""
     rule = JURISDICTION_RULES.get(code)
@@ -478,8 +634,68 @@ async def seal_packet(packet: dict, jurisdiction_codes: list[str], jurat_ctx: di
 
 
 # ────────────────────────────────────────────────────────────────────────────
+# NFT-MINTED VERIFICATION PASSPORT
+# Mode toggled by env `ACN_NFT_MODE`:
+#   • `real`  — uses Hedera HTS via hedera_service.mint_nft (when configured)
+#   • `mock`  — generates a synthetic NFT token id + serial (default; safe for demos)
+# ────────────────────────────────────────────────────────────────────────────
+
+
+def _nft_mode() -> str:
+    return (os.environ.get("ACN_NFT_MODE") or "mock").strip().lower()
+
+
+async def mint_passport_nft(packet: dict, requester_email: str) -> dict:
+    """Mints (or mocks) an NFT representing the Cross-Border Verification Passport
+    for the given packet. Stores token_id + serial on the packet doc.
+
+    Real-mode payload (HTS): a CID-style metadata pointer.
+      `hedera://nft/{token_id}/{serial}?packet={packet_id}`
+
+    Mock-mode payload: deterministic 0.0.X token + serial derived from packet hash.
+    """
+    mode = _nft_mode()
+    packet_id = packet["id"]
+    seed = hashlib.sha256(f"acn-nft::{packet_id}".encode()).hexdigest()
+    metadata_uri = f"hedera://acn/{packet_id}"
+
+    if mode == "real" and _hedera is not None:
+        # Best-effort real HTS mint. The SDK call may not be available in the
+        # preview env; in that case we fall back to mock so the UX is never blocked.
+        try:
+            if hasattr(_hedera, "mint_nft"):
+                res = await _hedera.mint_nft(metadata=metadata_uri.encode())
+                if res and res.get("success"):
+                    return {
+                        "mode": "real",
+                        "minted": True,
+                        "token_id": res.get("token_id"),
+                        "serial_number": res.get("serial_number"),
+                        "metadata_uri": metadata_uri,
+                        "transaction_id": res.get("transaction_id"),
+                        "explorer_url": res.get("explorer_url"),
+                    }
+        except Exception as e:
+            logger.warning("[ACN.nft] real mint failed, falling back to mock: %s", e)
+
+    # Mock-mode synthetic NFT
+    token_num = int(seed[:10], 16) % 9_000_000 + 1_000_000
+    serial = (int(seed[10:14], 16) % 9_000) + 1
+    return {
+        "mode": "mock",
+        "minted": True,
+        "token_id": f"0.0.{token_num}",
+        "serial_number": serial,
+        "metadata_uri": metadata_uri,
+        "transaction_id": "0x" + seed[:40],
+        "explorer_url": None,
+    }
+
+
+# ────────────────────────────────────────────────────────────────────────────
 # RULE UPDATES (re-seal triggers)
 # ────────────────────────────────────────────────────────────────────────────
+
 
 async def record_rule_update(code: str, change_summary: str, effective_date: str, actor: str) -> dict:
     """Records a rule-update event and flags every packet that has a proof for

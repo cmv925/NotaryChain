@@ -231,6 +231,7 @@ async def public_verify(packet_id: str):
         "detected_jurisdictions": packet.get("detected_jurisdictions", []),
         "sealed_at": packet.get("sealed_at"),
         "needs_reseal": packet.get("needs_reseal", False),
+        "nft": packet.get("nft"),
         "proofs": proofs,
         "verification_url": f"/acn/verify/{packet_id}",
     }
@@ -296,3 +297,31 @@ async def reseal_packet(packet_id: str, request: Request, current_user: User = D
     )
     return {"packet_id": packet_id, "resealed_jurisdictions": codes,
             "all_sealed_on_chain": result["all_sealed"], "sealed_at": result["sealed_at"]}
+
+
+# ────────────────────────────────────────────────────────────────────────────
+# NFT-MINTED VERIFICATION PASSPORT
+# ────────────────────────────────────────────────────────────────────────────
+
+
+@router.post("/packets/{packet_id}/mint-nft")
+async def mint_passport_nft(packet_id: str, current_user: User = Depends(get_current_user)):
+    """Mints (or mocks) an NFT representing the Cross-Border Verification Passport.
+    The token id + serial number become part of the packet and surface on the
+    public passport page so verifiers can confirm on Hedera HTS directly."""
+    packet = await db.acn_packets.find_one({"id": packet_id}, {"_id": 0})
+    if not packet:
+        raise HTTPException(status_code=404, detail="Packet not found")
+    if packet.get("owner_email") != current_user.email and not await _is_admin(current_user):
+        raise HTTPException(status_code=403, detail="Access denied")
+    if packet.get("status") not in ("sealed", "partially_sealed"):
+        raise HTTPException(status_code=400, detail="Packet must be sealed before minting an NFT")
+    if packet.get("nft"):
+        return {"packet_id": packet_id, "nft": packet["nft"], "already_minted": True}
+
+    nft = await acn_service.mint_passport_nft(packet, current_user.email)
+    await db.acn_packets.update_one(
+        {"id": packet_id},
+        {"$set": {"nft": nft, "updated_at": datetime.now(timezone.utc).isoformat()}},
+    )
+    return {"packet_id": packet_id, "nft": nft, "already_minted": False}

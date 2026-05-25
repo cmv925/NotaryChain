@@ -161,6 +161,18 @@ export default function ACNPublicVerify() {
               <p className="text-cyan-300 flex items-center gap-1 text-sm font-bold"><MapPin className="w-3 h-3" /> {data.source_jurisdiction}</p>
             </CardContent>
           </Card>
+          {data.nft && (
+            <Card className="bg-gradient-to-br from-indigo-950 to-navy-800 border-cyan-500/30" data-testid="acn-public-nft">
+              <CardContent className="p-4">
+                <p className="text-[10px] uppercase tracking-wider text-cyan-300 font-bold mb-2 flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3" /> Passport NFT
+                </p>
+                <p className="text-white text-sm font-mono">{data.nft.token_id}</p>
+                <p className="text-slate-400 text-[11px] font-mono">serial #{data.nft.serial_number}</p>
+                <p className="text-[9px] text-slate-500 mt-1 font-bold uppercase tracking-wider">mode: {data.nft.mode}</p>
+              </CardContent>
+            </Card>
+          )}
           <Card className="bg-navy-800 border-slate-700">
             <CardContent className="p-4">
               <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Detected jurisdictions</p>

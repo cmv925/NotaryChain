@@ -124,6 +124,10 @@ from routes import admin_certs_routes, audit_export_routes
 admin_certs_routes.set_db(db)
 audit_export_routes.set_db(db)
 
+# Weekly SOC 2 / ISO export cron + email to compliance officer
+from services import soc2_cron_service
+soc2_cron_service.set_db(db)
+
 # Autonomous Cross-Border Notarization Network (ACN)
 from routes import acn_routes
 acn_routes.set_db(db)
@@ -487,6 +491,7 @@ async def create_indexes():
         asyncio.create_task(hbar_alert_service.run_balance_checker())
         asyncio.create_task(service_health_monitor.run_service_monitor())
         asyncio.create_task(pcv_service.run_pcv_scheduler())
+        asyncio.create_task(soc2_cron_service.run_scheduler())
 
         logger.info("Database indexes created/verified successfully")
     except Exception as e:

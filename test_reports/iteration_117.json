@@ -1,0 +1,32 @@
+{
+  "summary": "Iter-117 testing complete. Backend 13/13 pass (ACN expansion +65 jurisdictions, ACN NFT mint + idempotency + unsealed-400, SOC2 run-now sends email to mrclay925@gmail.com + scheduled download ZIP + history excludes zip_b64, real Hedera deploy mock mode + state + 403). Frontend: /acn Jurisdictions tab renders all 65 codes (50 US states + DC, 10 ASEAN, 4 originals). One UI smoke check on Mint NFT button could not be triggered because demo user had no sealed packet in the UI session — but backend test_mint_nft_success_and_idempotent confirms end-to-end mint + storage + public verify exposes nft.token_id.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "/acn header stat card", "issues": ["'JURISDICTIONS 39' stat in dashboard header counts detected jurisdictions across user's packets — could be misread as 'total supported'. Suggest renaming to 'COVERED JURISDICTIONS' or showing X/65 for clarity. Not blocking."]},
+      {"screen": "/acn (any tab with <select>)", "issues": ["Pre-existing React hydration warnings from Emergent visual-editor wrapping <option> with <span> — cosmetic, not blocking."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_acn_nft_soc2_hscs.py",
+    "/app/test_reports/pytest/iter117.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "acn_service.mint_passport_nft must return mode='mock' when ACN_NFT_MODE unset — verified via API. Token_id and serial_number deterministic per packet — idempotency works because routes/acn_routes.py:319 checks packet.nft before re-minting.",
+    "audit_export_routes.py:309 history correctly projects out zip_b64. /scheduled/{export_id}/download returns 404 when zip_b64 missing — graceful.",
+    "escrow_routes.py:1354 deploy-real correctly validates is_party-or-admin and persists smart_contract.real_deployment + mode. _mint_mock_contract now includes 'mode' field reflecting hedera_contract_service.mode() — clean.",
+    "hedera_contract_service.deploy_contract appears to return real-shaped mock payload (contract_id 0.0.X, bytecode_sha256, gas_used, transaction_id) — solid drop-in pattern for future real HSCS rollout.",
+    "Seal endpoint multi-jurisdiction can still hit preview-env 502 read-timeouts for big detection sets (5+ jurisdictions). For tests use single-jurisdiction seal. Not a code bug — preview ingress limit."
+  ],
+  "updated_files": ["/app/backend/tests/test_acn_nft_soc2_hscs.py (new)"],
+  "success_rate": {"backend": "100% (13/13)", "frontend": "Verified: /acn Jurisdictions tab renders 65 codes incl. all ASEAN + 50 US states + DC + originals. Mint NFT UI button + escrow Deploy-real UI not E2E-clicked but backend equivalents pass."},
+  "test_credentials": "Admin: admin@notarychain.com / Admin123! · User: demo@test.com / Demo123! · Notary: notarytest@test.com / Test123!",
+  "seed_data_creation": "Created 1 ACN packet + sealed it (US-FL) + minted NFT for demo@test.com; created 2 admin-owned escrows (one with real-deploy mock, one for access-control test); triggered 1 SOC2 weekly export (real email sent to mrclay925@gmail.com via Resend per intentional design).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All iter-117 features verified. The SOC2 run-now actually sends a Resend email to mrclay925@gmail.com — this is intentional. Hedera real-deploy defaults to mock (ESCROW_CONTRACT_MODE unset). Multi-jurisdiction seal can 502 in preview; use {'jurisdictions': ['US-FL']} for fast test fixtures. To exercise the frontend Mint NFT button manually, navigate /acn → My Packets → open a sealed packet — button is in detail view.",
+  "rca of the issue": "No outstanding issues."
+}

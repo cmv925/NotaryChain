@@ -155,6 +155,19 @@ export default function ACNDashboard() {
     }
   };
 
+  const mintNft = async (id) => {
+    try {
+      const res = await axios.post(`${API}/packets/${id}/mint-nft`, {}, { headers: authHeaders() });
+      const n = res.data.nft || {};
+      toast.success(res.data.already_minted
+        ? `NFT already minted · ${n.token_id} #${n.serial_number}`
+        : `Passport NFT minted · ${n.token_id} #${n.serial_number}`);
+      await openPacket(id);
+    } catch (e) {
+      toast.error(e.response?.data?.detail || 'NFT mint failed');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-cream-100">
       {/* Header */}
@@ -213,7 +226,7 @@ export default function ACNDashboard() {
         )}
 
         {tab === 'packets' && (
-          <PacketsView packets={packets} onOpen={openPacket} onReseal={reseal} loading={loading} active={active} onClose={() => setActive(null)} downloadCert={downloadCert} navigate={navigate} />
+          <PacketsView packets={packets} onOpen={openPacket} onReseal={reseal} onMintNft={mintNft} loading={loading} active={active} onClose={() => setActive(null)} downloadCert={downloadCert} navigate={navigate} />
         )}
 
         {tab === 'updates' && <UpdatesView updates={updates} jurisdictions={jurisdictions} onRefresh={refresh} />}
@@ -333,9 +346,9 @@ function NewPacketView({ docText, setDocText, sourceJur, setSourceJur, signerNam
   );
 }
 
-function PacketsView({ packets, onOpen, onReseal, loading, active, onClose, downloadCert, navigate }) {
+function PacketsView({ packets, onOpen, onReseal, onMintNft, loading, active, onClose, downloadCert, navigate }) {
   if (active) {
-    return <PacketDetail packet={active} onClose={onClose} onReseal={onReseal} downloadCert={downloadCert} navigate={navigate} />;
+    return <PacketDetail packet={active} onClose={onClose} onReseal={onReseal} onMintNft={onMintNft} downloadCert={downloadCert} navigate={navigate} />;
   }
   if (loading) return <div className="text-center py-12 text-slate-500"><RefreshCw className="w-6 h-6 mx-auto animate-spin mb-2" />Loading packets…</div>;
   if (packets.length === 0) {
@@ -384,7 +397,7 @@ function PacketsView({ packets, onOpen, onReseal, loading, active, onClose, down
   );
 }
 
-function PacketDetail({ packet, onClose, onReseal, downloadCert, navigate }) {
+function PacketDetail({ packet, onClose, onReseal, onMintNft, downloadCert, navigate }) {
   if (packet.loading) return <div className="text-center py-12 text-slate-500"><RefreshCw className="w-6 h-6 mx-auto animate-spin" /></div>;
   const verifyUrl = `${window.location.origin}/acn/verify/${packet.id}`;
   return (
@@ -399,7 +412,12 @@ function PacketDetail({ packet, onClose, onReseal, downloadCert, navigate }) {
               <h2 className="font-serif text-2xl text-navy-900">Packet {packet.id?.slice(0, 12)}…</h2>
               <p className="text-xs text-slate-500 font-mono mt-1">source hash: {packet.source_text_hash}</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              {!packet.nft && (packet.status === 'sealed' || packet.status === 'partially_sealed') && (
+                <Button onClick={() => onMintNft(packet.id)} variant="outline" className="border-cyan-300 text-cyan-700 hover:bg-cyan-50" data-testid="acn-mint-nft-btn">
+                  <Sparkles className="w-4 h-4 mr-1" /> Mint Passport NFT
+                </Button>
+              )}
               {packet.needs_reseal && (
                 <Button onClick={() => onReseal(packet.id)} variant="outline" className="border-red-300 text-red-700 hover:bg-red-50" data-testid="acn-reseal-btn">
                   <RefreshCw className="w-4 h-4 mr-1" /> Re-seal
@@ -410,6 +428,28 @@ function PacketDetail({ packet, onClose, onReseal, downloadCert, navigate }) {
               </Button>
             </div>
           </div>
+
+          {/* NFT card */}
+          {packet.nft && (
+            <div className="bg-gradient-to-r from-cyan-50 to-indigo-50 border border-cyan-200 rounded-lg p-3 mb-4 flex items-center gap-3" data-testid="acn-nft-card">
+              <div className="w-10 h-10 rounded-lg bg-cyan-500/15 flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-5 h-5 text-cyan-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-navy-900 flex items-center gap-2">
+                  Passport NFT
+                  <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded font-bold border border-cyan-300 text-cyan-700 bg-white/60">
+                    {packet.nft.mode}
+                  </span>
+                </p>
+                <p className="text-[11px] font-mono text-slate-600 truncate">{packet.nft.token_id} · serial #{packet.nft.serial_number}</p>
+                <p className="text-[10px] font-mono text-slate-400 truncate">{packet.nft.metadata_uri}</p>
+              </div>
+              <button onClick={() => { navigator.clipboard?.writeText(`${packet.nft.token_id}/${packet.nft.serial_number}`); toast.success('Copied'); }} className="text-slate-500 hover:text-navy-900">
+                <Copy className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
 
           <div className="bg-cream-100 rounded-md p-3 mb-4 flex items-center gap-2 text-xs">
             <Languages className="w-4 h-4 text-coral-600 flex-shrink-0" />

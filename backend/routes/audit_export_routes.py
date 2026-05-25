@@ -13,6 +13,7 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from fastapi.responses import Response
 from datetime import datetime, timezone
 from typing import Optional
+import base64
 import hashlib
 import io
 import json
@@ -305,6 +306,38 @@ async def export_history(current_user: User = Depends(get_current_user)):
     """List previous audit exports for re-download evidence / SOC2 auditor."""
     await _check_admin(current_user)
     items = []
-    async for e in db.audit_log_exports.find({}, {"_id": 0}).sort("generated_at", -1).limit(100):
+    async for e in db.audit_log_exports.find({}, {"_id": 0, "zip_b64": 0}).sort("generated_at", -1).limit(100):
         items.append(e)
     return {"exports": items, "total": len(items)}
+
+
+@router.post("/run-now")
+async def run_scheduled_now(current_user: User = Depends(get_current_user)):
+    """Admin convenience: triggers the weekly SOC2 cron immediately.
+    Useful for demoing the compliance officer email pipeline."""
+    await _check_admin(current_user)
+    from services import soc2_cron_service
+    result = await soc2_cron_service.run_weekly_export()
+    if not result:
+        raise HTTPException(status_code=400, detail="No audit rows in the last 7 days — nothing to export.")
+    return result
+
+
+@router.get("/scheduled/{export_id}/download")
+async def download_scheduled_export(export_id: str, current_user: User = Depends(get_current_user)):
+    """Streams a previously-generated scheduled export ZIP (linked from the
+    compliance officer email)."""
+    await _check_admin(current_user)
+    rec = await db.audit_log_exports.find_one({"export_id": export_id}, {"_id": 0})
+    if not rec or not rec.get("zip_b64"):
+        raise HTTPException(status_code=404, detail="Export not found")
+    return Response(
+        content=base64.b64decode(rec["zip_b64"]),
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f'attachment; filename="{export_id}.zip"',
+            "X-Export-Id": export_id,
+            "X-Root-Hash": rec.get("root_hash", ""),
+            "X-Row-Count": str(rec.get("row_count", 0)),
+        },
+    )

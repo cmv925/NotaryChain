@@ -38,6 +38,7 @@ export default function SmartContractPanel({ escrowId, onAfterAction }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refunding, setRefunding] = useState(false);
+  const [deploying, setDeploying] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -71,6 +72,20 @@ export default function SmartContractPanel({ escrowId, onAfterAction }) {
     }
   };
 
+  const handleDeployReal = async () => {
+    setDeploying(true);
+    try {
+      const res = await axios.post(`${API}/${escrowId}/contract/deploy-real`, {}, { headers: authHeaders() });
+      const dep = res.data.deployment || {};
+      toast.success(`Hedera deployment ${dep.mode === 'real' ? 'submitted' : 'shadowed (mode=mock)'} · ${dep.contract_id}`);
+      await load();
+    } catch (e) {
+      toast.error(e.response?.data?.detail || 'Deploy failed');
+    } finally {
+      setDeploying(false);
+    }
+  };
+
   const copy = (text) => {
     navigator.clipboard?.writeText(text);
     toast.success('Copied');
@@ -99,8 +114,12 @@ export default function SmartContractPanel({ escrowId, onAfterAction }) {
             <div className="flex items-center gap-2 mb-1">
               <Cpu className="w-4 h-4 text-cyan-400" />
               <h3 className="text-white font-bold text-sm tracking-wide">SMART CONTRACT</h3>
-              <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                Mock · Hedera HSCS-style
+              <span className={`text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${
+                data.mode === 'real'
+                  ? 'bg-emerald-500/20 text-emerald-200 border-emerald-500/40'
+                  : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+              }`}>
+                {data.mode === 'real' ? 'Hedera HSCS · live' : 'Mock · Hedera HSCS-style'}
               </span>
             </div>
             <button
@@ -117,6 +136,18 @@ export default function SmartContractPanel({ escrowId, onAfterAction }) {
             <Button size="sm" variant="ghost" className="text-slate-300 hover:text-white" onClick={load} data-testid="sc-refresh-btn">
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             </Button>
+            {data.mode !== 'real' && (
+              <Button
+                size="sm" variant="outline"
+                className="border-cyan-500/40 text-cyan-200 hover:bg-cyan-500/10 hover:text-cyan-100"
+                onClick={handleDeployReal} disabled={deploying}
+                data-testid="sc-deploy-real-btn"
+                title="Promote to a real Hedera HSCS deployment (gated by ESCROW_CONTRACT_MODE=real)"
+              >
+                <Cpu className="w-3.5 h-3.5 mr-1" />
+                {deploying ? 'Deploying…' : 'Deploy to Hedera'}
+              </Button>
+            )}
             {canRefund && !isTerminal && (
               <Button
                 size="sm" variant="outline"

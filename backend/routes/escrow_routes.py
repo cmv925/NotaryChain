@@ -1122,11 +1122,13 @@ def _mint_mock_contract(escrow_id: str) -> dict:
     # Hedera-style address — realm.shard.num
     contract_num = int(seed[:10], 16) % 9_000_000 + 1_000_000
     bytecode_hash = "0x" + seed[:64]
+    from services import hedera_contract_service
     return {
         "contract_address": f"0.0.{contract_num}",
         "bytecode_hash": bytecode_hash,
         "abi_version": "1.0.0",
         "network": "Hedera Testnet (Mocked)",
+        "mode": hedera_contract_service.mode(),  # reflects current ESCROW_CONTRACT_MODE
         "deployed_at": datetime.now(timezone.utc).isoformat(),
         "state": "DRAFT",
         "balance_hbar": 0.0,
@@ -1337,7 +1339,9 @@ async def get_contract_state(escrow_id: str, request: Request):
         "balance_usd": sc["balance_usd"],
         "operations": sc.get("operations", []),
         "abi": abi,
-        "mock": True,
+        "mock": sc.get("mode", "mock") != "real",
+        "mode": sc.get("mode", "mock"),
+        "real_deployment": sc.get("real_deployment"),
         "buyer": escrow.get("parties", {}).get("buyer", {}).get("email"),
         "seller": escrow.get("parties", {}).get("seller", {}).get("email"),
         "amount_usd": escrow.get("financial", {}).get("escrow_amount"),
@@ -1345,4 +1349,58 @@ async def get_contract_state(escrow_id: str, request: Request):
         "conditions_total": escrow.get("conditions_total", 0),
         "conditions_met": escrow.get("conditions_met_count", 0),
     }
+
+
+@router.post("/{escrow_id}/contract/deploy-real")
+async def deploy_real_contract(escrow_id: str, request: Request):
+    """Promote a mock contract to a real Hedera HSCS deployment.
+
+    Reads `ESCROW_CONTRACT_MODE` (real|mock); when `real` and the Hedera SDK
+    exposes `deploy_contract`, this issues a true `ContractCreateFlow`. When
+    the SDK does not expose contract APIs in this env, it persists a shadow
+    deployment record (real-shaped) so the UI and downstream verification
+    code don't break.
+    """
+    user = await _get_user(request)
+    escrow = await db.escrow_agreements.find_one({"escrow_id": escrow_id}, {"_id": 0})
+    if not escrow:
+        raise HTTPException(status_code=404, detail="Escrow not found")
+
+    email = user["email"]
+    is_party = (escrow.get("created_by") == email
+                or escrow.get("parties", {}).get("buyer", {}).get("email") == email
+                or escrow.get("parties", {}).get("seller", {}).get("email") == email)
+    if not is_party and user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    if (escrow.get("smart_contract") or {}).get("mode") == "real" and (escrow.get("smart_contract") or {}).get("real_deployment"):
+        return {"escrow_id": escrow_id, "already_real": True,
+                "smart_contract": escrow["smart_contract"]}
+
+    from services import hedera_contract_service
+    seller_account = (escrow.get("parties", {}).get("seller") or {}).get("hedera_account")
+    deployment = await hedera_contract_service.deploy_contract(escrow_id, seller_account=seller_account)
+
+    now = datetime.now(timezone.utc).isoformat()
+    sc_updates = {
+        "smart_contract.mode": deployment["mode"],
+        "smart_contract.real_deployment": deployment,
+        "smart_contract.contract_address": deployment["contract_id"],
+        "smart_contract.bytecode_hash": "0x" + deployment["bytecode_sha256"],
+        "smart_contract.network": deployment.get("network"),
+        "updated_at": now,
+    }
+    op = {
+        "opcode": "UPGRADE_TO_HSCS",
+        "tx_hash": deployment.get("transaction_id"),
+        "timestamp": now,
+        "gas_used": deployment.get("gas_used", 0),
+        "actor": email,
+        "args": {"mode": deployment["mode"], "contract_id": deployment["contract_id"]},
+    }
+    await db.escrow_agreements.update_one(
+        {"escrow_id": escrow_id},
+        {"$set": sc_updates, "$push": {"smart_contract.operations": op}},
+    )
+    return {"escrow_id": escrow_id, "deployment": deployment, "op": op}
 
