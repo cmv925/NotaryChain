@@ -65,29 +65,36 @@ const NotaryDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [statsRes, pendingRes, assignedRes] = await Promise.all([
-        axios.get(`${API}/notary/stats`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/notary/requests/pending`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/notary/requests/assigned`, { headers: { Authorization: `Bearer ${token}` } }),
+      // Try notary endpoints first; gracefully fall back to client-side data for non-notary users
+      const [statsRes, pendingRes, assignedRes, myReqsRes] = await Promise.all([
+        axios.get(`${API}/notary/stats`, { headers: { Authorization: `Bearer ${token}` } })
+          .catch(() => ({ data: { is_notary: false } })),
+        axios.get(`${API}/notary/requests/pending`, { headers: { Authorization: `Bearer ${token}` } })
+          .catch(() => ({ data: [] })),
+        axios.get(`${API}/notary/requests/assigned`, { headers: { Authorization: `Bearer ${token}` } })
+          .catch(() => ({ data: [] })),
+        axios.get(`${API}/notary/requests/my`, { headers: { Authorization: `Bearer ${token}` } })
+          .catch(() => ({ data: [] })),
       ]);
 
+      const isNotary = !!statsRes.data?.is_notary;
       setStats(statsRes.data);
-      setPendingRequests(pendingRes.data);
-      
-      // Separate assigned into active and completed
-      const assigned = assignedRes.data;
-      setAssignedRequests(assigned.filter(r => r.status !== 'completed'));
-      setCompletedRequests(assigned.filter(r => r.status === 'completed'));
+
+      if (isNotary) {
+        // Notary view: pending queue + assigned-to-me
+        setPendingRequests(pendingRes.data);
+        const assigned = assignedRes.data;
+        setAssignedRequests(assigned.filter(r => r.status !== 'completed'));
+        setCompletedRequests(assigned.filter(r => r.status === 'completed'));
+      } else {
+        // Regular user view: their own client-side notarization requests
+        const myReqs = myReqsRes.data || [];
+        setPendingRequests(myReqs.filter(r => ['pending', 'submitted', 'reviewing'].includes(r.status)));
+        setAssignedRequests(myReqs.filter(r => ['assigned', 'in_progress'].includes(r.status)));
+        setCompletedRequests(myReqs.filter(r => r.status === 'completed'));
+      }
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
-      if (error.response?.status === 403) {
-        toast({
-          title: 'Not Authorized',
-          description: 'You need to be a certified notary to access this page',
-          variant: 'destructive',
-        });
-        navigate('/notary/onboarding');
-      }
     } finally {
       setLoading(false);
     }
