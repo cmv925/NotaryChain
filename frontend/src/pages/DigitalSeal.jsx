@@ -152,7 +152,7 @@ const DigitalSeal = () => {
         <Card className="bg-white border-slate-200">
           <CardContent className="p-6">
             <h2 className="text-navy-900 font-semibold mb-4 flex items-center gap-2">
-              <Upload className="w-5 h-5 text-blue-400" /> Upload New Seal
+              <Upload className="w-5 h-5 text-coral-500" /> Upload New Seal
             </h2>
             <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 text-center hover:border-coral-500/50 transition-colors">
               <input

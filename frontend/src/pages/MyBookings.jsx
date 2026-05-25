@@ -18,7 +18,7 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const statusCfg = {
   pending: { color: 'text-coral-600', bg: 'bg-coral-500/15', border: 'border-gold-500/30', label: 'Pending' },
   confirmed: { color: 'text-green-400', bg: 'bg-green-500/15', border: 'border-green-500/30', label: 'Confirmed' },
-  completed: { color: 'text-blue-400', bg: 'bg-blue-500/15', border: 'border-blue-500/30', label: 'Completed' },
+  completed: { color: 'text-coral-500', bg: 'bg-coral-500/15', border: 'border-coral-300/30', label: 'Completed' },
   cancelled: { color: 'text-red-400', bg: 'bg-red-500/15', border: 'border-red-500/30', label: 'Cancelled' },
 };
 
@@ -65,13 +65,13 @@ const MyBookings = () => {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 flex items-center gap-3">
-                <Calendar className="w-7 h-7 text-blue-400" />
+                <Calendar className="w-7 h-7 text-coral-500" />
                 My Bookings
               </h1>
               <p className="text-slate-500 text-sm mt-1">Manage your notarization appointments</p>
             </div>
             <div className="flex gap-2">
-              <Button onClick={() => navigate('/marketplace')} className="bg-blue-600 hover:bg-blue-700" data-testid="find-notary-btn">
+              <Button onClick={() => navigate('/marketplace')} className="bg-coral-500 hover:bg-coral-600" data-testid="find-notary-btn">
                 Find a Notary
               </Button>
             </div>
@@ -85,7 +85,7 @@ const MyBookings = () => {
                 onClick={() => setFilter(f)}
                 size="sm"
                 variant={filter === f ? 'default' : 'outline'}
-                className={filter === f ? 'bg-blue-600' : 'border-slate-200 text-slate-500'}
+                className={filter === f ? 'bg-coral-500' : 'border-slate-200 text-slate-500'}
                 data-testid={`filter-${f}`}
               >
                 {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
@@ -94,13 +94,13 @@ const MyBookings = () => {
           </div>
 
           {loading ? (
-            <div className="text-center py-12"><Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto" /></div>
+            <div className="text-center py-12"><Loader2 className="w-8 h-8 text-coral-500 animate-spin mx-auto" /></div>
           ) : bookings.length === 0 ? (
             <Card className="bg-white border-slate-200">
               <CardContent className="p-12 text-center">
                 <Calendar className="w-12 h-12 text-slate-600 mx-auto mb-3" />
                 <p className="text-slate-500 mb-4">No bookings yet. Find a notary and book a session.</p>
-                <Button onClick={() => navigate('/marketplace')} className="bg-blue-600 hover:bg-blue-700" data-testid="empty-find-notary">
+                <Button onClick={() => navigate('/marketplace')} className="bg-coral-500 hover:bg-coral-600" data-testid="empty-find-notary">
                   Browse Marketplace
                 </Button>
               </CardContent>

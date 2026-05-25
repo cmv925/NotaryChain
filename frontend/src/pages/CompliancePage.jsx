@@ -182,7 +182,7 @@ const CompliancePage = () => {
         <Card className="bg-white border-slate-200" data-testid="privacy-settings-card">
           <CardContent className="p-6">
             <h2 className="text-navy-900 font-semibold mb-1 flex items-center gap-2">
-              <Lock className="w-5 h-5 text-blue-400" /> Privacy Settings
+              <Lock className="w-5 h-5 text-coral-500" /> Privacy Settings
             </h2>
             <p className="text-slate-500 text-sm mb-5">Control how your data is used on the platform</p>
             <div className="space-y-4">

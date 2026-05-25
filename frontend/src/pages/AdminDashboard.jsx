@@ -343,7 +343,7 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-cream-100 flex items-center justify-center">
-        <RefreshCw className="w-12 h-12 text-blue-500 animate-spin" />
+        <RefreshCw className="w-12 h-12 text-coral-500 animate-spin" />
       </div>
     );
   }
@@ -356,9 +356,9 @@ const AdminDashboard = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-                <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-blue-500" />
+                <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-coral-500" />
                 <span className="text-lg sm:text-xl font-bold text-navy-900">
-                  Notary<span className="text-blue-500">Chain</span>
+                  Notary<span className="text-coral-500">Chain</span>
                 </span>
               </div>
               <span className="text-slate-500 hidden sm:inline">|</span>
@@ -378,7 +378,7 @@ const AdminDashboard = () => {
                 onClick={() => navigate('/admin/ron-compliance')}
                 variant="outline"
                 size="sm"
-                className="border-blue-600/50 text-blue-400 hover:bg-blue-600/20 hidden sm:flex"
+                className="border-coral-500/50 text-coral-500 hover:bg-coral-500/20 hidden sm:flex"
                 data-testid="ron-compliance-btn"
               >
                 <Shield className="w-4 h-4 sm:mr-1" />
@@ -411,14 +411,14 @@ const AdminDashboard = () => {
         {/* Stats Overview */}
         {stats && (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
-            <Card className="bg-gradient-to-br from-blue-600/20 to-blue-600/10 border-blue-500/30">
+            <Card className="bg-gradient-to-br from-coral-500/20 to-coral-600/10 border-coral-300/30">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-slate-500 text-xs">Total Users</p>
                     <p className="text-2xl font-bold text-navy-900">{stats.total_users}</p>
                   </div>
-                  <Users className="w-8 h-8 text-blue-400" />
+                  <Users className="w-8 h-8 text-coral-500" />
                 </div>
               </CardContent>
             </Card>
@@ -435,14 +435,14 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-purple-600/20 to-purple-600/10 border-purple-500/30">
+            <Card className="bg-gradient-to-br from-navy-700/20 to-navy-700/10 border-navy-300/30">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-slate-500 text-xs">Notarizations</p>
                     <p className="text-2xl font-bold text-navy-900">{stats.total_notarizations}</p>
                   </div>
-                  <FileText className="w-8 h-8 text-purple-400" />
+                  <FileText className="w-8 h-8 text-navy-500" />
                 </div>
               </CardContent>
             </Card>
@@ -504,7 +504,7 @@ const AdminDashboard = () => {
                 }}
                 className={`flex items-center gap-2 px-4 py-3 font-medium transition-all whitespace-nowrap ${
                   activeTab === tab.id
-                    ? 'text-blue-500 border-b-2 border-blue-500'
+                    ? 'text-coral-500 border-b-2 border-coral-300'
                     : 'text-slate-500 hover:text-navy-900'
                 }`}
               >

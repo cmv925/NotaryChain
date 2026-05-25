@@ -15,7 +15,7 @@ export const StepProgressBar = ({ currentStep }) => (
           <div className="flex flex-col items-center">
             <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-base transition-all ${
               currentStep >= step.num
-                ? 'bg-blue-600 text-white'
+                ? 'bg-coral-500 text-white'
                 : 'bg-gray-700 text-slate-500'
             }`}>
               {currentStep > step.num ? (
@@ -25,14 +25,14 @@ export const StepProgressBar = ({ currentStep }) => (
               )}
             </div>
             <span className={`mt-1 sm:mt-2 text-xs sm:text-sm text-center ${
-              currentStep >= step.num ? 'text-blue-400' : 'text-slate-500'
+              currentStep >= step.num ? 'text-coral-500' : 'text-slate-500'
             }`}>
               {step.label}
             </span>
           </div>
           {index < 2 && (
             <div className={`flex-1 h-0.5 sm:h-1 mx-2 sm:mx-4 rounded ${
-              currentStep > step.num ? 'bg-blue-600' : 'bg-gray-700'
+              currentStep > step.num ? 'bg-coral-500' : 'bg-gray-700'
             }`} />
           )}
         </React.Fragment>

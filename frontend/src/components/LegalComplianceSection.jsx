@@ -82,7 +82,7 @@ const LegalComplianceSection = () => {
         </div>
 
         {/* Legal Defense Advantage */}
-        <div className="bg-gradient-to-r from-green-600/10 to-blue-600/10 border border-green-500/30 rounded-2xl p-8">
+        <div className="bg-gradient-to-r from-green-600/10 to-coral-600/10 border border-green-500/30 rounded-2xl p-8">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-shrink-0">
               <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center">

@@ -46,7 +46,7 @@ function VolumeChart({ data }) {
       {data.map((d, i) => (
         <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
           <div
-            className="w-full bg-sky-500/30 hover:bg-sky-500/50 rounded-t transition-all min-h-[2px]"
+            className="w-full bg-coral-500/30 hover:bg-coral-500/50 rounded-t transition-all min-h-[2px]"
             style={{ height: `${Math.max((d.count / max) * 100, 2)}%` }}
             title={`${d.date}: ${d.count}`}
           />
@@ -70,7 +70,7 @@ export default function PublicAuditTrail() {
 
   if (loading) return (
     <div className="min-h-screen bg-cream-100 flex items-center justify-center">
-      <div className="animate-spin w-8 h-8 border-2 border-sky-500 border-t-transparent rounded-full" />
+      <div className="animate-spin w-8 h-8 border-2 border-coral-300 border-t-transparent rounded-full" />
     </div>
   );
 
@@ -137,7 +137,7 @@ export default function PublicAuditTrail() {
         {/* Verify CTA */}
         <div className="text-center">
           <a href="/verify-certificate" data-testid="verify-link"
-            className="inline-flex items-center gap-2 text-sm text-coral-600 hover:text-sky-300 transition-colors">
+            className="inline-flex items-center gap-2 text-sm text-coral-600 hover:text-coral-400 transition-colors">
             <Shield className="w-4 h-4" />
             Verify a Certificate
             <ArrowRight className="w-3.5 h-3.5" />

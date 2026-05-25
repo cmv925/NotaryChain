@@ -16,7 +16,7 @@ const STATES = ['DRAFT', 'FUNDED', 'CONDITIONS_MET', 'RELEASED'];
 
 const STATE_TONE = {
   DRAFT: 'bg-slate-100 text-slate-700 border-slate-200',
-  FUNDED: 'bg-blue-100 text-blue-700 border-blue-300',
+  FUNDED: 'bg-coral-100 text-coral-700 border-coral-200',
   CONDITIONS_MET: 'bg-amber-100 text-amber-700 border-amber-300',
   RELEASED: 'bg-emerald-100 text-emerald-700 border-emerald-300',
   REFUNDED: 'bg-red-100 text-red-700 border-red-300',
@@ -24,7 +24,7 @@ const STATE_TONE = {
 
 const OPCODE_TONE = {
   CONSTRUCTOR: 'bg-slate-100 text-slate-700',
-  FUND: 'bg-blue-100 text-blue-700',
+  FUND: 'bg-coral-100 text-coral-700',
   RELEASE: 'bg-emerald-100 text-emerald-700',
   REFUND: 'bg-red-100 text-red-700',
 };
@@ -112,7 +112,7 @@ export default function SmartContractPanel({ escrowId, onAfterAction }) {
         <div className="flex items-start justify-between gap-3 mb-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Cpu className="w-4 h-4 text-cyan-400" />
+              <Cpu className="w-4 h-4 text-coral-500" />
               <h3 className="text-white font-bold text-sm tracking-wide">SMART CONTRACT</h3>
               <span className={`text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${
                 data.mode === 'real'
@@ -139,7 +139,7 @@ export default function SmartContractPanel({ escrowId, onAfterAction }) {
             {data.mode !== 'real' && (
               <Button
                 size="sm" variant="outline"
-                className="border-cyan-500/40 text-cyan-200 hover:bg-cyan-500/10 hover:text-cyan-100"
+                className="border-coral-300/40 text-cyan-200 hover:bg-coral-500/10 hover:text-cyan-100"
                 onClick={handleDeployReal} disabled={deploying}
                 data-testid="sc-deploy-real-btn"
                 title="Promote to a real Hedera HSCS deployment (gated by ESCROW_CONTRACT_MODE=real)"
@@ -192,7 +192,7 @@ export default function SmartContractPanel({ escrowId, onAfterAction }) {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
           <div>
             <p className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">Balance</p>
-            <p className="text-cyan-300 text-sm font-bold font-mono">
+            <p className="text-coral-400 text-sm font-bold font-mono">
               ${Number(data.balance_usd || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
             </p>
             <p className="text-[10px] text-slate-500 font-mono">≈ {data.balance_hbar} HBAR</p>
@@ -222,7 +222,7 @@ export default function SmartContractPanel({ escrowId, onAfterAction }) {
                 <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${OPCODE_TONE[op.opcode] || 'bg-slate-700 text-slate-200'}`}>
                   {op.opcode}
                 </span>
-                <button onClick={() => copy(op.tx_hash)} className="text-cyan-300 hover:text-cyan-100 truncate" title="Copy tx hash" data-testid={`sc-op-${op.opcode}`}>
+                <button onClick={() => copy(op.tx_hash)} className="text-coral-400 hover:text-cyan-100 truncate" title="Copy tx hash" data-testid={`sc-op-${op.opcode}`}>
                   {op.tx_hash}
                 </button>
                 <span className="text-slate-500 ml-auto whitespace-nowrap">gas {op.gas_used?.toLocaleString()}</span>
@@ -243,7 +243,7 @@ export default function SmartContractPanel({ escrowId, onAfterAction }) {
           <div className="mt-2 bg-slate-950/60 border border-slate-700 rounded p-2 font-mono text-[10px] space-y-1">
             {(data.abi || []).map((fn) => (
               <div key={fn.name} className="flex items-baseline gap-2">
-                <span className="text-cyan-300">function</span>
+                <span className="text-coral-400">function</span>
                 <span className="text-amber-300">{fn.name}</span>
                 <span className="text-slate-500">({(fn.inputs || []).join(', ')})</span>
                 {fn.state_change && <span className="text-slate-500 ml-auto">→ {fn.state_change}</span>}

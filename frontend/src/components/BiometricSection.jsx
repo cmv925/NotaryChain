@@ -47,8 +47,8 @@ const BiometricSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left Side - Steps */}
           <div>
-            <div className="inline-block px-4 py-2 bg-blue-500/10 rounded-full border border-blue-500/30 mb-4">
-              <span className="text-blue-400 font-semibold">Unbreakable Identity</span>
+            <div className="inline-block px-4 py-2 bg-coral-500/10 rounded-full border border-coral-300/30 mb-4">
+              <span className="text-coral-500 font-semibold">Unbreakable Identity</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Go Beyond Visual Checks. Prove Identity.
@@ -65,8 +65,8 @@ const BiometricSection = () => {
                 return (
                   <div key={index} className="flex gap-4">
                     <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                        <Icon className="w-6 h-6 text-blue-500" />
+                      <div className="w-12 h-12 bg-coral-500/10 rounded-lg flex items-center justify-center">
+                        <Icon className="w-6 h-6 text-coral-500" />
                       </div>
                     </div>
                     <div>
@@ -94,13 +94,13 @@ const BiometricSection = () => {
                     <div key={index} className="relative">
                       <div className="flex items-start gap-4">
                         <div className="flex-shrink-0">
-                          <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-600/50">
+                          <div className="w-12 h-12 bg-coral-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-coral-500/50">
                             {step.number}
                           </div>
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <Icon className="w-5 h-5 text-blue-500" />
+                            <Icon className="w-5 h-5 text-coral-500" />
                             <h4 className="text-lg font-semibold text-white">{step.title}</h4>
                           </div>
                           <p className="text-slate-500 text-sm leading-relaxed">
@@ -109,7 +109,7 @@ const BiometricSection = () => {
                         </div>
                       </div>
                       {index < biometricSteps.length - 1 && (
-                        <div className="ml-6 mt-4 h-8 w-0.5 bg-gradient-to-b from-blue-500 to-transparent"></div>
+                        <div className="ml-6 mt-4 h-8 w-0.5 bg-gradient-to-b from-coral-500 to-transparent"></div>
                       )}
                     </div>
                   );

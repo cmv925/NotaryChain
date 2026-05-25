@@ -11,8 +11,8 @@ const API = process.env.REACT_APP_BACKEND_URL;
 const STATUSES = ['new', 'contacted', 'qualified', 'onboarded', 'declined'];
 const STATUS_STYLES = {
   new: 'bg-coral-500/20 text-coral-700',
-  contacted: 'bg-blue-500/20 text-blue-300',
-  qualified: 'bg-purple-500/20 text-purple-300',
+  contacted: 'bg-coral-500/20 text-coral-400',
+  qualified: 'bg-navy-600/20 text-purple-300',
   onboarded: 'bg-coral-500/20 text-coral-700',
   declined: 'bg-slate-700/50 text-slate-600',
 };

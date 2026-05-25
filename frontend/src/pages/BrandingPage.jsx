@@ -154,7 +154,7 @@ export default function BrandingPage() {
             </CardContent>
           </Card>
 
-          <Button onClick={save} disabled={saving} className="w-full bg-blue-600 hover:bg-blue-700" data-testid="save-branding">
+          <Button onClick={save} disabled={saving} className="w-full bg-coral-500 hover:bg-coral-600" data-testid="save-branding">
             {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
             {saving ? 'Saving...' : 'Save Branding'}
           </Button>

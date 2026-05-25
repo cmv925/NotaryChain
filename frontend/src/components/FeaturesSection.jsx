@@ -46,12 +46,12 @@ const FeaturesSection = () => {
             return (
               <Card
                 key={index}
-                className="bg-gradient-to-br from-white to-cream-100 border border-slate-200 hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 group"
+                className="bg-gradient-to-br from-white to-cream-100 border border-slate-200 hover:border-coral-300/50 transition-all duration-300 hover:shadow-lg hover:shadow-coral-500/20 group"
               >
                 <CardContent className="p-6">
                   <div className="mb-4">
-                    <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
-                      <Icon className="w-6 h-6 text-blue-500" />
+                    <div className="w-12 h-12 bg-coral-500/10 rounded-lg flex items-center justify-center group-hover:bg-coral-500/20 transition-colors">
+                      <Icon className="w-6 h-6 text-coral-500" />
                     </div>
                   </div>
                   <h3 className="text-xl font-semibold text-white mb-3">

@@ -181,7 +181,7 @@ export default function ACNDashboard() {
           </div>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-cyan-300 mb-1 flex items-center gap-2">
+              <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-coral-400 mb-1 flex items-center gap-2">
                 <Globe2 className="w-3.5 h-3.5" /> Autonomous Cross-Border Notarization Network
               </p>
               <h1 className="font-serif text-3xl sm:text-4xl">One notarization. Any jurisdiction.</h1>
@@ -208,7 +208,7 @@ export default function ACNDashboard() {
               return (
                 <button key={t.id} onClick={() => setTab(t.id)}
                   className={`px-4 py-2.5 text-xs font-bold tracking-wider uppercase border-b-2 transition-colors flex items-center gap-1.5 ${
-                    active_ ? 'border-cyan-400 text-cyan-300' : 'border-transparent text-slate-400 hover:text-slate-200'
+                    active_ ? 'border-coral-300 text-coral-400' : 'border-transparent text-slate-400 hover:text-slate-200'
                   }`}
                   data-testid={`acn-tab-${t.id}`}>
                   <Icon className="w-3.5 h-3.5" /> {t.label}
@@ -239,7 +239,7 @@ export default function ACNDashboard() {
 
 function StatCard({ label, value, tone }) {
   const tones = {
-    cyan: 'border-cyan-500/40 bg-cyan-500/10 text-cyan-200',
+    cyan: 'border-coral-300/40 bg-coral-500/10 text-cyan-200',
     emerald: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200',
     amber: 'border-amber-500/40 bg-amber-500/10 text-amber-200',
     red: 'border-red-500/40 bg-red-500/10 text-red-200',
@@ -385,7 +385,7 @@ function PacketsView({ packets, onOpen, onReseal, onMintNft, loading, active, on
               </p>
               <div className="flex flex-wrap gap-1 mt-1.5">
                 {(p.detected_jurisdictions || []).map(c => (
-                  <span key={c} className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-700 border border-cyan-200 font-mono">{c}</span>
+                  <span key={c} className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-50 text-coral-700 border border-coral-200 font-mono">{c}</span>
                 ))}
               </div>
             </div>
@@ -414,7 +414,7 @@ function PacketDetail({ packet, onClose, onReseal, onMintNft, downloadCert, navi
             </div>
             <div className="flex items-center gap-2 flex-wrap justify-end">
               {!packet.nft && (packet.status === 'sealed' || packet.status === 'partially_sealed') && (
-                <Button onClick={() => onMintNft(packet.id)} variant="outline" className="border-cyan-300 text-cyan-700 hover:bg-cyan-50" data-testid="acn-mint-nft-btn">
+                <Button onClick={() => onMintNft(packet.id)} variant="outline" className="border-coral-200 text-coral-700 hover:bg-cyan-50" data-testid="acn-mint-nft-btn">
                   <Sparkles className="w-4 h-4 mr-1" /> Mint Passport NFT
                 </Button>
               )}
@@ -431,14 +431,14 @@ function PacketDetail({ packet, onClose, onReseal, onMintNft, downloadCert, navi
 
           {/* NFT card */}
           {packet.nft && (
-            <div className="bg-gradient-to-r from-cyan-50 to-indigo-50 border border-cyan-200 rounded-lg p-3 mb-4 flex items-center gap-3" data-testid="acn-nft-card">
-              <div className="w-10 h-10 rounded-lg bg-cyan-500/15 flex items-center justify-center flex-shrink-0">
-                <Sparkles className="w-5 h-5 text-cyan-600" />
+            <div className="bg-gradient-to-r from-cyan-50 to-indigo-50 border border-coral-200 rounded-lg p-3 mb-4 flex items-center gap-3" data-testid="acn-nft-card">
+              <div className="w-10 h-10 rounded-lg bg-coral-500/15 flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-5 h-5 text-coral-600" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-bold text-navy-900 flex items-center gap-2">
                   Passport NFT
-                  <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded font-bold border border-cyan-300 text-cyan-700 bg-white/60">
+                  <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded font-bold border border-coral-200 text-coral-700 bg-white/60">
                     {packet.nft.mode}
                   </span>
                 </p>
@@ -552,19 +552,19 @@ function UpdatesView({ updates, jurisdictions, onRefresh }) {
   return (
     <div className="space-y-6">
       {/* Regulatory-Oracle watchlist */}
-      <Card className="border-cyan-200 bg-gradient-to-br from-cyan-50/40 to-white" data-testid="acn-oracle-card">
+      <Card className="border-coral-200 bg-gradient-to-br from-cyan-50/40 to-white" data-testid="acn-oracle-card">
         <CardContent className="p-5">
           <div className="flex items-start justify-between mb-3">
             <div>
               <h3 className="text-sm font-bold text-navy-900 flex items-center gap-2">
-                <Cpu className="w-4 h-4 text-cyan-600" /> Regulatory Oracle — Watchlist
-                <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-700 font-bold">mode: {oracleMode}</span>
+                <Cpu className="w-4 h-4 text-coral-600" /> Regulatory Oracle — Watchlist
+                <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-cyan-100 text-coral-700 font-bold">mode: {oracleMode}</span>
               </h3>
               <p className="text-[11px] text-slate-500 mt-0.5">
                 Auto-discovered notary-statute amendments. Each event automatically calls Rule Updates and flags affected packets for re-seal.
               </p>
             </div>
-            <Button size="sm" variant="outline" onClick={pollNow} disabled={polling} className="border-cyan-300 text-cyan-700 hover:bg-cyan-50" data-testid="acn-oracle-poll-btn">
+            <Button size="sm" variant="outline" onClick={pollNow} disabled={polling} className="border-coral-200 text-coral-700 hover:bg-cyan-50" data-testid="acn-oracle-poll-btn">
               <RefreshCw className={`w-3.5 h-3.5 mr-1 ${polling ? 'animate-spin' : ''}`} /> Poll now
             </Button>
           </div>
@@ -576,7 +576,7 @@ function UpdatesView({ updates, jurisdictions, onRefresh }) {
                 <div key={ev.id} className="border border-slate-200 rounded p-2 bg-white/70" data-testid={`acn-oracle-${ev.jurisdiction_code}`}>
                   <div className="flex items-center gap-2 flex-wrap mb-1">
                     <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider ${sevTone[ev.severity] || sevTone.medium}`}>{ev.severity}</span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-700 font-bold">{ev.jurisdiction_code}</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-100 text-coral-700 font-bold">{ev.jurisdiction_code}</span>
                     <span className="text-xs text-slate-500">eff. {ev.effective_date}</span>
                     {ev.auto_applied && (
                       <span className="ml-auto text-[10px] text-emerald-700 font-bold flex items-center gap-1">

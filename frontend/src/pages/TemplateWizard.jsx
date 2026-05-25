@@ -38,7 +38,7 @@ const FieldInput = ({ field, value, onChange, onAiSuggest, aiLoading }) => {
               size="sm"
               onClick={() => onAiSuggest(field)}
               disabled={aiLoading}
-              className="text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 text-xs h-7 px-2"
+              className="text-navy-500 hover:text-purple-300 hover:bg-navy-600/10 text-xs h-7 px-2"
               data-testid={`ai-suggest-${field.name}`}
             >
               {aiLoading ? (
@@ -55,7 +55,7 @@ const FieldInput = ({ field, value, onChange, onAiSuggest, aiLoading }) => {
           onChange={(e) => onChange(field.name, e.target.value)}
           placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}...`}
           rows={4}
-          className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 focus:outline-none resize-none"
+          className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-coral-300 focus:outline-none resize-none"
           data-testid={`field-${field.name}`}
         />
       </div>
@@ -124,7 +124,7 @@ const LivePreview = ({ template, fieldValues }) => {
     <Card className="bg-white border-slate-200 sticky top-24">
       <CardContent className="p-5">
         <h3 className="text-navy-900 font-semibold text-sm mb-3 flex items-center gap-2">
-          <FileText className="w-4 h-4 text-blue-400" />
+          <FileText className="w-4 h-4 text-coral-500" />
           Document Preview
         </h3>
 
@@ -449,7 +449,7 @@ const TemplateWizard = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-cream-100 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-coral-500 animate-spin" />
       </div>
     );
   }
@@ -485,7 +485,7 @@ const TemplateWizard = () => {
               size="sm"
               onClick={handleSaveDraft}
               disabled={savingDraft || filledCount === 0}
-              className="border-slate-200 text-slate-500 hover:text-navy-900 hover:border-blue-500"
+              className="border-slate-200 text-slate-500 hover:text-navy-900 hover:border-coral-300"
               data-testid="save-draft-btn"
             >
               {savingDraft ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Save className="w-3.5 h-3.5 mr-1.5" />}
@@ -497,7 +497,7 @@ const TemplateWizard = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => handleShareDraft(false)}
-                  className="border-slate-200 text-slate-500 hover:text-navy-900 hover:border-purple-500"
+                  className="border-slate-200 text-slate-500 hover:text-navy-900 hover:border-navy-300"
                   data-testid="share-draft-btn"
                 >
                   <Share2 className="w-3.5 h-3.5 mr-1.5" /> Share
@@ -533,9 +533,9 @@ const TemplateWizard = () => {
               <Card className="bg-gradient-to-br from-white to-cream-100 border border-slate-200">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 mb-5">
-                    <FileText className="w-5 h-5 text-blue-400" />
+                    <FileText className="w-5 h-5 text-coral-500" />
                     <h2 className="text-navy-900 font-semibold">Fill in Document Details</h2>
-                    <span className="ml-auto flex items-center gap-1 text-xs text-purple-400 bg-purple-500/10 rounded-full px-2 py-0.5">
+                    <span className="ml-auto flex items-center gap-1 text-xs text-navy-500 bg-navy-600/10 rounded-full px-2 py-0.5">
                       <Sparkles className="w-3 h-3" /> AI-Assisted
                     </span>
                   </div>
@@ -559,7 +559,7 @@ const TemplateWizard = () => {
                       <Button
                         onClick={handleGeneratePdf}
                         disabled={generating || !allRequiredFilled}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-navy-900 py-5 text-base"
+                        className="w-full bg-coral-500 hover:bg-coral-600 text-navy-900 py-5 text-base"
                         data-testid="generate-pdf-btn"
                       >
                         {generating ? (
@@ -589,7 +589,7 @@ const TemplateWizard = () => {
                           <Button
                             onClick={handleDownload}
                             variant="outline"
-                            className="border-slate-200 text-slate-500 hover:text-navy-900 hover:border-blue-500 py-5"
+                            className="border-slate-200 text-slate-500 hover:text-navy-900 hover:border-coral-300 py-5"
                             data-testid="download-pdf-btn"
                           >
                             <Download className="w-5 h-5 mr-2" />
@@ -645,22 +645,22 @@ const TemplateWizard = () => {
           <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-navy-900 font-bold text-lg flex items-center gap-2">
-                <Share2 className="w-5 h-5 text-purple-400" /> Share Draft
+                <Share2 className="w-5 h-5 text-navy-500" /> Share Draft
               </h2>
               <button onClick={() => setShowShareModal(false)} className="text-slate-500 hover:text-navy-900"><X className="w-5 h-5" /></button>
             </div>
             <div className="bg-cream-100 rounded-lg p-3 flex items-center gap-2 mb-4">
-              <Link className="w-4 h-4 text-blue-400 flex-shrink-0" />
+              <Link className="w-4 h-4 text-coral-500 flex-shrink-0" />
               <span className="text-slate-500 text-sm truncate flex-1">{`${window.location.origin}/drafts/shared/${shareToken}`}</span>
-              <Button size="sm" variant="ghost" onClick={copyShareLink} className="text-blue-400 hover:text-blue-300" data-testid="copy-share-link">
+              <Button size="sm" variant="ghost" onClick={copyShareLink} className="text-coral-500 hover:text-coral-400" data-testid="copy-share-link">
                 <Copy className="w-3.5 h-3.5" />
               </Button>
             </div>
             <div className="flex gap-2 mb-4">
-              <Button size="sm" onClick={() => handleShareDraft(false)} className={`flex-1 ${!shareToken ? 'bg-blue-600' : 'bg-gray-700'} text-navy-900`} data-testid="share-view-only">
+              <Button size="sm" onClick={() => handleShareDraft(false)} className={`flex-1 ${!shareToken ? 'bg-coral-500' : 'bg-gray-700'} text-navy-900`} data-testid="share-view-only">
                 View Only
               </Button>
-              <Button size="sm" onClick={() => handleShareDraft(true)} className="flex-1 bg-purple-600 hover:bg-purple-700 text-navy-900" data-testid="share-allow-edit">
+              <Button size="sm" onClick={() => handleShareDraft(true)} className="flex-1 bg-navy-700 hover:bg-navy-800 text-navy-900" data-testid="share-allow-edit">
                 Allow Editing
               </Button>
             </div>
@@ -685,18 +685,18 @@ const TemplateWizard = () => {
               {[...revisions].reverse().map((rev) => (
                 <div key={rev.version} className={`p-3 rounded-lg border ${
                   rev.version === draftVersion
-                    ? 'bg-blue-500/10 border-blue-500/30'
+                    ? 'bg-coral-500/10 border-coral-300/30'
                     : 'bg-cream-100 border-slate-200'
                 }`}>
                   <div className="flex items-center justify-between">
                     <div>
                       <span className="text-navy-900 font-medium text-sm">Version {rev.version}</span>
                       {rev.version === draftVersion && (
-                        <span className="ml-2 text-xs bg-blue-500/20 text-blue-400 rounded px-1.5 py-0.5">Current</span>
+                        <span className="ml-2 text-xs bg-coral-500/20 text-coral-500 rounded px-1.5 py-0.5">Current</span>
                       )}
                     </div>
                     {rev.version !== draftVersion && (
-                      <Button size="sm" variant="ghost" onClick={() => handleRestoreRevision(rev.version)} className="text-blue-400 hover:text-blue-300 text-xs h-7" data-testid={`restore-v${rev.version}`}>
+                      <Button size="sm" variant="ghost" onClick={() => handleRestoreRevision(rev.version)} className="text-coral-500 hover:text-coral-400 text-xs h-7" data-testid={`restore-v${rev.version}`}>
                         Restore
                       </Button>
                     )}

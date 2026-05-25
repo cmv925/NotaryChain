@@ -129,7 +129,7 @@ export default function PublicChallenge() {
               <input type="text" placeholder="Your name (optional)" value={challengerName} onChange={e => setChallengerName(e.target.value)}
                 className="w-full bg-cream-200 border border-slate-300 rounded px-3 py-2 text-sm mb-4" data-testid="challenger-name-input" />
 
-              <Button onClick={startCapture} className="w-full bg-sky-600 hover:bg-sky-500 h-11" data-testid="start-challenge-btn">
+              <Button onClick={startCapture} className="w-full bg-coral-500 hover:bg-coral-500 h-11" data-testid="start-challenge-btn">
                 <Camera className="w-4 h-4 mr-2" /> Capture Biometric & Verify
               </Button>
               <p className="text-[10px] text-slate-500 text-center mt-3">Sealed on Hedera mainnet. No NotaryChain account required.</p>
@@ -149,7 +149,7 @@ export default function PublicChallenge() {
               </div>
               <div className="flex gap-2">
                 {!captured ? (
-                  <Button onClick={snap} className="flex-1 bg-sky-600 hover:bg-sky-500" data-testid="snap-btn">
+                  <Button onClick={snap} className="flex-1 bg-coral-500 hover:bg-coral-500" data-testid="snap-btn">
                     <Camera className="w-4 h-4 mr-2" /> Capture
                   </Button>
                 ) : (

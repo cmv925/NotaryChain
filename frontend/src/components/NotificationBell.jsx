@@ -95,8 +95,8 @@ export function NotificationBell({ token }) {
   const typeColors = {
     success: 'bg-green-500',
     warning: 'bg-yellow-500',
-    action: 'bg-blue-500',
-    info: 'bg-cyan-500',
+    action: 'bg-coral-500',
+    info: 'bg-coral-500',
   };
 
   const timeAgo = (dateStr) => {
@@ -134,7 +134,7 @@ export function NotificationBell({ token }) {
             <h3 className="text-white font-semibold text-sm">Notifications</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
-                <button onClick={markAllAsRead} className="text-xs text-blue-400 hover:text-blue-300" data-testid="mark-all-read">
+                <button onClick={markAllAsRead} className="text-xs text-coral-500 hover:text-coral-400" data-testid="mark-all-read">
                   <CheckCheck className="h-4 w-4" />
                 </button>
               )}
@@ -158,13 +158,13 @@ export function NotificationBell({ token }) {
                   key={notif.id}
                   onClick={() => handleNotifClick(notif)}
                   className={`px-4 py-3 border-b border-slate-200 cursor-pointer hover:bg-white/5 transition-colors ${
-                    !notif.read ? 'bg-blue-500/5' : ''
+                    !notif.read ? 'bg-coral-500/5' : ''
                   }`}
                   data-testid={`notification-item-${notif.id}`}
                 >
                   <div className="flex items-start gap-3">
                     <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
-                      !notif.read ? typeColors[notif.type] || 'bg-cyan-500' : 'bg-transparent'
+                      !notif.read ? typeColors[notif.type] || 'bg-coral-500' : 'bg-transparent'
                     }`} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
@@ -177,7 +177,7 @@ export function NotificationBell({ token }) {
                         {notif.message}
                       </p>
                       {notif.link && (
-                        <div className="mt-1 flex items-center gap-1 text-[10px] text-blue-400">
+                        <div className="mt-1 flex items-center gap-1 text-[10px] text-coral-500">
                           <ExternalLink className="h-2.5 w-2.5" /> View
                         </div>
                       )}

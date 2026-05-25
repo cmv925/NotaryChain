@@ -9,17 +9,17 @@ const OrchestratorSection = () => {
   return (
     <section className="py-24 bg-cream-100">
       <div className="max-w-5xl mx-auto px-6">
-        <div className="bg-gradient-to-br from-blue-600/10 to-purple-600/10 border border-blue-500/30 rounded-2xl p-12 text-center relative overflow-hidden">
+        <div className="bg-gradient-to-br from-coral-500/10 to-navy-700/10 border border-coral-300/30 rounded-2xl p-12 text-center relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute w-64 h-64 bg-blue-500/20 rounded-full blur-3xl -top-20 -left-20"></div>
-            <div className="absolute w-64 h-64 bg-purple-500/20 rounded-full blur-3xl -bottom-20 -right-20"></div>
+            <div className="absolute w-64 h-64 bg-coral-500/20 rounded-full blur-3xl -top-20 -left-20"></div>
+            <div className="absolute w-64 h-64 bg-navy-600/20 rounded-full blur-3xl -bottom-20 -right-20"></div>
           </div>
 
           <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/20 rounded-full border border-blue-500/40 mb-6">
-              <Sparkles className="w-4 h-4 text-blue-400" />
-              <span className="text-blue-400 font-semibold text-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-coral-500/20 rounded-full border border-coral-300/40 mb-6">
+              <Sparkles className="w-4 h-4 text-coral-500" />
+              <span className="text-coral-500 font-semibold text-sm">
                 The Future of NotaryChain™
               </span>
             </div>
@@ -36,7 +36,7 @@ const OrchestratorSection = () => {
             </p>
             <Button
               onClick={() => navigate('/pricing')}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg rounded-md transition-all shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50 group"
+              className="bg-coral-500 hover:bg-coral-600 text-white px-8 py-6 text-lg rounded-md transition-all shadow-lg shadow-coral-500/30 hover:shadow-coral-500/50 group"
             >
               Learn About Enterprise
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />

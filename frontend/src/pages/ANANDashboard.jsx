@@ -27,7 +27,7 @@ const AGENT_CONFIG = {
 
 const STATUS_MAP = {
   pending: { label: 'Pending', cls: 'bg-slate-700/40 text-navy-800 border-slate-600' },
-  in_progress: { label: 'Scoring', cls: 'bg-blue-500/20 text-blue-400 border-blue-500/40 animate-pulse' },
+  in_progress: { label: 'Scoring', cls: 'bg-coral-500/20 text-coral-500 border-coral-300/40 animate-pulse' },
   sealed: { label: 'Sealed', cls: 'bg-coral-500/20 text-coral-600 border-emerald-500/40' },
   rejected: { label: 'Rejected', cls: 'bg-red-500/20 text-red-400 border-red-500/40' },
   escalated: { label: 'Escalated', cls: 'bg-coral-500/20 text-coral-600 border-amber-500/40' },
@@ -282,7 +282,7 @@ export default function ANANDashboard() {
         <div className="bg-cream-100 border-b border-slate-200 sticky top-0 z-20">
           <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-coral-500 to-violet-600 flex items-center justify-center">
                 <Brain className="w-5 h-5 text-navy-900" />
               </div>
               <div>
@@ -290,7 +290,7 @@ export default function ANANDashboard() {
                 <p className="text-slate-500 text-[10px] tracking-wider uppercase">Autonomous Notary Agent Network</p>
               </div>
             </div>
-            <Button onClick={() => setShowCreate(true)} className="bg-cyan-600 hover:bg-cyan-700 text-navy-900" data-testid="anan-create-btn">
+            <Button onClick={() => setShowCreate(true)} className="bg-coral-500 hover:bg-coral-600 text-navy-900" data-testid="anan-create-btn">
               <Zap className="w-4 h-4 mr-2" /> New ANAN Ceremony
             </Button>
           </div>
@@ -431,7 +431,7 @@ export default function ANANDashboard() {
 
           {/* Create Form */}
           {showCreate && (
-            <Card className="bg-cream-100 border-cyan-500/30 mb-6" data-testid="anan-create-form">
+            <Card className="bg-cream-100 border-coral-300/30 mb-6" data-testid="anan-create-form">
               <CardContent className="p-6">
                 <h2 className="text-navy-900 font-bold text-lg mb-4 flex items-center gap-2">
                   <Zap className="w-5 h-5 text-coral-600" /> New ANAN Ceremony
@@ -471,7 +471,7 @@ export default function ANANDashboard() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button onClick={handleCreate} disabled={actionLoading === 'create'} className="bg-cyan-600 hover:bg-cyan-700" data-testid="anan-submit-btn">
+                  <Button onClick={handleCreate} disabled={actionLoading === 'create'} className="bg-coral-500 hover:bg-coral-600" data-testid="anan-submit-btn">
                     {actionLoading === 'create' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Zap className="w-4 h-4 mr-2" />}
                     Initialize ANAN Protocol
                   </Button>
@@ -524,7 +524,7 @@ export default function ANANDashboard() {
                 <Brain className="w-14 h-14 text-slate-700 mx-auto mb-4" />
                 <h3 className="text-navy-900 font-bold text-lg mb-2">No ANAN Ceremonies Yet</h3>
                 <p className="text-slate-500 text-sm mb-4">Launch your first autonomous notarization with the ANAN swarm.</p>
-                <Button onClick={() => setShowCreate(true)} className="bg-cyan-600 hover:bg-cyan-700">
+                <Button onClick={() => setShowCreate(true)} className="bg-coral-500 hover:bg-coral-600">
                   <Zap className="w-4 h-4 mr-2" /> Create First ANAN Ceremony
                 </Button>
               </CardContent>
@@ -532,11 +532,11 @@ export default function ANANDashboard() {
           ) : (
             <div className="space-y-2" data-testid="anan-ceremony-list">
               {ceremonies.map((c) => (
-                <Card key={c.ceremony_id} className="bg-cream-100 border-slate-200 hover:border-cyan-500/30 transition-colors cursor-pointer"
+                <Card key={c.ceremony_id} className="bg-cream-100 border-slate-200 hover:border-coral-300/30 transition-colors cursor-pointer"
                   onClick={() => navigate(`/anan/${c.ceremony_id}`)} data-testid={`anan-card-${c.ceremony_id}`}>
                   <CardContent className="p-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-lg bg-coral-500/10 flex items-center justify-center">
                         <Brain className="w-5 h-5 text-coral-600" />
                       </div>
                       <div>
@@ -579,7 +579,7 @@ export default function ANANDashboard() {
       <div className="bg-cream-100 border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-coral-500 to-violet-600 flex items-center justify-center">
               <Brain className="w-5 h-5 text-navy-900" />
             </div>
             <div>
@@ -596,7 +596,7 @@ export default function ANANDashboard() {
 
         {/* Execute Actions */}
         {canExecute && (
-          <Card className="bg-cream-100 border-cyan-500/20 mb-6" data-testid="anan-execute-panel">
+          <Card className="bg-cream-100 border-coral-300/20 mb-6" data-testid="anan-execute-panel">
             <CardContent className="p-4 flex items-center justify-between">
               <div>
                 <p className="text-navy-900 font-semibold text-sm">Ready to Execute Blind Scoring Protocol</p>
@@ -604,7 +604,7 @@ export default function ANANDashboard() {
               </div>
               <div className="flex gap-2">
                 <Button onClick={handleExecuteStream} disabled={streaming || actionLoading === 'execute'}
-                  className="italic text-coral-600 hover:from-cyan-600 hover:to-violet-700" data-testid="anan-execute-stream-btn">
+                  className="italic text-coral-600 hover:from-coral-500 hover:to-violet-700" data-testid="anan-execute-stream-btn">
                   {streaming ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Play className="w-4 h-4 mr-2" />}
                   {streaming ? 'Scoring...' : 'Execute (Live Stream)'}
                 </Button>
@@ -824,7 +824,7 @@ function AgentScoreCard({ agentKey, config, agent, streaming }) {
   const scoreColor = hasScore ? (agent.score >= 70 ? 'emerald' : agent.score >= 40 ? 'amber' : 'red') : config.color;
 
   return (
-    <Card className={`bg-cream-100 transition-all duration-500 ${isRunning ? 'border-blue-500/40 ring-1 ring-blue-500/20' : hasScore && agent.score >= 60 ? 'border-coral-200' : hasScore ? 'border-red-500/30' : 'border-slate-200'}`}
+    <Card className={`bg-cream-100 transition-all duration-500 ${isRunning ? 'border-coral-300/40 ring-1 ring-coral-500/20' : hasScore && agent.score >= 60 ? 'border-coral-200' : hasScore ? 'border-red-500/30' : 'border-slate-200'}`}
       data-testid={`anan-agent-${agentKey}`}>
       <CardContent className="p-5">
         <div className="flex items-center justify-between mb-4">
@@ -841,7 +841,7 @@ function AgentScoreCard({ agentKey, config, agent, streaming }) {
             {hasScore ? (
               <ScoreRing score={agent.score} size={52} color={scoreColor} />
             ) : isRunning ? (
-              <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
+              <Loader2 className="w-8 h-8 text-coral-500 animate-spin" />
             ) : (
               <div className="w-[52px] h-[52px] rounded-full border-2 border-slate-200 flex items-center justify-center">
                 <span className="text-slate-600 text-xs">--</span>
@@ -886,7 +886,7 @@ function AgentScoreCard({ agentKey, config, agent, streaming }) {
         )}
 
         {isRunning && !hasScore && (
-          <div className="mt-3 flex items-center gap-2 text-blue-400 text-[10px]">
+          <div className="mt-3 flex items-center gap-2 text-coral-500 text-[10px]">
             <Loader2 className="w-3 h-3 animate-spin" /> Analyzing in isolation...
           </div>
         )}

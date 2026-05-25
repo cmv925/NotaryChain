@@ -201,7 +201,7 @@ export default function NotaryProfile() {
                 You can independently verify any document they’ve sealed, even years from now.
               </p>
               <Link to="/verify" data-testid="verify-document-cta">
-                <Button className="w-full bg-sky-600 hover:bg-sky-500 text-navy-900">
+                <Button className="w-full bg-coral-500 hover:bg-coral-500 text-navy-900">
                   Verify a document
                 </Button>
               </Link>

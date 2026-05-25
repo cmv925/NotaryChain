@@ -168,7 +168,7 @@ const NotaryVideoSession = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-cream-100 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-coral-500 animate-spin" />
       </div>
     );
   }
@@ -182,7 +182,7 @@ const NotaryVideoSession = () => {
             <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-navy-900 mb-2">Error</h1>
             <p className="text-slate-500 mb-6">{error}</p>
-            <Button onClick={() => navigate('/dashboard')} className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={() => navigate('/dashboard')} className="bg-coral-500 hover:bg-coral-600">
               Back to Dashboard
             </Button>
           </div>
@@ -210,7 +210,7 @@ const NotaryVideoSession = () => {
               </Button>
               <div>
                 <h1 className="text-2xl font-bold text-navy-900 flex items-center gap-2">
-                  <Video className="w-6 h-6 text-blue-500" />
+                  <Video className="w-6 h-6 text-coral-500" />
                   Notarization Session
                 </h1>
                 <p className="text-slate-500 text-sm">
@@ -248,8 +248,8 @@ const NotaryVideoSession = () => {
                   {/* Pre-session Screen */}
                   {sessionStatus === 'preparing' && !videoSession && (
                     <div className="aspect-video flex flex-col items-center justify-center bg-cream-100 p-8">
-                      <div className="w-24 h-24 rounded-full bg-blue-600/20 flex items-center justify-center mb-6">
-                        <Camera className="w-12 h-12 text-blue-500" />
+                      <div className="w-24 h-24 rounded-full bg-coral-500/20 flex items-center justify-center mb-6">
+                        <Camera className="w-12 h-12 text-coral-500" />
                       </div>
                       <h2 className="text-2xl font-bold text-navy-900 mb-2">
                         Ready to Start?
@@ -261,7 +261,7 @@ const NotaryVideoSession = () => {
                       <Button
                         onClick={createVideoSession}
                         size="lg"
-                        className="bg-blue-600 hover:bg-blue-700"
+                        className="bg-coral-500 hover:bg-coral-600"
                         data-testid="start-session-btn"
                       >
                         <Video className="w-5 h-5 mr-2" />
@@ -332,7 +332,7 @@ const NotaryVideoSession = () => {
                         </Button>
                         <Button
                           onClick={() => navigate('/dashboard')}
-                          className="bg-blue-600 hover:bg-blue-700"
+                          className="bg-coral-500 hover:bg-coral-600"
                         >
                           Go to Dashboard
                         </Button>
@@ -349,7 +349,7 @@ const NotaryVideoSession = () => {
               <Card className="bg-white border-slate-200">
                 <CardContent className="p-4">
                   <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-blue-500" />
+                    <FileText className="w-5 h-5 text-coral-500" />
                     Document Details
                   </h3>
                   <div className="space-y-3 text-sm">
@@ -379,7 +379,7 @@ const NotaryVideoSession = () => {
               <Card className="bg-white border-slate-200">
                 <CardContent className="p-4">
                   <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
-                    <Users className="w-5 h-5 text-blue-500" />
+                    <Users className="w-5 h-5 text-coral-500" />
                     Signers
                   </h3>
                   <div className="space-y-2">
@@ -429,7 +429,7 @@ const NotaryVideoSession = () => {
                 <Card className="bg-white border-slate-200">
                   <CardContent className="p-4">
                     <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
-                      <Clock className="w-5 h-5 text-blue-500" />
+                      <Clock className="w-5 h-5 text-coral-500" />
                       Session
                     </h3>
                     <div className="space-y-2 text-sm">
@@ -444,7 +444,7 @@ const NotaryVideoSession = () => {
                           href={videoSession.room_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-blue-400 hover:text-blue-300"
+                          className="flex items-center gap-1 text-coral-500 hover:text-coral-400"
                         >
                           <ExternalLink className="w-3 h-3" />
                           Open in new tab

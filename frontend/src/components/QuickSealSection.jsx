@@ -39,8 +39,8 @@ const QuickSealSection = () => {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-blue-400" />
+                <div className="flex-shrink-0 w-10 h-10 bg-coral-500/10 rounded-lg flex items-center justify-center">
+                  <DollarSign className="w-5 h-5 text-coral-500" />
                 </div>
                 <div>
                   <h4 className="text-white font-semibold mb-1">Just $5 Per Seal</h4>
@@ -51,8 +51,8 @@ const QuickSealSection = () => {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-purple-400" />
+                <div className="flex-shrink-0 w-10 h-10 bg-navy-600/10 rounded-lg flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 text-navy-500" />
                 </div>
                 <div>
                   <h4 className="text-white font-semibold mb-1">Permanent Proof</h4>

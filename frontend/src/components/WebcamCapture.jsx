@@ -109,13 +109,13 @@ export function WebcamCapture({ onCapture, onCancel, label = 'Capture Photo' }) 
           autoPlay
           playsInline
           muted
-          className="w-full h-28 object-cover rounded-sm border border-blue-500/50"
+          className="w-full h-28 object-cover rounded-sm border border-coral-300/50"
         />
         <canvas ref={canvasRef} className="hidden" />
         <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 flex gap-2">
           <button
             onClick={capture}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-sm text-[10px] font-bold flex items-center gap-1"
+            className="bg-coral-500 hover:bg-coral-600 text-white px-3 py-1 rounded-sm text-[10px] font-bold flex items-center gap-1"
             data-testid="webcam-shutter"
           >
             <Camera className="w-3 h-3" /> Capture
@@ -135,7 +135,7 @@ export function WebcamCapture({ onCapture, onCancel, label = 'Capture Photo' }) 
   return (
     <button
       onClick={startCamera}
-      className="flex flex-col items-center justify-center h-28 w-full border-2 border-dashed border-slate-200 bg-cream-100 hover:border-blue-500/50 hover:bg-blue-500/5 rounded-sm cursor-pointer transition-all"
+      className="flex flex-col items-center justify-center h-28 w-full border-2 border-dashed border-slate-200 bg-cream-100 hover:border-coral-300/50 hover:bg-coral-500/5 rounded-sm cursor-pointer transition-all"
       data-testid="webcam-start"
     >
       <Camera className="w-6 h-6 text-slate-500 mb-1" />

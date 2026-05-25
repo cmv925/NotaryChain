@@ -109,8 +109,8 @@ const VerifyDocument = () => {
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Verify Document' }]} />
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-600/20 mb-6">
-              <Shield className="w-8 h-8 text-blue-500" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-coral-500/20 mb-6">
+              <Shield className="w-8 h-8 text-coral-500" />
             </div>
             <h1 className="text-4xl font-bold text-navy-900 mb-4">
               Verify Document
@@ -130,7 +130,7 @@ const VerifyDocument = () => {
                   variant={verificationMethod === 'hash' ? 'default' : 'outline'}
                   onClick={() => setVerificationMethod('hash')}
                   className={verificationMethod === 'hash' 
-                    ? 'bg-blue-600 hover:bg-blue-700' 
+                    ? 'bg-coral-500 hover:bg-coral-600' 
                     : 'border-slate-200 text-slate-500'}
                 >
                   <Hash className="w-4 h-4 mr-2" />
@@ -140,7 +140,7 @@ const VerifyDocument = () => {
                   variant={verificationMethod === 'file' ? 'default' : 'outline'}
                   onClick={() => setVerificationMethod('file')}
                   className={verificationMethod === 'file' 
-                    ? 'bg-blue-600 hover:bg-blue-700' 
+                    ? 'bg-coral-500 hover:bg-coral-600' 
                     : 'border-slate-200 text-slate-500'}
                 >
                   <Upload className="w-4 h-4 mr-2" />
@@ -169,12 +169,12 @@ const VerifyDocument = () => {
                 <div className="space-y-4">
                   <div 
                     className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                      selectedFile ? 'border-blue-500 bg-blue-500/5' : 'border-slate-200 hover:border-slate-200'
+                      selectedFile ? 'border-coral-300 bg-coral-500/5' : 'border-slate-200 hover:border-slate-200'
                     }`}
                   >
                     {selectedFile ? (
                       <div className="space-y-3">
-                        <FileText className="w-12 h-12 mx-auto text-blue-500" />
+                        <FileText className="w-12 h-12 mx-auto text-coral-500" />
                         <p className="text-navy-900 font-medium">{selectedFile.name}</p>
                         <p className="text-slate-500 text-sm">
                           {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
@@ -219,7 +219,7 @@ const VerifyDocument = () => {
               <Button
                 onClick={handleVerify}
                 disabled={loading || !documentHash}
-                className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-navy-900 py-4"
+                className="w-full mt-6 bg-coral-500 hover:bg-coral-600 text-navy-900 py-4"
                 data-testid="verify-btn"
               >
                 {loading ? (
@@ -288,7 +288,7 @@ const VerifyDocument = () => {
                     {/* Document Info */}
                     <div className="bg-cream-100 rounded-lg p-4 border border-slate-200">
                       <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-blue-500" />
+                        <FileText className="w-5 h-5 text-coral-500" />
                         Document Information
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -306,7 +306,7 @@ const VerifyDocument = () => {
                     {/* Blockchain Info */}
                     <div className="bg-cream-100 rounded-lg p-4 border border-slate-200">
                       <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
-                        <Link2 className="w-5 h-5 text-blue-500" />
+                        <Link2 className="w-5 h-5 text-coral-500" />
                         Blockchain Record
                       </h3>
                       <div className="space-y-3 text-sm">
@@ -340,7 +340,7 @@ const VerifyDocument = () => {
                         href={result.explorer_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 p-4 rounded-lg bg-blue-600/10 border border-blue-500/30 text-blue-400 hover:bg-blue-600/20 transition-colors"
+                        className="flex items-center justify-center gap-2 p-4 rounded-lg bg-coral-500/10 border border-coral-300/30 text-coral-500 hover:bg-coral-500/20 transition-colors"
                       >
                         <ExternalLink className="w-5 h-5" />
                         View on HashScan Explorer
@@ -356,7 +356,7 @@ const VerifyDocument = () => {
                     </p>
                     <Button
                       onClick={() => window.location.href = '/request-notarization'}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-coral-500 hover:bg-coral-600"
                     >
                       Request Notarization
                     </Button>
@@ -371,8 +371,8 @@ const VerifyDocument = () => {
             <h3 className="text-xl font-bold text-navy-900 mb-6 text-center">How Verification Works</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white rounded-lg p-6 border border-slate-200 text-center">
-                <div className="w-12 h-12 rounded-full bg-blue-600/20 flex items-center justify-center mx-auto mb-4">
-                  <Hash className="w-6 h-6 text-blue-500" />
+                <div className="w-12 h-12 rounded-full bg-coral-500/20 flex items-center justify-center mx-auto mb-4">
+                  <Hash className="w-6 h-6 text-coral-500" />
                 </div>
                 <h4 className="text-navy-900 font-semibold mb-2">1. Document Hash</h4>
                 <p className="text-slate-500 text-sm">
@@ -380,8 +380,8 @@ const VerifyDocument = () => {
                 </p>
               </div>
               <div className="bg-white rounded-lg p-6 border border-slate-200 text-center">
-                <div className="w-12 h-12 rounded-full bg-blue-600/20 flex items-center justify-center mx-auto mb-4">
-                  <Search className="w-6 h-6 text-blue-500" />
+                <div className="w-12 h-12 rounded-full bg-coral-500/20 flex items-center justify-center mx-auto mb-4">
+                  <Search className="w-6 h-6 text-coral-500" />
                 </div>
                 <h4 className="text-navy-900 font-semibold mb-2">2. Blockchain Lookup</h4>
                 <p className="text-slate-500 text-sm">
@@ -389,8 +389,8 @@ const VerifyDocument = () => {
                 </p>
               </div>
               <div className="bg-white rounded-lg p-6 border border-slate-200 text-center">
-                <div className="w-12 h-12 rounded-full bg-blue-600/20 flex items-center justify-center mx-auto mb-4">
-                  <Shield className="w-6 h-6 text-blue-500" />
+                <div className="w-12 h-12 rounded-full bg-coral-500/20 flex items-center justify-center mx-auto mb-4">
+                  <Shield className="w-6 h-6 text-coral-500" />
                 </div>
                 <h4 className="text-navy-900 font-semibold mb-2">3. Tamper-Proof</h4>
                 <p className="text-slate-500 text-sm">

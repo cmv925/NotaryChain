@@ -6,7 +6,7 @@ import { Button } from './ui/button';
 import { Lock, Crown, Building2, ArrowRight } from 'lucide-react';
 
 const PLAN_META = {
-  pro: { name: 'Professional', price: 49, icon: Crown, color: 'blue', accent: 'from-blue-600 to-blue-400' },
+  pro: { name: 'Professional', price: 49, icon: Crown, color: 'blue', accent: 'from-coral-500 to-blue-400' },
   enterprise: { name: 'Enterprise', price: 199, icon: Building2, color: 'violet', accent: 'from-violet-600 to-violet-400' },
 };
 

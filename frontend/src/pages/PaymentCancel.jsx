@@ -30,7 +30,7 @@ const PaymentCancel = () => {
               <div className="space-y-3">
                 <Button
                   onClick={() => navigate('/checkout')}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  className="w-full bg-coral-500 hover:bg-coral-600"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Try Again

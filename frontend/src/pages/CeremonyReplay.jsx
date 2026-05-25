@@ -21,7 +21,7 @@ function StepCard({ step, isActive, isCompleted, delay }) {
   const statusColors = {
     pass: 'border-emerald-500/40 bg-coral-500/5',
     fail: 'border-red-500/40 bg-red-500/5',
-    completed: 'border-sky-500/40 bg-sky-500/5',
+    completed: 'border-coral-300/40 bg-coral-500/5',
     pending: 'border-slate-300 bg-cream-200',
   };
 
@@ -29,7 +29,7 @@ function StepCard({ step, isActive, isCompleted, delay }) {
     <div
       data-testid={`replay-step-${step.step}`}
       className={`rounded-xl border p-4 transition-all duration-700 ${
-        isActive ? 'ring-2 ring-sky-500/50 scale-[1.02]' : ''
+        isActive ? 'ring-2 ring-coral-500/50 scale-[1.02]' : ''
       } ${isCompleted ? statusColors[step.status] || statusColors.completed : 'border-slate-200 bg-white/20 opacity-40'}`}
       style={{ animationDelay: `${delay}ms`, animation: isCompleted ? 'fadeInUp 0.6s ease forwards' : 'none' }}
     >
@@ -37,7 +37,7 @@ function StepCard({ step, isActive, isCompleted, delay }) {
         <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
           step.status === 'pass' ? 'bg-coral-500/15 text-coral-600' :
           step.status === 'fail' ? 'bg-red-500/15 text-red-400' :
-          'bg-sky-500/15 text-coral-600'
+          'bg-coral-500/15 text-coral-600'
         }`}>
           <Icon className="w-4.5 h-4.5" />
         </div>
@@ -60,7 +60,7 @@ function StepCard({ step, isActive, isCompleted, delay }) {
           {step.confidence && (
             <div className="flex items-center gap-2 mt-2">
               <div className="flex-1 h-1.5 bg-cream-200 rounded-full overflow-hidden">
-                <div className="h-full bg-sky-500 rounded-full transition-all duration-1000"
+                <div className="h-full bg-coral-500 rounded-full transition-all duration-1000"
                   style={{ width: isCompleted ? `${(step.confidence * 100)}%` : '0%' }} />
               </div>
               <span className="text-[10px] text-slate-500">{(step.confidence * 100).toFixed(0)}%</span>
@@ -161,7 +161,7 @@ export default function CeremonyReplay() {
           </div>
           <div className="flex gap-2">
             <Button data-testid="replay-play-btn" size="sm" onClick={playing ? pause : play}
-              className="bg-sky-600 hover:bg-sky-700 text-navy-900">
+              className="bg-coral-500 hover:bg-coral-600 text-navy-900">
               {playing ? <><Pause className="w-3.5 h-3.5 mr-1" />Pause</> : <><Play className="w-3.5 h-3.5 mr-1" />Play</>}
             </Button>
             <Button data-testid="replay-reset-btn" size="sm" variant="outline" onClick={reset}

@@ -118,7 +118,7 @@ const NotaryMarketplace = () => {
               <Card className="bg-white border-slate-200 mb-6">
                 <CardContent className="p-6">
                   <div className="flex flex-col sm:flex-row gap-6">
-                    <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-navy-900 text-2xl font-bold flex-shrink-0">
+                    <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-coral-500 to-navy-700 flex items-center justify-center text-navy-900 text-2xl font-bold flex-shrink-0">
                       {selectedNotary.name?.charAt(0) || '?'}
                     </div>
                     <div className="flex-1">
@@ -140,7 +140,7 @@ const NotaryMarketplace = () => {
                       <p className="text-slate-500 text-sm mt-3">{selectedNotary.bio || 'No bio provided.'}</p>
                       <div className="flex flex-wrap gap-2 mt-3">
                         {(selectedNotary.specializations || []).map(s => (
-                          <span key={s} className="px-2 py-0.5 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">{s}</span>
+                          <span key={s} className="px-2 py-0.5 bg-coral-500/10 text-coral-500 text-xs rounded-full border border-coral-300/20">{s}</span>
                         ))}
                       </div>
                       <div className="flex items-center gap-6 mt-4 text-sm">
@@ -170,7 +170,7 @@ const NotaryMarketplace = () => {
                 <Card className="bg-white border-slate-200 mb-6" data-testid="notary-availability">
                   <CardContent className="p-5">
                     <h3 className="text-base font-semibold text-navy-900 mb-3 flex items-center gap-2">
-                      <CalendarIcon className="w-4 h-4 text-blue-400" />
+                      <CalendarIcon className="w-4 h-4 text-coral-500" />
                       {t('marketplace.availability')}
                     </h3>
                     {availability.availability ? (
@@ -180,7 +180,7 @@ const NotaryMarketplace = () => {
                           const slots = availability.availability[dayKey] || availability.availability[['monday','tuesday','wednesday','thursday','friday','saturday','sunday'][i]] || [];
                           const hasSlots = Array.isArray(slots) ? slots.length > 0 : !!slots;
                           return (
-                            <div key={day} className={`rounded-lg p-2 text-center border ${hasSlots ? 'bg-coral-500/5 border-coral-200' : 'bg-gray-800/30 border-slate-200'}`}>
+                            <div key={day} className={`rounded-lg p-2 text-center border ${hasSlots ? 'bg-coral-500/5 border-coral-200' : 'bg-navy-800/30 border-slate-200'}`}>
                               <p className={`text-xs font-medium ${hasSlots ? 'text-coral-600' : 'text-slate-600'}`}>{day}</p>
                               <p className="text-[10px] text-slate-500 mt-0.5">{hasSlots ? (Array.isArray(slots) ? `${slots.length} slots` : 'Available') : 'Closed'}</p>
                             </div>
@@ -198,7 +198,7 @@ const NotaryMarketplace = () => {
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-navy-900">{t('marketplace.reviews')} ({selectedNotary.review_count})</h2>
                 {token && !showReviewForm && (
-                  <Button size="sm" onClick={() => setShowReviewForm(true)} className="bg-blue-600 hover:bg-blue-500" data-testid="write-review-btn">
+                  <Button size="sm" onClick={() => setShowReviewForm(true)} className="bg-coral-500 hover:bg-coral-500" data-testid="write-review-btn">
                     <MessageSquare className="w-4 h-4 mr-1" /> {t('marketplace.write_review')}
                   </Button>
                 )}
@@ -206,7 +206,7 @@ const NotaryMarketplace = () => {
 
               {/* Review Form */}
               {showReviewForm && (
-                <Card className="bg-white border-blue-500/30 mb-4" data-testid="review-form">
+                <Card className="bg-white border-coral-300/30 mb-4" data-testid="review-form">
                   <CardContent className="p-5 space-y-4">
                     <h3 className="text-navy-900 font-medium">{t('marketplace.rate_experience')}</h3>
                     <div className="flex items-center gap-1">
@@ -222,11 +222,11 @@ const NotaryMarketplace = () => {
                       onChange={e => setReviewComment(e.target.value)}
                       placeholder={t('marketplace.share_experience')}
                       rows={3}
-                      className="w-full bg-cream-100 border border-slate-200 rounded-lg px-3 py-2 text-navy-900 text-sm placeholder-gray-500 focus:border-blue-500 outline-none"
+                      className="w-full bg-cream-100 border border-slate-200 rounded-lg px-3 py-2 text-navy-900 text-sm placeholder-gray-500 focus:border-coral-300 outline-none"
                       data-testid="review-comment"
                     />
                     <div className="flex gap-2">
-                      <Button onClick={submitReview} disabled={submittingReview} className="bg-blue-600 hover:bg-blue-500" data-testid="submit-review-btn">
+                      <Button onClick={submitReview} disabled={submittingReview} className="bg-coral-500 hover:bg-coral-500" data-testid="submit-review-btn">
                         {submittingReview ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null}
                         {t('marketplace.submit_review')}
                       </Button>
@@ -262,7 +262,7 @@ const NotaryMarketplace = () => {
               <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Marketplace' }]} />
               <div className="mb-8">
                 <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 flex items-center gap-3">
-                  <Users className="w-7 h-7 text-blue-400" />
+                  <Users className="w-7 h-7 text-coral-500" />
                   {t('marketplace.title')}
                 </h1>
                 <p className="text-slate-500 text-sm mt-1">{t('marketplace.subtitle')}</p>
@@ -279,15 +279,15 @@ const NotaryMarketplace = () => {
                     data-testid="marketplace-search"
                   />
                 </div>
-                <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="bg-white border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none" data-testid="marketplace-state-filter">
+                <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="bg-white border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-coral-300 outline-none" data-testid="marketplace-state-filter">
                   <option value="">{t('marketplace.all_states')}</option>
                   {STATES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <select value={specFilter} onChange={e => setSpecFilter(e.target.value)} className="bg-white border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none" data-testid="marketplace-spec-filter">
+                <select value={specFilter} onChange={e => setSpecFilter(e.target.value)} className="bg-white border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-coral-300 outline-none" data-testid="marketplace-spec-filter">
                   <option value="">{t('marketplace.all_specs')}</option>
                   {SPECIALIZATIONS.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="bg-white border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none" data-testid="marketplace-sort">
+                <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="bg-white border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-coral-300 outline-none" data-testid="marketplace-sort">
                   <option value="rating">{t('marketplace.top_rated')}</option>
                   <option value="experience">{t('marketplace.most_experienced')}</option>
                   <option value="rate">{t('marketplace.lowest_rate')}</option>
@@ -305,7 +305,7 @@ const NotaryMarketplace = () => {
 
               {/* Results */}
               {loading ? (
-                <div className="text-center py-12"><Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto" /></div>
+                <div className="text-center py-12"><Loader2 className="w-8 h-8 text-coral-500 animate-spin mx-auto" /></div>
               ) : notaries.length === 0 ? (
                 <Card className="bg-white border-slate-200">
                   <CardContent className="p-12 text-center">
@@ -318,13 +318,13 @@ const NotaryMarketplace = () => {
                   {notaries.map(notary => (
                     <Card
                       key={notary.notary_id}
-                      className="bg-white border-slate-200 hover:border-blue-500/30 transition-colors cursor-pointer"
+                      className="bg-white border-slate-200 hover:border-coral-300/30 transition-colors cursor-pointer"
                       onClick={() => viewProfile(notary.notary_id)}
                       data-testid={`notary-card-${notary.notary_id}`}
                     >
                       <CardContent className="p-4">
                         <div className="flex items-start gap-3">
-                          <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-navy-900 text-lg font-bold flex-shrink-0">
+                          <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-coral-500 to-navy-700 flex items-center justify-center text-navy-900 text-lg font-bold flex-shrink-0">
                             {notary.name?.charAt(0) || '?'}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -345,7 +345,7 @@ const NotaryMarketplace = () => {
                             </div>
                             <div className="flex flex-wrap gap-1 mt-2">
                               {(notary.specializations || []).slice(0, 3).map(s => (
-                                <span key={s} className="px-1.5 py-0.5 bg-blue-500/10 text-blue-400 text-[10px] rounded">{s}</span>
+                                <span key={s} className="px-1.5 py-0.5 bg-coral-500/10 text-coral-500 text-[10px] rounded">{s}</span>
                               ))}
                             </div>
                           </div>

@@ -595,7 +595,7 @@ function RemediationTab({ headers, onChanged }) {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <Badge className={t.status === 'pending' ? 'bg-amber-100 text-amber-800 border-amber-200' : t.status === 'approved' ? 'bg-blue-100 text-blue-800 border-blue-200' : t.status === 'completed' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-slate-100 text-slate-700 border-slate-200'}>
+                      <Badge className={t.status === 'pending' ? 'bg-amber-100 text-amber-800 border-amber-200' : t.status === 'approved' ? 'bg-coral-100 text-blue-800 border-coral-200' : t.status === 'completed' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-slate-100 text-slate-700 border-slate-200'}>
                         {t.status}
                       </Badge>
                       <ArrowRight className={`w-4 h-4 text-slate-400 transition-transform ${selected?.id === t.id ? 'rotate-90' : ''}`} />

@@ -50,7 +50,7 @@ export const AuditTab = ({ auditLogs }) => (
                     <div className={`w-2 h-2 rounded-full mt-2 ${
                       log.severity === 'critical' ? 'bg-red-500' :
                       log.severity === 'warning' ? 'bg-yellow-500' :
-                      'bg-blue-500'
+                      'bg-coral-500'
                     }`} />
                     <div className="flex-1">
                       <div className="flex items-center gap-2">

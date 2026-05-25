@@ -96,13 +96,13 @@ export default function ApprovalsPage() {
             </Button>
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
-                <UserCheck className="w-6 h-6 text-blue-400" />
+                <UserCheck className="w-6 h-6 text-coral-500" />
                 Approval Workflows
               </h1>
               <p className="text-slate-500 text-sm">Multi-step document approvals</p>
             </div>
           </div>
-          <Button onClick={() => setShowCreate(!showCreate)} className="bg-blue-600 hover:bg-blue-700" data-testid="create-approval-btn">
+          <Button onClick={() => setShowCreate(!showCreate)} className="bg-coral-500 hover:bg-coral-600" data-testid="create-approval-btn">
             <Plus className="w-4 h-4 mr-2" /> New Request
           </Button>
         </div>
@@ -135,11 +135,11 @@ export default function ApprovalsPage() {
                     </select>
                   </div>
                 ))}
-                <Button variant="ghost" size="sm" onClick={() => setChain([...chain, { approver_email: '', role: 'approver' }])} className="text-blue-400 text-xs">
+                <Button variant="ghost" size="sm" onClick={() => setChain([...chain, { approver_email: '', role: 'approver' }])} className="text-coral-500 text-xs">
                   + Add step
                 </Button>
               </div>
-              <Button onClick={createRequest} disabled={creating} className="bg-blue-600 hover:bg-blue-700 w-full" data-testid="submit-approval">
+              <Button onClick={createRequest} disabled={creating} className="bg-coral-500 hover:bg-coral-600 w-full" data-testid="submit-approval">
                 {creating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
                 Submit for Approval
               </Button>
@@ -157,7 +157,7 @@ export default function ApprovalsPage() {
               key={key}
               onClick={() => setTab(key)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                tab === key ? 'bg-blue-600/20 text-blue-400' : 'bg-gray-800/50 text-slate-500 hover:text-slate-500'
+                tab === key ? 'bg-coral-500/20 text-coral-500' : 'bg-navy-800/50 text-slate-500 hover:text-slate-500'
               }`}
               data-testid={`tab-${key}`}
             >
@@ -198,7 +198,7 @@ export default function ApprovalsPage() {
                           step.status === 'approved' ? 'bg-green-500/10 text-green-400' :
                           step.status === 'rejected' ? 'bg-red-500/10 text-red-400' :
                           step.status === 'pending' ? 'bg-coral-500/10 text-coral-600 ring-1 ring-amber-500/20' :
-                          'bg-gray-800/50 text-slate-500'
+                          'bg-navy-800/50 text-slate-500'
                         }`}>
                           {step.status === 'approved' ? <CheckCircle className="w-3 h-3" /> :
                            step.status === 'rejected' ? <XCircle className="w-3 h-3" /> :

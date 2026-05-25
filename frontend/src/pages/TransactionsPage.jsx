@@ -19,8 +19,8 @@ const API_URL = process.env.REACT_APP_BACKEND_URL;
 const statusColors = {
   draft: 'bg-gray-500',
   pending_participants: 'bg-yellow-500',
-  in_progress: 'bg-blue-500',
-  pending_review: 'bg-purple-500',
+  in_progress: 'bg-coral-500',
+  pending_review: 'bg-navy-600',
   pending_settlement: 'bg-coral-500',
   completed: 'bg-green-500',
   cancelled: 'bg-red-500',
@@ -370,8 +370,8 @@ export default function TransactionsPage() {
                   <p className="text-slate-500 text-sm">Total</p>
                   <p className="text-2xl font-bold text-navy-900">{stats.total}</p>
                 </div>
-                <div className="h-10 w-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-blue-500" />
+                <div className="h-10 w-10 rounded-full bg-coral-500/20 flex items-center justify-center">
+                  <FileText className="h-5 w-5 text-coral-500" />
                 </div>
               </div>
             </CardContent>

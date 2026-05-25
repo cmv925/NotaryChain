@@ -28,7 +28,7 @@ const API = `${BACKEND_URL}/api`;
 
 const ROLE_BADGES = {
   owner: { label: 'Owner', color: 'bg-coral-500/15 text-coral-600 border-gold-500/30' },
-  admin: { label: 'Admin', color: 'bg-blue-500/15 text-blue-400 border-blue-500/30' },
+  admin: { label: 'Admin', color: 'bg-coral-500/15 text-coral-500 border-coral-300/30' },
   member: { label: 'Member', color: 'bg-gray-500/15 text-slate-500 border-slate-300/30' },
 };
 
@@ -82,7 +82,7 @@ const CreateOrgModal = ({ onClose, onCreated, token }) => {
             <Label className="text-slate-500 text-sm">Description</Label>
             <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="A brief description..." className="bg-cream-100 border-slate-200 text-navy-900 mt-1" data-testid="org-desc-input" />
           </div>
-          <Button type="submit" disabled={creating || !name.trim()} className="w-full bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="create-org-btn">
+          <Button type="submit" disabled={creating || !name.trim()} className="w-full bg-coral-500 hover:bg-coral-600 text-navy-900" data-testid="create-org-btn">
             {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
             Create Organization
           </Button>
@@ -138,10 +138,10 @@ const InviteMemberModal = ({ orgId, onClose, onInvited, token }) => {
                   key={r.value}
                   type="button"
                   onClick={() => setRole(r.value)}
-                  className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${role === r.value ? 'border-blue-500 bg-blue-500/10' : 'border-slate-200 bg-cream-100 hover:border-slate-200'}`}
+                  className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${role === r.value ? 'border-coral-300 bg-coral-500/10' : 'border-slate-200 bg-cream-100 hover:border-slate-200'}`}
                   data-testid={`invite-role-${r.value}`}
                 >
-                  <r.icon className={`w-4 h-4 ${role === r.value ? 'text-blue-400' : 'text-slate-500'}`} />
+                  <r.icon className={`w-4 h-4 ${role === r.value ? 'text-coral-500' : 'text-slate-500'}`} />
                   <div>
                     <p className={`text-sm font-medium ${role === r.value ? 'text-navy-900' : 'text-slate-500'}`}>{r.label}</p>
                     <p className="text-slate-500 text-xs">{r.desc}</p>
@@ -150,7 +150,7 @@ const InviteMemberModal = ({ orgId, onClose, onInvited, token }) => {
               ))}
             </div>
           </div>
-          <Button type="submit" disabled={sending || !email.trim()} className="w-full bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="send-invite-btn">
+          <Button type="submit" disabled={sending || !email.trim()} className="w-full bg-coral-500 hover:bg-coral-600 text-navy-900" data-testid="send-invite-btn">
             {sending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Mail className="w-4 h-4 mr-2" />}
             Send Invitation
           </Button>
@@ -230,7 +230,7 @@ const SSOSettings = ({ orgId, myRole, token }) => {
     <div className="space-y-4" data-testid="sso-settings">
       <div className="flex items-center justify-between p-4 bg-cream-100 rounded-lg border border-slate-200">
         <div className="flex items-center gap-3">
-          <Lock className="w-5 h-5 text-purple-400" />
+          <Lock className="w-5 h-5 text-navy-500" />
           <div>
             <p className="text-navy-900 font-medium">Single Sign-On (SSO)</p>
             <p className="text-slate-500 text-xs">Allow members to sign in with your identity provider</p>
@@ -238,7 +238,7 @@ const SSOSettings = ({ orgId, myRole, token }) => {
         </div>
         <button
           onClick={() => setForm(f => ({ ...f, sso_enabled: !f.sso_enabled }))}
-          className={`w-12 h-6 rounded-full transition-colors ${form.sso_enabled ? 'bg-blue-600' : 'bg-gray-700'} relative`}
+          className={`w-12 h-6 rounded-full transition-colors ${form.sso_enabled ? 'bg-coral-500' : 'bg-gray-700'} relative`}
           data-testid="sso-toggle"
         >
           <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all ${form.sso_enabled ? 'left-6' : 'left-0.5'}`} />
@@ -279,7 +279,7 @@ const SSOSettings = ({ orgId, myRole, token }) => {
             <Input value={form.sso_allowed_domains} onChange={(e) => setForm(f => ({ ...f, sso_allowed_domains: e.target.value }))} placeholder="example.com, acme.com" className="bg-white border-slate-200 text-navy-900 mt-1" data-testid="sso-domains-input" />
             <p className="text-slate-500 text-xs mt-1">Comma-separated. Only users with these email domains can SSO.</p>
           </div>
-          <Button onClick={handleSave} disabled={saving} className="bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="save-sso-btn">
+          <Button onClick={handleSave} disabled={saving} className="bg-coral-500 hover:bg-coral-600 text-navy-900" data-testid="save-sso-btn">
             {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
             Save SSO Configuration
           </Button>
@@ -297,7 +297,7 @@ const MemberRow = ({ member: m, orgId, myRole, isAdmin, token, onRemove, onRoleC
   return (
     <div className="flex items-center justify-between p-3 bg-cream-100 rounded-lg border border-slate-200" data-testid={`member-${m.id}`}>
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-bold">
+        <div className="w-8 h-8 rounded-full bg-coral-500/20 flex items-center justify-center text-coral-500 text-sm font-bold">
           {(m.full_name || m.email)[0].toUpperCase()}
         </div>
         <div>
@@ -529,7 +529,7 @@ const OrganizationPage = () => {
               <h1 className="text-2xl sm:text-3xl font-bold text-navy-900" data-testid="org-page-title">Organizations</h1>
               <p className="text-slate-500 text-sm mt-1">Manage your teams and enterprise settings</p>
             </div>
-            <Button onClick={() => setShowCreateModal(true)} className="bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="new-org-btn">
+            <Button onClick={() => setShowCreateModal(true)} className="bg-coral-500 hover:bg-coral-600 text-navy-900" data-testid="new-org-btn">
               <Plus className="w-4 h-4 mr-2" /> New Organization
             </Button>
           </div>
@@ -538,14 +538,14 @@ const OrganizationPage = () => {
           {pendingInvites.length > 0 && (
             <div className="mb-6 space-y-2" data-testid="pending-invites-banner">
               {pendingInvites.map((inv) => (
-                <div key={inv.id} className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-between">
+                <div key={inv.id} className="p-3 rounded-lg bg-coral-500/10 border border-coral-300/30 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-blue-400" />
+                    <Mail className="w-4 h-4 text-coral-500" />
                     <span className="text-slate-500 text-sm">
                       <strong className="text-navy-900">{inv.invited_by_name}</strong> invited you to <strong className="text-navy-900">{inv.org_name}</strong> as {inv.role}
                     </span>
                   </div>
-                  <Button size="sm" onClick={() => handleAcceptInvite(inv.token)} className="bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid={`accept-invite-${inv.id}`}>
+                  <Button size="sm" onClick={() => handleAcceptInvite(inv.token)} className="bg-coral-500 hover:bg-coral-600 text-navy-900" data-testid={`accept-invite-${inv.id}`}>
                     <Check className="w-3 h-3 mr-1" /> Accept
                   </Button>
                 </div>
@@ -573,13 +573,13 @@ const OrganizationPage = () => {
                     onClick={() => selectOrg(org)}
                     className={`w-full text-left p-3 rounded-lg border transition-all ${
                       selectedOrg?.id === org.id
-                        ? 'bg-blue-500/10 border-blue-500/30'
+                        ? 'bg-coral-500/10 border-coral-300/30'
                         : 'bg-white border-slate-200 hover:border-slate-200'
                     }`}
                     data-testid={`org-item-${org.id}`}
                   >
                     <div className="flex items-center gap-2">
-                      <Building2 className={`w-4 h-4 ${selectedOrg?.id === org.id ? 'text-blue-400' : 'text-slate-500'}`} />
+                      <Building2 className={`w-4 h-4 ${selectedOrg?.id === org.id ? 'text-coral-500' : 'text-slate-500'}`} />
                       <span className="text-navy-900 font-medium text-sm truncate">{org.name}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-1 ml-6">
@@ -615,7 +615,7 @@ const OrganizationPage = () => {
                             key={id}
                             onClick={() => setActiveTab(id)}
                             className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm transition-all ${
-                              activeTab === id ? 'bg-blue-600 text-navy-900' : 'text-slate-500 hover:text-navy-900'
+                              activeTab === id ? 'bg-coral-500 text-navy-900' : 'text-slate-500 hover:text-navy-900'
                             }`}
                             data-testid={`tab-${id}`}
                           >
@@ -636,7 +636,7 @@ const OrganizationPage = () => {
                                 </span>
                               )}
                               <PermissionGate permission="members:invite" userPermissions={myPerms} showLock>
-                                <Button size="sm" onClick={() => setShowInviteModal(true)} className="bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="invite-member-btn">
+                                <Button size="sm" onClick={() => setShowInviteModal(true)} className="bg-coral-500 hover:bg-coral-600 text-navy-900" data-testid="invite-member-btn">
                                   <UserPlus className="w-3.5 h-3.5 mr-1" /> Invite
                                 </Button>
                               </PermissionGate>
@@ -729,12 +729,12 @@ const OrganizationPage = () => {
                             </div>
                             <div className="p-4 bg-cream-100 rounded-lg border border-slate-200">
                               <p className="text-slate-500 text-sm mb-1">Your Permissions</p>
-                              <p className="text-navy-900 text-sm">{myPerms.length} permissions via <span className="text-blue-400">{permSource}</span></p>
+                              <p className="text-navy-900 text-sm">{myPerms.length} permissions via <span className="text-coral-500">{permSource}</span></p>
                               <div className="flex flex-wrap gap-1 mt-2">
                                 {myPerms.slice(0, 8).map(p => (
                                   <span key={p} className="text-[10px] px-1.5 py-0.5 rounded bg-coral-500/10 text-coral-600 border border-coral-200">{p}</span>
                                 ))}
-                                {myPerms.length > 8 && <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-slate-500">+{myPerms.length - 8} more</span>}
+                                {myPerms.length > 8 && <span className="text-[10px] px-1.5 py-0.5 rounded bg-navy-800 text-slate-500">+{myPerms.length - 8} more</span>}
                               </div>
                             </div>
                             <PermissionGate permission="org:settings" userPermissions={myPerms}>

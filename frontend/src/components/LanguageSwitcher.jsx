@@ -25,7 +25,7 @@ const LanguageSwitcher = () => {
     <div className="relative" ref={ref} data-testid="language-switcher">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-blue-500/50 bg-cream-100/50 text-slate-500 hover:text-white text-sm transition-all"
+        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-coral-300/50 bg-cream-100/50 text-slate-500 hover:text-white text-sm transition-all"
         data-testid="language-switcher-btn"
       >
         <Globe className="w-3.5 h-3.5" />
@@ -40,7 +40,7 @@ const LanguageSwitcher = () => {
               onClick={() => { i18n.changeLanguage(lang.code); setOpen(false); }}
               className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-all text-left ${
                 lang.code === i18n.language
-                  ? 'bg-blue-600/15 text-blue-400'
+                  ? 'bg-coral-500/15 text-coral-500'
                   : 'text-slate-500 hover:bg-cream-100/50 hover:text-white'
               }`}
               data-testid={`lang-${lang.code}`}

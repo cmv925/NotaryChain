@@ -12,7 +12,7 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const STATUS_BADGES = {
   live: { label: 'Live', icon: CheckCircle2, color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
   pilot: { label: 'Pilot', icon: Clock, color: 'bg-amber-50 text-amber-700 border-amber-200' },
-  enacted_pending: { label: 'Implementing', icon: Clock, color: 'bg-sky-50 text-sky-700 border-sky-200' },
+  enacted_pending: { label: 'Implementing', icon: Clock, color: 'bg-coral-50 text-coral-700 border-coral-200' },
   proposed: { label: 'Proposed', icon: AlertCircle, color: 'bg-slate-100 text-slate-700 border-slate-200' },
 };
 

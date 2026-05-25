@@ -276,7 +276,7 @@ export default function UserGuide() {
               headers={['Pill', 'Meaning']}
               rows={[
                 [<span key="p" className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px] font-bold uppercase">Pending</span>, 'Waiting for a notary to pick it up'],
-                [<span key="a" className="px-2 py-0.5 bg-sky-100 text-sky-700 rounded text-[10px] font-bold uppercase">Assigned</span>, 'A notary has claimed it — ceremony scheduled'],
+                [<span key="a" className="px-2 py-0.5 bg-coral-100 text-coral-700 rounded text-[10px] font-bold uppercase">Assigned</span>, 'A notary has claimed it — ceremony scheduled'],
                 [<span key="i" className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px] font-bold uppercase">In session</span>, 'Video ceremony is live right now'],
                 [<span key="c" className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-[10px] font-bold uppercase">Completed</span>, 'Sealed on Hedera, you\'re done'],
                 [<span key="b" className="px-2 py-0.5 bg-coral-100 text-coral-700 rounded text-[10px] font-bold uppercase">{'<state>_blocked'}</span>, 'Pre-seal gate failed; see the reason in the audit trail'],

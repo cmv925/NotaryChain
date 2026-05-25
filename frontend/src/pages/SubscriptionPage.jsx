@@ -18,8 +18,8 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const planIcons = { free: Zap, pro: Crown, enterprise: Building2 };
 const planColors = {
   free: 'text-slate-500',
-  pro: 'text-blue-400',
-  enterprise: 'text-purple-400',
+  pro: 'text-coral-500',
+  enterprise: 'text-navy-500',
 };
 
 const SubscriptionPage = () => {
@@ -83,7 +83,7 @@ const SubscriptionPage = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
               <h1 className="text-navy-900 font-semibold flex items-center gap-2 text-sm sm:text-base">
-                <CreditCard className="w-5 h-5 text-blue-500" /> Subscription
+                <CreditCard className="w-5 h-5 text-coral-500" /> Subscription
               </h1>
             </div>
             <NotificationBell token={token} />
@@ -120,7 +120,7 @@ const SubscriptionPage = () => {
 
               <div className="flex gap-2">
                 {plan.id !== 'enterprise' && (
-                  <Button onClick={() => navigate('/pricing')} className="bg-blue-600 hover:bg-blue-700 text-navy-900" data-testid="upgrade-btn">
+                  <Button onClick={() => navigate('/pricing')} className="bg-coral-500 hover:bg-coral-600 text-navy-900" data-testid="upgrade-btn">
                     Upgrade
                   </Button>
                 )}
@@ -176,7 +176,7 @@ const SubscriptionPage = () => {
         <Card className="bg-white border-slate-200" data-testid="usage-card">
           <CardContent className="p-6 sm:p-8">
             <div className="flex items-center gap-2 mb-6">
-              <BarChart3 className="w-5 h-5 text-blue-400" />
+              <BarChart3 className="w-5 h-5 text-coral-500" />
               <h3 className="text-lg font-bold text-navy-900">Usage This Month</h3>
             </div>
 
@@ -201,11 +201,11 @@ const SubscriptionPage = () => {
                         {item.used} / {item.limit > 1000 ? 'Unlimited' : item.limit}
                       </span>
                     </div>
-                    <Progress value={pct} className={`h-2 ${isOver ? '[&>div]:bg-red-500' : '[&>div]:bg-blue-500'}`} />
+                    <Progress value={pct} className={`h-2 ${isOver ? '[&>div]:bg-red-500' : '[&>div]:bg-coral-500'}`} />
                     {isOver && (
                       <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
                         <AlertTriangle className="w-3 h-3" /> Limit reached.{' '}
-                        <button onClick={() => navigate('/pricing')} className="underline text-blue-400">Upgrade</button>
+                        <button onClick={() => navigate('/pricing')} className="underline text-coral-500">Upgrade</button>
                       </p>
                     )}
                   </div>

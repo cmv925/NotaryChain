@@ -94,7 +94,7 @@ const NotaryAvailabilitySettings = ({ token }) => {
     } catch {}
   };
 
-  if (loading) return <div className="text-center py-4"><Loader2 className="w-6 h-6 text-blue-500 animate-spin mx-auto" /></div>;
+  if (loading) return <div className="text-center py-4"><Loader2 className="w-6 h-6 text-coral-500 animate-spin mx-auto" /></div>;
 
   return (
     <div className="space-y-4" data-testid="notary-availability-settings">
@@ -102,7 +102,7 @@ const NotaryAvailabilitySettings = ({ token }) => {
       <Card className="bg-cream-100 border-slate-200">
         <CardContent className="p-4">
           <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-blue-400" />
+            <Calendar className="w-4 h-4 text-coral-500" />
             Weekly Schedule
           </h3>
 
@@ -167,7 +167,7 @@ const NotaryAvailabilitySettings = ({ token }) => {
           </div>
 
           <div className="flex gap-2">
-            <Button onClick={addSlot} size="sm" variant="outline" className="border-blue-500/50 text-blue-400" data-testid="add-time-slot-btn">
+            <Button onClick={addSlot} size="sm" variant="outline" className="border-coral-300/50 text-coral-500" data-testid="add-time-slot-btn">
               <Plus className="w-3 h-3 mr-1" /> Add Time Slot
             </Button>
             <Button onClick={saveSchedule} size="sm" className="bg-green-600 hover:bg-green-700 ml-auto" disabled={saving} data-testid="save-schedule-btn">

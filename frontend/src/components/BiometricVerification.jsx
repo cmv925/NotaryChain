@@ -428,13 +428,13 @@ const BiometricVerification = ({ onVerificationComplete, onError }) => {
       <div className={`p-3 rounded-lg flex items-center gap-3 ${
         status === 'success' ? 'bg-green-500/10 border border-green-500/30' :
         status === 'failed' ? 'bg-red-500/10 border border-red-500/30' :
-        faceDetected ? 'bg-blue-500/10 border border-blue-500/30' :
+        faceDetected ? 'bg-coral-500/10 border border-coral-300/30' :
         'bg-yellow-500/10 border border-yellow-500/30'
       }`}>
         {status === 'initializing' && (
           <>
-            <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />
-            <span className="text-blue-400">Loading face detection model...</span>
+            <Loader2 className="w-5 h-5 text-coral-500 animate-spin" />
+            <span className="text-coral-500">Loading face detection model...</span>
           </>
         )}
         {status === 'ready' && !faceDetected && (
@@ -451,16 +451,16 @@ const BiometricVerification = ({ onVerificationComplete, onError }) => {
         )}
         {(status === 'detecting' || status === 'challenge') && (
           <>
-            <Eye className="w-5 h-5 text-blue-500 animate-pulse" />
-            <span className="text-blue-400">
+            <Eye className="w-5 h-5 text-coral-500 animate-pulse" />
+            <span className="text-coral-500">
               {currentChallenge?.instruction || 'Performing liveness check...'}
             </span>
           </>
         )}
         {status === 'verifying' && (
           <>
-            <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />
-            <span className="text-blue-400">Analyzing biometric data...</span>
+            <Loader2 className="w-5 h-5 text-coral-500 animate-spin" />
+            <span className="text-coral-500">Analyzing biometric data...</span>
           </>
         )}
         {status === 'success' && (
@@ -483,7 +483,7 @@ const BiometricVerification = ({ onVerificationComplete, onError }) => {
           <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
             <XCircle className="w-12 h-12 text-red-500 mb-4" />
             <p className="text-red-400 text-center mb-4">{cameraError}</p>
-            <Button onClick={startCamera} className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={startCamera} className="bg-coral-500 hover:bg-coral-600">
               <RefreshCw className="w-4 h-4 mr-2" />
               Retry Camera
             </Button>
@@ -518,7 +518,7 @@ const BiometricVerification = ({ onVerificationComplete, onError }) => {
               <div className="absolute bottom-4 left-4 right-4">
                 <div className="bg-black/70 backdrop-blur-sm rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-2">
-                    {React.createElement(currentChallenge.icon, { className: "w-5 h-5 text-blue-400" })}
+                    {React.createElement(currentChallenge.icon, { className: "w-5 h-5 text-coral-500" })}
                     <span className="text-white text-sm">{currentChallenge.instruction}</span>
                   </div>
                   <Progress value={challengeProgress} className="h-2" />
@@ -556,8 +556,8 @@ const BiometricVerification = ({ onVerificationComplete, onError }) => {
                 challengesPassed.includes(challenge.id) 
                   ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
                   : currentChallenge?.id === challenge.id
-                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                  : 'bg-gray-800 text-slate-500 border border-slate-200'
+                  ? 'bg-coral-500/20 text-coral-500 border border-coral-300/30'
+                  : 'bg-navy-800 text-slate-500 border border-slate-200'
               }`}
             >
               {React.createElement(challenge.icon, { className: "w-4 h-4 mx-auto mb-1" })}
@@ -590,7 +590,7 @@ const BiometricVerification = ({ onVerificationComplete, onError }) => {
           <Button
             onClick={startVerification}
             disabled={!faceDetected || confidenceScore < 50 || !modelLoaded}
-            className="flex-1 bg-blue-600 hover:bg-blue-700 py-4"
+            className="flex-1 bg-coral-500 hover:bg-coral-600 py-4"
             data-testid="start-verification-btn"
           >
             <Camera className="w-5 h-5 mr-2" />

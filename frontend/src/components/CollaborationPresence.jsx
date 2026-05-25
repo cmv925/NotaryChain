@@ -2,8 +2,8 @@ import React from 'react';
 import { Users, Eye, Edit3 } from 'lucide-react';
 
 const AVATAR_COLORS = [
-  'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-amber-500',
-  'bg-pink-500', 'bg-cyan-500', 'bg-red-500', 'bg-indigo-500',
+  'bg-coral-500', 'bg-green-500', 'bg-navy-600', 'bg-amber-500',
+  'bg-pink-500', 'bg-coral-500', 'bg-red-500', 'bg-navy-600',
 ];
 
 function getInitials(name) {
@@ -92,7 +92,7 @@ export function FieldCollabIndicator({ fieldName, cursors, typingUsers, currentU
       {typingEntries.map(([uid, t]) => (
         <span
           key={uid}
-          className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-purple-500/15 rounded text-[10px] text-purple-400 border border-purple-500/25 animate-pulse"
+          className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-navy-600/15 rounded text-[10px] text-navy-500 border border-navy-300/25 animate-pulse"
         >
           <Edit3 className="w-2.5 h-2.5" />
           {t.user_name} is typing...
@@ -101,7 +101,7 @@ export function FieldCollabIndicator({ fieldName, cursors, typingUsers, currentU
       {cursorEntries.filter(([uid]) => !typingEntries.some(([tid]) => tid === uid)).map(([uid, c]) => (
         <span
           key={uid}
-          className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/10 rounded text-[10px] text-blue-400 border border-blue-500/20"
+          className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-coral-500/10 rounded text-[10px] text-coral-500 border border-coral-300/20"
         >
           <Eye className="w-2.5 h-2.5" />
           {c.user_name}

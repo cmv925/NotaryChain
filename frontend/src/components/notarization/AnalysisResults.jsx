@@ -15,7 +15,7 @@ const getStatusIcon = (status) => {
     case 'suspicious':
       return <XCircle className="w-6 h-6 text-red-500" />;
     default:
-      return <Eye className="w-6 h-6 text-blue-500" />;
+      return <Eye className="w-6 h-6 text-coral-500" />;
   }
 };
 
@@ -26,7 +26,7 @@ const getSeverityColor = (severity) => {
     case 'medium':
       return 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30';
     case 'low':
-      return 'text-blue-400 bg-blue-500/10 border-blue-500/30';
+      return 'text-coral-500 bg-coral-500/10 border-coral-300/30';
     default:
       return 'text-slate-500 bg-gray-500/10 border-slate-300/30';
   }
@@ -73,7 +73,7 @@ const Discrepancies = ({ items }) => (
             <span className={`text-xs px-2 py-0.5 rounded uppercase ${
               item.severity === 'high' ? 'bg-red-500/20 text-red-400' :
               item.severity === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
-              'bg-blue-500/20 text-blue-400'
+              'bg-coral-500/20 text-coral-500'
             }`}>
               {item.severity}
             </span>
@@ -93,7 +93,7 @@ const Discrepancies = ({ items }) => (
 const SignatureAnalysis = ({ data }) => (
   <div className="bg-cream-100 rounded-lg p-4 border border-slate-200" data-testid="signature-analysis">
     <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
-      <FileText className="w-5 h-5 text-purple-500" />
+      <FileText className="w-5 h-5 text-navy-600" />
       Signature Analysis
     </h3>
     <div className="grid grid-cols-2 gap-4 text-sm">
@@ -131,7 +131,7 @@ const SignatureAnalysis = ({ data }) => (
           <span className="text-slate-500 text-xs">Signature Types</span>
           <div className="flex flex-wrap gap-2 mt-1">
             {data.signature_types.map((type, idx) => (
-              <span key={idx} className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs capitalize">
+              <span key={idx} className="px-2 py-1 bg-coral-500/20 text-coral-500 rounded text-xs capitalize">
                 {type}
               </span>
             ))}

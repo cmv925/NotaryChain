@@ -76,7 +76,7 @@ export default function AdminSubpoena() {
 function StatusBadge({ status }) {
   const map = {
     intake: { c: 'bg-coral-500/20 text-coral-700', i: Clock },
-    in_progress: { c: 'bg-blue-500/20 text-blue-300', i: Loader2 },
+    in_progress: { c: 'bg-coral-500/20 text-coral-400', i: Loader2 },
     responded: { c: 'bg-coral-500/20 text-coral-700', i: CheckCircle },
   };
   const m = map[status] || { c: 'bg-slate-700 text-navy-800', i: FileText };
@@ -197,7 +197,7 @@ function DetailModal({ subpoena: s, token, onClose, onUpdated }) {
       </div>
 
       <div className="flex flex-wrap items-center gap-2 mb-4">
-        <Button onClick={exportCSV} disabled={exporting} className="bg-blue-600 hover:bg-blue-500" data-testid="export-bundle-btn">
+        <Button onClick={exportCSV} disabled={exporting} className="bg-coral-500 hover:bg-coral-500" data-testid="export-bundle-btn">
           {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Download className="w-4 h-4 mr-1" />Export journal slice (CSV)</>}
         </Button>
         {resp.entries_exported > 0 && <span className="text-xs text-coral-700">{resp.entries_exported} entries downloaded</span>}

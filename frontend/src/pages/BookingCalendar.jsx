@@ -139,7 +139,7 @@ const BookingCalendar = () => {
 
   if (loading) return (
     <div className="min-h-screen bg-cream-100 flex items-center justify-center">
-      <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+      <Loader2 className="w-10 h-10 text-coral-500 animate-spin" />
     </div>
   );
 
@@ -160,7 +160,7 @@ const BookingCalendar = () => {
           {notary && (
             <Card className="bg-white border-slate-200 mb-6" data-testid="booking-notary-header">
               <CardContent className="p-5 flex items-center gap-4">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-navy-900 text-xl font-bold flex-shrink-0">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-coral-500 to-navy-700 flex items-center justify-center text-navy-900 text-xl font-bold flex-shrink-0">
                   {notary.name?.charAt(0) || '?'}
                 </div>
                 <div className="flex-1">
@@ -172,7 +172,7 @@ const BookingCalendar = () => {
                     {notary.ron_certified && <span className="text-green-400">RON Certified</span>}
                   </div>
                 </div>
-                <CalendarIcon className="w-8 h-8 text-blue-400" />
+                <CalendarIcon className="w-8 h-8 text-coral-500" />
               </CardContent>
             </Card>
           )}
@@ -191,7 +191,7 @@ const BookingCalendar = () => {
                   <div className="flex justify-between py-1"><span className="text-slate-500 text-sm">Status</span><span className="text-coral-600 text-sm font-medium">Pending Confirmation</span></div>
                 </div>
                 <div className="flex gap-3 justify-center">
-                  <Button onClick={() => navigate('/my-bookings')} className="bg-blue-600 hover:bg-blue-700" data-testid="go-to-bookings">
+                  <Button onClick={() => navigate('/my-bookings')} className="bg-coral-500 hover:bg-coral-600" data-testid="go-to-bookings">
                     View My Bookings
                   </Button>
                   <Button onClick={() => navigate('/dashboard')} variant="outline" className="border-slate-200 text-slate-500">
@@ -217,7 +217,7 @@ const BookingCalendar = () => {
                           return acc + ((eh * 60 + em) - (sh * 60 + sm)) / 60;
                         }, 0);
                         return (
-                          <div key={day} className={`rounded-xl p-3 text-center border transition-all ${hasSlots ? 'bg-coral-500/5 border-coral-200 hover:bg-coral-500/10' : 'bg-gray-800/20 border-slate-200'}`}>
+                          <div key={day} className={`rounded-xl p-3 text-center border transition-all ${hasSlots ? 'bg-coral-500/5 border-coral-200 hover:bg-coral-500/10' : 'bg-navy-800/20 border-slate-200'}`}>
                             <p className={`text-xs font-bold mb-1 ${hasSlots ? 'text-coral-600' : 'text-slate-600'}`}>{day}</p>
                             {hasSlots ? (
                               <>
@@ -271,8 +271,8 @@ const BookingCalendar = () => {
                           onClick={() => available && handleDateClick(day)}
                           disabled={!available}
                           className={`aspect-square rounded-lg flex items-center justify-center text-sm font-medium transition-all
-                            ${isSelected ? 'bg-blue-600 text-navy-900 ring-2 ring-blue-400' :
-                              available ? 'bg-cream-100 text-navy-900 hover:bg-blue-600/30 cursor-pointer border border-slate-200 hover:border-blue-500/50' :
+                            ${isSelected ? 'bg-coral-500 text-navy-900 ring-2 ring-coral-400' :
+                              available ? 'bg-cream-100 text-white hover:bg-coral-500/30 cursor-pointer border border-slate-200 hover:border-coral-300/50' :
                               'text-slate-700 cursor-not-allowed'}
                             ${isToday && !isSelected ? 'ring-1 ring-amber-500/50' : ''}
                           `}
@@ -286,7 +286,7 @@ const BookingCalendar = () => {
 
                   <div className="flex items-center gap-4 mt-4 text-xs text-slate-500">
                     <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-cream-100 border border-slate-200" /> Available</span>
-                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-600" /> Selected</span>
+                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-coral-500" /> Selected</span>
                     <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-transparent border border-dashed border-slate-200" /> Unavailable</span>
                   </div>
                 </CardContent>
@@ -298,11 +298,11 @@ const BookingCalendar = () => {
                   <Card className="bg-white border-slate-200" data-testid="time-slots">
                     <CardContent className="p-5">
                       <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-blue-400" />
+                        <Clock className="w-4 h-4 text-coral-500" />
                         Available Times — {new Date(selectedDate + 'T12:00:00').toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' })}
                       </h3>
                       {loadingSlots ? (
-                        <Loader2 className="w-6 h-6 text-blue-500 animate-spin mx-auto my-4" />
+                        <Loader2 className="w-6 h-6 text-coral-500 animate-spin mx-auto my-4" />
                       ) : slots.length === 0 ? (
                         <p className="text-slate-500 text-sm text-center py-4">No available slots on this date.</p>
                       ) : (
@@ -329,10 +329,10 @@ const BookingCalendar = () => {
                                       onClick={() => setSelectedSlot(slot)}
                                       className={`py-2.5 px-3 rounded-lg text-sm font-medium transition-all border
                                         ${selectedSlot?.start_time === slot.start_time
-                                          ? 'bg-blue-600 text-navy-900 border-blue-400'
+                                          ? 'bg-coral-500 text-navy-900 border-coral-300'
                                           : slot.booked
                                             ? 'bg-red-500/10 text-red-400/50 border-red-500/20 cursor-not-allowed line-through'
-                                            : 'bg-cream-100 text-slate-500 border-slate-200 hover:border-blue-500/50 hover:text-navy-900'}
+                                            : 'bg-cream-100 text-slate-500 border-slate-200 hover:border-coral-300/50 hover:text-navy-900'}
                                       `}
                                       disabled={slot.booked}
                                       data-testid={`slot-${slot.start_time}`}
@@ -357,8 +357,8 @@ const BookingCalendar = () => {
                         <FileText className="w-4 h-4 text-green-400" />
                         Booking Details
                       </h3>
-                      <div className="bg-cream-100 rounded-lg p-3 border border-blue-500/20 mb-4">
-                        <p className="text-blue-400 text-sm font-medium">
+                      <div className="bg-cream-100 rounded-lg p-3 border border-coral-300/20 mb-4">
+                        <p className="text-coral-500 text-sm font-medium">
                           {new Date(selectedDate + 'T12:00:00').toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' })} &middot; {selectedSlot.start_time} - {selectedSlot.end_time}
                         </p>
                       </div>
@@ -378,7 +378,7 @@ const BookingCalendar = () => {
                           <select
                             value={docType}
                             onChange={e => setDocType(e.target.value)}
-                            className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none"
+                            className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-coral-300 outline-none"
                             data-testid="booking-doc-type"
                           >
                             {DOC_TYPES.map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}
@@ -391,7 +391,7 @@ const BookingCalendar = () => {
                             onChange={e => setNotes(e.target.value)}
                             placeholder="Any additional details..."
                             rows={2}
-                            className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 outline-none resize-none"
+                            className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-coral-300 outline-none resize-none"
                             data-testid="booking-notes"
                           />
                         </div>

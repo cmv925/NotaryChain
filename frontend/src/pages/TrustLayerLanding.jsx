@@ -221,7 +221,7 @@ function Stat({ label, value, sub }) {
 function Role({ icon: Icon, color, title, description }) {
   const map = {
     violet: 'text-coral-600 bg-violet-500/10 border-violet-500/20',
-    sky: 'text-coral-600 bg-sky-500/10 border-sky-500/20',
+    sky: 'text-coral-600 bg-coral-500/10 border-coral-300/20',
     emerald: 'text-coral-600 bg-coral-500/10 border-coral-200',
   };
   return (

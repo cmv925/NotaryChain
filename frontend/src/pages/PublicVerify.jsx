@@ -123,7 +123,7 @@ export default function PublicVerify() {
             { k: 'notary', label: 'Notary', icon: Shield },
           ].map(t => (
             <button key={t.k} onClick={() => { setTab(t.k); setResult(null); }}
-              className={`px-4 py-3 text-sm flex items-center gap-2 border-b-2 transition-colors whitespace-nowrap ${tab === t.k ? 'border-sky-400 text-coral-600 font-semibold' : 'border-transparent text-slate-600 hover:text-navy-900'}`}
+              className={`px-4 py-3 text-sm flex items-center gap-2 border-b-2 transition-colors whitespace-nowrap ${tab === t.k ? 'border-coral-300 text-coral-600 font-semibold' : 'border-transparent text-slate-600 hover:text-navy-900'}`}
               data-testid={`tab-${t.k}`}>
               <t.icon className="w-4 h-4" /> {t.label}
             </button>

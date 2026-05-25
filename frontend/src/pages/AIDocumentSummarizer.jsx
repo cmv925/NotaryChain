@@ -191,7 +191,7 @@ const AIDocumentSummarizer = () => {
                         </h3>
                         <div className="flex gap-1.5">
                           {result.result?.document_type_detected && (
-                            <span className="px-2 py-0.5 bg-blue-500/15 text-blue-400 text-[10px] rounded-full">{result.result.document_type_detected}</span>
+                            <span className="px-2 py-0.5 bg-coral-500/15 text-coral-500 text-[10px] rounded-full">{result.result.document_type_detected}</span>
                           )}
                           {result.result?.complexity_level && (
                             <span className={`px-2 py-0.5 text-[10px] rounded-full ${complexityColors[result.result.complexity_level] || ''}`}>
@@ -209,7 +209,7 @@ const AIDocumentSummarizer = () => {
                     <Card className="bg-white border-slate-200">
                       <CardContent className="p-4">
                         <button onClick={() => toggleSection('terms')} className="w-full flex items-center justify-between">
-                          <h3 className="text-navy-900 font-semibold text-sm flex items-center gap-2"><Tag className="w-4 h-4 text-purple-400" /> Key Terms ({result.result.key_terms.length})</h3>
+                          <h3 className="text-navy-900 font-semibold text-sm flex items-center gap-2"><Tag className="w-4 h-4 text-navy-500" /> Key Terms ({result.result.key_terms.length})</h3>
                           {expandedSections.terms ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
                         </button>
                         {expandedSections.terms !== false && (
@@ -227,11 +227,11 @@ const AIDocumentSummarizer = () => {
                   {result.result?.parties?.length > 0 && (
                     <Card className="bg-white border-slate-200">
                       <CardContent className="p-4">
-                        <h3 className="text-navy-900 font-semibold text-sm flex items-center gap-2 mb-2"><Users className="w-4 h-4 text-blue-400" /> Parties</h3>
+                        <h3 className="text-navy-900 font-semibold text-sm flex items-center gap-2 mb-2"><Users className="w-4 h-4 text-coral-500" /> Parties</h3>
                         <div className="flex flex-wrap gap-2">
                           {result.result.parties.map((p, i) => (
-                            <span key={i} className="px-2.5 py-1 bg-blue-500/10 text-blue-400 text-xs rounded border border-blue-500/20">
-                              {p.name} <span className="text-blue-300/60">({p.role})</span>
+                            <span key={i} className="px-2.5 py-1 bg-coral-500/10 text-coral-500 text-xs rounded border border-coral-300/20">
+                              {p.name} <span className="text-coral-400/60">({p.role})</span>
                             </span>
                           ))}
                         </div>

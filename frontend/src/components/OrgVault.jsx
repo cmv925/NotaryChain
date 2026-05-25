@@ -26,9 +26,9 @@ const CATEGORY_LABELS = {
 };
 
 const CATEGORY_COLORS = {
-  contracts: 'bg-blue-500/15 text-blue-400',
+  contracts: 'bg-coral-500/15 text-coral-500',
   agreements: 'bg-green-500/15 text-green-400',
-  notarized: 'bg-purple-500/15 text-purple-400',
+  notarized: 'bg-navy-600/15 text-navy-500',
   identity: 'bg-amber-500/15 text-amber-400',
   financial: 'bg-teal-500/15 text-teal-400',
   legal: 'bg-red-500/15 text-red-400',
@@ -92,13 +92,13 @@ const UploadModal = ({ orgId, token, onClose, onUploaded }) => {
         <form onSubmit={handleUpload} className="space-y-4">
           <div
             className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-              file ? 'border-blue-500 bg-blue-500/5' : 'border-slate-200 hover:border-slate-200'
+              file ? 'border-coral-300 bg-coral-500/5' : 'border-slate-200 hover:border-slate-200'
             }`}
             onClick={() => fileRef.current?.click()}
           >
             {file ? (
               <div>
-                <FileText className="w-8 h-8 mx-auto text-blue-400 mb-2" />
+                <FileText className="w-8 h-8 mx-auto text-coral-500 mb-2" />
                 <p className="text-white text-sm">{file.name}</p>
                 <p className="text-slate-500 text-xs">{formatSize(file.size)}</p>
               </div>
@@ -131,7 +131,7 @@ const UploadModal = ({ orgId, token, onClose, onUploaded }) => {
             <Label className="text-slate-500 text-sm">Description</Label>
             <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} placeholder="Brief description..." className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white text-sm mt-1 resize-none" data-testid="vault-description" />
           </div>
-          <Button type="submit" disabled={uploading || !file} className="w-full bg-blue-600 hover:bg-blue-700 text-white" data-testid="vault-upload-btn">
+          <Button type="submit" disabled={uploading || !file} className="w-full bg-coral-500 hover:bg-coral-600 text-white" data-testid="vault-upload-btn">
             {uploading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
             Upload to Vault
           </Button>
@@ -218,7 +218,7 @@ const DocDetailModal = ({ doc, orgId, token, isAdmin, onClose, onDeleted }) => {
           {doc.tags?.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {doc.tags.map((t, i) => (
-                <span key={i} className="text-xs bg-blue-500/15 text-blue-400 rounded px-2 py-0.5">{t}</span>
+                <span key={i} className="text-xs bg-coral-500/15 text-coral-500 rounded px-2 py-0.5">{t}</span>
               ))}
             </div>
           )}
@@ -230,7 +230,7 @@ const DocDetailModal = ({ doc, orgId, token, isAdmin, onClose, onDeleted }) => {
 
           {/* Actions */}
           <div className="flex gap-2">
-            <Button onClick={handleDownload} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white" data-testid="download-vault-doc">
+            <Button onClick={handleDownload} className="flex-1 bg-coral-500 hover:bg-coral-600 text-white" data-testid="download-vault-doc">
               <Download className="w-4 h-4 mr-2" /> Download
             </Button>
             {isAdmin && (
@@ -359,7 +359,7 @@ export const OrgVault = ({ orgId, myRole, token, userPerms = [] }) => {
           />
         </div>
         {canUpload && (
-          <Button onClick={() => setShowUpload(true)} className="bg-blue-600 hover:bg-blue-700 text-white" data-testid="vault-upload-trigger">
+          <Button onClick={() => setShowUpload(true)} className="bg-coral-500 hover:bg-coral-600 text-white" data-testid="vault-upload-trigger">
             <Upload className="w-4 h-4 mr-2" /> Upload
           </Button>
         )}
@@ -372,7 +372,7 @@ export const OrgVault = ({ orgId, myRole, token, userPerms = [] }) => {
             variant={activeCategory === null ? 'default' : 'outline'}
             size="sm"
             onClick={() => setActiveCategory(null)}
-            className={activeCategory === null ? 'bg-blue-600 text-white' : 'border-slate-200 text-slate-500'}
+            className={activeCategory === null ? 'bg-coral-500 text-white' : 'border-slate-200 text-slate-500'}
           >
             All
           </Button>
@@ -382,7 +382,7 @@ export const OrgVault = ({ orgId, myRole, token, userPerms = [] }) => {
               variant={activeCategory === cat ? 'default' : 'outline'}
               size="sm"
               onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
-              className={activeCategory === cat ? 'bg-blue-600 text-white' : 'border-slate-200 text-slate-500'}
+              className={activeCategory === cat ? 'bg-coral-500 text-white' : 'border-slate-200 text-slate-500'}
               data-testid={`vault-filter-${cat}`}
             >
               {CATEGORY_LABELS[cat] || cat}

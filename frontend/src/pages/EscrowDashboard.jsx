@@ -23,7 +23,7 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const STATUS_CONFIG = {
   draft:          { label: 'Draft',          color: 'text-slate-500 bg-gray-500/15 border-slate-300/25' },
-  active:         { label: 'Active',         color: 'text-blue-400 bg-blue-500/15 border-blue-500/25' },
+  active:         { label: 'Active',         color: 'text-coral-500 bg-coral-500/15 border-coral-300/25' },
   conditions_met: { label: 'Conditions Met', color: 'text-coral-600 bg-coral-500/15 border-emerald-500/25' },
   settling:       { label: 'Settling',       color: 'text-yellow-400 bg-yellow-500/15 border-yellow-500/25' },
   settled:        { label: 'Settled',        color: 'text-coral-600 bg-coral-500/15 border-emerald-500/25' },
@@ -378,7 +378,7 @@ export default function EscrowDashboard() {
           </div>
           <div className="flex items-center gap-2">
             <StatusBadge status={e.status} />
-            <div className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border ${wsConnected ? 'text-coral-600 border-coral-200 bg-coral-500/10' : 'text-slate-500 border-slate-200 bg-gray-800'}`} data-testid="ws-status-indicator">
+            <div className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border ${wsConnected ? 'text-coral-600 border-coral-200 bg-coral-500/10' : 'text-slate-500 border-slate-200 bg-navy-800'}`} data-testid="ws-status-indicator">
               {wsConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
               {wsConnected ? 'LIVE' : 'OFFLINE'}
             </div>
@@ -393,8 +393,8 @@ export default function EscrowDashboard() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
           <SummaryCard label="Smart Vault" value={`$${e.financial.escrow_amount.toLocaleString()}`} icon={DollarSign} colorClass="text-coral-600 bg-coral-500/10" />
           <SummaryCard label="Vault Status" value={e.financial.deposit_status === 'held' ? 'FUNDS LOCKED' : e.financial.deposit_status === 'released' ? 'RELEASED' : 'PENDING'} icon={e.financial.deposit_status === 'held' ? Lock : Unlock} colorClass={e.financial.deposit_status === 'held' ? 'text-coral-600 bg-coral-500/10' : 'text-slate-500 bg-gray-500/10'} />
-          <SummaryCard label="Performance Triggers" value={`${e.conditions_met_count}/${e.conditions_total}`} icon={Zap} colorClass="text-blue-400 bg-blue-500/10" />
-          <SummaryCard label="Biometric Gate" value={biometricPassed ? 'PASSED' : buyerBio || sellerBio ? 'PARTIAL' : 'PENDING'} icon={Fingerprint} colorClass={biometricPassed ? 'text-coral-600 bg-coral-500/10' : 'text-purple-400 bg-purple-500/10'} />
+          <SummaryCard label="Performance Triggers" value={`${e.conditions_met_count}/${e.conditions_total}`} icon={Zap} colorClass="text-coral-500 bg-coral-500/10" />
+          <SummaryCard label="Biometric Gate" value={biometricPassed ? 'PASSED' : buyerBio || sellerBio ? 'PARTIAL' : 'PENDING'} icon={Fingerprint} colorClass={biometricPassed ? 'text-coral-600 bg-coral-500/10' : 'text-navy-500 bg-navy-600/10'} />
         </div>
 
         {/* Progress Bar */}
@@ -431,13 +431,13 @@ export default function EscrowDashboard() {
 
                 {e.status === 'draft' && (
                   <div className="space-y-3">
-                    <label className={`flex items-center gap-3 p-3 border-2 border-dashed rounded-lg cursor-pointer transition-all ${uploadedFile ? 'border-purple-500/50 bg-purple-500/5' : 'border-slate-200 hover:border-purple-500/30'}`} data-testid="upload-contract">
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${uploadedFile ? 'bg-purple-500/15' : 'bg-white'}`}>
-                        {uploadedFile ? <CheckCircle className="w-5 h-5 text-purple-400" /> : <FileText className="w-5 h-5 text-slate-500" />}
+                    <label className={`flex items-center gap-3 p-3 border-2 border-dashed rounded-lg cursor-pointer transition-all ${uploadedFile ? 'border-navy-300/50 bg-navy-600/5' : 'border-slate-200 hover:border-navy-300/30'}`} data-testid="upload-contract">
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${uploadedFile ? 'bg-navy-600/15' : 'bg-white'}`}>
+                        {uploadedFile ? <CheckCircle className="w-5 h-5 text-navy-500" /> : <FileText className="w-5 h-5 text-slate-500" />}
                       </div>
                       <div className="flex-1">
                         {uploadedFile ? (
-                          <><p className="text-purple-300 text-sm font-medium">{uploadedFile.name}</p><p className="text-purple-400/60 text-[10px]">{(uploadedFile.size / 1024).toFixed(1)} KB ready for AI</p></>
+                          <><p className="text-purple-300 text-sm font-medium">{uploadedFile.name}</p><p className="text-navy-500/60 text-[10px]">{(uploadedFile.size / 1024).toFixed(1)} KB ready for AI</p></>
                         ) : (
                           <><p className="text-slate-500 text-sm">Upload Contract Document</p><p className="text-slate-600 text-[10px]">PDF, DOCX, or TXT for real GPT-5.2 extraction</p></>
                         )}
@@ -445,7 +445,7 @@ export default function EscrowDashboard() {
                       <input type="file" accept=".pdf,.docx,.txt,.doc" className="hidden" onChange={(ev) => setUploadedFile(ev.target.files?.[0] || null)} />
                     </label>
                     <div className="flex gap-2">
-                      <Button onClick={handleExtract} disabled={actionLoading === 'extract'} className={`${uploadedFile ? 'bg-purple-600 hover:bg-purple-700' : 'bg-gray-700 hover:bg-gray-600'}`} data-testid="extract-conditions-btn">
+                      <Button onClick={handleExtract} disabled={actionLoading === 'extract'} className={`${uploadedFile ? 'bg-navy-700 hover:bg-navy-800' : 'bg-gray-700 hover:bg-gray-600'}`} data-testid="extract-conditions-btn">
                         {actionLoading === 'extract' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Brain className="w-4 h-4 mr-2" />}
                         {uploadedFile ? 'AI Extract (GPT-5.2)' : 'Demo Extract'}
                       </Button>
@@ -467,9 +467,9 @@ export default function EscrowDashboard() {
             {e.conditions.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded bg-cyan-500/15 flex items-center justify-center"><Network className="w-3.5 h-3.5 text-coral-600" /></div>
+                  <div className="w-6 h-6 rounded bg-coral-500/15 flex items-center justify-center"><Network className="w-3.5 h-3.5 text-coral-600" /></div>
                   <h3 className="text-navy-900 font-bold text-sm">Trust Gap 2: Verification</h3>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-coral-600 border border-cyan-500/20 font-bold">ORACLE + AI VISION</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-coral-500/10 text-coral-600 border border-coral-300/20 font-bold">ORACLE + AI VISION</span>
                 </div>
                 <p className="text-slate-500 text-xs -mt-1 ml-8">Conditions are verified autonomously by oracles (shipping, inspection, appraisal) or AI-analyzed photo evidence.</p>
 
@@ -492,14 +492,14 @@ export default function EscrowDashboard() {
                                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                                   <h4 className={`text-sm font-semibold ${isMet ? 'text-coral-700' : 'text-navy-900'}`}>{c.title}</h4>
                                   <span className="text-[10px] text-slate-600 bg-white px-1.5 py-0.5 rounded">{c.category}</span>
-                                  {isOracle && <span className="text-[10px] text-coral-600 bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20 flex items-center gap-0.5"><OracleIcon className="w-2.5 h-2.5" /> Oracle</span>}
-                                  {isBiometric && <span className="text-[10px] text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/20 flex items-center gap-0.5"><Fingerprint className="w-2.5 h-2.5" /> Biometric</span>}
+                                  {isOracle && <span className="text-[10px] text-coral-600 bg-coral-500/10 px-1.5 py-0.5 rounded border border-coral-300/20 flex items-center gap-0.5"><OracleIcon className="w-2.5 h-2.5" /> Oracle</span>}
+                                  {isBiometric && <span className="text-[10px] text-navy-500 bg-navy-600/10 px-1.5 py-0.5 rounded border border-navy-300/20 flex items-center gap-0.5"><Fingerprint className="w-2.5 h-2.5" /> Biometric</span>}
                                   {c.payment_pct > 0 && <span className="text-[10px] text-coral-600 bg-coral-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">{c.payment_pct}% Release</span>}
                                 </div>
                                 <p className="text-slate-500 text-xs leading-relaxed">{c.description}</p>
                                 <div className="flex items-center gap-3 mt-2 flex-wrap">
                                   {c.deadline_days && <span className="text-[10px] text-slate-600 flex items-center gap-1"><Clock className="w-3 h-3" /> {c.deadline_days}d deadline</span>}
-                                  {c.confidence && <span className="text-[10px] text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded">{Math.round(c.confidence * 100)}% AI</span>}
+                                  {c.confidence && <span className="text-[10px] text-navy-500 bg-navy-600/10 px-1.5 py-0.5 rounded">{Math.round(c.confidence * 100)}% AI</span>}
                                   {c.oracle_result && <span className={`text-[10px] px-1.5 py-0.5 rounded ${c.oracle_result.condition_met ? 'text-coral-600 bg-coral-500/10' : 'text-red-400 bg-red-500/10'}`}>{c.oracle_result.condition_met ? 'Oracle: Verified' : 'Oracle: Not Met'}</span>}
                                 </div>
                                 {isMet && <p className="text-coral-600 text-[10px] mt-1.5">Verified by {c.verified_by} at {new Date(c.verified_at).toLocaleString()}</p>}
@@ -508,12 +508,12 @@ export default function EscrowDashboard() {
                             {!isMet && e.status !== 'settled' && (
                               <div className="flex flex-col gap-1.5 flex-shrink-0">
                                 {isOracle && !isBiometric && (
-                                  <Button size="sm" onClick={() => handleOracleVerify(c.condition_id)} disabled={actionLoading === `oracle-${c.condition_id}`} className="bg-cyan-600 hover:bg-cyan-700 text-xs" data-testid={`oracle-btn-${c.condition_id}`}>
+                                  <Button size="sm" onClick={() => handleOracleVerify(c.condition_id)} disabled={actionLoading === `oracle-${c.condition_id}`} className="bg-coral-500 hover:bg-coral-600 text-xs" data-testid={`oracle-btn-${c.condition_id}`}>
                                     {actionLoading === `oracle-${c.condition_id}` ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Globe className="w-3 h-3 mr-1" /> Check Oracle</>}
                                   </Button>
                                 )}
                                 {!isBiometric && (
-                                  <Button size="sm" onClick={() => handleVerify(c.condition_id)} disabled={actionLoading === `verify-${c.condition_id}`} className="bg-blue-600 hover:bg-blue-700 text-xs" data-testid={`verify-btn-${c.condition_id}`}>
+                                  <Button size="sm" onClick={() => handleVerify(c.condition_id)} disabled={actionLoading === `verify-${c.condition_id}`} className="bg-coral-500 hover:bg-coral-600 text-xs" data-testid={`verify-btn-${c.condition_id}`}>
                                     {actionLoading === `verify-${c.condition_id}` ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Fingerprint className="w-3 h-3 mr-1" /> Verify</>}
                                   </Button>
                                 )}
@@ -537,9 +537,9 @@ export default function EscrowDashboard() {
               <Card className={`border ${biometricPassed ? 'bg-coral-500/5 border-coral-200' : 'bg-cream-100 border-slate-200'}`} data-testid="biometric-gate-section">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="w-6 h-6 rounded bg-purple-500/15 flex items-center justify-center"><Fingerprint className="w-3.5 h-3.5 text-purple-400" /></div>
+                    <div className="w-6 h-6 rounded bg-navy-600/15 flex items-center justify-center"><Fingerprint className="w-3.5 h-3.5 text-navy-500" /></div>
                     <h3 className="text-navy-900 font-bold text-sm">Trust Gap 3: Security</h3>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-bold">BIOMETRIC PROOF OF INTENT</span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-navy-600/10 text-navy-500 border border-navy-300/20 font-bold">BIOMETRIC PROOF OF INTENT</span>
                   </div>
                   <p className="text-slate-500 text-xs mb-4">Funds are only released when the recipient's identity is verified via facial geometry and liveness detection at settlement.</p>
 
@@ -562,7 +562,7 @@ export default function EscrowDashboard() {
 
                   <div className="flex flex-wrap gap-2">
                     {!biometricPassed && e.status !== 'settled' && (
-                      <Button onClick={handleBiometricGate} disabled={actionLoading === 'biometric'} className="bg-purple-600 hover:bg-purple-700" data-testid="biometric-verify-btn">
+                      <Button onClick={handleBiometricGate} disabled={actionLoading === 'biometric'} className="bg-navy-700 hover:bg-navy-800" data-testid="biometric-verify-btn">
                         {actionLoading === 'biometric' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Camera className="w-4 h-4 mr-2" />}
                         Verify My Identity
                       </Button>
@@ -587,7 +587,7 @@ export default function EscrowDashboard() {
             {/* Parties */}
             <Card className="bg-cream-100 border-slate-200" data-testid="escrow-parties">
               <CardContent className="p-4">
-                <h3 className="text-navy-900 font-bold text-sm mb-3 flex items-center gap-2"><Users className="w-4 h-4 text-blue-400" /> Parties</h3>
+                <h3 className="text-navy-900 font-bold text-sm mb-3 flex items-center gap-2"><Users className="w-4 h-4 text-coral-500" /> Parties</h3>
                 <div className="space-y-2.5">
                   <PartyRow label="Buyer" name={e.parties.buyer.name || 'TBD'} email={e.parties.buyer.email} bio={buyerBio} />
                   <PartyRow label="Seller" name={e.parties.seller.name || 'TBD'} email={e.parties.seller.email} bio={sellerBio} />
@@ -686,11 +686,11 @@ export default function EscrowDashboard() {
                   {(e.timeline || []).slice().reverse().slice(0, 10).map((t, i) => {
                     const cat = t.category || '';
                     const dotColor = cat === 'settlement' || t.event?.includes('settled') ? 'bg-emerald-400'
-                      : cat === 'biometric' ? 'bg-purple-400'
-                      : cat === 'oracle' ? 'bg-cyan-400'
-                      : cat === 'ai' ? 'bg-purple-400'
+                      : cat === 'biometric' ? 'bg-navy-500'
+                      : cat === 'oracle' ? 'bg-coral-400'
+                      : cat === 'ai' ? 'bg-navy-500'
                       : cat === 'financial' ? 'bg-amber-400'
-                      : cat === 'verification' ? 'bg-blue-400'
+                      : cat === 'verification' ? 'bg-coral-400'
                       : 'bg-gray-600';
                     return (
                       <div key={i} className="flex gap-2.5">
@@ -740,7 +740,7 @@ function SummaryCard({ label, value, icon: Icon, colorClass }) {
 function PartyRow({ label, name, email, bio }) {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="w-7 h-7 rounded-md bg-blue-500/10 flex items-center justify-center"><User className="w-3.5 h-3.5 text-blue-400" /></div>
+      <div className="w-7 h-7 rounded-md bg-coral-500/10 flex items-center justify-center"><User className="w-3.5 h-3.5 text-coral-500" /></div>
       <div className="flex-1"><p className="text-navy-900 text-xs font-medium">{name}</p><p className="text-slate-600 text-[10px]">{label} &#8212; {email || 'N/A'}</p></div>
       {bio && <CheckCircle className="w-3.5 h-3.5 text-coral-600" />}
     </div>

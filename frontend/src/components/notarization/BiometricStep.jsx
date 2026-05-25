@@ -19,7 +19,7 @@ export const BiometricStep = ({
     <CardContent className="p-8">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-          <Camera className="w-6 h-6 text-blue-500" />
+          <Camera className="w-6 h-6 text-coral-500" />
           Step 2: AI-Powered Identity Verification
         </h2>
         <Button

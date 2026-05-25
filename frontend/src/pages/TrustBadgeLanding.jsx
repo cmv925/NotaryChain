@@ -91,7 +91,7 @@ export default function TrustBadgeLanding() {
               { v: '60s', l: 'NotaryChain setup time', sub: 'JS or HTML snippet' },
             ].map(s => (
               <div key={s.l}>
-                <p className="text-3xl sm:text-4xl font-bold text-sky-400">{s.v}</p>
+                <p className="text-3xl sm:text-4xl font-bold text-coral-500">{s.v}</p>
                 <p className="text-sm text-slate-200 mt-1">{s.l}</p>
                 <p className="text-[10px] text-slate-500 mt-0.5">{s.sub}</p>
               </div>
@@ -120,7 +120,7 @@ export default function TrustBadgeLanding() {
                   <div className="grid grid-cols-4 gap-2 mt-1.5">
                     {Object.entries(STYLE_PALETTES).map(([k, p]) => (
                       <button key={k} onClick={() => setPreviewStyle(k)}
-                        className={`rounded p-2 text-xs font-medium border transition-all ${previewStyle === k ? 'border-sky-400' : 'border-slate-300 hover:border-slate-500'}`}
+                        className={`rounded p-2 text-xs font-medium border transition-all ${previewStyle === k ? 'border-coral-300' : 'border-slate-300 hover:border-slate-500'}`}
                         style={{ background: p.bg, color: p.text }}
                         data-testid={`preview-style-${k}`}>{k}</button>
                     ))}
@@ -262,7 +262,7 @@ export default function TrustBadgeLanding() {
                     'Video notarization (RON)',
                     'Blockchain sealing on Hedera',
                     'Priority support',
-                  ].map(f => <li key={f} className="flex items-start gap-2"><Check className="w-4 h-4 text-sky-400 flex-shrink-0 mt-0.5" /><span className="text-navy-800">{f}</span></li>)}
+                  ].map(f => <li key={f} className="flex items-start gap-2"><Check className="w-4 h-4 text-coral-500 flex-shrink-0 mt-0.5" /><span className="text-navy-800">{f}</span></li>)}
                 </ul>
                 <Button onClick={() => checkout('pro')} disabled={checkoutLoading === 'pro'} variant="outline" className="w-full border-slate-300 hover:bg-cream-200 h-11" data-testid="pricing-pro-btn">
                   {checkoutLoading === 'pro' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
@@ -300,7 +300,7 @@ export default function TrustBadgeLanding() {
             </Card>
           </div>
 
-          <p className="text-center text-xs text-slate-500 mt-6">Need 100+ badges or custom legal terms? <a href="mailto:hello@notarychain.app" className="text-sky-400 hover:underline">Contact us</a></p>
+          <p className="text-center text-xs text-slate-500 mt-6">Need 100+ badges or custom legal terms? <a href="mailto:hello@notarychain.app" className="text-coral-500 hover:underline">Contact us</a></p>
         </div>
       </section>
 

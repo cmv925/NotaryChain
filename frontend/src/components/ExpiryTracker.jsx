@@ -11,7 +11,7 @@ const statusConfig = {
   expired: { color: 'text-red-400', bg: 'bg-red-500/15', border: 'border-red-500/30', icon: XCircle, label: 'Expired' },
   critical: { color: 'text-orange-400', bg: 'bg-orange-500/15', border: 'border-orange-500/30', icon: AlertTriangle, label: 'Expiring Soon' },
   warning: { color: 'text-yellow-400', bg: 'bg-yellow-500/15', border: 'border-yellow-500/30', icon: Clock, label: 'Expiring' },
-  approaching: { color: 'text-blue-400', bg: 'bg-blue-500/15', border: 'border-blue-500/30', icon: CalendarClock, label: 'Approaching' },
+  approaching: { color: 'text-coral-500', bg: 'bg-coral-500/15', border: 'border-coral-300/30', icon: CalendarClock, label: 'Approaching' },
   active: { color: 'text-green-400', bg: 'bg-green-500/15', border: 'border-green-500/30', icon: CheckCircle2, label: 'Active' },
 };
 
@@ -84,7 +84,7 @@ export function ExpiryWidget({ token }) {
             </span>
           )}
           {summary.approaching > 0 && (
-            <span className="px-2 py-0.5 bg-blue-500/15 text-blue-400 text-xs rounded-full border border-blue-500/30" data-testid="expiry-summary-approaching">
+            <span className="px-2 py-0.5 bg-coral-500/15 text-coral-500 text-xs rounded-full border border-coral-300/30" data-testid="expiry-summary-approaching">
               {summary.approaching} approaching
             </span>
           )}

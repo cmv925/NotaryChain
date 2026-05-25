@@ -14,10 +14,10 @@ const API = process.env.REACT_APP_BACKEND_URL;
 const severityColor = {
   critical: 'bg-red-500/15 text-red-400 border-red-500/30',
   important: 'bg-coral-500/15 text-coral-600 border-gold-500/30',
-  recommended: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+  recommended: 'bg-coral-500/15 text-coral-500 border-coral-300/30',
   high: 'bg-red-500/15 text-red-400',
   medium: 'bg-coral-500/15 text-coral-600',
-  low: 'bg-blue-500/15 text-blue-400',
+  low: 'bg-coral-500/15 text-coral-500',
 };
 
 export default function DocumentRemediation() {
@@ -234,7 +234,7 @@ export default function DocumentRemediation() {
                             </Badge>
                           </div>
                           <p className="text-slate-500 text-[11px] mt-1 ml-6">{c.reason}</p>
-                          <button onClick={(e) => { e.stopPropagation(); toggle(`clause_${i}`); }} className="text-blue-400 text-[10px] ml-6 mt-1 hover:underline">
+                          <button onClick={(e) => { e.stopPropagation(); toggle(`clause_${i}`); }} className="text-coral-500 text-[10px] ml-6 mt-1 hover:underline">
                             {expanded[`clause_${i}`] ? 'Hide suggested text' : 'Show suggested text'}
                           </button>
                           {expanded[`clause_${i}`] && (
@@ -283,7 +283,7 @@ export default function DocumentRemediation() {
                     <CardHeader className="pb-2 cursor-pointer" onClick={() => toggle('risk')}>
                       <CardTitle className="text-sm text-navy-900 flex items-center justify-between">
                         <span className="flex items-center gap-2">
-                          <FileText className="w-4 h-4 text-blue-400" />
+                          <FileText className="w-4 h-4 text-coral-500" />
                           Risk Areas ({result.risk_areas.length})
                         </span>
                         {expanded.risk ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}

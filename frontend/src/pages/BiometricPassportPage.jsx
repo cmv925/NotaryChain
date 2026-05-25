@@ -106,7 +106,7 @@ export default function BiometricPassport() {
                 className="flex-1 bg-white border border-slate-200 rounded-md px-3 py-2 text-sm text-navy-900"
                 data-testid="session-id-input"
               />
-              <Button onClick={generatePassport} disabled={generating || !sessionId.trim()} className="bg-cyan-600 hover:bg-cyan-700" data-testid="generate-passport-btn">
+              <Button onClick={generatePassport} disabled={generating || !sessionId.trim()} className="bg-coral-500 hover:bg-coral-600" data-testid="generate-passport-btn">
                 {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4 mr-2" />}
                 Generate
               </Button>
@@ -180,7 +180,7 @@ export default function BiometricPassport() {
                         size="sm"
                         onClick={() => verifyPassport(p.id)}
                         disabled={verifying === p.id}
-                        className="text-blue-400 hover:text-blue-300 text-xs"
+                        className="text-coral-500 hover:text-coral-400 text-xs"
                         data-testid={`verify-${p.id}`}
                       >
                         {verifying === p.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eye className="w-3 h-3 mr-1" />}

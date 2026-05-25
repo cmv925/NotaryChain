@@ -73,11 +73,11 @@ export default function ACNPublicVerify() {
       {/* Header */}
       <div className="bg-gradient-to-br from-cyan-950 via-navy-900 to-navy-900 border-b border-slate-700">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
-          <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-cyan-300 mb-2 flex items-center gap-2">
+          <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-coral-400 mb-2 flex items-center gap-2">
             <Globe2 className="w-3.5 h-3.5" /> Cross-Border Verification Passport
           </p>
           <h1 className="font-serif text-3xl sm:text-4xl mb-3">
-            This document is notarised across <span className="text-cyan-300">{data.detected_jurisdictions?.length || 0}</span> jurisdictions.
+            This document is notarised across <span className="text-coral-400">{data.detected_jurisdictions?.length || 0}</span> jurisdictions.
           </h1>
           <div className="flex flex-wrap items-center gap-2 mb-4">
             <Pill tone={data.status === 'sealed' ? 'emerald' : data.status === 'partially_sealed' ? 'amber' : 'slate'}>
@@ -136,7 +136,7 @@ export default function ACNPublicVerify() {
                   )}
                   {p.hcs?.explorer_url && (
                     <a href={p.hcs.explorer_url} target="_blank" rel="noreferrer"
-                       className="text-cyan-300 hover:text-cyan-200 underline-offset-2 hover:underline sm:col-span-2 flex items-center gap-1">
+                       className="text-coral-400 hover:text-cyan-200 underline-offset-2 hover:underline sm:col-span-2 flex items-center gap-1">
                       <ExternalLink className="w-3 h-3" /> View on HashScan
                     </a>
                   )}
@@ -158,13 +158,13 @@ export default function ACNPublicVerify() {
           <Card className="bg-navy-800 border-slate-700">
             <CardContent className="p-4">
               <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Source jurisdiction</p>
-              <p className="text-cyan-300 flex items-center gap-1 text-sm font-bold"><MapPin className="w-3 h-3" /> {data.source_jurisdiction}</p>
+              <p className="text-coral-400 flex items-center gap-1 text-sm font-bold"><MapPin className="w-3 h-3" /> {data.source_jurisdiction}</p>
             </CardContent>
           </Card>
           {data.nft && (
-            <Card className="bg-gradient-to-br from-indigo-950 to-navy-800 border-cyan-500/30" data-testid="acn-public-nft">
+            <Card className="bg-gradient-to-br from-indigo-950 to-navy-800 border-coral-300/30" data-testid="acn-public-nft">
               <CardContent className="p-4">
-                <p className="text-[10px] uppercase tracking-wider text-cyan-300 font-bold mb-2 flex items-center gap-1">
+                <p className="text-[10px] uppercase tracking-wider text-coral-400 font-bold mb-2 flex items-center gap-1">
                   <ShieldCheck className="w-3 h-3" /> Passport NFT
                 </p>
                 <p className="text-white text-sm font-mono">{data.nft.token_id}</p>
@@ -178,12 +178,12 @@ export default function ACNPublicVerify() {
               <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Detected jurisdictions</p>
               <div className="flex flex-wrap gap-1">
                 {(data.detected_jurisdictions || []).map(c => (
-                  <span key={c} className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-mono">{c}</span>
+                  <span key={c} className="text-[10px] px-1.5 py-0.5 rounded bg-coral-500/10 text-coral-400 border border-coral-300/30 font-mono">{c}</span>
                 ))}
               </div>
             </CardContent>
           </Card>
-          <Link to="/" className="block text-center text-xs text-slate-500 hover:text-cyan-300 mt-4">
+          <Link to="/" className="block text-center text-xs text-slate-500 hover:text-coral-400 mt-4">
             Powered by NotaryChain — ACN
           </Link>
         </aside>
@@ -195,7 +195,7 @@ export default function ACNPublicVerify() {
 function Pill({ children, tone = 'slate' }) {
   const tones = {
     emerald: 'bg-emerald-500/20 text-emerald-200 border-emerald-500/40',
-    cyan: 'bg-cyan-500/20 text-cyan-200 border-cyan-500/40',
+    cyan: 'bg-coral-500/20 text-cyan-200 border-coral-300/40',
     amber: 'bg-amber-500/20 text-amber-200 border-amber-500/40',
     red: 'bg-red-500/20 text-red-200 border-red-500/40',
     slate: 'bg-slate-500/20 text-slate-300 border-slate-500/40',

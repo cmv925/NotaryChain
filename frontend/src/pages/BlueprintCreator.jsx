@@ -335,8 +335,8 @@ export default function BlueprintCreator() {
                               {step.name || `Step ${step.order}`}
                             </p>
                             <div className="flex items-center gap-2 mt-1">
-                              {step.requires_document && <Badge className="bg-purple-500/20 text-purple-400 text-xs">Doc</Badge>}
-                              {step.requires_signature && <Badge className="bg-blue-500/20 text-blue-400 text-xs">Sign</Badge>}
+                              {step.requires_document && <Badge className="bg-navy-600/20 text-navy-500 text-xs">Doc</Badge>}
+                              {step.requires_signature && <Badge className="bg-coral-500/20 text-coral-500 text-xs">Sign</Badge>}
                               {step.requires_notarization && <Badge className="bg-green-500/20 text-green-400 text-xs">Notary</Badge>}
                               {step.requires_payment && <Badge className="bg-coral-500/20 text-coral-600 text-xs">Pay</Badge>}
                             </div>
@@ -441,7 +441,7 @@ export default function BlueprintCreator() {
                                       onClick={() => toggleStepDependency(step.id, depStep.id)}
                                       className={`px-2 py-1 rounded text-xs transition-colors ${
                                         step.dependencies.includes(depStep.id)
-                                          ? 'bg-blue-500/20 text-blue-400 border border-blue-500/50'
+                                          ? 'bg-coral-500/20 text-coral-500 border border-coral-300/50'
                                           : 'bg-white text-slate-500 border border-slate-200 hover:border-slate-300'
                                       }`}
                                     >
@@ -467,7 +467,7 @@ export default function BlueprintCreator() {
             <Card className="bg-white border-slate-200">
               <CardHeader>
                 <CardTitle className="text-navy-900 text-sm flex items-center gap-2">
-                  <Users className="h-4 w-4 text-blue-500" />
+                  <Users className="h-4 w-4 text-coral-500" />
                   Required Roles
                 </CardTitle>
               </CardHeader>
@@ -479,7 +479,7 @@ export default function BlueprintCreator() {
                       onClick={() => toggleRole(role)}
                       className={`px-2 py-1 rounded text-xs transition-colors ${
                         blueprint.required_roles.includes(role)
-                          ? 'bg-blue-500/20 text-blue-400 border border-blue-500/50'
+                          ? 'bg-coral-500/20 text-coral-500 border border-coral-300/50'
                           : 'bg-cream-100 text-slate-500 border border-slate-200 hover:border-slate-300'
                       }`}
                     >
@@ -494,7 +494,7 @@ export default function BlueprintCreator() {
             <Card className="bg-white border-slate-200">
               <CardHeader>
                 <CardTitle className="text-navy-900 text-sm flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-purple-500" />
+                  <FileText className="h-4 w-4 text-navy-600" />
                   Required Documents
                 </CardTitle>
               </CardHeader>
@@ -618,8 +618,8 @@ export default function BlueprintCreator() {
                       <p className="text-slate-500 text-xs mt-1">{step.description}</p>
                     )}
                     <div className="flex gap-2 mt-2">
-                      {step.requires_document && <Badge className="bg-purple-500/20 text-purple-400 text-xs">Document</Badge>}
-                      {step.requires_signature && <Badge className="bg-blue-500/20 text-blue-400 text-xs">Signature</Badge>}
+                      {step.requires_document && <Badge className="bg-navy-600/20 text-navy-500 text-xs">Document</Badge>}
+                      {step.requires_signature && <Badge className="bg-coral-500/20 text-coral-500 text-xs">Signature</Badge>}
                       {step.requires_notarization && <Badge className="bg-green-500/20 text-green-400 text-xs">Notarization</Badge>}
                       {step.requires_payment && <Badge className="bg-coral-500/20 text-coral-600 text-xs">Payment</Badge>}
                     </div>

@@ -103,14 +103,14 @@ const AIDocumentGenerator = () => {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 flex items-center gap-3">
-                <Wand2 className="w-7 h-7 text-purple-400" />
+                <Wand2 className="w-7 h-7 text-navy-500" />
                 AI Document Generator
               </h1>
               <p className="text-slate-500 text-sm mt-1">Create legal documents by describing what you need</p>
             </div>
             <div className="flex gap-2">
               {view !== 'create' && (
-                <Button onClick={() => { setView('create'); setResult(null); }} variant="outline" className="border-purple-500/50 text-purple-400" data-testid="new-document-btn">
+                <Button onClick={() => { setView('create'); setResult(null); }} variant="outline" className="border-navy-300/50 text-navy-500" data-testid="new-document-btn">
                   <Sparkles className="w-4 h-4 mr-1" /> New Document
                 </Button>
               )}
@@ -142,11 +142,11 @@ const AIDocumentGenerator = () => {
                         onChange={e => setDescription(e.target.value)}
                         placeholder="e.g., I need a bill of sale for a 2020 Toyota Camry. The seller is John Smith from Austin, TX and the buyer is Jane Doe from Dallas, TX. The sale price is $15,000..."
                         rows={5}
-                        className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-purple-500 outline-none resize-none"
+                        className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-navy-300 outline-none resize-none"
                         data-testid="doc-description-input"
                       />
                     </div>
-                    <Button onClick={handleGenerate} disabled={generating || !description.trim()} className="w-full bg-purple-600 hover:bg-purple-700" data-testid="generate-btn">
+                    <Button onClick={handleGenerate} disabled={generating || !description.trim()} className="w-full bg-navy-700 hover:bg-navy-800" data-testid="generate-btn">
                       {generating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Wand2 className="w-4 h-4 mr-2" />}
                       Generate Document
                     </Button>
@@ -169,7 +169,7 @@ const AIDocumentGenerator = () => {
                           <button
                             key={doc.id}
                             onClick={() => loadDocument(doc.id)}
-                            className="w-full text-left p-2 bg-cream-100 rounded border border-slate-200 hover:border-purple-500/30 transition-colors"
+                            className="w-full text-left p-2 bg-cream-100 rounded border border-slate-200 hover:border-navy-300/30 transition-colors"
                             data-testid={`history-doc-${doc.id}`}
                           >
                             <p className="text-navy-900 text-xs font-medium truncate">{doc.result?.title || doc.description?.slice(0, 40)}</p>
@@ -205,8 +205,8 @@ const AIDocumentGenerator = () => {
 
                   {/* Fields */}
                   {result.fields && Object.keys(result.fields).length > 0 && (
-                    <div className="mt-4 p-4 bg-blue-500/5 rounded-lg border border-blue-500/20">
-                      <h3 className="text-blue-400 font-semibold text-sm mb-2 flex items-center gap-2">
+                    <div className="mt-4 p-4 bg-coral-500/5 rounded-lg border border-coral-300/20">
+                      <h3 className="text-coral-500 font-semibold text-sm mb-2 flex items-center gap-2">
                         <PenTool className="w-4 h-4" /> Fields to Fill
                       </h3>
                       <div className="grid grid-cols-2 gap-2">
@@ -241,7 +241,7 @@ const AIDocumentGenerator = () => {
               <Card className="bg-white border-slate-200">
                 <CardContent className="p-4">
                   <h3 className="text-sm font-semibold text-navy-900 mb-2 flex items-center gap-2">
-                    <RefreshCw className="w-4 h-4 text-purple-400" /> Refine Document
+                    <RefreshCw className="w-4 h-4 text-navy-500" /> Refine Document
                   </h3>
                   <div className="flex gap-2">
                     <Input
@@ -251,7 +251,7 @@ const AIDocumentGenerator = () => {
                       className="bg-cream-100 border-slate-200 text-navy-900 flex-1"
                       data-testid="refine-input"
                     />
-                    <Button onClick={handleRefine} disabled={refining || !feedback.trim()} className="bg-purple-600 hover:bg-purple-700" data-testid="refine-btn">
+                    <Button onClick={handleRefine} disabled={refining || !feedback.trim()} className="bg-navy-700 hover:bg-navy-800" data-testid="refine-btn">
                       {refining ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                     </Button>
                   </div>

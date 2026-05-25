@@ -18,7 +18,7 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const statusConfig = {
   full: { label: 'Full RON', color: 'bg-coral-500/20 text-coral-600 border-coral-200', icon: CheckCircle, dotColor: 'bg-coral-500' },
   limited: { label: 'Limited', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: AlertTriangle, dotColor: 'bg-yellow-500' },
-  pending: { label: 'Pending', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', icon: Clock, dotColor: 'bg-blue-500' },
+  pending: { label: 'Pending', color: 'bg-coral-500/20 text-coral-500 border-coral-300/30', icon: Clock, dotColor: 'bg-coral-500' },
   prohibited: { label: 'Prohibited', color: 'bg-red-500/20 text-red-400 border-red-500/30', icon: XCircle, dotColor: 'bg-red-500' },
 };
 
@@ -105,7 +105,7 @@ const RONComplianceDashboard = () => {
               { label: 'Jurisdictions', value: stats.total_jurisdictions, color: 'text-navy-900' },
               { label: 'Full RON', value: stats.full_ron, color: 'text-coral-600' },
               { label: 'Limited', value: stats.limited_ron, color: 'text-yellow-400' },
-              { label: 'Pending', value: stats.pending_legislation, color: 'text-blue-400' },
+              { label: 'Pending', value: stats.pending_legislation, color: 'text-coral-500' },
               { label: 'Prohibited', value: stats.prohibited, color: 'text-red-400' },
               { label: 'Coverage', value: `${stats.coverage_pct}%`, color: 'text-coral-600' },
             ].map(item => (
@@ -296,7 +296,7 @@ const RONComplianceDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-navy-900 font-semibold flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-blue-400" /> Validation Activity
+                  <Activity className="w-5 h-5 text-coral-500" /> Validation Activity
                 </h3>
                 {activity?.summary && (
                   <div className="flex gap-3 text-xs">

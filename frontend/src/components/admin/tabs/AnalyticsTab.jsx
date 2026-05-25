@@ -21,7 +21,7 @@ export const AnalyticsTab = ({ analyticsData, analyticsPeriod, ceremonyAnalytics
             {/* Period Selector */}
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-navy-900 flex items-center gap-2">
-                <PieChart className="w-6 h-6 text-blue-500" />
+                <PieChart className="w-6 h-6 text-coral-500" />
                 Platform Analytics
               </h2>
               <div className="flex items-center gap-3">
@@ -52,7 +52,7 @@ export const AnalyticsTab = ({ analyticsData, analyticsPeriod, ceremonyAnalytics
 
             {loadingAnalytics && !analyticsData ? (
               <div className="flex items-center justify-center py-20">
-                <RefreshCw className="w-12 h-12 text-blue-500 animate-spin" />
+                <RefreshCw className="w-12 h-12 text-coral-500 animate-spin" />
               </div>
             ) : analyticsData ? (
               <>
@@ -65,14 +65,14 @@ export const AnalyticsTab = ({ analyticsData, analyticsPeriod, ceremonyAnalytics
                       <p className="text-xs text-slate-500 mt-1">Last {analyticsPeriod} days</p>
                     </CardContent>
                   </Card>
-                  <Card className="bg-gradient-to-br from-blue-600/20 to-blue-600/10 border-blue-500/30" data-testid="analytics-new-users">
+                  <Card className="bg-gradient-to-br from-coral-500/20 to-coral-600/10 border-coral-300/30" data-testid="analytics-new-users">
                     <CardContent className="p-4">
                       <p className="text-slate-500 text-xs">New Users</p>
                       <p className="text-2xl font-bold text-navy-900">{analyticsData.summary.new_users}</p>
                       <p className="text-xs text-slate-500 mt-1">Last {analyticsPeriod} days</p>
                     </CardContent>
                   </Card>
-                  <Card className="bg-gradient-to-br from-purple-600/20 to-purple-600/10 border-purple-500/30" data-testid="analytics-notarizations">
+                  <Card className="bg-gradient-to-br from-navy-700/20 to-navy-700/10 border-navy-300/30" data-testid="analytics-notarizations">
                     <CardContent className="p-4">
                       <p className="text-slate-500 text-xs">Notarizations</p>
                       <p className="text-2xl font-bold text-navy-900">{analyticsData.summary.total_notarizations}</p>
@@ -128,7 +128,7 @@ export const AnalyticsTab = ({ analyticsData, analyticsPeriod, ceremonyAnalytics
                   <Card className="bg-white border-slate-200">
                     <CardContent className="p-6">
                       <h3 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
-                        <Users className="w-5 h-5 text-blue-500" />
+                        <Users className="w-5 h-5 text-coral-500" />
                         User Growth
                       </h3>
                       <ResponsiveContainer width="100%" height={250}>
@@ -190,7 +190,7 @@ export const AnalyticsTab = ({ analyticsData, analyticsPeriod, ceremonyAnalytics
                   <Card className="bg-white border-slate-200">
                     <CardContent className="p-6">
                       <h3 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-purple-500" />
+                        <FileText className="w-5 h-5 text-navy-600" />
                         Notarization Volume
                       </h3>
                       <ResponsiveContainer width="100%" height={250}>
@@ -259,7 +259,7 @@ export const AnalyticsTab = ({ analyticsData, analyticsPeriod, ceremonyAnalytics
                               <div className="flex items-center gap-3">
                                 <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
                                   <div 
-                                    className="h-full bg-purple-500 rounded-full"
+                                    className="h-full bg-navy-600 rounded-full"
                                     style={{ width: `${(doc.count / analyticsData.document_types[0].count) * 100}%` }}
                                   />
                                 </div>
@@ -285,7 +285,7 @@ export const AnalyticsTab = ({ analyticsData, analyticsPeriod, ceremonyAnalytics
                               <div className="flex items-center gap-3">
                                 <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
                                   <div 
-                                    className="h-full bg-blue-500 rounded-full"
+                                    className="h-full bg-coral-500 rounded-full"
                                     style={{ width: `${(tx.count / analyticsData.transaction_types[0].count) * 100}%` }}
                                   />
                                 </div>
@@ -305,7 +305,7 @@ export const AnalyticsTab = ({ analyticsData, analyticsPeriod, ceremonyAnalytics
                 <div className="mt-8" data-testid="ceremony-analytics-widget">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-bold text-navy-900 flex items-center gap-2">
-                      <Shield className="w-5 h-5 text-purple-400" /> Ceremony Pipeline Analytics
+                      <Shield className="w-5 h-5 text-navy-500" /> Ceremony Pipeline Analytics
                     </h3>
                     <Button variant="outline" size="sm" onClick={fetchCeremonyAnalytics} disabled={loadingCeremonyAnalytics} className="border-slate-200 text-slate-500 hover:text-navy-900 h-8">
                       {loadingCeremonyAnalytics ? <RefreshCw className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3 mr-1" />}
@@ -331,7 +331,7 @@ export const AnalyticsTab = ({ analyticsData, analyticsPeriod, ceremonyAnalytics
                         <Card className="bg-cream-100 border-slate-200">
                           <CardContent className="p-4 text-center">
                             <p className="text-slate-500 text-xs mb-1">Sealed</p>
-                            <p className="text-2xl font-bold text-blue-400" data-testid="ceremony-sealed">{ceremonyAnalytics.sealed_count}</p>
+                            <p className="text-2xl font-bold text-coral-500" data-testid="ceremony-sealed">{ceremonyAnalytics.sealed_count}</p>
                           </CardContent>
                         </Card>
                         <Card className="bg-cream-100 border-slate-200">
@@ -433,7 +433,7 @@ export const AnalyticsTab = ({ analyticsData, analyticsPeriod, ceremonyAnalytics
                         <Card className="bg-cream-100 border-slate-200">
                           <CardContent className="p-4 text-center">
                             <p className="text-slate-500 text-xs mb-1">AI Biometric</p>
-                            <p className="text-xl font-bold text-purple-400" data-testid="ai-biometric-count">{ceremonyAnalytics.ai_vs_simulated.ai_biometric}</p>
+                            <p className="text-xl font-bold text-navy-500" data-testid="ai-biometric-count">{ceremonyAnalytics.ai_vs_simulated.ai_biometric}</p>
                           </CardContent>
                         </Card>
                         <Card className="bg-cream-100 border-slate-200">

@@ -228,7 +228,7 @@ const DeveloperPage = () => {
     },
   ];
 
-  const methodColors = { GET: 'bg-coral-500', POST: 'bg-blue-500', DELETE: 'bg-red-500' };
+  const methodColors = { GET: 'bg-coral-500', POST: 'bg-coral-500', DELETE: 'bg-red-500' };
 
   return (
     <div className="min-h-screen bg-cream-100">
@@ -408,7 +408,7 @@ const DeveloperPage = () => {
               <Card className="bg-white border-slate-200" data-testid="usage-stats">
                 <CardContent className="p-6">
                   <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-blue-400" /> API Usage
+                    <Activity className="w-5 h-5 text-coral-500" /> API Usage
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-cream-100 rounded-lg p-4">
@@ -462,7 +462,7 @@ const DeveloperPage = () => {
                         {!k.revoked && k.scopes && (
                           <div className="flex gap-1.5 mt-2">
                             {k.scopes.map(s => (
-                              <Badge key={s} className="bg-gray-800 text-slate-500 text-[10px]">{s}</Badge>
+                              <Badge key={s} className="bg-navy-800 text-slate-500 text-[10px]">{s}</Badge>
                             ))}
                           </div>
                         )}
@@ -572,7 +572,7 @@ const DeveloperPage = () => {
                           <div className="px-4 pb-4 border-t border-slate-200 space-y-4">
                             {/* Actions */}
                             <div className="flex gap-2 pt-3">
-                              <Button size="sm" onClick={() => handleTestWebhook(wh.id)} className="bg-blue-600 hover:bg-blue-700 text-navy-900 text-xs h-7" data-testid={`test-webhook-${wh.id}`}>
+                              <Button size="sm" onClick={() => handleTestWebhook(wh.id)} className="bg-coral-500 hover:bg-coral-600 text-navy-900 text-xs h-7" data-testid={`test-webhook-${wh.id}`}>
                                 <Send className="w-3 h-3 mr-1" /> Test
                               </Button>
                               <Button size="sm" variant="outline" onClick={() => handleToggleWebhook(wh.id)} className="border-slate-200 text-slate-500 text-xs h-7" data-testid={`toggle-webhook-${wh.id}`}>
@@ -633,7 +633,7 @@ const DeveloperPage = () => {
             <Card className="bg-white border-slate-200">
               <CardContent className="p-6">
                 <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-blue-400" /> Verifying Webhook Signatures
+                  <Shield className="w-5 h-5 text-coral-500" /> Verifying Webhook Signatures
                 </h3>
                 <p className="text-slate-500 text-sm mb-3">Each webhook delivery includes an <code className="bg-cream-100 px-1.5 py-0.5 rounded text-coral-600 text-xs">X-Webhook-Signature</code> header with an HMAC-SHA256 signature.</p>
                 <pre className="bg-cream-100 rounded-lg p-4 text-xs text-slate-500 overflow-x-auto font-mono">{`import hmac, hashlib

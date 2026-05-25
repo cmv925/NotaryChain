@@ -165,7 +165,7 @@ export default function NotarizationCertificate() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h2 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2 print:text-black">
-                <User className="h-5 w-5 text-blue-500" />
+                <User className="h-5 w-5 text-coral-500" />
                 Requester
               </h2>
               <div className="bg-cream-100 rounded-lg p-4 print:bg-gray-50">
@@ -199,12 +199,12 @@ export default function NotarizationCertificate() {
                 <div className="flex items-center gap-3 mb-3">
                   <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${
                     certificate?.verifications?.document_analysis?.performed 
-                      ? 'bg-purple-500/20' 
+                      ? 'bg-navy-600/20' 
                       : 'bg-gray-500/20'
                   }`}>
                     <Brain className={`h-5 w-5 ${
                       certificate?.verifications?.document_analysis?.performed 
-                        ? 'text-purple-500' 
+                        ? 'text-navy-600' 
                         : 'text-slate-500'
                     }`} />
                   </div>
@@ -215,7 +215,7 @@ export default function NotarizationCertificate() {
                 </div>
                 <Badge className={`${
                   certificate?.verifications?.document_analysis?.performed 
-                    ? 'bg-purple-500/20 text-purple-400' 
+                    ? 'bg-navy-600/20 text-navy-500' 
                     : 'bg-gray-500/20 text-slate-500'
                 }`}>
                   {certificate?.verifications?.document_analysis?.performed 
@@ -259,12 +259,12 @@ export default function NotarizationCertificate() {
                 <div className="flex items-center gap-3 mb-3">
                   <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${
                     certificate?.verifications?.video_session?.completed 
-                      ? 'bg-blue-500/20' 
+                      ? 'bg-coral-500/20' 
                       : 'bg-gray-500/20'
                   }`}>
                     <Video className={`h-5 w-5 ${
                       certificate?.verifications?.video_session?.completed 
-                        ? 'text-blue-500' 
+                        ? 'text-coral-500' 
                         : 'text-slate-500'
                     }`} />
                   </div>
@@ -275,7 +275,7 @@ export default function NotarizationCertificate() {
                 </div>
                 <Badge className={`${
                   certificate?.verifications?.video_session?.completed 
-                    ? 'bg-blue-500/20 text-blue-400' 
+                    ? 'bg-coral-500/20 text-coral-500' 
                     : 'bg-gray-500/20 text-slate-500'
                 }`}>
                   {certificate?.verifications?.video_session?.completed 
@@ -326,7 +326,7 @@ export default function NotarizationCertificate() {
                       href={certificate.blockchain_proof.explorer_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 print:text-blue-600"
+                      className="inline-flex items-center gap-2 text-coral-500 hover:text-coral-400 print:text-coral-600"
                     >
                       <ExternalLink className="h-4 w-4" />
                       View on HashScan Explorer
@@ -394,7 +394,7 @@ export default function NotarizationCertificate() {
           .print\\:text-slate-500 { color: #6b7280 !important; }
           .print\\:text-slate-600 { color: #4b5563 !important; }
           .print\\:text-green-600 { color: #16a34a !important; }
-          .print\\:text-blue-600 { color: #2563eb !important; }
+          .print\\:text-coral-600 { color: #2563eb !important; }
           .print\\:border-slate-300 { border-color: #d1d5db !important; }
           .print\\:shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important; }
         }

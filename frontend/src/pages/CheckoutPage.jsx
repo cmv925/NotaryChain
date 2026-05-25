@@ -103,7 +103,7 @@ const CheckoutPage = () => {
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Pricing', path: '/pricing' }, { label: 'Checkout' }]} />
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/10 border border-blue-500/30 text-blue-400 text-sm mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-coral-500/10 border border-coral-300/30 text-coral-500 text-sm mb-6">
               <Sparkles className="w-4 h-4" />
               Transparent Pricing
             </div>
@@ -122,7 +122,7 @@ const CheckoutPage = () => {
               variant={paymentMethod === 'card' ? 'default' : 'outline'}
               onClick={() => setPaymentMethod('card')}
               className={paymentMethod === 'card' 
-                ? 'bg-blue-600 hover:bg-blue-700' 
+                ? 'bg-coral-500 hover:bg-coral-600' 
                 : 'border-slate-200 text-slate-500'}
             >
               <CreditCard className="w-4 h-4 mr-2" />
@@ -132,7 +132,7 @@ const CheckoutPage = () => {
               variant={paymentMethod === 'both' ? 'default' : 'outline'}
               onClick={() => setPaymentMethod('both')}
               className={paymentMethod === 'both' 
-                ? 'bg-blue-600 hover:bg-blue-700' 
+                ? 'bg-coral-500 hover:bg-coral-600' 
                 : 'border-slate-200 text-slate-500'}
             >
               <Wallet className="w-4 h-4 mr-2" />
@@ -151,7 +151,7 @@ const CheckoutPage = () => {
           {/* Packages Grid */}
           {loadingPackages ? (
             <div className="flex justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+              <Loader2 className="w-8 h-8 animate-spin text-coral-500" />
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -166,7 +166,7 @@ const CheckoutPage = () => {
                     key={pkgId}
                     className={`relative cursor-pointer transition-all duration-300 ${
                       isSelected 
-                        ? 'bg-blue-600/10 border-blue-500 scale-[1.02]' 
+                        ? 'bg-coral-500/10 border-coral-300 scale-[1.02]' 
                         : 'bg-gradient-to-br from-white to-cream-100 border-slate-200 hover:border-slate-200'
                     }`}
                     onClick={() => setSelectedPackage(pkgId)}
@@ -181,11 +181,11 @@ const CheckoutPage = () => {
                     )}
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
-                        <div className="w-12 h-12 rounded-lg bg-blue-600/20 flex items-center justify-center">
-                          <FileText className="w-6 h-6 text-blue-500" />
+                        <div className="w-12 h-12 rounded-lg bg-coral-500/20 flex items-center justify-center">
+                          <FileText className="w-6 h-6 text-coral-500" />
                         </div>
                         {isSelected && (
-                          <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center">
+                          <div className="w-6 h-6 rounded-full bg-coral-500 flex items-center justify-center">
                             <Check className="w-4 h-4 text-navy-900" />
                           </div>
                         )}
@@ -254,8 +254,8 @@ const CheckoutPage = () => {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-blue-600/20 flex items-center justify-center mx-auto mb-4">
-                <FileText className="w-8 h-8 text-blue-500" />
+              <div className="w-16 h-16 rounded-full bg-coral-500/20 flex items-center justify-center mx-auto mb-4">
+                <FileText className="w-8 h-8 text-coral-500" />
               </div>
               <h4 className="text-navy-900 font-semibold mb-2">Instant Processing</h4>
               <p className="text-slate-500 text-sm">
@@ -263,8 +263,8 @@ const CheckoutPage = () => {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-purple-600/20 flex items-center justify-center mx-auto mb-4">
-                <Wallet className="w-8 h-8 text-purple-500" />
+              <div className="w-16 h-16 rounded-full bg-navy-700/20 flex items-center justify-center mx-auto mb-4">
+                <Wallet className="w-8 h-8 text-navy-600" />
               </div>
               <h4 className="text-navy-900 font-semibold mb-2">Flexible Payments</h4>
               <p className="text-slate-500 text-sm">

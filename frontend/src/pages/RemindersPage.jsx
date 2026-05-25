@@ -79,9 +79,9 @@ export default function RemindersPage() {
               <CardContent className="space-y-4">
                 {[
                   { key: 'overdue_tasks', label: 'Overdue Task Alerts', desc: 'Get notified when transaction tasks pass their deadline', icon: AlertTriangle, color: 'text-red-400' },
-                  { key: 'upcoming_bookings', label: 'Upcoming Booking Reminders', desc: 'Reminder 24h before scheduled notary bookings', icon: Clock, color: 'text-blue-400' },
+                  { key: 'upcoming_bookings', label: 'Upcoming Booking Reminders', desc: 'Reminder 24h before scheduled notary bookings', icon: Clock, color: 'text-coral-500' },
                   { key: 'pending_approvals', label: 'Pending Approval Nudges', desc: 'Reminder for approval requests waiting on you', icon: CheckCircle, color: 'text-coral-600' },
-                  { key: 'email_notifications', label: 'Email Notifications', desc: 'Also send critical reminders via email', icon: Bell, color: 'text-purple-400' },
+                  { key: 'email_notifications', label: 'Email Notifications', desc: 'Also send critical reminders via email', icon: Bell, color: 'text-navy-500' },
                 ].map(({ key, label, desc, icon: Icon, color }) => (
                   <div key={key} className="flex items-center justify-between py-2">
                     <div className="flex items-start gap-3">

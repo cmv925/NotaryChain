@@ -110,7 +110,7 @@ export default function VerifyCertificate() {
                   <Card className="bg-white border-slate-200" data-testid="cert-document-info">
                     <CardContent className="p-6">
                       <h3 className="text-navy-900 font-semibold text-lg mb-4 flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-blue-400" /> Document Information
+                        <FileText className="w-5 h-5 text-coral-500" /> Document Information
                       </h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <InfoRow label="Certificate ID" value={result.certificate_id} copyable onCopy={copyToClipboard} />
@@ -127,7 +127,7 @@ export default function VerifyCertificate() {
                   <Card className="bg-white border-slate-200" data-testid="cert-agent-verdicts">
                     <CardContent className="p-6">
                       <h3 className="text-navy-900 font-semibold text-lg mb-4 flex items-center gap-2">
-                        <Shield className="w-5 h-5 text-purple-400" /> Agent Verification Results
+                        <Shield className="w-5 h-5 text-navy-500" /> Agent Verification Results
                       </h3>
                       <div className="grid grid-cols-3 gap-3">
                         {result.agents.map((a) => (

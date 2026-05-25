@@ -177,7 +177,7 @@ export default function AdminIntegrations() {
                   </select>
                 </div>
                 <Button onClick={handleTestContact} disabled={testing || !ghlStatus?.connected}
-                        className="w-full h-9 bg-sky-600 hover:bg-sky-500 text-xs" data-testid="ghl-test-contact-btn">
+                        className="w-full h-9 bg-coral-500 hover:bg-coral-500 text-xs" data-testid="ghl-test-contact-btn">
                   {testing ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" /> : <Send className="w-3.5 h-3.5 mr-2" />}
                   Push Test Contact to GHL
                 </Button>

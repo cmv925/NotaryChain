@@ -37,7 +37,7 @@ export const SecurityTab = ({ exportSecurityPdf, exportingPdf, fetchSecurityComp
                 <Button
                   onClick={exportSecurityPdf}
                   disabled={exportingPdf}
-                  className="bg-blue-600 hover:bg-blue-500"
+                  className="bg-coral-500 hover:bg-coral-500"
                   data-testid="security-export-pdf-btn"
                 >
                   <FileText className="w-4 h-4 mr-2" />
@@ -104,7 +104,7 @@ export const SecurityTab = ({ exportSecurityPdf, exportingPdf, fetchSecurityComp
                         <CardContent className="p-5">
                           <div className="flex items-center justify-between mb-4">
                             <h4 className="text-base font-bold text-navy-900 flex items-center gap-2">
-                              <CatIcon className="w-4 h-4 text-blue-400" />
+                              <CatIcon className="w-4 h-4 text-coral-500" />
                               {cat.label}
                             </h4>
                             <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${allActive ? 'bg-coral-500/20 text-coral-600' : 'bg-yellow-500/20 text-yellow-400'}`}>

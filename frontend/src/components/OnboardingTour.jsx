@@ -188,7 +188,7 @@ export function OnboardingTour({ userRole }) {
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <span className="text-[10px] text-slate-500">{step + 1} of {steps.length}</span>
-            <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold" data-testid="onboarding-role-badge">{roleLabel} Tour</span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-coral-500/10 text-coral-500 border border-coral-300/20 font-bold" data-testid="onboarding-role-badge">{roleLabel} Tour</span>
           </div>
           <button onClick={close} className="text-slate-500 hover:text-white" data-testid="onboarding-close-btn"><X className="w-4 h-4" /></button>
         </div>

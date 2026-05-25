@@ -189,8 +189,8 @@ function PasswordGate({ onVerified }) {
     <div className="min-h-screen bg-cream-100 flex items-center justify-center p-6" data-testid="password-gate">
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600/10 border border-blue-500/20 mb-6">
-            <Lock className="w-7 h-7 text-blue-400" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-coral-500/10 border border-coral-300/20 mb-6">
+            <Lock className="w-7 h-7 text-coral-500" />
           </div>
           <h1 className="text-3xl font-bold text-navy-900 tracking-tight">NotaryChain</h1>
           <p className="text-slate-500 mt-2 text-sm tracking-widest uppercase">Investor Preview</p>
@@ -203,10 +203,10 @@ function PasswordGate({ onVerified }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter access code"
-            className="w-full px-4 py-3.5 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 transition-all text-center tracking-[0.3em] text-lg"
+            className="w-full px-4 py-3.5 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-coral-300/50 focus:ring-1 focus:ring-coral-500/30 transition-all text-center tracking-[0.3em] text-lg"
           />
           {error && <p data-testid="password-error" className="text-red-400 text-sm text-center">{error}</p>}
-          <button data-testid="password-submit" type="submit" disabled={loading || !password} className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-navy-900 font-medium rounded-xl transition-all flex items-center justify-center gap-2">
+          <button data-testid="password-submit" type="submit" disabled={loading || !password} className="w-full py-3.5 bg-coral-500 hover:bg-coral-500 disabled:opacity-40 disabled:cursor-not-allowed text-navy-900 font-medium rounded-xl transition-all flex items-center justify-center gap-2">
             {loading ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><span>Access Deck</span><ChevronRight className="w-4 h-4" /></>}
           </button>
         </form>
@@ -221,7 +221,7 @@ function HeroSlide({ visible }) {
   return (
     <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="text-center max-w-4xl mx-auto py-20 px-6">
-        <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-6">Enterprise-Grade Digital Notarization + AI Escrow</p>
+        <p className="text-coral-500 tracking-[0.25em] uppercase text-xs font-medium mb-6">Enterprise-Grade Digital Notarization + AI Escrow</p>
         <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-navy-900 text-navy-900 leading-tight mb-6">
           The Future of <span className="italic text-coral-600">Trust</span> is Here
         </h1>
@@ -248,13 +248,13 @@ function IPSlide({ visible }) {
     <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="max-w-5xl mx-auto px-6 py-12">
         <div className="text-center mb-10">
-          <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">Intellectual Property</p>
+          <p className="text-coral-500 tracking-[0.25em] uppercase text-xs font-medium mb-4">Intellectual Property</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 mb-2">11 Trademarkable Innovations</h2>
           <p className="text-slate-500 text-sm max-w-xl mx-auto">Proprietary workflow innovations that form a defensible technology moat.</p>
         </div>
         <div className="grid sm:grid-cols-2 gap-3">
           {TRADEMARKS.map((t) => (
-            <div key={t.name} className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-4 hover:border-blue-500/20 transition-colors group">
+            <div key={t.name} className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-4 hover:border-coral-300/20 transition-colors group">
               <div className="flex items-center gap-2 mb-2">
                 <Award className="w-4 h-4 text-coral-600 shrink-0" />
                 <span className="text-navy-900 font-semibold text-sm">{t.name}<sup className="text-coral-600 text-[9px] ml-0.5">TM</sup></span>
@@ -353,12 +353,12 @@ function AIPipelineSlide({ visible }) {
     <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="text-center mb-10">
-          <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">Core Innovation</p>
+          <p className="text-coral-500 tracking-[0.25em] uppercase text-xs font-medium mb-4">Core Innovation</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 mb-2">6-Phase AI Orchestration Pipeline</h2>
           <p className="text-slate-500 text-sm max-w-xl mx-auto">End-to-end autonomous transaction execution powered by GPT-5.2.</p>
         </div>
         <div className="relative">
-          <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-blue-500/50 via-purple-500/50 via-cyan-500/50 to-emerald-500/50 hidden sm:block" />
+          <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-coral-500/50 via-navy-600/50 via-cyan-500/50 to-emerald-500/50 hidden sm:block" />
           <div className="space-y-6">
             {AI_PIPELINE.map((p, i) => (
               <div key={p.phase} className="flex items-start gap-6 relative">
@@ -392,7 +392,7 @@ function FeatureBreakdownSlide({ visible }) {
     <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="max-w-5xl mx-auto px-6 py-12">
         <div className="text-center mb-8">
-          <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">Platform Depth</p>
+          <p className="text-coral-500 tracking-[0.25em] uppercase text-xs font-medium mb-4">Platform Depth</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 mb-2">{totalFeatures} Features Across {FEATURE_CATEGORIES.length} Categories</h2>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -406,9 +406,9 @@ function FeatureBreakdownSlide({ visible }) {
               </div>
             );
           })}
-          <div className="bg-blue-600/10 border border-blue-500/20 rounded-xl p-4 flex flex-col justify-center items-center">
-            <div className="text-2xl font-bold text-blue-400">{totalFeatures}</div>
-            <div className="text-blue-300 text-xs mt-1">Total Features</div>
+          <div className="bg-coral-500/10 border border-coral-300/20 rounded-xl p-4 flex flex-col justify-center items-center">
+            <div className="text-2xl font-bold text-coral-500">{totalFeatures}</div>
+            <div className="text-coral-400 text-xs mt-1">Total Features</div>
           </div>
         </div>
       </div>
@@ -423,41 +423,41 @@ function ArchitectureSlide({ visible }) {
     <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="max-w-5xl mx-auto px-6 py-12">
         <div className="text-center mb-8">
-          <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">System Design</p>
+          <p className="text-coral-500 tracking-[0.25em] uppercase text-xs font-medium mb-4">System Design</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 mb-2">Architecture Overview</h2>
         </div>
         <div className="space-y-3">
-          <div className="bg-white/[0.02] border border-blue-500/20 rounded-xl p-5">
+          <div className="bg-white/[0.02] border border-coral-300/20 rounded-xl p-5">
             <div className="flex items-center gap-3 mb-3">
-              <Eye className="w-5 h-5 text-blue-400" />
+              <Eye className="w-5 h-5 text-coral-500" />
               <h3 className="text-navy-900 font-semibold text-sm">Frontend — React SPA</h3>
             </div>
             <div className="flex flex-wrap gap-2">
               {['Bento Dashboard', 'ANAN Monitor', 'Escrow Intelligence', 'Fraud Intelligence', 'Biometric Gate', 'Notary Portal', 'Admin Panel', 'AI Tools', 'Role-Based Onboarding'].map(m => (
-                <span key={m} className="text-[11px] text-slate-500 bg-blue-500/5 border border-blue-500/10 rounded-md px-2.5 py-1">{m}</span>
+                <span key={m} className="text-[11px] text-slate-500 bg-coral-500/5 border border-coral-300/10 rounded-md px-2.5 py-1">{m}</span>
               ))}
             </div>
           </div>
           <div className="flex justify-center text-slate-700 text-xs">HTTPS / WebSocket (Real-Time Events)</div>
-          <div className="bg-white/[0.02] border border-purple-500/20 rounded-xl p-5">
+          <div className="bg-white/[0.02] border border-navy-300/20 rounded-xl p-5">
             <div className="flex items-center gap-3 mb-3">
-              <Server className="w-5 h-5 text-purple-400" />
+              <Server className="w-5 h-5 text-navy-500" />
               <h3 className="text-navy-900 font-semibold text-sm">API Gateway — FastAPI</h3>
             </div>
             <div className="flex flex-wrap gap-2">
               {['JWT Auth + 2FA', 'RBAC Middleware', 'Rate Limiting', 'SSO (Auth0/Okta)', 'WebSocket Manager'].map(m => (
-                <span key={m} className="text-[11px] text-slate-500 bg-purple-500/5 border border-purple-500/10 rounded-md px-2.5 py-1">{m}</span>
+                <span key={m} className="text-[11px] text-slate-500 bg-navy-600/5 border border-navy-300/10 rounded-md px-2.5 py-1">{m}</span>
               ))}
             </div>
           </div>
-          <div className="bg-white/[0.02] border border-cyan-500/20 rounded-xl p-5">
+          <div className="bg-white/[0.02] border border-coral-300/20 rounded-xl p-5">
             <div className="flex items-center gap-3 mb-3">
               <Box className="w-5 h-5 text-coral-600" />
               <h3 className="text-navy-900 font-semibold text-sm">Service Layer — 15 Core Services</h3>
             </div>
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
               {['ANAN Swarm (GPT-5.2)', 'Escrow Oracle', 'Fraud Intelligence', 'AI Engine', 'Biometric Vision', 'Hedera HCS + Bond', 'Payment (Stripe)', 'Agent Reputation', 'Document Pipeline', 'Email (Resend)', 'Notification WS', 'Webhook Delivery', 'S3 Storage', 'HBAR Alerts', 'Scheduled Reports'].map(m => (
-                <span key={m} className="text-[11px] text-center text-slate-500 bg-cyan-500/5 border border-cyan-500/10 rounded-md px-2 py-1.5">{m}</span>
+                <span key={m} className="text-[11px] text-center text-slate-500 bg-coral-500/5 border border-coral-300/10 rounded-md px-2 py-1.5">{m}</span>
               ))}
             </div>
           </div>
@@ -503,7 +503,7 @@ function TechSlide({ visible }) {
   return (
     <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="max-w-5xl mx-auto px-6 py-12">
-        <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-4 text-center">Technology</p>
+        <p className="text-coral-500 tracking-[0.25em] uppercase text-xs font-medium mb-4 text-center">Technology</p>
         <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 text-center mb-10">Production-Ready Tech Stack</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {layers.map((l) => {
@@ -542,7 +542,7 @@ function InfraSlide({ visible }) {
     <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="max-w-4xl mx-auto px-6 py-16">
         <div className="text-center mb-10">
-          <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">Infrastructure</p>
+          <p className="text-coral-500 tracking-[0.25em] uppercase text-xs font-medium mb-4">Infrastructure</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-navy-900">Built for Scale</h2>
         </div>
         <div className="grid sm:grid-cols-2 gap-4">
@@ -569,7 +569,7 @@ function MetricsSlide({ visible }) {
     <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="max-w-4xl mx-auto px-6 py-16">
         <div className="text-center mb-10">
-          <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">By The Numbers</p>
+          <p className="text-coral-500 tracking-[0.25em] uppercase text-xs font-medium mb-4">By The Numbers</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-navy-900">Platform Metrics</h2>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -591,11 +591,11 @@ function MarketSlide({ visible }) {
   return (
     <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="max-w-4xl mx-auto px-6 py-16 text-center">
-        <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">Market Opportunity</p>
+        <p className="text-coral-500 tracking-[0.25em] uppercase text-xs font-medium mb-4">Market Opportunity</p>
         <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 mb-10">Positioned for Exponential Growth</h2>
         <div className="grid sm:grid-cols-3 gap-6 mb-10">
           <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6">
-            <BarChart3 className="w-7 h-7 text-blue-400 mx-auto mb-3" />
+            <BarChart3 className="w-7 h-7 text-coral-500 mx-auto mb-3" />
             <div className="text-3xl font-bold text-navy-900 mb-1">$18.6B</div>
             <p className="text-slate-500 text-xs">Global e-notarization market by 2030 (est. CAGR 19.2%)*</p>
           </div>
@@ -646,7 +646,7 @@ function ContactSlide({ visible }) {
     <section className={`transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="max-w-xl mx-auto px-6 py-16">
         <div className="text-center mb-10">
-          <p className="text-blue-400 tracking-[0.25em] uppercase text-xs font-medium mb-4">Get in Touch</p>
+          <p className="text-coral-500 tracking-[0.25em] uppercase text-xs font-medium mb-4">Get in Touch</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-navy-900">Interested in NotaryChain?</h2>
           <p className="text-slate-500 mt-2 text-sm">Let's discuss how we can work together.</p>
         </div>
@@ -659,12 +659,12 @@ function ContactSlide({ visible }) {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4" data-testid="contact-form">
             <div className="grid sm:grid-cols-2 gap-4">
-              <input data-testid="contact-name" required value={form.name} onChange={set('name')} placeholder="Your name" className="w-full px-4 py-3 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all text-sm" />
-              <input data-testid="contact-email" required type="email" value={form.email} onChange={set('email')} placeholder="Email" className="w-full px-4 py-3 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all text-sm" />
+              <input data-testid="contact-name" required value={form.name} onChange={set('name')} placeholder="Your name" className="w-full px-4 py-3 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-coral-300/50 transition-all text-sm" />
+              <input data-testid="contact-email" required type="email" value={form.email} onChange={set('email')} placeholder="Email" className="w-full px-4 py-3 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-coral-300/50 transition-all text-sm" />
             </div>
-            <input data-testid="contact-company" required value={form.company} onChange={set('company')} placeholder="Company / Fund" className="w-full px-4 py-3 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all text-sm" />
-            <textarea data-testid="contact-message" required value={form.message} onChange={set('message')} rows={4} placeholder="Tell us about your interest..." className="w-full px-4 py-3 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all text-sm resize-none" />
-            <button data-testid="contact-submit" type="submit" disabled={status === 'sending'} className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-navy-900 font-medium rounded-xl transition-all flex items-center justify-center gap-2">
+            <input data-testid="contact-company" required value={form.company} onChange={set('company')} placeholder="Company / Fund" className="w-full px-4 py-3 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-coral-300/50 transition-all text-sm" />
+            <textarea data-testid="contact-message" required value={form.message} onChange={set('message')} rows={4} placeholder="Tell us about your interest..." className="w-full px-4 py-3 bg-cream-100 border border-white/10 rounded-xl text-navy-900 placeholder-gray-600 focus:outline-none focus:border-coral-300/50 transition-all text-sm resize-none" />
+            <button data-testid="contact-submit" type="submit" disabled={status === 'sending'} className="w-full py-3.5 bg-coral-500 hover:bg-coral-500 disabled:opacity-50 text-navy-900 font-medium rounded-xl transition-all flex items-center justify-center gap-2">
               {status === 'sending' ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Send className="w-4 h-4" /><span>Send Message</span></>}
             </button>
             {status === 'error' && <p className="text-red-400 text-sm text-center">Something went wrong. Please try again.</p>}
@@ -809,7 +809,7 @@ function DemoWalkthroughSlide({ visible }) {
             return (
               <React.Fragment key={i}>
                 <button onClick={() => goStep(i)} data-testid={`demo-step-${i + 1}`}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all text-xs font-medium border ${isActive ? 'border-white/20 bg-white/[0.06] text-navy-900 scale-105' : isPast ? 'border-coral-200 bg-coral-500/5 text-coral-600' : 'border-white/[0.06] bg-white/[0.02] text-slate-600 hover:text-slate-500 hover:border-white/10'}`}>
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all text-xs font-medium border ${isActive ? 'border-white/20 bg-white/[0.06] text-white scale-105' : isPast ? 'border-coral-200 bg-coral-500/5 text-coral-600' : 'border-white/[0.06] bg-white/[0.02] text-slate-600 hover:text-slate-500 hover:border-white/10'}`}>
                   <SIcon className="w-3.5 h-3.5" style={{ color: isActive ? s.color : isPast ? '#10b981' : undefined }} />
                   <span className="hidden sm:inline">{s.label}</span>
                   <span className="sm:hidden">{s.phase}</span>
@@ -875,8 +875,8 @@ function DemoWalkthroughSlide({ visible }) {
 function DemoUpload({ step }) {
   return (
     <div className="text-center space-y-4">
-      <div className="inline-flex items-center gap-4 bg-blue-500/5 border border-blue-500/15 rounded-xl px-6 py-4 animate-[fadeSlideUp_0.6s_ease-out]">
-        <div className="w-14 h-16 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center"><FileText className="w-7 h-7 text-blue-400" /></div>
+      <div className="inline-flex items-center gap-4 bg-coral-500/5 border border-coral-300/15 rounded-xl px-6 py-4 animate-[fadeSlideUp_0.6s_ease-out]">
+        <div className="w-14 h-16 rounded-lg bg-coral-500/10 border border-coral-300/20 flex items-center justify-center"><FileText className="w-7 h-7 text-coral-500" /></div>
         <div className="text-left">
           <p className="text-navy-900 font-semibold text-sm">{step.detail}</p>
           <p className="text-slate-500 text-xs">{step.detailSub}</p>
@@ -884,9 +884,9 @@ function DemoUpload({ step }) {
         <CheckCircle className="w-5 h-5 text-coral-600 animate-[fadeIn_1s_ease-out_0.4s_both]" />
       </div>
       <div className="flex items-center justify-center gap-2 animate-[fadeIn_0.8s_ease-out_0.6s_both]">
-        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-        <span className="text-blue-400 text-xs font-medium">GPT-5.2 parsing document...</span>
-        <Brain className="w-4 h-4 text-purple-400 animate-pulse" />
+        <div className="w-2 h-2 rounded-full bg-coral-500 animate-pulse" />
+        <span className="text-coral-500 text-xs font-medium">GPT-5.2 parsing document...</span>
+        <Brain className="w-4 h-4 text-navy-500 animate-pulse" />
       </div>
       <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto animate-[fadeIn_0.8s_ease-out_1s_both]">
         {['Clauses Found: 42', 'Parties: 2', 'Conditions: 6'].map(t => (
@@ -903,13 +903,13 @@ function DemoTriggers({ step }) {
   return (
     <div className="space-y-2">
       <p className="text-slate-500 text-[10px] uppercase tracking-wider mb-3 flex items-center gap-2">
-        <Brain className="w-3 h-3 text-purple-400" /> AI-Extracted Performance Triggers
+        <Brain className="w-3 h-3 text-navy-500" /> AI-Extracted Performance Triggers
       </p>
       {step.triggers.map((t, i) => (
         <div key={i} className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] rounded-lg px-4 py-2.5 opacity-0 animate-[fadeSlideUp_0.4s_ease-out_both]" style={{ animationDelay: `${i * 120}ms` }}>
-          <span className="w-5 h-5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[9px] font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
+          <span className="w-5 h-5 rounded-full bg-navy-600/10 border border-navy-300/20 text-navy-500 text-[9px] font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
           <span className="text-navy-900 text-sm flex-1">{t.name}</span>
-          <span className={`text-[10px] px-2 py-0.5 rounded-full border ${t.method === 'Oracle' ? 'text-coral-600 border-cyan-500/20 bg-cyan-500/10' : t.method === 'Biometric' ? 'text-purple-400 border-purple-500/20 bg-purple-500/10' : t.method === 'AI Photo' ? 'text-coral-600 border-amber-500/20 bg-coral-500/10' : 'text-slate-500 border-slate-200 bg-gray-800'}`}>{t.method}</span>
+          <span className={`text-[10px] px-2 py-0.5 rounded-full border ${t.method === 'Oracle' ? 'text-coral-600 border-coral-300/20 bg-coral-500/10' : t.method === 'Biometric' ? 'text-navy-500 border-navy-300/20 bg-navy-600/10' : t.method === 'AI Photo' ? 'text-coral-600 border-amber-500/20 bg-coral-500/10' : 'text-slate-500 border-slate-200 bg-navy-800'}`}>{t.method}</span>
           {t.pct > 0 && <span className="text-coral-600 text-[10px] font-bold">{t.pct}%</span>}
         </div>
       ))}
@@ -968,16 +968,16 @@ function DemoBiometric({ step }) {
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         {Object.entries(step.bio).map(([role, data]) => (
-          <div key={role} className="bg-white/[0.02] border border-purple-500/15 rounded-xl p-5 text-center animate-[fadeSlideUp_0.5s_ease-out_both]" style={{ animationDelay: role === 'buyer' ? '0ms' : '300ms' }}>
-            <div className="w-16 h-16 rounded-full bg-purple-500/10 border-2 border-purple-500/30 mx-auto mb-3 flex items-center justify-center relative">
-              <Fingerprint className="w-8 h-8 text-purple-400" />
+          <div key={role} className="bg-white/[0.02] border border-navy-300/15 rounded-xl p-5 text-center animate-[fadeSlideUp_0.5s_ease-out_both]" style={{ animationDelay: role === 'buyer' ? '0ms' : '300ms' }}>
+            <div className="w-16 h-16 rounded-full bg-navy-600/10 border-2 border-navy-300/30 mx-auto mb-3 flex items-center justify-center relative">
+              <Fingerprint className="w-8 h-8 text-navy-500" />
               <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-coral-500 flex items-center justify-center"><CheckCircle className="w-3 h-3 text-navy-900" /></div>
             </div>
             <p className="text-navy-900 font-semibold text-sm mb-0.5">{data.name}</p>
             <p className="text-slate-600 text-[10px] uppercase tracking-wider mb-2">{role}</p>
             <div className="flex items-center justify-center gap-3">
               <span className="text-coral-600 text-[10px] flex items-center gap-1"><Eye className="w-3 h-3" /> Liveness</span>
-              <span className="text-purple-400 text-[10px] font-bold">{data.conf}%</span>
+              <span className="text-navy-500 text-[10px] font-bold">{data.conf}%</span>
             </div>
           </div>
         ))}
@@ -1249,12 +1249,12 @@ function TransactionOrchestratorDeepDiveSlide({ visible }) {
 
           {/* RIGHT: Next-Best-Action + On-Chain Audit */}
           <div className="lg:col-span-3 space-y-3">
-            <div className="bg-white/[0.02] border border-sky-500/20 rounded-xl p-3" key={`nba-${activeIdx}`}>
+            <div className="bg-white/[0.02] border border-coral-300/20 rounded-xl p-3" key={`nba-${activeIdx}`}>
               <p className="text-coral-600 text-[10px] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                 <Zap className="w-3 h-3" /> Next-Best Action
               </p>
               <p className="text-navy-900 text-[11px] leading-snug">{active.nba}</p>
-              <button className="mt-2 w-full text-[9px] font-bold text-coral-600 bg-sky-500/10 border border-sky-500/20 rounded px-2 py-1 hover:bg-sky-500/20 transition-colors">
+              <button className="mt-2 w-full text-[9px] font-bold text-coral-600 bg-coral-500/10 border border-coral-300/20 rounded px-2 py-1 hover:bg-coral-500/20 transition-colors">
                 EXECUTE →
               </button>
             </div>
@@ -1429,7 +1429,7 @@ function CompetitiveSlide({ visible }) {
 function ProgressBar({ current, total }) {
   return (
     <div className="fixed top-0 left-0 right-0 z-50 h-0.5 bg-white/[0.05]">
-      <div className="h-full bg-blue-500 transition-all duration-700 ease-out" style={{ width: `${((current + 1) / total) * 100}%` }} />
+      <div className="h-full bg-coral-500 transition-all duration-700 ease-out" style={{ width: `${((current + 1) / total) * 100}%` }} />
     </div>
   );
 }
@@ -1454,7 +1454,7 @@ function NavDots({ current, total, onGo }) {
           <span className={`text-[9px] tracking-wider uppercase transition-opacity whitespace-nowrap ${current === i ? 'opacity-100 text-navy-900' : 'opacity-0 group-hover:opacity-70 text-slate-500'}`}>
             {SLIDE_LABELS[i]}
           </span>
-          <span className={`block rounded-full transition-all ${current === i ? 'w-2.5 h-2.5 bg-blue-500' : 'w-1.5 h-1.5 bg-white/20 group-hover:bg-white/40'}`} />
+          <span className={`block rounded-full transition-all ${current === i ? 'w-2.5 h-2.5 bg-coral-500' : 'w-1.5 h-1.5 bg-white/20 group-hover:bg-white/40'}`} />
         </button>
       ))}
     </div>

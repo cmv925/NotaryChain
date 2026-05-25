@@ -12,7 +12,7 @@ const API = process.env.REACT_APP_BACKEND_URL;
 const STATUSES = ['draft', 'submitted', 'approved', 'renewing', 'expired', 'denied'];
 const STATUS_STYLES = {
   draft: 'bg-slate-700/50 text-navy-800',
-  submitted: 'bg-blue-500/20 text-blue-300',
+  submitted: 'bg-coral-500/20 text-coral-400',
   approved: 'bg-coral-500/20 text-coral-700',
   renewing: 'bg-coral-500/20 text-coral-700',
   expired: 'bg-red-500/20 text-red-300',

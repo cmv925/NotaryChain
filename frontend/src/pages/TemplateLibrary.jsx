@@ -37,9 +37,9 @@ const CATEGORY_LABELS = {
 };
 
 const CATEGORY_COLORS = {
-  legal: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+  legal: 'bg-coral-500/15 text-coral-500 border-coral-300/30',
   real_estate: 'bg-green-500/15 text-green-400 border-green-500/30',
-  business: 'bg-purple-500/15 text-purple-400 border-purple-500/30',
+  business: 'bg-navy-600/15 text-navy-500 border-navy-300/30',
   estate: 'bg-coral-500/15 text-coral-600 border-gold-500/30',
 };
 
@@ -49,7 +49,7 @@ const TemplateCard = ({ template, onSelect, onPreview }) => {
 
   return (
     <Card
-      className="bg-white border-slate-200 hover:border-blue-500/50 transition-all group cursor-pointer"
+      className="bg-white border-slate-200 hover:border-coral-300/50 transition-all group cursor-pointer"
       data-testid={`template-card-${template.id}`}
       onClick={() => onPreview(template)}
     >
@@ -65,13 +65,13 @@ const TemplateCard = ({ template, onSelect, onPreview }) => {
               </span>
             )}
             {template.notarization_required && (
-              <span className="text-xs bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded-full px-2 py-0.5">
+              <span className="text-xs bg-coral-500/15 text-coral-500 border border-coral-300/30 rounded-full px-2 py-0.5">
                 Notarization Required
               </span>
             )}
           </div>
         </div>
-        <h3 className="text-navy-900 font-semibold text-base mb-1.5 group-hover:text-blue-400 transition-colors">
+        <h3 className="text-navy-900 font-semibold text-base mb-1.5 group-hover:text-coral-500 transition-colors">
           {template.name}
         </h3>
         <p className="text-slate-500 text-sm mb-4 line-clamp-2">
@@ -104,8 +104,8 @@ const TemplatePreviewModal = ({ template, onClose, onUse }) => {
       <div className="bg-white border border-slate-200 rounded-xl max-w-lg w-full max-h-[85vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-slate-200 p-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-500/15 flex items-center justify-center">
-              <IconComponent className="w-5 h-5 text-blue-400" />
+            <div className="w-10 h-10 rounded-lg bg-coral-500/15 flex items-center justify-center">
+              <IconComponent className="w-5 h-5 text-coral-500" />
             </div>
             <div>
               <h2 className="text-navy-900 font-bold text-lg">{template.name}</h2>
@@ -123,7 +123,7 @@ const TemplatePreviewModal = ({ template, onClose, onUse }) => {
           {/* Meta info */}
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-cream-100 rounded-lg p-3 text-center">
-              <Clock className="w-4 h-4 text-blue-400 mx-auto mb-1" />
+              <Clock className="w-4 h-4 text-coral-500 mx-auto mb-1" />
               <p className="text-navy-900 text-sm font-medium">{template.estimated_time}</p>
               <p className="text-slate-500 text-xs">Est. Time</p>
             </div>
@@ -133,7 +133,7 @@ const TemplatePreviewModal = ({ template, onClose, onUse }) => {
               <p className="text-slate-500 text-xs">Signers</p>
             </div>
             <div className="bg-cream-100 rounded-lg p-3 text-center">
-              <Shield className="w-4 h-4 text-purple-400 mx-auto mb-1" />
+              <Shield className="w-4 h-4 text-navy-500 mx-auto mb-1" />
               <p className="text-navy-900 text-sm font-medium">{template.notarization_required ? 'Yes' : 'No'}</p>
               <p className="text-slate-500 text-xs">Notarization</p>
             </div>
@@ -145,7 +145,7 @@ const TemplatePreviewModal = ({ template, onClose, onUse }) => {
             <div className="space-y-2">
               {template.fields?.map((field, idx) => (
                 <div key={idx} className="flex items-center gap-2 bg-cream-100 rounded-lg px-3 py-2.5 border border-slate-200">
-                  <ChevronRight className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
+                  <ChevronRight className="w-3.5 h-3.5 text-coral-500 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <span className="text-slate-500 text-sm">{field.label}</span>
                     {field.required && <span className="text-red-400 text-xs ml-1">*</span>}
@@ -159,7 +159,7 @@ const TemplatePreviewModal = ({ template, onClose, onUse }) => {
           {/* Use button */}
           <Button
             onClick={() => onUse(template)}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-navy-900 py-5 text-base"
+            className="w-full bg-coral-500 hover:bg-coral-600 text-navy-900 py-5 text-base"
             data-testid="use-template-btn"
           >
             Use This Template
@@ -246,7 +246,7 @@ const TemplateLibrary = () => {
                 size="sm"
                 onClick={() => setActiveCategory(null)}
                 className={activeCategory === null
-                  ? 'bg-blue-600 text-navy-900'
+                  ? 'bg-coral-500 text-navy-900'
                   : 'border-slate-200 text-slate-500 hover:text-navy-900'}
                 data-testid="filter-all"
               >
@@ -259,7 +259,7 @@ const TemplateLibrary = () => {
                   size="sm"
                   onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
                   className={activeCategory === cat
-                    ? 'bg-blue-600 text-navy-900'
+                    ? 'bg-coral-500 text-navy-900'
                     : 'border-slate-200 text-slate-500 hover:text-navy-900'}
                   data-testid={`filter-${cat}`}
                 >
@@ -296,7 +296,7 @@ const TemplateLibrary = () => {
             <Button
               onClick={() => navigate('/request-notarization')}
               variant="outline"
-              className="border-slate-200 text-slate-500 hover:text-navy-900 hover:border-blue-500"
+              className="border-slate-200 text-slate-500 hover:text-navy-900 hover:border-coral-300"
               data-testid="upload-own-document-btn"
             >
               <FileText className="w-4 h-4 mr-2" />

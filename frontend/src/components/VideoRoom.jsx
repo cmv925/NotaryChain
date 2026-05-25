@@ -182,8 +182,8 @@ const VideoRoom = ({
         {/* Pre-join screen */}
         {!isJoined && !callFrame && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-cream-100">
-            <div className="w-24 h-24 rounded-full bg-blue-600/20 flex items-center justify-center mb-6 animate-pulse">
-              <Video className="w-12 h-12 text-blue-500" />
+            <div className="w-24 h-24 rounded-full bg-coral-500/20 flex items-center justify-center mb-6 animate-pulse">
+              <Video className="w-12 h-12 text-coral-500" />
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">
               Preparing Video Session
@@ -193,7 +193,7 @@ const VideoRoom = ({
             </p>
             <Button
               onClick={joinCall}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-coral-500 hover:bg-coral-600"
             >
               <Camera className="w-4 h-4 mr-2" />
               Join Session
@@ -268,7 +268,7 @@ const VideoRoom = ({
             size="lg"
             className={`rounded-full w-14 h-14 p-0 ${
               isScreenSharing 
-                ? 'bg-blue-600 hover:bg-blue-700 border-blue-600' 
+                ? 'bg-coral-500 hover:bg-coral-600 border-coral-500' 
                 : 'bg-gray-700 hover:bg-gray-600 border-slate-200'
             }`}
             data-testid="toggle-screen-btn"

@@ -179,7 +179,7 @@ function TrustScoreCard({ identity, onRefresh }) {
             <span className="text-[10px] tracking-[0.2em] uppercase font-bold" style={{ color: ring }}>{tier}</span>
           </div>
         </div>
-        <Button onClick={onRefresh} className="w-full mt-4 bg-sky-600 hover:bg-sky-500 text-navy-900" data-testid="refresh-identity-btn">
+        <Button onClick={onRefresh} className="w-full mt-4 bg-coral-500 hover:bg-coral-500 text-navy-900" data-testid="refresh-identity-btn">
           <RefreshCw className="w-4 h-4 mr-2" /> Refresh Identity
         </Button>
         <p className="text-[10px] text-slate-500 text-center mt-2">Next refresh due: {fmtDate(identity.next_refresh_due)}</p>
@@ -318,7 +318,7 @@ function GenesisCTA({ onStart }) {
       <p className="text-slate-600 max-w-xl mx-auto mb-6">
         The Genesis Anchor is the immutable starting point of your Living Identity — sealed on Hedera mainnet. Once anchored, your identity becomes a continuously-verifiable credential that ages with you and detects compromise the moment it happens.
       </p>
-      <Button onClick={onStart} size="lg" className="bg-sky-600 hover:bg-sky-500" data-testid="start-genesis-btn">
+      <Button onClick={onStart} size="lg" className="bg-coral-500 hover:bg-coral-500" data-testid="start-genesis-btn">
         <Camera className="w-4 h-4 mr-2" /> Start Genesis Capture
       </Button>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-8 text-left text-xs">
@@ -420,7 +420,7 @@ function CaptureModal({ mode, onClose, onComplete }) {
           {!captured ? (
             <>
               <Button onClick={onClose} variant="outline" className="flex-1" data-testid="cancel-capture-btn">Cancel</Button>
-              <Button onClick={captureSnapshot} className="flex-1 bg-sky-600 hover:bg-sky-500" data-testid="capture-btn">
+              <Button onClick={captureSnapshot} className="flex-1 bg-coral-500 hover:bg-coral-500" data-testid="capture-btn">
                 <Camera className="w-4 h-4 mr-2" /> Capture
               </Button>
             </>
@@ -504,7 +504,7 @@ function ChallengeQRModal({ token, onClose }) {
                   className="w-full bg-cream-200 border border-slate-300 rounded px-3 py-2 text-sm mt-1" data-testid="qr-max-uses-input" />
               </div>
             </div>
-            <Button onClick={issue} disabled={creating} className="w-full bg-sky-600 hover:bg-sky-500 mt-2" data-testid="issue-qr-token-btn">
+            <Button onClick={issue} disabled={creating} className="w-full bg-coral-500 hover:bg-coral-500 mt-2" data-testid="issue-qr-token-btn">
               {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <QrCode className="w-4 h-4 mr-2" />}
               Generate QR Code
             </Button>

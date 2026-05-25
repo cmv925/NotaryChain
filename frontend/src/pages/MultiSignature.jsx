@@ -141,7 +141,7 @@ export default function MultiSignature() {
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] text-slate-500 uppercase tracking-wider">Signers ({signers.length})</span>
                   <button data-testid="add-signer-btn" onClick={addSigner}
-                    className="text-[10px] text-coral-600 hover:text-sky-300 flex items-center gap-1">
+                    className="text-[10px] text-coral-600 hover:text-coral-400 flex items-center gap-1">
                     <Plus className="w-3 h-3" /> Add Signer
                   </button>
                 </div>

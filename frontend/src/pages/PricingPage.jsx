@@ -15,8 +15,8 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const planIcons = { free: Zap, pro: Crown, enterprise: Building2 };
 const planAccents = {
   free: { border: 'border-slate-200', bg: 'bg-gray-500/10', text: 'text-slate-500', btn: 'bg-gray-700 hover:bg-gray-600' },
-  pro: { border: 'border-blue-500', bg: 'bg-blue-500/10', text: 'text-blue-400', btn: 'bg-blue-600 hover:bg-blue-700' },
-  enterprise: { border: 'border-purple-500', bg: 'bg-purple-500/10', text: 'text-purple-400', btn: 'bg-purple-600 hover:bg-purple-700' },
+  pro: { border: 'border-coral-300', bg: 'bg-coral-500/10', text: 'text-coral-500', btn: 'bg-coral-500 hover:bg-coral-600' },
+  enterprise: { border: 'border-navy-300', bg: 'bg-navy-600/10', text: 'text-navy-500', btn: 'bg-navy-700 hover:bg-navy-800' },
 };
 
 const PricingPage = () => {
@@ -89,12 +89,12 @@ const PricingPage = () => {
               return (
                 <Card
                   key={plan.id}
-                  className={`relative bg-white ${accent.border} border-2 ${isPopular ? 'ring-2 ring-blue-500/50 md:scale-[1.02]' : ''} transition-all hover:scale-[1.01]`}
+                  className={`relative bg-white ${accent.border} border-2 ${isPopular ? 'ring-2 ring-coral-500/50 md:scale-[1.02]' : ''} transition-all hover:scale-[1.01]`}
                   data-testid={`plan-card-${plan.id}`}
                 >
                   {isPopular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="bg-blue-600 text-navy-900 text-xs font-bold px-4 py-1 rounded-full">Most Popular</span>
+                      <span className="bg-coral-500 text-navy-900 text-xs font-bold px-4 py-1 rounded-full">Most Popular</span>
                     </div>
                   )}
                   <CardContent className="p-6 sm:p-8">
@@ -148,7 +148,7 @@ const PricingPage = () => {
           <div className="mt-12 sm:mt-16 text-center">
             <p className="text-slate-500 text-sm">All plans include SSL encryption, email notifications, and basic document management.</p>
             {isAuthenticated && (
-              <Button variant="link" onClick={() => navigate('/subscription')} className="text-blue-400 mt-2" data-testid="manage-subscription-link">
+              <Button variant="link" onClick={() => navigate('/subscription')} className="text-coral-500 mt-2" data-testid="manage-subscription-link">
                 Manage your subscription
               </Button>
             )}

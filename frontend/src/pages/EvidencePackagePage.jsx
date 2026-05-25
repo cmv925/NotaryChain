@@ -123,7 +123,7 @@ export default function EvidencePackagePage() {
                     <h2 className="text-navy-900 text-lg font-bold">{pkg.transaction?.name}</h2>
                     <p className="text-slate-500 text-xs">{pkg.transaction?.type?.replace(/_/g, ' ')}</p>
                   </div>
-                  <Badge className={pkg.transaction?.status === 'completed' ? 'bg-green-500/15 text-green-400' : 'bg-blue-500/15 text-blue-400'}>
+                  <Badge className={pkg.transaction?.status === 'completed' ? 'bg-green-500/15 text-green-400' : 'bg-coral-500/15 text-coral-500'}>
                     {pkg.transaction?.status}
                   </Badge>
                 </div>
@@ -166,7 +166,7 @@ export default function EvidencePackagePage() {
                   </div>
                 )}
                 {pkg.blockchain_proof?.explorer_url && (
-                  <a href={pkg.blockchain_proof.explorer_url} target="_blank" rel="noreferrer" className="text-blue-400 hover:underline flex items-center gap-1">
+                  <a href={pkg.blockchain_proof.explorer_url} target="_blank" rel="noreferrer" className="text-coral-500 hover:underline flex items-center gap-1">
                     View on Explorer <ExternalLink className="w-3 h-3" />
                   </a>
                 )}
@@ -174,7 +174,7 @@ export default function EvidencePackagePage() {
             </Section>
 
             {/* Participants */}
-            <Section title={`Participants (${pkg.participants?.length || 0})`} icon={Users} color="text-blue-400" id="participants">
+            <Section title={`Participants (${pkg.participants?.length || 0})`} icon={Users} color="text-coral-500" id="participants">
               <div className="space-y-2">
                 {pkg.participants?.map((p, i) => (
                   <div key={i} className="flex items-center justify-between bg-white rounded-lg p-2">
@@ -204,7 +204,7 @@ export default function EvidencePackagePage() {
                     </div>
                     <div className="flex items-center gap-1">
                       {t.requires_signature && <Badge className="text-[8px] bg-violet-500/15 text-coral-600">SIG</Badge>}
-                      {t.requires_notarization && <Badge className="text-[8px] bg-cyan-500/15 text-coral-600">NOT</Badge>}
+                      {t.requires_notarization && <Badge className="text-[8px] bg-coral-500/15 text-coral-600">NOT</Badge>}
                       {t.requires_document && <Badge className="text-[8px] bg-coral-500/15 text-coral-600">DOC</Badge>}
                     </div>
                   </div>
@@ -213,8 +213,8 @@ export default function EvidencePackagePage() {
             </Section>
 
             {/* Biometric Evidence */}
-            <Section title="Biometric Evidence" icon={Fingerprint} color="text-purple-400" id="biometric"
-              badge={<Badge className="bg-purple-500/15 text-purple-400 text-[10px]">{pkg.biometric_evidence?.individual_verifications || 0} verifications</Badge>}>
+            <Section title="Biometric Evidence" icon={Fingerprint} color="text-navy-500" id="biometric"
+              badge={<Badge className="bg-navy-600/15 text-navy-500 text-[10px]">{pkg.biometric_evidence?.individual_verifications || 0} verifications</Badge>}>
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between"><span className="text-slate-500">Passports</span><span className="text-navy-900">{pkg.biometric_evidence?.passports?.length || 0}</span></div>
                 <div className="flex justify-between"><span className="text-slate-500">Modalities</span><span className="text-navy-900">{pkg.biometric_evidence?.modalities_used?.join(', ') || 'None'}</span></div>

@@ -73,7 +73,7 @@ const PaymentSuccess = () => {
             <CardContent className="p-8 text-center">
               {status === 'checking' && (
                 <>
-                  <Loader2 className="w-16 h-16 text-blue-500 animate-spin mx-auto mb-6" />
+                  <Loader2 className="w-16 h-16 text-coral-500 animate-spin mx-auto mb-6" />
                   <h1 className="text-2xl font-bold text-navy-900 mb-2">
                     Verifying Payment...
                   </h1>
@@ -98,7 +98,7 @@ const PaymentSuccess = () => {
                   {paymentDetails && (
                     <div className="bg-cream-100 rounded-lg p-4 mb-6 text-left">
                       <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-blue-500" />
+                        <FileText className="w-5 h-5 text-coral-500" />
                         Payment Details
                       </h3>
                       <div className="space-y-2 text-sm">
@@ -123,7 +123,7 @@ const PaymentSuccess = () => {
                   <div className="space-y-3">
                     <Button
                       onClick={() => navigate('/request-notarization')}
-                      className="w-full bg-blue-600 hover:bg-blue-700"
+                      className="w-full bg-coral-500 hover:bg-coral-600"
                     >
                       Start Notarization
                       <ArrowRight className="w-4 h-4 ml-2" />
@@ -152,7 +152,7 @@ const PaymentSuccess = () => {
                   </p>
                   <Button
                     onClick={() => navigate('/dashboard')}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-coral-500 hover:bg-coral-600"
                   >
                     Go to Dashboard
                   </Button>
@@ -174,7 +174,7 @@ const PaymentSuccess = () => {
                   </p>
                   <Button
                     onClick={() => navigate('/checkout')}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-coral-500 hover:bg-coral-600"
                   >
                     Try Again
                   </Button>

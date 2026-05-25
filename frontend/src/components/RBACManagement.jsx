@@ -109,10 +109,10 @@ const RBACManagement = ({ orgId, myRole, token }) => {
         </div>
         <div className="flex items-center gap-2">
           <div className="flex bg-cream-100 rounded-lg border border-slate-200 p-0.5">
-            <button onClick={() => setViewMode('grid')} className={`px-2.5 py-1 rounded text-xs transition-all ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-500'}`} data-testid="rbac-grid-view">
+            <button onClick={() => setViewMode('grid')} className={`px-2.5 py-1 rounded text-xs transition-all ${viewMode === 'grid' ? 'bg-coral-500 text-white' : 'text-slate-500 hover:text-slate-500'}`} data-testid="rbac-grid-view">
               <Grid3X3 className="w-3.5 h-3.5" />
             </button>
-            <button onClick={() => setViewMode('list')} className={`px-2.5 py-1 rounded text-xs transition-all ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-500'}`} data-testid="rbac-list-view">
+            <button onClick={() => setViewMode('list')} className={`px-2.5 py-1 rounded text-xs transition-all ${viewMode === 'list' ? 'bg-coral-500 text-white' : 'text-slate-500 hover:text-slate-500'}`} data-testid="rbac-list-view">
               <List className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -135,7 +135,7 @@ const RBACManagement = ({ orgId, myRole, token }) => {
                   <th key={role.id} className="px-3 py-3 text-center min-w-[100px]">
                     <div className="flex flex-col items-center gap-1">
                       <span className="text-white text-xs font-medium">{role.name}</span>
-                      {role.is_system && <span className="text-[9px] px-1.5 py-0 rounded bg-blue-500/15 text-blue-400">SYS</span>}
+                      {role.is_system && <span className="text-[9px] px-1.5 py-0 rounded bg-coral-500/15 text-coral-500">SYS</span>}
                     </div>
                   </th>
                 ))}
@@ -167,7 +167,7 @@ const RBACManagement = ({ orgId, myRole, token }) => {
                                 className={`inline-flex items-center justify-center w-7 h-7 rounded-lg transition-all ${
                                   has
                                     ? 'bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25'
-                                    : 'bg-gray-800/30 text-slate-700 hover:bg-gray-800/50'
+                                    : 'bg-navy-800/30 text-slate-700 hover:bg-navy-800/50'
                                 } ${clickable ? 'cursor-pointer' : 'cursor-default'}`}
                                 data-testid={`perm-toggle-${role.id}-${perm.key}`}
                               >
@@ -196,13 +196,13 @@ const RBACManagement = ({ orgId, myRole, token }) => {
                 onClick={() => setPreviewRole(previewRole === role.id ? null : role.id)}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${role.is_system ? 'bg-blue-500/15' : 'bg-emerald-500/15'}`}>
-                    {role.is_system ? <Lock className="w-4 h-4 text-blue-400" /> : <Shield className="w-4 h-4 text-emerald-400" />}
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${role.is_system ? 'bg-coral-500/15' : 'bg-emerald-500/15'}`}>
+                    {role.is_system ? <Lock className="w-4 h-4 text-coral-500" /> : <Shield className="w-4 h-4 text-emerald-400" />}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-white text-sm font-medium">{role.name}</span>
-                      {role.is_system && <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 border border-blue-500/30">SYSTEM</span>}
+                      {role.is_system && <span className="text-[10px] px-1.5 py-0.5 rounded bg-coral-500/15 text-coral-500 border border-coral-300/30">SYSTEM</span>}
                     </div>
                     <p className="text-slate-500 text-xs">{role.description}</p>
                   </div>
@@ -236,7 +236,7 @@ const RBACManagement = ({ orgId, myRole, token }) => {
                           </div>
                           <div className="flex flex-wrap gap-1">
                             {perms.map(p => (
-                              <span key={p.key} className={`text-[10px] px-1.5 py-0.5 rounded ${role.permissions?.includes(p.key) ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-gray-800/50 text-slate-600 border border-slate-200/50'}`}>
+                              <span key={p.key} className={`text-[10px] px-1.5 py-0.5 rounded ${role.permissions?.includes(p.key) ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-navy-800/50 text-slate-600 border border-slate-200/50'}`}>
                                 {p.label}
                               </span>
                             ))}
@@ -356,11 +356,11 @@ const RoleEditor = ({ orgId, token, role, permissions, categories, onClose, onSa
             <div className="flex items-center justify-between mb-2">
               <span className="text-slate-500 text-xs">{selected.size} of {permissions.length} permissions selected</span>
               <div className="flex gap-2">
-                <button onClick={() => setSelected(new Set(permissions.map(p => p.key)))} className="text-[10px] text-blue-400 hover:text-blue-300">Select All</button>
+                <button onClick={() => setSelected(new Set(permissions.map(p => p.key)))} className="text-[10px] text-coral-500 hover:text-coral-400">Select All</button>
                 <button onClick={() => setSelected(new Set())} className="text-[10px] text-slate-500 hover:text-slate-500">Clear All</button>
               </div>
             </div>
-            <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-navy-800 rounded-full overflow-hidden">
               <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${(selected.size / Math.max(permissions.length, 1)) * 100}%` }} />
             </div>
           </div>

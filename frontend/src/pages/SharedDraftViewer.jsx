@@ -111,7 +111,7 @@ const SharedDraftViewer = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-cream-100 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-coral-500 animate-spin" />
       </div>
     );
   }
@@ -124,7 +124,7 @@ const SharedDraftViewer = () => {
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Shared Draft' }]} />
           <FileText className="w-12 h-12 text-slate-600 mx-auto mb-3" />
           <p className="text-slate-500">This shared draft was not found or the link has expired.</p>
-          <Button onClick={() => navigate('/templates')} className="mt-4 bg-blue-600 text-navy-900">
+          <Button onClick={() => navigate('/templates')} className="mt-4 bg-coral-500 text-navy-900">
             Browse Templates
           </Button>
         </div>
@@ -141,8 +141,8 @@ const SharedDraftViewer = () => {
           {/* Breadcrumbs */}
           <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Shared Draft' }]} />
           {/* Shared Banner */}
-          <div className="mb-6 p-3 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center gap-2" data-testid="shared-draft-banner">
-            <Share2 className="w-4 h-4 text-purple-400" />
+          <div className="mb-6 p-3 rounded-lg bg-navy-600/10 border border-navy-300/30 flex items-center gap-2" data-testid="shared-draft-banner">
+            <Share2 className="w-4 h-4 text-navy-500" />
             <span className="text-purple-300 text-sm">
               Shared by <strong className="text-navy-900">{draft.owner_email}</strong>
               {draft.allow_edit ? (
@@ -192,7 +192,7 @@ const SharedDraftViewer = () => {
                           onChange={(e) => handleFieldChange(key, e.target.value)}
                           onFocus={() => handleFieldFocus(key)}
                           rows={3}
-                          className="w-full mt-1 bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-blue-500 focus:outline-none resize-none"
+                          className="w-full mt-1 bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 text-sm focus:border-coral-300 focus:outline-none resize-none"
                           data-testid={`shared-field-${key}`}
                         />
                       ) : (
@@ -218,7 +218,7 @@ const SharedDraftViewer = () => {
                   <Button
                     onClick={handleSave}
                     disabled={saving || saved}
-                    className="bg-blue-600 hover:bg-blue-700 text-navy-900"
+                    className="bg-coral-500 hover:bg-coral-600 text-navy-900"
                     data-testid="save-shared-changes"
                   >
                     {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : saved ? <CheckCircle className="w-4 h-4 mr-2" /> : <Save className="w-4 h-4 mr-2" />}

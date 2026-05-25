@@ -191,7 +191,7 @@ const WhiteLabelPage = () => {
 
                     <div className="flex flex-wrap gap-2 mb-3">
                       {(config.allowed_origins || []).map(o => (
-                        <span key={o} className="px-2 py-0.5 bg-blue-500/10 text-blue-400 text-xs rounded border border-blue-500/20 flex items-center gap-1">
+                        <span key={o} className="px-2 py-0.5 bg-coral-500/10 text-coral-500 text-xs rounded border border-coral-300/20 flex items-center gap-1">
                           <Globe className="w-2.5 h-2.5" /> {o}
                         </span>
                       ))}

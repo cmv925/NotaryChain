@@ -201,7 +201,7 @@ export default function TokenizedEscrow() {
   if (loading) {
     return (
       <div className="min-h-screen bg-cream-100 flex items-center justify-center">
-        <Loader2 className="w-6 h-6 text-sky-500 animate-spin" />
+        <Loader2 className="w-6 h-6 text-coral-500 animate-spin" />
       </div>
     );
   }
@@ -415,7 +415,7 @@ export default function TokenizedEscrow() {
                 {/* Action Buttons */}
                 {selectedToken.status === 'active' && (
                   <div className="flex items-center gap-3" data-testid="token-actions">
-                    <Button onClick={() => setShowTransfer(true)} size="sm" className="bg-sky-600 hover:bg-sky-700" data-testid="transfer-btn">
+                    <Button onClick={() => setShowTransfer(true)} size="sm" className="bg-coral-500 hover:bg-coral-600" data-testid="transfer-btn">
                       <ArrowRightLeft className="w-4 h-4 mr-1.5" /> Transfer
                     </Button>
                     <Button onClick={() => handleBurn(selectedToken.escrow_id)} size="sm" variant="outline" className="border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300" disabled={actionLoading === 'burn'} data-testid="burn-btn">
@@ -431,7 +431,7 @@ export default function TokenizedEscrow() {
 
                 {/* Transfer Modal */}
                 {showTransfer && (
-                  <Card className="bg-white border-sky-500/20 text-navy-900" data-testid="transfer-modal">
+                  <Card className="bg-white border-coral-300/20 text-navy-900" data-testid="transfer-modal">
                     <CardContent className="p-5 space-y-3">
                       <h3 className="text-sm font-bold flex items-center gap-2">
                         <ArrowRightLeft className="w-4 h-4 text-coral-600" /> Transfer Tokens
@@ -453,7 +453,7 @@ export default function TokenizedEscrow() {
                           <select
                             value={transferForm.to_party}
                             onChange={(e) => setTransferForm({ ...transferForm, to_party: e.target.value })}
-                            className="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-sm text-navy-900 focus:border-sky-500 outline-none"
+                            className="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-sm text-navy-900 focus:border-coral-300 outline-none"
                             data-testid="transfer-party-select"
                           >
                             <option value="seller">Seller</option>
@@ -463,7 +463,7 @@ export default function TokenizedEscrow() {
                       </div>
                       <div className="flex justify-end gap-2">
                         <Button variant="ghost" size="sm" onClick={() => setShowTransfer(false)} className="text-slate-600" data-testid="cancel-transfer-btn">Cancel</Button>
-                        <Button size="sm" onClick={handleTransfer} disabled={actionLoading === 'transfer'} className="bg-sky-600 hover:bg-sky-700" data-testid="confirm-transfer-btn">
+                        <Button size="sm" onClick={handleTransfer} disabled={actionLoading === 'transfer'} className="bg-coral-500 hover:bg-coral-600" data-testid="confirm-transfer-btn">
                           {actionLoading === 'transfer' ? <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> : <ArrowRightLeft className="w-4 h-4 mr-1.5" />}
                           Execute Transfer
                         </Button>
@@ -562,7 +562,7 @@ export default function TokenizedEscrow() {
                       </div>
                       <div className="divide-y divide-slate-800/50 max-h-48 overflow-y-auto">
                         {liveEvents.map((evt) => {
-                          const evtColors = { hts_mint: 'text-coral-600 bg-coral-500/10', hts_transfer: 'text-coral-600 bg-sky-500/10', hts_burn: 'text-red-400 bg-red-500/10' };
+                          const evtColors = { hts_mint: 'text-coral-600 bg-coral-500/10', hts_transfer: 'text-coral-600 bg-coral-500/10', hts_burn: 'text-red-400 bg-red-500/10' };
                           const evtLabels = { hts_mint: 'MINT', hts_transfer: 'TRANSFER', hts_burn: 'BURN' };
                           return (
                             <div key={evt.id} className="px-5 py-2.5 flex items-center gap-3" data-testid={`live-event-${evt.id}`}>

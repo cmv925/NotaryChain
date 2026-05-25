@@ -32,20 +32,20 @@ const ACTION_ICONS = {
 const ACTION_COLORS = {
   'member.joined': 'text-emerald-400 bg-emerald-500/15',
   'member.removed': 'text-red-400 bg-red-500/15',
-  'member.role_changed': 'text-blue-400 bg-blue-500/15',
-  'member.invited': 'text-sky-400 bg-sky-500/15',
-  'role.created': 'text-purple-400 bg-purple-500/15',
-  'role.updated': 'text-purple-400 bg-purple-500/15',
+  'member.role_changed': 'text-coral-500 bg-coral-500/15',
+  'member.invited': 'text-coral-500 bg-coral-500/15',
+  'role.created': 'text-navy-500 bg-navy-600/15',
+  'role.updated': 'text-navy-500 bg-navy-600/15',
   'role.deleted': 'text-red-400 bg-red-500/15',
-  'role.assigned': 'text-purple-400 bg-purple-500/15',
+  'role.assigned': 'text-navy-500 bg-navy-600/15',
   'sso_login': 'text-amber-400 bg-amber-500/15',
   'sso.configured': 'text-amber-400 bg-amber-500/15',
   'vault.uploaded': 'text-teal-400 bg-teal-500/15',
   'vault.deleted': 'text-red-400 bg-red-500/15',
   'branding.updated': 'text-pink-400 bg-pink-500/15',
   'org.settings_updated': 'text-slate-500 bg-gray-500/15',
-  'approval.created': 'text-indigo-400 bg-indigo-500/15',
-  'approval.decided': 'text-indigo-400 bg-indigo-500/15',
+  'approval.created': 'text-navy-500 bg-navy-600/15',
+  'approval.decided': 'text-navy-500 bg-navy-600/15',
 };
 
 const OrgActivityLog = ({ orgId, token }) => {
@@ -128,7 +128,7 @@ const OrgActivityLog = ({ orgId, token }) => {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-white font-semibold flex items-center gap-2">
-            <Activity className="w-4 h-4 text-cyan-400" /> Activity Log
+            <Activity className="w-4 h-4 text-coral-500" /> Activity Log
             <span className="text-slate-500 text-xs font-normal">({total} events)</span>
           </h3>
           <p className="text-slate-500 text-xs mt-0.5">Track all actions within this organization</p>
@@ -156,7 +156,7 @@ const OrgActivityLog = ({ orgId, token }) => {
           </div>
           <div className="bg-cream-100 rounded-lg border border-slate-200 p-3">
             <p className="text-slate-500 text-[10px] uppercase tracking-wider">Top Action</p>
-            <p className="text-cyan-400 text-sm font-medium mt-1 truncate">
+            <p className="text-coral-500 text-sm font-medium mt-1 truncate">
               {Object.entries(stats.by_action || {})[0]?.[0]?.replace('.', ' ') || 'None'}
             </p>
           </div>

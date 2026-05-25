@@ -23,10 +23,10 @@ const ICON_MAP = {
 };
 
 const CATEGORY_CONFIG = {
-  lifecycle: { label: 'Lifecycle', color: 'bg-blue-500', text: 'text-blue-400', ring: 'ring-blue-500/30' },
+  lifecycle: { label: 'Lifecycle', color: 'bg-coral-500', text: 'text-coral-500', ring: 'ring-coral-500/30' },
   people: { label: 'People', color: 'bg-violet-500', text: 'text-coral-600', ring: 'ring-violet-500/30' },
   tasks: { label: 'Tasks', color: 'bg-coral-500', text: 'text-coral-600', ring: 'ring-amber-500/30' },
-  documents: { label: 'Documents', color: 'bg-cyan-500', text: 'text-coral-600', ring: 'ring-cyan-500/30' },
+  documents: { label: 'Documents', color: 'bg-coral-500', text: 'text-coral-600', ring: 'ring-cyan-500/30' },
   ai: { label: 'AI', color: 'bg-pink-500', text: 'text-pink-400', ring: 'ring-pink-500/30' },
   verification: { label: 'Verification', color: 'bg-coral-500', text: 'text-coral-600', ring: 'ring-emerald-500/30' },
   blockchain: { label: 'Blockchain', color: 'bg-coral-500', text: 'text-coral-600', ring: 'ring-orange-500/30' },
@@ -36,7 +36,7 @@ const SEVERITY_DOT = {
   success: 'bg-green-400',
   warning: 'bg-amber-400',
   error: 'bg-red-400',
-  info: 'bg-blue-400',
+  info: 'bg-coral-400',
 };
 
 function formatTimestamp(ts) {
@@ -197,7 +197,7 @@ export default function TransactionTimeline() {
           </Button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Clock className="w-6 h-6 text-blue-400" />
+              <Clock className="w-6 h-6 text-coral-500" />
               Transaction Timeline
             </h1>
             {data && (
@@ -206,7 +206,7 @@ export default function TransactionTimeline() {
           </div>
           <Badge className={
             data?.transaction_status === 'completed' ? 'bg-green-500/15 text-green-400' :
-            data?.transaction_status === 'in_progress' ? 'bg-blue-500/15 text-blue-400' :
+            data?.transaction_status === 'in_progress' ? 'bg-coral-500/15 text-coral-500' :
             'bg-gray-500/15 text-slate-500'
           }>
             {data?.transaction_status || '...'}
@@ -219,7 +219,7 @@ export default function TransactionTimeline() {
             <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${
               wsConnected
                 ? 'bg-green-500/10 text-green-400 ring-1 ring-green-500/20'
-                : 'bg-gray-800/50 text-slate-500'
+                : 'bg-navy-800/50 text-slate-500'
             }`} data-testid="ws-status">
               {wsConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
               {wsConnected ? 'Live' : 'Connecting...'}
@@ -236,7 +236,7 @@ export default function TransactionTimeline() {
 
         {loading && (
           <div className="flex flex-col items-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-400 mb-3" />
+            <Loader2 className="w-8 h-8 animate-spin text-coral-500 mb-3" />
             <p className="text-slate-500 text-sm">Loading timeline...</p>
           </div>
         )}
@@ -263,7 +263,7 @@ export default function TransactionTimeline() {
                       className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                         activeFilters.size === 0 || activeFilters.has(key)
                           ? `${cfg.color}/20 ${cfg.text} ring-1 ${cfg.ring}`
-                          : 'bg-gray-800/50 text-slate-600'
+                          : 'bg-navy-800/50 text-slate-600'
                       }`}
                       data-testid={`filter-${key}`}
                     >
@@ -273,7 +273,7 @@ export default function TransactionTimeline() {
                   {activeFilters.size > 0 && (
                     <button
                       onClick={() => setActiveFilters(new Set())}
-                      className="px-3 py-1.5 rounded-full text-xs text-slate-500 hover:text-navy-900 bg-gray-800/30"
+                      className="px-3 py-1.5 rounded-full text-xs text-slate-500 hover:text-navy-900 bg-navy-800/30"
                     >
                       Clear
                     </button>

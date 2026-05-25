@@ -68,7 +68,7 @@ export const OverviewTab = ({ handleApproveNotary, handleRejectNotary, pendingAp
             <Card className="bg-white border-slate-200">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-blue-500" />
+                  <Activity className="w-5 h-5 text-coral-500" />
                   Platform Statistics
                 </h3>
                 <div className="space-y-4">
@@ -82,7 +82,7 @@ export const OverviewTab = ({ handleApproveNotary, handleRejectNotary, pendingAp
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-slate-500">Documents Sealed</span>
-                    <span className="text-purple-400 font-bold">{stats?.documents_sealed || 0}</span>
+                    <span className="text-navy-500 font-bold">{stats?.documents_sealed || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-slate-500">Crypto Payments</span>
@@ -110,7 +110,7 @@ export const OverviewTab = ({ handleApproveNotary, handleRejectNotary, pendingAp
                       return (
                         <div key={idx} className="flex-1 flex flex-col items-center group">
                           <div
-                            className="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t transition-all hover:from-blue-500 hover:to-blue-300"
+                            className="w-full bg-gradient-to-t from-coral-500 to-blue-400 rounded-t transition-all hover:from-coral-500 hover:to-blue-300"
                             style={{ height: `${Math.max(height, 4)}%` }}
                             title={`${day.date}: $${total.toFixed(2)}`}
                           />

@@ -31,8 +31,8 @@ const AIDocumentSection = () => {
     <section className="py-24 bg-gradient-to-br from-[#0f1825] via-white to-cream-100">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-12">
-          <div className="inline-block px-4 py-2 bg-blue-500/10 rounded-full border border-blue-500/30 mb-4">
-            <span className="text-blue-400 font-semibold">AI Document Suite™</span>
+          <div className="inline-block px-4 py-2 bg-coral-500/10 rounded-full border border-coral-300/30 mb-4">
+            <span className="text-coral-500 font-semibold">AI Document Suite™</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
             From Generation to Remediation, Instantly.
@@ -50,10 +50,10 @@ const AIDocumentSection = () => {
             return (
               <Card
                 key={index}
-                className="bg-white/50 border border-slate-200 hover:border-blue-500/50 transition-all duration-300 group"
+                className="bg-white/50 border border-slate-200 hover:border-coral-300/50 transition-all duration-300 group"
               >
                 <CardContent className="p-6">
-                  <Icon className="w-8 h-8 text-blue-500 mb-4 group-hover:scale-110 transition-transform" />
+                  <Icon className="w-8 h-8 text-coral-500 mb-4 group-hover:scale-110 transition-transform" />
                   <h4 className="text-lg font-semibold text-white mb-2">{feature.title}</h4>
                   <p className="text-slate-500 text-sm leading-relaxed">{feature.description}</p>
                 </CardContent>

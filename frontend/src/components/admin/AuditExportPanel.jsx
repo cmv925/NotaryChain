@@ -181,7 +181,7 @@ export default function AuditExportPanel() {
             <div className="space-y-1.5">
               {preview.sample.map((r) => (
                 <div key={r.id} className="flex items-center gap-3 text-xs">
-                  <span className={`w-1.5 h-1.5 rounded-full ${r.severity === 'critical' ? 'bg-red-500' : r.severity === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'}`} />
+                  <span className={`w-1.5 h-1.5 rounded-full ${r.severity === 'critical' ? 'bg-red-500' : r.severity === 'warning' ? 'bg-yellow-500' : 'bg-coral-500'}`} />
                   <span className="text-slate-500 font-mono">{r.timestamp?.slice(0, 19)}</span>
                   <span className="font-medium text-navy-900">{r.action}</span>
                   <span className="text-slate-500 truncate">{r.user_email}</span>

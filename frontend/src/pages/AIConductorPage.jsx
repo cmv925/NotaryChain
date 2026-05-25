@@ -16,7 +16,7 @@ const API = process.env.REACT_APP_BACKEND_URL;
 const urgencyColor = {
   immediate: 'bg-red-500/15 text-red-400',
   soon: 'bg-coral-500/15 text-coral-600',
-  when_ready: 'bg-blue-500/15 text-blue-400',
+  when_ready: 'bg-coral-500/15 text-coral-500',
 };
 
 export default function AIConductorPage() {
@@ -153,7 +153,7 @@ export default function AIConductorPage() {
                             </p>
                           )}
                           {step.tips && (
-                            <p className="text-blue-400 text-[10px] ml-8 mt-1">Tip: {step.tips}</p>
+                            <p className="text-coral-500 text-[10px] ml-8 mt-1">Tip: {step.tips}</p>
                           )}
                         </div>
                       ))}

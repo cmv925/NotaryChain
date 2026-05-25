@@ -33,16 +33,16 @@ export const DocumentAnalysisStep = ({
   <Card className="bg-gradient-to-br from-white to-cream-100 border border-slate-200" data-testid="step-1-card">
     <CardContent className="p-8">
       <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-        <FileText className="w-6 h-6 text-blue-500" />
+        <FileText className="w-6 h-6 text-coral-500" />
         Step 1: Document Analysis
       </h2>
 
       {/* Template Banner */}
       {templateData?.fromTemplate ? (
-        <div className="mb-6 p-4 rounded-lg bg-blue-500/10 border border-blue-500/30" data-testid="template-active-banner">
+        <div className="mb-6 p-4 rounded-lg bg-coral-500/10 border border-coral-300/30" data-testid="template-active-banner">
           <div className="flex items-center gap-2 mb-1">
-            <CheckCircle className="w-4 h-4 text-blue-400" />
-            <span className="text-blue-400 font-medium text-sm">Template Applied</span>
+            <CheckCircle className="w-4 h-4 text-coral-500" />
+            <span className="text-coral-500 font-medium text-sm">Template Applied</span>
           </div>
           <p className="text-slate-500 text-sm">
             Using <strong className="text-white">{templateData.templateName}</strong> template.
@@ -52,14 +52,14 @@ export const DocumentAnalysisStep = ({
       ) : (
         <div className="mb-6 p-3 rounded-lg bg-cream-100 border border-slate-200 flex items-center justify-between" data-testid="template-suggestion-banner">
           <div className="flex items-center gap-2 text-sm text-slate-500">
-            <BookOpen className="w-4 h-4 text-purple-400" />
+            <BookOpen className="w-4 h-4 text-navy-500" />
             <span>Need a starting point? Browse our template library.</span>
           </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={onBrowseTemplates}
-            className="text-purple-400 hover:text-purple-300 text-sm px-3"
+            className="text-navy-500 hover:text-purple-300 text-sm px-3"
             data-testid="browse-templates-btn"
           >
             Browse Templates
@@ -77,7 +77,7 @@ export const DocumentAnalysisStep = ({
           name="document_type"
           value={formData.document_type}
           onChange={onDocTypeChange}
-          className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
+          className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white focus:border-coral-300 focus:outline-none"
           data-testid="document-type-select"
         >
           {DOCUMENT_TYPES.map((type) => (
@@ -93,12 +93,12 @@ export const DocumentAnalysisStep = ({
         <Label className="text-white mb-2 block">Upload Document</Label>
         <div
           className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-            selectedFile ? 'border-blue-500 bg-blue-500/5' : 'border-slate-200 hover:border-slate-200'
+            selectedFile ? 'border-coral-300 bg-coral-500/5' : 'border-slate-200 hover:border-slate-200'
           }`}
         >
           {selectedFile ? (
             <div className="space-y-3">
-              <FileText className="w-12 h-12 mx-auto text-blue-500" />
+              <FileText className="w-12 h-12 mx-auto text-coral-500" />
               <p className="text-white font-medium">{selectedFile.name}</p>
               <p className="text-slate-500 text-sm">
                 {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
@@ -109,7 +109,7 @@ export const DocumentAnalysisStep = ({
                     variant="outline"
                     size="sm"
                     onClick={onShowPdfPreview}
-                    className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                    className="border-coral-300/50 text-coral-500 hover:bg-coral-500/10"
                     data-testid="preview-pdf-btn"
                   >
                     <Maximize2 className="w-4 h-4 mr-1" />
@@ -152,7 +152,7 @@ export const DocumentAnalysisStep = ({
         <Button
           onClick={onAnalyze}
           disabled={uploading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4"
+          className="w-full bg-coral-500 hover:bg-coral-600 text-white py-4"
           data-testid="analyze-btn"
         >
           {uploading ? (

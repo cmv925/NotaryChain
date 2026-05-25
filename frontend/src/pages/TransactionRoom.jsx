@@ -19,8 +19,8 @@ const API_URL = process.env.REACT_APP_BACKEND_URL;
 const statusColors = {
   draft: 'bg-gray-500',
   pending_participants: 'bg-yellow-500',
-  in_progress: 'bg-blue-500',
-  pending_review: 'bg-purple-500',
+  in_progress: 'bg-coral-500',
+  pending_review: 'bg-navy-600',
   pending_settlement: 'bg-coral-500',
   completed: 'bg-green-500',
   cancelled: 'bg-red-500',
@@ -29,8 +29,8 @@ const statusColors = {
 
 const taskStatusColors = {
   pending: 'bg-gray-500',
-  in_progress: 'bg-blue-500',
-  awaiting_review: 'bg-purple-500',
+  in_progress: 'bg-coral-500',
+  awaiting_review: 'bg-navy-600',
   completed: 'bg-green-500',
   blocked: 'bg-red-500',
   skipped: 'bg-gray-400',
@@ -380,7 +380,7 @@ export default function TransactionRoom() {
                 variant="outline"
                 size="sm"
                 onClick={() => navigate(`/timeline/${transactionId}`)}
-                className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                className="border-coral-300/50 text-coral-500 hover:bg-coral-500/10"
                 data-testid="timeline-btn"
               >
                 <Clock className="h-4 w-4 sm:mr-2" />
@@ -434,8 +434,8 @@ export default function TransactionRoom() {
                     <p className="text-slate-500 text-sm">Total Tasks</p>
                     <p className="text-3xl font-bold text-navy-900">{tasks.length}</p>
                   </div>
-                  <div className="h-12 w-12 rounded-full bg-blue-500/20 flex items-center justify-center">
-                    <FileText className="h-6 w-6 text-blue-500" />
+                  <div className="h-12 w-12 rounded-full bg-coral-500/20 flex items-center justify-center">
+                    <FileText className="h-6 w-6 text-coral-500" />
                   </div>
                 </div>
                 <div className="mt-4 flex gap-2">
@@ -455,8 +455,8 @@ export default function TransactionRoom() {
                     <p className="text-slate-500 text-sm">Participants</p>
                     <p className="text-3xl font-bold text-navy-900">{participants.length}</p>
                   </div>
-                  <div className="h-12 w-12 rounded-full bg-purple-500/20 flex items-center justify-center">
-                    <Users className="h-6 w-6 text-purple-500" />
+                  <div className="h-12 w-12 rounded-full bg-navy-600/20 flex items-center justify-center">
+                    <Users className="h-6 w-6 text-navy-600" />
                   </div>
                 </div>
                 <div className="mt-4 flex gap-2 flex-wrap">
@@ -529,7 +529,7 @@ export default function TransactionRoom() {
                         href={transaction.hcs_explorer_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-400 text-sm hover:underline"
+                        className="text-coral-500 text-sm hover:underline"
                       >
                         View on HashScan →
                       </a>
@@ -866,17 +866,17 @@ export default function TransactionRoom() {
                           className={`p-3 rounded-lg border-l-4 ${
                             rec.priority === 'high' ? 'bg-red-500/10 border-red-500' :
                             rec.priority === 'medium' ? 'bg-yellow-500/10 border-yellow-500' :
-                            'bg-blue-500/10 border-blue-500'
+                            'bg-coral-500/10 border-coral-300'
                           }`}
                         >
                           <div className="flex items-center gap-2 mb-1">
                             {rec.type === 'warning' && <AlertTriangle className="h-4 w-4 text-yellow-500" />}
-                            {rec.type === 'action' && <ChevronRight className="h-4 w-4 text-blue-500" />}
-                            {rec.type === 'suggestion' && <Sparkles className="h-4 w-4 text-purple-500" />}
+                            {rec.type === 'action' && <ChevronRight className="h-4 w-4 text-coral-500" />}
+                            {rec.type === 'suggestion' && <Sparkles className="h-4 w-4 text-navy-600" />}
                             <span className={`text-xs font-medium uppercase ${
                               rec.priority === 'high' ? 'text-red-400' :
                               rec.priority === 'medium' ? 'text-yellow-400' :
-                              'text-blue-400'
+                              'text-coral-500'
                             }`}>
                               {rec.priority} priority
                             </span>

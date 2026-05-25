@@ -231,7 +231,7 @@ const CryptoCheckout = () => {
   if (loadingData) {
     return (
       <div className="min-h-screen bg-cream-100 flex items-center justify-center">
-        <RefreshCw className="w-12 h-12 text-blue-500 animate-spin" />
+        <RefreshCw className="w-12 h-12 text-coral-500 animate-spin" />
       </div>
     );
   }
@@ -322,7 +322,7 @@ const CryptoCheckout = () => {
                         >
                           <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
                             crypto.symbol === 'BTC' ? 'bg-coral-500/20 text-coral-600' :
-                            crypto.symbol === 'ETH' ? 'bg-blue-500/20 text-blue-400' :
+                            crypto.symbol === 'ETH' ? 'bg-coral-500/20 text-coral-500' :
                             'bg-green-500/20 text-green-400'
                           }`}>
                             <CryptoIcon symbol={crypto.symbol} className="w-6 h-6" />
@@ -401,7 +401,7 @@ const CryptoCheckout = () => {
                   <div className="text-center mb-6">
                     <div className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center ${
                       payment.crypto_symbol === 'BTC' ? 'bg-coral-500/20 text-coral-600' :
-                      payment.crypto_symbol === 'ETH' ? 'bg-blue-500/20 text-blue-400' :
+                      payment.crypto_symbol === 'ETH' ? 'bg-coral-500/20 text-coral-500' :
                       'bg-green-500/20 text-green-400'
                     }`}>
                       <CryptoIcon symbol={payment.crypto_symbol} className="w-8 h-8" />
@@ -472,7 +472,7 @@ const CryptoCheckout = () => {
                       <span className="text-slate-500">Status</span>
                       <span className={`px-2 py-1 rounded text-sm ${
                         paymentStatus?.status === 'confirmed' ? 'bg-green-500/20 text-green-400' :
-                        paymentStatus?.status === 'confirming' ? 'bg-blue-500/20 text-blue-400' :
+                        paymentStatus?.status === 'confirming' ? 'bg-coral-500/20 text-coral-500' :
                         paymentStatus?.status === 'expired' ? 'bg-red-500/20 text-red-400' :
                         'bg-yellow-500/20 text-yellow-400'
                       }`}>
@@ -551,7 +551,7 @@ const CryptoCheckout = () => {
                       </div>
                       <div>
                         <p className="text-slate-500">Payment ID</p>
-                        <p className="text-blue-400 font-mono text-xs">{payment.payment_id}</p>
+                        <p className="text-coral-500 font-mono text-xs">{payment.payment_id}</p>
                       </div>
                       <div>
                         <p className="text-slate-500">Network</p>
@@ -564,7 +564,7 @@ const CryptoCheckout = () => {
                 <div className="flex gap-4">
                   <Button
                     onClick={() => navigate('/dashboard')}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700"
+                    className="flex-1 bg-coral-500 hover:bg-coral-600"
                   >
                     Go to Dashboard
                   </Button>

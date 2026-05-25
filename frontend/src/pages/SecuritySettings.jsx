@@ -155,7 +155,7 @@ const SecuritySettings = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
               <h1 className="text-navy-900 font-semibold flex items-center gap-2 text-sm sm:text-base">
-                <Shield className="w-5 h-5 text-blue-500" /> {t('security.title')}
+                <Shield className="w-5 h-5 text-coral-500" /> {t('security.title')}
               </h1>
             </div>
             <div className="flex items-center gap-3">
@@ -207,12 +207,12 @@ const SecuritySettings = () => {
                         <Button onClick={() => setStep('disable')} variant="outline" className="border-red-500/50 text-red-400 hover:bg-red-500/10" data-testid="disable-2fa-button">
                           <ShieldOff className="w-4 h-4 mr-2" /> {t('security.disable_2fa')}
                         </Button>
-                        <Button onClick={regenerateBackupCodes} variant="outline" className="border-slate-200 text-slate-500 hover:bg-gray-800" disabled={actionLoading} data-testid="regenerate-backup-codes-button">
+                        <Button onClick={regenerateBackupCodes} variant="outline" className="border-slate-200 text-slate-500 hover:bg-navy-800" disabled={actionLoading} data-testid="regenerate-backup-codes-button">
                           <RefreshCw className="w-4 h-4 mr-2" /> {t('security.regenerate')}
                         </Button>
                       </>
                     ) : (
-                      <Button onClick={startSetup} className="bg-blue-600 hover:bg-blue-700 text-navy-900" disabled={actionLoading} data-testid="enable-2fa-button">
+                      <Button onClick={startSetup} className="bg-coral-500 hover:bg-coral-600 text-navy-900" disabled={actionLoading} data-testid="enable-2fa-button">
                         <ShieldCheck className="w-4 h-4 mr-2" /> {t('security.enable_2fa')}
                       </Button>
                     )}
@@ -246,7 +246,7 @@ const SecuritySettings = () => {
                   <p className="text-slate-500 text-xs text-center max-w-[250px]">
                     {t('security.manual_key')}
                   </p>
-                  <code className="mt-1 text-xs bg-cream-100 text-blue-400 px-3 py-1.5 rounded border border-slate-200 select-all" data-testid="2fa-secret-key">
+                  <code className="mt-1 text-xs bg-cream-100 text-coral-500 px-3 py-1.5 rounded border border-slate-200 select-all" data-testid="2fa-secret-key">
                     {setupData.secret}
                   </code>
                 </div>
@@ -262,7 +262,7 @@ const SecuritySettings = () => {
                       <div key={i} className="bg-cream-100 border border-slate-200 rounded px-3 py-1.5 text-sm font-mono text-slate-500">{code}</div>
                     ))}
                   </div>
-                  <Button onClick={copyBackupCodes} variant="outline" size="sm" className="border-slate-200 text-slate-500 hover:bg-gray-800" data-testid="copy-backup-codes">
+                  <Button onClick={copyBackupCodes} variant="outline" size="sm" className="border-slate-200 text-slate-500 hover:bg-navy-800" data-testid="copy-backup-codes">
                     <Copy className="w-3 h-3 mr-2" /> {t('security.copy_all')}
                   </Button>
                 </div>
@@ -284,7 +284,7 @@ const SecuritySettings = () => {
                         value={digit}
                         onChange={(e) => handleCodeChange(index, e.target.value)}
                         onKeyDown={(e) => handleCodeKeyDown(index, e)}
-                        className="w-12 h-14 text-center text-xl font-bold bg-cream-100 border border-slate-200 rounded-lg text-navy-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                        className="w-12 h-14 text-center text-xl font-bold bg-cream-100 border border-slate-200 rounded-lg text-navy-900 focus:border-coral-300 focus:ring-1 focus:ring-coral-500 outline-none transition-all"
                         disabled={actionLoading}
                         data-testid={`2fa-setup-code-input-${index}`}
                       />
@@ -294,7 +294,7 @@ const SecuritySettings = () => {
                     <Button type="button" variant="ghost" onClick={() => { setStep('status'); setSetupData(null); setVerifyCode(['','','','','','']); }} className="text-slate-500" data-testid="2fa-setup-cancel">
                       {t('common.cancel')}
                     </Button>
-                    <Button type="submit" className="bg-blue-600 hover:bg-blue-700" disabled={actionLoading || verifyCode.join('').length < 6} data-testid="2fa-setup-verify">
+                    <Button type="submit" className="bg-coral-500 hover:bg-coral-600" disabled={actionLoading || verifyCode.join('').length < 6} data-testid="2fa-setup-verify">
                       {actionLoading ? `${t('common.loading')}` : t('security.verify_enable')}
                     </Button>
                   </div>
@@ -376,7 +376,7 @@ const SecuritySettings = () => {
                 ))}
               </div>
               <div className="flex gap-3">
-                <Button onClick={copyBackupCodes} variant="outline" size="sm" className="border-slate-200 text-slate-500 hover:bg-gray-800">
+                <Button onClick={copyBackupCodes} variant="outline" size="sm" className="border-slate-200 text-slate-500 hover:bg-navy-800">
                   <Copy className="w-3 h-3 mr-2" /> Copy All
                 </Button>
                 <Button onClick={() => setShowBackupCodes(false)} variant="ghost" size="sm" className="text-slate-500">

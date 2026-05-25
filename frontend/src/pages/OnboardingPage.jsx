@@ -100,13 +100,13 @@ const OnboardingPage = () => {
             <div key={s.id} className="flex items-center gap-2">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
                 i < step ? 'bg-coral-500 text-navy-900' :
-                i === step ? 'bg-blue-600 text-navy-900 ring-4 ring-blue-600/20' :
-                'bg-gray-800 text-slate-500'
+                i === step ? 'bg-coral-500 text-navy-900 ring-4 ring-blue-600/20' :
+                'bg-navy-800 text-slate-500'
               }`}>
                 {i < step ? <CheckCircle className="w-4 h-4" /> : i + 1}
               </div>
               {i < STEPS.length - 1 && (
-                <div className={`w-12 h-0.5 ${i < step ? 'bg-coral-500' : 'bg-gray-800'}`} />
+                <div className={`w-12 h-0.5 ${i < step ? 'bg-coral-500' : 'bg-navy-800'}`} />
               )}
             </div>
           ))}
@@ -137,7 +137,7 @@ const OnboardingPage = () => {
                   </div>
                 ))}
               </div>
-              <Button onClick={() => setStep(1)} className="w-full bg-blue-600 hover:bg-blue-500 py-5 text-base" data-testid="onboarding-next-btn">
+              <Button onClick={() => setStep(1)} className="w-full bg-coral-500 hover:bg-coral-500 py-5 text-base" data-testid="onboarding-next-btn">
                 Let's Get Started <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </div>
@@ -152,22 +152,22 @@ const OnboardingPage = () => {
                   onClick={() => setSelectedRole(opt.value)}
                   className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all text-left ${
                     selectedRole === opt.value
-                      ? 'border-blue-500 bg-blue-500/10'
+                      ? 'border-coral-300 bg-coral-500/10'
                       : 'border-slate-200 bg-cream-100 hover:border-slate-200'
                   }`}
                   data-testid={`role-${opt.value}`}
                 >
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${selectedRole === opt.value ? 'bg-blue-500/20' : 'bg-gray-800'}`}>
-                    <opt.icon className={`w-5 h-5 ${selectedRole === opt.value ? 'text-blue-400' : 'text-slate-500'}`} />
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${selectedRole === opt.value ? 'bg-coral-500/20' : 'bg-navy-800'}`}>
+                    <opt.icon className={`w-5 h-5 ${selectedRole === opt.value ? 'text-coral-500' : 'text-slate-500'}`} />
                   </div>
                   <div className="flex-1">
                     <p className="text-navy-900 font-medium">{opt.label}</p>
                     <p className="text-slate-500 text-sm">{opt.desc}</p>
                   </div>
-                  {selectedRole === opt.value && <CheckCircle className="w-5 h-5 text-blue-400" />}
+                  {selectedRole === opt.value && <CheckCircle className="w-5 h-5 text-coral-500" />}
                 </button>
               ))}
-              <Button onClick={() => setStep(2)} className="w-full bg-blue-600 hover:bg-blue-500 py-5 text-base mt-4" data-testid="onboarding-continue-btn">
+              <Button onClick={() => setStep(2)} className="w-full bg-coral-500 hover:bg-coral-500 py-5 text-base mt-4" data-testid="onboarding-continue-btn">
                 Continue <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </div>
@@ -178,8 +178,8 @@ const OnboardingPage = () => {
             <div className="space-y-3">
               {features.map((f, i) => (
                 <div key={i} className="flex items-center gap-4 p-4 rounded-xl border border-slate-200 bg-cream-100">
-                  <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0">
-                    <f.icon className="w-5 h-5 text-blue-400" />
+                  <div className="w-10 h-10 rounded-lg bg-coral-500/10 flex items-center justify-center flex-shrink-0">
+                    <f.icon className="w-5 h-5 text-coral-500" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-navy-900 font-medium text-sm">{f.title}</p>
@@ -188,7 +188,7 @@ const OnboardingPage = () => {
                   <ChevronRight className="w-4 h-4 text-slate-600 flex-shrink-0" />
                 </div>
               ))}
-              <Button onClick={() => setStep(3)} className="w-full bg-blue-600 hover:bg-blue-500 py-5 text-base mt-4">
+              <Button onClick={() => setStep(3)} className="w-full bg-coral-500 hover:bg-coral-500 py-5 text-base mt-4">
                 Almost Done <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </div>
@@ -206,9 +206,9 @@ const OnboardingPage = () => {
                   <button
                     key={i}
                     onClick={() => navigate(f.path)}
-                    className="p-4 rounded-xl border border-slate-200 bg-cream-100 hover:border-blue-500/50 transition-all text-left"
+                    className="p-4 rounded-xl border border-slate-200 bg-cream-100 hover:border-coral-300/50 transition-all text-left"
                   >
-                    <f.icon className="w-5 h-5 text-blue-400 mb-2" />
+                    <f.icon className="w-5 h-5 text-coral-500 mb-2" />
                     <p className="text-navy-900 text-sm font-medium">{f.title}</p>
                     <p className="text-slate-500 text-xs mt-1">{f.desc}</p>
                   </button>

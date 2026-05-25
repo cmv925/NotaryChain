@@ -20,7 +20,7 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 function AgentStatusBadge({ status }) {
   const map = {
     idle: { label: 'STANDBY', cls: 'bg-slate-700/60 text-navy-800 border-slate-600' },
-    running: { label: 'PROCESSING', cls: 'bg-blue-500/20 text-blue-400 border-blue-500/50 animate-pulse' },
+    running: { label: 'PROCESSING', cls: 'bg-coral-500/20 text-coral-500 border-coral-300/50 animate-pulse' },
     passed: { label: 'PASS', cls: 'bg-coral-500/20 text-coral-600 border-emerald-500/50' },
     failed: { label: 'FAIL', cls: 'bg-red-500/20 text-red-400 border-red-500/50' },
   };
@@ -36,7 +36,7 @@ function AgentStatusBadge({ status }) {
 function ConfidenceBar({ value, status }) {
   if (value == null) return <div className="h-1.5 w-full bg-slate-700/50 rounded-sm" />;
   const pct = Math.round(value * 100);
-  const color = status === 'passed' ? 'bg-coral-500' : status === 'failed' ? 'bg-red-500' : 'bg-blue-500';
+  const color = status === 'passed' ? 'bg-coral-500' : status === 'failed' ? 'bg-red-500' : 'bg-coral-500';
   return (
     <div className="space-y-1">
       <div className="flex justify-between text-[11px]">
@@ -53,7 +53,7 @@ function ConfidenceBar({ value, status }) {
 /* ── Single Agent Card ──────────────────────────── */
 function AgentCard({ name, icon: Icon, agent, accent }) {
   const isRunning = agent.status === 'running';
-  const borderCls = isRunning ? 'border-blue-500/60 ring-1 ring-blue-500/30' : agent.status === 'passed' ? 'border-emerald-500/40' : agent.status === 'failed' ? 'border-red-500/40' : 'border-slate-200';
+  const borderCls = isRunning ? 'border-coral-300/60 ring-1 ring-coral-500/30' : agent.status === 'passed' ? 'border-emerald-500/40' : agent.status === 'failed' ? 'border-red-500/40' : 'border-slate-200';
   const checks = agent.details?.checks || agent.details?.evidence || agent.details?.compliance;
 
   return (
@@ -71,7 +71,7 @@ function AgentCard({ name, icon: Icon, agent, accent }) {
                   {name === 'Verifier' ? 'Biometric & ID' : name === 'Witness' ? 'Audit & Evidence' : 'Blockchain & Compliance'}
                 </p>
                 {agent.details?.ai_powered && (
-                  <span className="text-[9px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/40 px-1 py-0.5 rounded-sm" data-testid="ai-powered-badge">GPT-5.2</span>
+                  <span className="text-[9px] font-bold bg-navy-600/20 text-navy-500 border border-navy-300/40 px-1 py-0.5 rounded-sm" data-testid="ai-powered-badge">GPT-5.2</span>
                 )}
               </div>
             </div>
@@ -85,7 +85,7 @@ function AgentCard({ name, icon: Icon, agent, accent }) {
           <div className="mt-3 flex items-center gap-2 text-[11px]">
             <Fingerprint className="w-3 h-3 text-slate-500" />
             <span className="text-slate-500">Evidence:</span>
-            <code className="text-blue-400 font-mono">{agent.evidence_hash}</code>
+            <code className="text-coral-500 font-mono">{agent.evidence_hash}</code>
           </div>
         )}
 
@@ -108,7 +108,7 @@ function AgentCard({ name, icon: Icon, agent, accent }) {
           <div className="mt-3 space-y-1.5 text-[11px]">
             <div className="flex items-center justify-between">
               <span className="text-slate-600">merkle root</span>
-              <code className="text-blue-400 font-mono">{agent.details.evidence.audit_integrity?.merkle_root?.slice(0, 16)}</code>
+              <code className="text-coral-500 font-mono">{agent.details.evidence.audit_integrity?.merkle_root?.slice(0, 16)}</code>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-600">timeline entries</span>
@@ -132,7 +132,7 @@ function AgentCard({ name, icon: Icon, agent, accent }) {
         )}
 
         {isRunning && (
-          <div className="mt-4 flex items-center gap-2 text-blue-400 text-xs">
+          <div className="mt-4 flex items-center gap-2 text-coral-500 text-xs">
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
             <span>Analyzing...</span>
           </div>
@@ -207,7 +207,7 @@ function ConsensusOracle({ consensus, blockchainSeal }) {
         {blockchainSeal && (
           <div className="mt-4 pt-4 border-t border-slate-200">
             <div className="flex items-center gap-2 mb-3">
-              <Blocks className="w-4 h-4 text-blue-400" />
+              <Blocks className="w-4 h-4 text-coral-500" />
               <span className="text-navy-900 font-semibold text-sm">Blockchain Seal</span>
               {blockchainSeal.hcs_submitted && (
                 <span className="text-[10px] font-bold bg-coral-500/20 text-coral-600 border border-emerald-500/40 px-1.5 py-0.5 rounded-sm">HCS VERIFIED</span>
@@ -220,12 +220,12 @@ function ConsensusOracle({ consensus, blockchainSeal }) {
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Topic ID</span>
-                <span className="text-blue-400 font-mono">{blockchainSeal.topic_id}</span>
+                <span className="text-coral-500 font-mono">{blockchainSeal.topic_id}</span>
               </div>
               {blockchainSeal.transaction_id && (
                 <div className="flex justify-between">
                   <span className="text-slate-500">Transaction ID</span>
-                  <span className="text-blue-400 font-mono text-right break-all max-w-[280px]">{blockchainSeal.transaction_id}</span>
+                  <span className="text-coral-500 font-mono text-right break-all max-w-[280px]">{blockchainSeal.transaction_id}</span>
                 </div>
               )}
               {blockchainSeal.sequence_number != null && (
@@ -243,7 +243,7 @@ function ConsensusOracle({ consensus, blockchainSeal }) {
                 <span className="text-navy-900 font-mono">{new Date(blockchainSeal.sealed_at).toLocaleString()}</span>
               </div>
               {blockchainSeal.explorer_url && (
-                <a href={blockchainSeal.explorer_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-blue-400 hover:text-blue-300 mt-1" data-testid="explorer-link">
+                <a href={blockchainSeal.explorer_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-coral-500 hover:text-coral-400 mt-1" data-testid="explorer-link">
                   <Link2 className="w-3 h-3" />
                   <span>View on HashScan Explorer</span>
                 </a>
@@ -428,7 +428,7 @@ const CeremonyDashboard = () => {
   const agents = ceremony?.agents || { verifier: { status: 'idle' }, witness: { status: 'idle' }, sealer: { status: 'idle' } };
   const statusColor = {
     pending: 'text-slate-600',
-    in_progress: 'text-blue-400',
+    in_progress: 'text-coral-500',
     sealed: 'text-coral-600',
     consensus_failed: 'text-red-400',
   };
@@ -441,11 +441,11 @@ const CeremonyDashboard = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-blue-500" />
+                <Shield className="w-5 h-5 text-coral-500" />
                 <h1 className="text-navy-900 font-semibold tracking-tight">Notarization Ceremony</h1>
               </div>
             </div>
-            <Button size="sm" onClick={() => { setShowNew(true); setCeremony(null); setForm({ document_name: '', signer_name: '', id_image_base64: null, selfie_base64: null }); }} className="bg-blue-600 hover:bg-blue-700 rounded-sm text-xs" data-testid="new-ceremony-btn">
+            <Button size="sm" onClick={() => { setShowNew(true); setCeremony(null); setForm({ document_name: '', signer_name: '', id_image_base64: null, selfie_base64: null }); }} className="bg-coral-500 hover:bg-coral-600 rounded-sm text-xs" data-testid="new-ceremony-btn">
               <Play className="w-3.5 h-3.5 mr-1.5" /> New Ceremony
             </Button>
           </div>
@@ -471,7 +471,7 @@ const CeremonyDashboard = () => {
                 <button
                   key={c.ceremony_id}
                   onClick={() => { fetchCeremony(c.ceremony_id); setShowNew(false); }}
-                  className={`w-full text-left p-3 rounded-sm border transition-all ${ceremony?.ceremony_id === c.ceremony_id ? 'bg-white border-blue-500/40' : 'bg-white/50 border-slate-200 hover:border-slate-500'}`}
+                  className={`w-full text-left p-3 rounded-sm border transition-all ${ceremony?.ceremony_id === c.ceremony_id ? 'bg-white border-coral-300/40' : 'bg-white/50 border-slate-200 hover:border-slate-500'}`}
                   data-testid={`ceremony-item-${c.ceremony_id}`}
                 >
                   <div className="flex items-center justify-between">
@@ -497,8 +497,8 @@ const CeremonyDashboard = () => {
                 <CardContent className="p-8">
                   <div className="max-w-lg mx-auto">
                     <div className="text-center mb-8">
-                      <div className="w-14 h-14 rounded-sm bg-blue-500/20 flex items-center justify-center mx-auto mb-4">
-                        <Shield className="w-7 h-7 text-blue-400" />
+                      <div className="w-14 h-14 rounded-sm bg-coral-500/20 flex items-center justify-center mx-auto mb-4">
+                        <Shield className="w-7 h-7 text-coral-500" />
                       </div>
                       <h2 className="text-2xl font-bold text-navy-900 tracking-tight mb-2">Initialize Ceremony</h2>
                       <p className="text-slate-600 text-sm">Start a multi-agent notarization verification pipeline</p>
@@ -528,7 +528,7 @@ const CeremonyDashboard = () => {
                       {/* Biometric Verification Images */}
                       <div className="pt-2 border-t border-slate-200">
                         <div className="flex items-center gap-2 mb-3">
-                          <ScanFace className="w-4 h-4 text-purple-400" />
+                          <ScanFace className="w-4 h-4 text-navy-500" />
                           <span className="text-navy-900 text-sm font-medium">AI Biometric Verification</span>
                           <span className="text-[10px] text-slate-500 bg-cream-200 px-2 py-0.5 rounded-sm">GPT-5.2 Vision</span>
                         </div>
@@ -540,8 +540,8 @@ const CeremonyDashboard = () => {
                             <div className="flex items-center justify-between mb-1.5">
                               <label className="text-navy-800 text-xs">ID Document</label>
                               <div className="flex gap-1">
-                                <button onClick={() => { setIdCaptureMode('upload'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors ${idCaptureMode === 'upload' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' : 'text-slate-500 hover:text-navy-800'}`} data-testid="id-mode-upload">Upload</button>
-                                <button onClick={() => { setIdCaptureMode('webcam'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors flex items-center gap-0.5 ${idCaptureMode === 'webcam' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' : 'text-slate-500 hover:text-navy-800'}`} data-testid="id-mode-webcam"><Camera className="w-2.5 h-2.5" />Cam</button>
+                                <button onClick={() => { setIdCaptureMode('upload'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors ${idCaptureMode === 'upload' ? 'bg-navy-600/20 text-purple-300 border border-navy-300/40' : 'text-slate-500 hover:text-navy-800'}`} data-testid="id-mode-upload">Upload</button>
+                                <button onClick={() => { setIdCaptureMode('webcam'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors flex items-center gap-0.5 ${idCaptureMode === 'webcam' ? 'bg-coral-500/20 text-coral-400 border border-coral-300/40' : 'text-slate-500 hover:text-navy-800'}`} data-testid="id-mode-webcam"><Camera className="w-2.5 h-2.5" />Cam</button>
                               </div>
                             </div>
                             {idCaptureMode === 'webcam' ? (
@@ -552,12 +552,12 @@ const CeremonyDashboard = () => {
                               />
                             ) : (
                               <label
-                                className={`flex flex-col items-center justify-center h-28 border-2 border-dashed rounded-sm cursor-pointer transition-all ${form.id_image_base64 ? 'border-purple-500/50 bg-purple-500/10' : 'border-slate-200 bg-cream-100 hover:border-slate-500'}`}
+                                className={`flex flex-col items-center justify-center h-28 border-2 border-dashed rounded-sm cursor-pointer transition-all ${form.id_image_base64 ? 'border-navy-300/50 bg-navy-600/10' : 'border-slate-200 bg-cream-100 hover:border-slate-500'}`}
                                 data-testid="upload-id-image"
                               >
                                 {form.id_image_base64 ? (
                                   <div className="text-center">
-                                    <CheckCircle className="w-6 h-6 text-purple-400 mx-auto mb-1" />
+                                    <CheckCircle className="w-6 h-6 text-navy-500 mx-auto mb-1" />
                                     <span className="text-purple-300 text-[11px]">ID uploaded</span>
                                   </div>
                                 ) : (
@@ -587,8 +587,8 @@ const CeremonyDashboard = () => {
                             <div className="flex items-center justify-between mb-1.5">
                               <label className="text-navy-800 text-xs">Selfie Photo</label>
                               <div className="flex gap-1">
-                                <button onClick={() => { setSelfieCaptureMode('upload'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors ${selfieCaptureMode === 'upload' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' : 'text-slate-500 hover:text-navy-800'}`} data-testid="selfie-mode-upload">Upload</button>
-                                <button onClick={() => { setSelfieCaptureMode('webcam'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors flex items-center gap-0.5 ${selfieCaptureMode === 'webcam' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' : 'text-slate-500 hover:text-navy-800'}`} data-testid="selfie-mode-webcam"><Camera className="w-2.5 h-2.5" />Cam</button>
+                                <button onClick={() => { setSelfieCaptureMode('upload'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors ${selfieCaptureMode === 'upload' ? 'bg-coral-500/20 text-coral-400 border border-coral-300/40' : 'text-slate-500 hover:text-navy-800'}`} data-testid="selfie-mode-upload">Upload</button>
+                                <button onClick={() => { setSelfieCaptureMode('webcam'); }} className={`text-[9px] px-1.5 py-0.5 rounded-sm transition-colors flex items-center gap-0.5 ${selfieCaptureMode === 'webcam' ? 'bg-coral-500/20 text-coral-400 border border-coral-300/40' : 'text-slate-500 hover:text-navy-800'}`} data-testid="selfie-mode-webcam"><Camera className="w-2.5 h-2.5" />Cam</button>
                               </div>
                             </div>
                             {selfieCaptureMode === 'webcam' ? (
@@ -599,13 +599,13 @@ const CeremonyDashboard = () => {
                               />
                             ) : (
                               <label
-                                className={`flex flex-col items-center justify-center h-28 border-2 border-dashed rounded-sm cursor-pointer transition-all ${form.selfie_base64 ? 'border-blue-500/50 bg-blue-500/10' : 'border-slate-200 bg-cream-100 hover:border-slate-500'}`}
+                                className={`flex flex-col items-center justify-center h-28 border-2 border-dashed rounded-sm cursor-pointer transition-all ${form.selfie_base64 ? 'border-coral-300/50 bg-coral-500/10' : 'border-slate-200 bg-cream-100 hover:border-slate-500'}`}
                                 data-testid="upload-selfie"
                               >
                                 {form.selfie_base64 ? (
                                   <div className="text-center">
-                                    <CheckCircle className="w-6 h-6 text-blue-400 mx-auto mb-1" />
-                                    <span className="text-blue-300 text-[11px]">Selfie uploaded</span>
+                                    <CheckCircle className="w-6 h-6 text-coral-500 mx-auto mb-1" />
+                                    <span className="text-coral-400 text-[11px]">Selfie uploaded</span>
                                   </div>
                                 ) : (
                                   <div className="text-center">
@@ -631,7 +631,7 @@ const CeremonyDashboard = () => {
                           </div>
                         </div>
                       </div>
-                      <Button onClick={handleStart} disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 rounded-sm mt-2" data-testid="start-ceremony-btn">
+                      <Button onClick={handleStart} disabled={loading} className="w-full bg-coral-500 hover:bg-coral-600 rounded-sm mt-2" data-testid="start-ceremony-btn">
                         {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Play className="w-4 h-4 mr-2" />}
                         {loading ? 'Initializing...' : 'Start Ceremony'}
                       </Button>
@@ -655,13 +655,13 @@ const CeremonyDashboard = () => {
                       {ceremony.has_id_image && (
                         <>
                           <span className="text-slate-700">|</span>
-                          <span className="text-[10px] font-bold bg-purple-500/15 text-purple-400 border border-purple-500/30 px-1.5 py-0.5 rounded-sm">AI BIOMETRICS</span>
+                          <span className="text-[10px] font-bold bg-navy-600/15 text-navy-500 border border-navy-300/30 px-1.5 py-0.5 rounded-sm">AI BIOMETRICS</span>
                         </>
                       )}
                     </div>
                   </div>
                   {ceremony.status === 'pending' && (
-                    <Button onClick={handleExecute} disabled={executing} className="bg-blue-600 hover:bg-blue-700 rounded-sm" data-testid="execute-ceremony-btn">
+                    <Button onClick={handleExecute} disabled={executing} className="bg-coral-500 hover:bg-coral-600 rounded-sm" data-testid="execute-ceremony-btn">
                       {executing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Play className="w-4 h-4 mr-2" />}
                       {executing ? 'Running Pipeline...' : 'Execute Pipeline'}
                     </Button>
@@ -680,7 +680,7 @@ const CeremonyDashboard = () => {
                   )}
                   {(ceremony.status === 'sealed' || ceremony.status === 'consensus_failed') && (
                     <Button variant="outline" onClick={() => navigate(`/ceremony-replay/${ceremony.ceremony_id}`)}
-                      className="border-sky-500/50 text-coral-600 hover:bg-sky-500/10 rounded-sm" data-testid="replay-ceremony-btn">
+                      className="border-coral-300/50 text-coral-600 hover:bg-coral-500/10 rounded-sm" data-testid="replay-ceremony-btn">
                       <Play className="w-4 h-4 mr-2" /> Replay
                     </Button>
                   )}
@@ -688,8 +688,8 @@ const CeremonyDashboard = () => {
 
                 {/* Agent Pipeline */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                  <AgentCard name="Verifier" icon={ScanFace} agent={agents.verifier} accent="bg-purple-500/20 text-purple-400" />
-                  <AgentCard name="Witness" icon={Eye} agent={agents.witness} accent="bg-blue-500/20 text-blue-400" />
+                  <AgentCard name="Verifier" icon={ScanFace} agent={agents.verifier} accent="bg-navy-600/20 text-navy-500" />
+                  <AgentCard name="Witness" icon={Eye} agent={agents.witness} accent="bg-coral-500/20 text-coral-500" />
                   <AgentCard name="Sealer" icon={Lock} agent={agents.sealer} accent="bg-coral-500/20 text-coral-600" />
                 </div>
 
@@ -697,7 +697,7 @@ const CeremonyDashboard = () => {
                 <div className="flex items-center justify-center gap-2 py-2">
                   {['verifier', 'witness', 'sealer'].map((a, i) => (
                     <React.Fragment key={a}>
-                      <div className={`w-3 h-3 rounded-full border-2 transition-all duration-500 ${agents[a].status === 'passed' ? 'bg-coral-500 border-emerald-500' : agents[a].status === 'failed' ? 'bg-red-500 border-red-500' : agents[a].status === 'running' ? 'bg-blue-500 border-blue-500 animate-pulse' : 'bg-transparent border-slate-600'}`} />
+                      <div className={`w-3 h-3 rounded-full border-2 transition-all duration-500 ${agents[a].status === 'passed' ? 'bg-coral-500 border-emerald-500' : agents[a].status === 'failed' ? 'bg-red-500 border-red-500' : agents[a].status === 'running' ? 'bg-coral-500 border-coral-300 animate-pulse' : 'bg-transparent border-slate-600'}`} />
                       {i < 2 && <div className={`w-16 h-0.5 transition-all duration-500 ${agents[a].status === 'passed' ? 'bg-coral-500' : agents[a].status === 'failed' ? 'bg-red-500' : 'bg-slate-700'}`} />}
                     </React.Fragment>
                   ))}
@@ -713,7 +713,7 @@ const CeremonyDashboard = () => {
                   <Card className="bg-cream-100 border-slate-200 rounded-sm" data-testid="ceremony-stream-log">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-2 mb-3">
-                        <div className={`w-2 h-2 rounded-full ${executing ? 'bg-blue-500 animate-pulse' : 'bg-coral-500'}`} />
+                        <div className={`w-2 h-2 rounded-full ${executing ? 'bg-coral-500 animate-pulse' : 'bg-coral-500'}`} />
                         <span className="text-slate-600 text-xs font-bold tracking-wider uppercase">
                           {executing ? 'Live Stream' : 'Execution Log'}
                         </span>
@@ -727,7 +727,7 @@ const CeremonyDashboard = () => {
                               entry.msg.includes('FAIL') ? 'text-red-400' :
                               entry.msg.includes('APPROVED') ? 'text-coral-600' :
                               entry.msg.includes('REJECTED') ? 'text-red-400' :
-                              entry.msg.includes('Hedera') ? 'text-blue-400' :
+                              entry.msg.includes('Hedera') ? 'text-coral-500' :
                               'text-navy-800'
                             }>{entry.msg}</span>
                           </div>

@@ -38,7 +38,7 @@ const VerificationSummary = ({ selectedFile, analysisResult, verificationResult 
 const SignersSection = ({ signers, loading, onSignerChange, onAddSigner, onRemoveSigner }) => (
   <div>
     <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-      <Users className="w-5 h-5 text-blue-500" />
+      <Users className="w-5 h-5 text-coral-500" />
       Signers
     </h3>
     <div className="space-y-4">
@@ -108,7 +108,7 @@ export const SubmissionStep = ({
     <CardContent className="p-8">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-          <FileText className="w-6 h-6 text-blue-500" />
+          <FileText className="w-6 h-6 text-coral-500" />
           Step 3: Complete Your Request
         </h2>
         <Button
@@ -131,7 +131,7 @@ export const SubmissionStep = ({
         {/* Document Details */}
         <div>
           <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-            <FileText className="w-5 h-5 text-blue-500" />
+            <FileText className="w-5 h-5 text-coral-500" />
             Document Details
           </h3>
           <div className="space-y-4">
@@ -162,7 +162,7 @@ export const SubmissionStep = ({
                 required
                 value={formData.notarization_type}
                 onChange={onChange}
-                className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
+                className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white focus:border-coral-300 focus:outline-none"
                 disabled={loading}
                 data-testid="notarization-type-select"
               >
@@ -184,7 +184,7 @@ export const SubmissionStep = ({
                 required
                 value={formData.state_code || 'FL'}
                 onChange={onChange}
-                className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
+                className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white focus:border-coral-300 focus:outline-none"
                 disabled={loading}
                 data-testid="state-code-select"
               >
@@ -202,7 +202,7 @@ export const SubmissionStep = ({
         {/* Scheduling */}
         <div>
           <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-blue-500" />
+            <Calendar className="w-5 h-5 text-coral-500" />
             Scheduling
           </h3>
           <div>
@@ -242,7 +242,7 @@ export const SubmissionStep = ({
             value={formData.notes}
             onChange={onChange}
             rows={4}
-            className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
+            className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-white focus:border-coral-300 focus:outline-none"
             placeholder="Any special instructions or requirements..."
             disabled={loading}
             data-testid="notes-textarea"
@@ -252,7 +252,7 @@ export const SubmissionStep = ({
         <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg"
+          className="w-full bg-coral-500 hover:bg-coral-600 text-white py-6 text-lg"
           data-testid="submit-request-btn"
         >
           {loading ? (

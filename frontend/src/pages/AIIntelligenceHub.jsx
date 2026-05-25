@@ -97,7 +97,7 @@ function RiskScoringTab({ token }) {
             placeholder="Document name (e.g. Purchase Agreement)" className="bg-white border-slate-300 text-navy-900" />
           <textarea data-testid="risk-doc-text" value={docText} onChange={e => setDocText(e.target.value)}
             placeholder="Paste your document text here for AI risk analysis..."
-            className="w-full h-64 bg-white border border-slate-300 rounded-lg p-3 text-sm text-navy-800 resize-none focus:border-sky-500/50 focus:outline-none" />
+            className="w-full h-64 bg-white border border-slate-300 rounded-lg p-3 text-sm text-navy-800 resize-none focus:border-coral-300/50 focus:outline-none" />
           <Button data-testid="risk-analyze-btn" onClick={analyze} disabled={loading}
             className="w-full bg-red-600 hover:bg-red-700 text-navy-900">
             {loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Analyzing...</> : <><ShieldAlert className="w-4 h-4 mr-2" /> Analyze Risk</>}
@@ -217,9 +217,9 @@ function SummarizerTab({ token }) {
             placeholder="Document name" className="bg-white border-slate-300 text-navy-900" />
           <textarea data-testid="summary-doc-text" value={docText} onChange={e => setDocText(e.target.value)}
             placeholder="Paste your legal document text here for AI summarization..."
-            className="w-full h-64 bg-white border border-slate-300 rounded-lg p-3 text-sm text-navy-800 resize-none focus:border-sky-500/50 focus:outline-none" />
+            className="w-full h-64 bg-white border border-slate-300 rounded-lg p-3 text-sm text-navy-800 resize-none focus:border-coral-300/50 focus:outline-none" />
           <Button data-testid="summary-analyze-btn" onClick={summarize} disabled={loading}
-            className="w-full bg-sky-600 hover:bg-sky-700 text-navy-900">
+            className="w-full bg-coral-500 hover:bg-coral-600 text-navy-900">
             {loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Summarizing...</> : <><FileSearch className="w-4 h-4 mr-2" /> Summarize Document</>}
           </Button>
         </div>
@@ -230,7 +230,7 @@ function SummarizerTab({ token }) {
               <div>
                 <h3 className="text-lg font-bold text-navy-900">{result.title || docName}</h3>
                 <div className="flex items-center gap-3 mt-1">
-                  <span className="text-[10px] uppercase tracking-wider bg-sky-500/15 text-coral-600 border border-sky-500/30 px-2 py-0.5 rounded">{result.document_type}</span>
+                  <span className="text-[10px] uppercase tracking-wider bg-coral-500/15 text-coral-600 border border-coral-300/30 px-2 py-0.5 rounded">{result.document_type}</span>
                   {result.reading_time_minutes && <span className="text-[11px] text-slate-500 flex items-center gap-1"><Clock className="w-3 h-3" /> {result.reading_time_minutes} min read</span>}
                   {result.ai_powered && <span className="text-[10px] text-coral-600 flex items-center gap-1"><Sparkles className="w-3 h-3" /> GPT-5.2</span>}
                 </div>
@@ -422,7 +422,7 @@ function NotaryMatchTab({ token }) {
                   <span key={j} className="text-[10px] bg-cream-200 text-slate-600 px-2 py-0.5 rounded">{s.replace(/_/g, ' ')}</span>
                 ))}
                 {rec.notary.languages?.map((l, j) => (
-                  <span key={`l-${j}`} className="text-[10px] bg-sky-500/10 text-coral-600 px-2 py-0.5 rounded flex items-center gap-0.5"><Globe className="w-2.5 h-2.5" />{l}</span>
+                  <span key={`l-${j}`} className="text-[10px] bg-coral-500/10 text-coral-600 px-2 py-0.5 rounded flex items-center gap-0.5"><Globe className="w-2.5 h-2.5" />{l}</span>
                 ))}
               </div>
 
@@ -740,7 +740,7 @@ export default function AIIntelligenceHub() {
 
         {/* Header */}
         <div className="flex items-center gap-3 mt-4 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500/20 to-violet-500/20 border border-sky-500/30 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-coral-500/20 to-violet-500/20 border border-coral-300/30 flex items-center justify-center">
             <Brain className="w-5 h-5 text-coral-600" />
           </div>
           <div>

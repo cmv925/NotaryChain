@@ -1,5 +1,21 @@
 # NotaryChain Changelog
 
+## May 25, 2026 — Global Color Theme Audit + Brand Compliance Sweep
+- Reported issue: Quick Seal page (`/demo`) rendered with off-brand bright-blue "Choose File" CTA + step indicator + a broken duplicate footer (white text on cream bg).
+- Fix scope (aggressive sweep — user-approved): swept **all 228 .jsx/.js source files** in `frontend/src` and globally replaced off-brand Tailwind classes with brand palette (coral-500 / navy-900 / cream-100 / gold-500):
+  - `bg-blue-*`, `text-blue-*`, `border-blue-*`, `from-blue-*`, `to-blue-*`, `hover:bg-blue-*`, `shadow-blue-*`, `ring-blue-*` → coral equivalents
+  - `bg-sky-*`, `text-sky-*`, `border-sky-*` → coral equivalents
+  - `text-cyan-*`, `bg-cyan-*`, `border-cyan-*` → coral equivalents
+  - `bg-indigo-*`, `text-indigo-*`, `from-indigo-*`, `bg-purple-*`, `text-purple-*` → navy equivalents
+  - `bg-gray-800/900`, `hover:bg-gray-700/800` → navy equivalents
+  - Trailing hover-state leftovers (`hover:bg-cyan-700`, `hover:bg-sky-700`) → coral-600
+- `QuickSealDemo.jsx` fully rewritten with coral CTAs, coral step indicator, coral upload icon, branded "Live Demo" pill, semantic emerald for success states, navy pricing CTA strip.
+- `components/Footer.jsx` deprecated → no-op stub (returns null). Eliminates broken duplicate footer (white text on cream bg) across 30+ public pages. `PlatformFooter` (globally rendered in App.js) is the canonical site footer.
+- `EscrowDashboard.jsx` biometric/ai legend swatches: `bg-purple-400` → `bg-navy-500`.
+- Verified production build passes (`yarn build` ✓). Verified live on Quick Seal, Verify, Florida, Trust Badge, Pricing, Compliance, Landing, and Login pages.
+
+
+
 ## May 25, 2026 — UI Verification: Scheduled Exports Panel + ACN Regulatory Oracle Watchlist
 - Visually verified `ScheduledExportsPanel` renders inside Admin → Audit Logs tab without React errors. Empty state, "New schedule" button, and refresh action all functional. (data-testid: `scheduled-exports-panel`)
 - Visually verified `Regulatory Oracle Watchlist` renders inside ACN Dashboard → Rule Updates tab. Live oracle feed shows seeded `DE-de`, `SG`, and `US-TX` events with severity badges, auto-applied indicators, and "Poll now" CTA. Mode badge correctly displays "mock". (data-testid: `acn-oracle-card`)

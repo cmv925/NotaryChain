@@ -30,7 +30,7 @@ export function PDFPreview({ fileUrl, fileName, onClose }) {
       {/* Toolbar */}
       <div className="bg-white border-b border-slate-200 px-4 py-2 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
-          <FileText className="h-5 w-5 text-blue-400" />
+          <FileText className="h-5 w-5 text-coral-500" />
           <span className="text-white font-medium text-sm truncate max-w-[300px]">{fileName || 'Document'}</span>
           {numPages && (
             <span className="text-slate-500 text-sm">
@@ -118,7 +118,7 @@ export function PDFPreview({ fileUrl, fileName, onClose }) {
             onLoadError={onDocumentLoadError}
             loading={
               <div className="text-center text-slate-500 mt-20">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4" />
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-coral-300 mx-auto mb-4" />
                 <p>Loading document...</p>
               </div>
             }
@@ -151,7 +151,7 @@ export function PDFPreviewButton({ fileUrl, fileName, className = '' }) {
         variant="outline"
         size="sm"
         onClick={() => setIsOpen(true)}
-        className={`border-blue-500/50 text-blue-400 hover:bg-blue-500/10 ${className}`}
+        className={`border-coral-300/50 text-coral-500 hover:bg-coral-500/10 ${className}`}
         data-testid="pdf-preview-button"
       >
         <Maximize2 className="h-3 w-3 mr-1" />

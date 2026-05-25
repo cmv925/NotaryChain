@@ -214,7 +214,7 @@ export default function TrustHub() {
 
 function PillarCard({ icon: Icon, color, title, score, subtitle, to, ctaLabel, empty, testId, children }) {
   const colors = {
-    sky: { ring: 'border-sky-500/30', icon: 'text-coral-600', bg: 'bg-sky-500/10' },
+    sky: { ring: 'border-coral-300/30', icon: 'text-coral-600', bg: 'bg-coral-500/10' },
     violet: { ring: 'border-violet-500/30', icon: 'text-coral-600', bg: 'bg-violet-500/10' },
     emerald: { ring: 'border-coral-200', icon: 'text-coral-600', bg: 'bg-coral-500/10' },
   }[color];

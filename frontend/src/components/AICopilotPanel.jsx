@@ -44,19 +44,19 @@ const AICopilotPanel = ({ requestId, token, onJournalPrefill }) => {
   };
 
   return (
-    <Card className="bg-gradient-to-br from-white to-cream-200 border-purple-500/30" data-testid="ai-copilot-panel">
+    <Card className="bg-gradient-to-br from-white to-cream-200 border-navy-300/30" data-testid="ai-copilot-panel">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-white font-semibold flex items-center gap-2">
-            <Brain className="w-5 h-5 text-purple-400" />
+            <Brain className="w-5 h-5 text-navy-500" />
             AI Co-pilot
           </h3>
           <div className="flex gap-2">
-            <Button onClick={prefillJournal} size="sm" variant="outline" className="border-blue-500/50 text-blue-400 text-xs" disabled={prefillingJournal} data-testid="copilot-prefill-btn">
+            <Button onClick={prefillJournal} size="sm" variant="outline" className="border-coral-300/50 text-coral-500 text-xs" disabled={prefillingJournal} data-testid="copilot-prefill-btn">
               {prefillingJournal ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <ClipboardList className="w-3 h-3 mr-1" />}
               Pre-fill Journal
             </Button>
-            <Button onClick={runAnalysis} size="sm" className="bg-purple-600 hover:bg-purple-700 text-xs" disabled={analyzing} data-testid="copilot-analyze-btn">
+            <Button onClick={runAnalysis} size="sm" className="bg-navy-700 hover:bg-navy-800 text-xs" disabled={analyzing} data-testid="copilot-analyze-btn">
               {analyzing ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Zap className="w-3 h-3 mr-1" />}
               Analyze
             </Button>
@@ -65,7 +65,7 @@ const AICopilotPanel = ({ requestId, token, onJournalPrefill }) => {
 
         {analyzing && (
           <div className="text-center py-6">
-            <Loader2 className="w-8 h-8 text-purple-400 animate-spin mx-auto mb-2" />
+            <Loader2 className="w-8 h-8 text-navy-500 animate-spin mx-auto mb-2" />
             <p className="text-slate-500 text-sm">Analyzing request...</p>
           </div>
         )}
@@ -94,7 +94,7 @@ const AICopilotPanel = ({ requestId, token, onJournalPrefill }) => {
                 <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-1.5">Key Data</h4>
                 <div className="space-y-1">
                   {analysis.key_highlights.map((h, i) => (
-                    <div key={i} className={`flex items-center justify-between px-2.5 py-1.5 rounded border text-xs ${statusColors[h.status] || 'bg-gray-800 text-slate-500 border-slate-200'}`}>
+                    <div key={i} className={`flex items-center justify-between px-2.5 py-1.5 rounded border text-xs ${statusColors[h.status] || 'bg-navy-800 text-slate-500 border-slate-200'}`}>
                       <span>{h.label}</span>
                       <span className="font-medium">{h.value}</span>
                     </div>
@@ -111,7 +111,7 @@ const AICopilotPanel = ({ requestId, token, onJournalPrefill }) => {
                   {analysis.inconsistency_flags.map((f, i) => (
                     <div key={i} className="p-2 bg-red-500/5 rounded border border-red-500/20">
                       <div className="flex items-center gap-1.5">
-                        <AlertTriangle className={`w-3 h-3 ${f.severity === 'high' ? 'text-red-400' : f.severity === 'medium' ? 'text-amber-400' : 'text-blue-400'}`} />
+                        <AlertTriangle className={`w-3 h-3 ${f.severity === 'high' ? 'text-red-400' : f.severity === 'medium' ? 'text-amber-400' : 'text-coral-500'}`} />
                         <span className="text-xs text-slate-500">{f.description}</span>
                       </div>
                       {f.recommendation && <p className="text-[10px] text-slate-500 mt-0.5 ml-4">{f.recommendation}</p>}
@@ -142,7 +142,7 @@ const AICopilotPanel = ({ requestId, token, onJournalPrefill }) => {
                 <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-1.5">Recommendations</h4>
                 {analysis.recommendations.map((r, i) => (
                   <div key={i} className="flex items-start gap-1.5 text-xs text-slate-500">
-                    <ChevronRight className="w-3 h-3 mt-0.5 text-purple-400 flex-shrink-0" />
+                    <ChevronRight className="w-3 h-3 mt-0.5 text-navy-500 flex-shrink-0" />
                     <span>{r}</span>
                   </div>
                 ))}

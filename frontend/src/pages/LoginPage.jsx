@@ -226,7 +226,7 @@ const LoginPage = () => {
                   <button
                     onClick={handleAuth0Login}
                     disabled={auth0Loading}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-cyan-500/30 bg-cyan-500/5 text-coral-600 hover:bg-cyan-500/10 hover:border-cyan-500/50 transition-all text-sm font-medium disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-coral-300/30 bg-coral-500/5 text-coral-600 hover:bg-coral-500/10 hover:border-coral-300/50 transition-all text-sm font-medium disabled:opacity-50"
                     data-testid="auth0-login-button"
                   >
                     <Globe className="w-4 h-4" />
@@ -243,7 +243,7 @@ const LoginPage = () => {
                   </button>
                   <button
                     onClick={() => navigate('/sso/login')}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-purple-500/30 bg-purple-500/5 text-purple-400 hover:bg-purple-500/10 hover:border-purple-500/50 transition-all text-sm font-medium"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-navy-300/30 bg-navy-600/5 text-navy-500 hover:bg-navy-600/10 hover:border-navy-300/50 transition-all text-sm font-medium"
                     data-testid="sso-login-link"
                   >
                     <KeyRound className="w-4 h-4" />

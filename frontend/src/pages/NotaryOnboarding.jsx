@@ -263,7 +263,7 @@ const NotaryOnboarding = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <Shield className="w-10 h-10 text-blue-500" />
+            <Shield className="w-10 h-10 text-coral-500" />
           </div>
           <h1 className="text-4xl font-bold text-navy-900 mb-4">Become a NotaryChain Notary</h1>
           <p className="text-slate-500 text-lg">
@@ -285,10 +285,10 @@ const NotaryOnboarding = () => {
                 onClick={() => existingProfile?.has_profile && setStep(s.num)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
                   step === s.num 
-                    ? 'bg-blue-600 text-navy-900' 
+                    ? 'bg-coral-500 text-navy-900' 
                     : step > s.num || (existingProfile?.has_profile && s.num <= 2)
                     ? 'bg-green-600/20 text-green-400 border border-green-500/30'
-                    : 'bg-gray-800 text-slate-500'
+                    : 'bg-navy-800 text-slate-500'
                 }`}
                 disabled={!existingProfile?.has_profile && step < s.num}
               >
@@ -307,7 +307,7 @@ const NotaryOnboarding = () => {
             {step === 1 && (
               <form onSubmit={(e) => { e.preventDefault(); setStep(2); }} className="space-y-6">
                 <h2 className="text-2xl font-semibold text-navy-900 mb-6 flex items-center gap-2">
-                  <User className="w-6 h-6 text-blue-500" />
+                  <User className="w-6 h-6 text-coral-500" />
                   Personal Information
                 </h2>
                 
@@ -390,7 +390,7 @@ const NotaryOnboarding = () => {
                 </div>
 
                 <div className="flex justify-end">
-                  <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-navy-900 px-8">
+                  <Button type="submit" className="bg-coral-500 hover:bg-coral-600 text-navy-900 px-8">
                     Next: License Details
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
@@ -402,7 +402,7 @@ const NotaryOnboarding = () => {
             {step === 2 && (
               <form onSubmit={handleSubmitProfile} className="space-y-6">
                 <h2 className="text-2xl font-semibold text-navy-900 mb-6 flex items-center gap-2">
-                  <Award className="w-6 h-6 text-blue-500" />
+                  <Award className="w-6 h-6 text-coral-500" />
                   License & Credentials
                 </h2>
                 
@@ -511,8 +511,8 @@ const NotaryOnboarding = () => {
                         onClick={() => toggleSpecialization(spec)}
                         className={`px-4 py-2 rounded-lg border text-sm transition-all ${
                           formData.specializations.includes(spec)
-                            ? 'bg-blue-600 border-blue-500 text-navy-900'
-                            : 'bg-cream-100 border-slate-200 text-slate-500 hover:border-blue-500'
+                            ? 'bg-coral-500 border-coral-300 text-navy-900'
+                            : 'bg-cream-100 border-slate-200 text-slate-500 hover:border-coral-300'
                         }`}
                       >
                         {spec}
@@ -531,7 +531,7 @@ const NotaryOnboarding = () => {
                     value={formData.bio}
                     onChange={handleChange}
                     rows={4}
-                    className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 focus:border-blue-500 focus:outline-none"
+                    className="w-full bg-cream-100 border border-slate-200 rounded-md px-3 py-2 text-navy-900 focus:border-coral-300 focus:outline-none"
                     placeholder="Tell us about your experience and why you'd be a great addition to our network..."
                   />
                 </div>
@@ -549,7 +549,7 @@ const NotaryOnboarding = () => {
                   <Button 
                     type="submit" 
                     disabled={loading}
-                    className="bg-blue-600 hover:bg-blue-700 text-navy-900 px-8"
+                    className="bg-coral-500 hover:bg-coral-600 text-navy-900 px-8"
                   >
                     {loading ? 'Saving...' : existingProfile?.has_profile ? 'Next: Upload Documents' : 'Save & Continue'}
                     <ArrowRight className="ml-2 w-5 h-5" />
@@ -562,7 +562,7 @@ const NotaryOnboarding = () => {
             {step === 3 && (
               <div className="space-y-6">
                 <h2 className="text-2xl font-semibold text-navy-900 mb-6 flex items-center gap-2">
-                  <Upload className="w-6 h-6 text-blue-500" />
+                  <Upload className="w-6 h-6 text-coral-500" />
                   Upload Credentials
                 </h2>
                 
@@ -610,7 +610,7 @@ const NotaryOnboarding = () => {
                                   onChange={(e) => handleFileUpload(cred.id, e.target.files[0])}
                                   disabled={loading}
                                 />
-                                <span className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-navy-900 rounded-lg text-sm transition-colors">
+                                <span className="inline-flex items-center px-4 py-2 bg-coral-500 hover:bg-coral-600 text-navy-900 rounded-lg text-sm transition-colors">
                                   <Upload className="w-4 h-4 mr-2" />
                                   Upload
                                 </span>
@@ -623,8 +623,8 @@ const NotaryOnboarding = () => {
                   })}
                 </div>
 
-                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-                  <h4 className="text-blue-400 font-medium mb-2">What happens next?</h4>
+                <div className="bg-coral-500/10 border border-coral-300/30 rounded-lg p-4">
+                  <h4 className="text-coral-500 font-medium mb-2">What happens next?</h4>
                   <ul className="text-slate-500 text-sm space-y-1">
                     <li>• Your application will be reviewed by our team (1-3 business days)</li>
                     <li>• We may contact you if additional information is needed</li>

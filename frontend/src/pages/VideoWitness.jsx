@@ -155,7 +155,7 @@ const VideoWitness = () => {
                 <h2 className="text-2xl font-bold text-navy-900 mb-2">Video Submitted!</h2>
                 <p className="text-slate-500 mb-6">Your witness recording has been uploaded. The notary will review it.</p>
                 <div className="flex gap-3 justify-center">
-                  <Button onClick={() => { setUploadSuccess(false); setView('select'); setRecordedBlob(null); setRecordedUrl(null); }} className="bg-blue-600 hover:bg-blue-700">Record Another</Button>
+                  <Button onClick={() => { setUploadSuccess(false); setView('select'); setRecordedBlob(null); setRecordedUrl(null); }} className="bg-coral-500 hover:bg-coral-600">Record Another</Button>
                   <Button onClick={() => navigate('/dashboard')} variant="outline" className="border-slate-200 text-slate-500">Dashboard</Button>
                 </div>
               </CardContent>
@@ -180,7 +180,7 @@ const VideoWitness = () => {
                     <span className={`px-2 py-0.5 rounded-full text-xs ${
                       rec.status === 'approved' ? 'bg-green-500/15 text-green-400' :
                       rec.status === 'rejected' ? 'bg-red-500/15 text-red-400' :
-                      rec.status === 'under_review' ? 'bg-blue-500/15 text-blue-400' :
+                      rec.status === 'under_review' ? 'bg-coral-500/15 text-coral-500' :
                       'bg-coral-500/15 text-coral-600'
                     }`}>{rec.status}</span>
                   </CardContent>
@@ -284,7 +284,7 @@ const VideoWitness = () => {
                       </Button>
                     )}
                     {recording && (
-                      <Button onClick={stopRecording} className="bg-gray-600 hover:bg-gray-700" data-testid="rec-stop-btn">
+                      <Button onClick={stopRecording} className="bg-gray-600 hover:bg-navy-700" data-testid="rec-stop-btn">
                         <Square className="w-4 h-4 mr-1" /> Stop
                       </Button>
                     )}

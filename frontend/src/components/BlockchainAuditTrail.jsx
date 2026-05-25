@@ -102,13 +102,13 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
       <CardContent className="p-0">
         {/* Header */}
         <div 
-          className="p-4 border-b border-slate-200 cursor-pointer hover:bg-gray-800/30 transition-colors"
+          className="p-4 border-b border-slate-200 cursor-pointer hover:bg-navy-800/30 transition-colors"
           onClick={() => setExpanded(!expanded)}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                <Shield className="w-5 h-5 text-blue-400" />
+              <div className="w-10 h-10 bg-coral-500/20 rounded-lg flex items-center justify-center">
+                <Shield className="w-5 h-5 text-coral-500" />
               </div>
               <div>
                 <h3 className="text-white font-semibold">{title}</h3>
@@ -132,7 +132,7 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="text-blue-400 hover:text-blue-300 p-2"
+                className="text-coral-500 hover:text-coral-400 p-2"
               >
                 <ExternalLink className="w-4 h-4" />
               </a>
@@ -150,7 +150,7 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
           <div className="p-4">
             {loading ? (
               <div className="text-center py-8">
-                <RefreshCw className="w-8 h-8 text-blue-500 animate-spin mx-auto mb-3" />
+                <RefreshCw className="w-8 h-8 text-coral-500 animate-spin mx-auto mb-3" />
                 <p className="text-slate-500">Loading audit trail...</p>
               </div>
             ) : error ? (
@@ -210,7 +210,7 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
                             {decoded.document_hash && (
                               <p>
                                 <span className="text-slate-500">Document Hash:</span>{' '}
-                                <code className="text-blue-400 text-xs">{decoded.document_hash.substring(0, 16)}...</code>
+                                <code className="text-coral-500 text-xs">{decoded.document_hash.substring(0, 16)}...</code>
                               </p>
                             )}
                             {decoded.document_name && (
@@ -222,7 +222,7 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
                             {decoded.notary_id && (
                               <p>
                                 <span className="text-slate-500">Notary ID:</span>{' '}
-                                <span className="text-purple-400">{decoded.notary_id.substring(0, 12)}...</span>
+                                <span className="text-navy-500">{decoded.notary_id.substring(0, 12)}...</span>
                               </p>
                             )}
                             {decoded.session_id && (
@@ -234,7 +234,7 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
                             {decoded.request_id && (
                               <p>
                                 <span className="text-slate-500">Request:</span>{' '}
-                                <span className="text-cyan-400">{decoded.request_id.substring(0, 12)}...</span>
+                                <span className="text-coral-500">{decoded.request_id.substring(0, 12)}...</span>
                               </p>
                             )}
                           </div>
@@ -250,13 +250,13 @@ const BlockchainAuditTrail = ({ topicId, token, requestId, title = "Blockchain A
             {!loading && !error && (
               <div className="mt-4 pt-4 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
                 <span>
-                  Network: <span className="text-blue-400">Hedera Testnet</span>
+                  Network: <span className="text-coral-500">Hedera Testnet</span>
                 </span>
                 <a
                   href={`https://hashscan.io/testnet/topic/${topicId}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                  className="text-coral-500 hover:text-coral-400 flex items-center gap-1"
                 >
                   View on HashScan
                   <ExternalLink className="w-3 h-3" />

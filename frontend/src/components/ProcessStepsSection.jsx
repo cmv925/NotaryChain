@@ -53,38 +53,38 @@ const ProcessStepsSection = () => {
             From Document to Immutable Proof in Five Steps
           </h2>
           <p className="text-slate-500 text-lg max-w-3xl mx-auto">
-            A seamless experience that is <span className="text-blue-400 font-semibold">70% Faster</span> with{' '}
-            <span className="text-blue-400 font-semibold">10x Lower Fraud Risk</span>
+            A seamless experience that is <span className="text-coral-500 font-semibold">70% Faster</span> with{' '}
+            <span className="text-coral-500 font-semibold">10x Lower Fraud Risk</span>
           </p>
         </div>
 
         <div className="relative">
           {/* Connection Line - Desktop */}
-          <div className="hidden lg:block absolute top-20 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
+          <div className="hidden lg:block absolute top-20 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-coral-500/30 to-transparent"></div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {processSteps.map((step, index) => {
               const Icon = step.icon;
               return (
                 <div key={index} className="relative">
-                  <div className="bg-white border border-slate-200 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300 h-full group">
+                  <div className="bg-white border border-slate-200 rounded-xl p-6 hover:border-coral-300/50 transition-all duration-300 h-full group">
                     {/* Step Number Badge */}
                     <div className="flex justify-center mb-4">
-                      <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-blue-600/50 group-hover:scale-110 transition-transform">
+                      <div className="w-16 h-16 bg-gradient-to-br from-coral-500 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-coral-500/50 group-hover:scale-110 transition-transform">
                         {step.number}
                       </div>
                     </div>
 
                     {/* Icon */}
                     <div className="flex justify-center mb-4">
-                      <div className="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                        <Icon className="w-7 h-7 text-blue-500" />
+                      <div className="w-14 h-14 bg-coral-500/10 rounded-lg flex items-center justify-center">
+                        <Icon className="w-7 h-7 text-coral-500" />
                       </div>
                     </div>
 
                     {/* Subtitle Badge */}
                     <div className="flex justify-center mb-3">
-                      <span className="text-xs font-semibold text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/30">
+                      <span className="text-xs font-semibold text-coral-500 bg-coral-500/10 px-3 py-1 rounded-full border border-coral-300/30">
                         {step.subtitle}
                       </span>
                     </div>

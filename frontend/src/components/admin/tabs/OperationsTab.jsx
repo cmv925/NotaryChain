@@ -20,7 +20,7 @@ export const OperationsTab = ({ alertForm, alertSettings, editingAlerts, exportI
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-navy-900 flex items-center gap-2">
-                <Server className="w-6 h-6 text-cyan-500" />
+                <Server className="w-6 h-6 text-coral-500" />
                 Production Operations
               </h2>
               <Button
@@ -36,7 +36,7 @@ export const OperationsTab = ({ alertForm, alertSettings, editingAlerts, exportI
 
             {loadingOps && !opsData ? (
               <div className="flex items-center justify-center py-20">
-                <RefreshCw className="w-12 h-12 text-cyan-500 animate-spin" />
+                <RefreshCw className="w-12 h-12 text-coral-500 animate-spin" />
               </div>
             ) : opsData ? (
               <>
@@ -109,7 +109,7 @@ export const OperationsTab = ({ alertForm, alertSettings, editingAlerts, exportI
                             return (
                               <div key={idx} className="flex-1 group relative">
                                 <div
-                                  className="w-full bg-gradient-to-t from-cyan-600 to-cyan-400 rounded-t transition-all hover:from-cyan-500 hover:to-cyan-300"
+                                  className="w-full bg-gradient-to-t from-coral-500 to-cyan-400 rounded-t transition-all hover:from-coral-500 hover:to-cyan-300"
                                   style={{ height: `${Math.max(pct, 8)}%` }}
                                   title={`${day.date}: ${day.count} seals`}
                                 />
@@ -292,7 +292,7 @@ export const OperationsTab = ({ alertForm, alertSettings, editingAlerts, exportI
                             const isHealthy = svc.status === 'healthy';
                             const isDegraded = svc.status === 'degraded';
                             return (
-                              <div key={i} className={`rounded-xl p-4 border transition-all ${isHealthy ? 'bg-coral-500/5 border-coral-200' : isDegraded ? 'bg-red-500/5 border-red-500/20' : 'bg-gray-800/30 border-slate-200'}`} data-testid={`health-${svc.service.toLowerCase().replace(' ', '-')}`}>
+                              <div key={i} className={`rounded-xl p-4 border transition-all ${isHealthy ? 'bg-coral-500/5 border-coral-200' : isDegraded ? 'bg-red-500/5 border-red-500/20' : 'bg-navy-800/30 border-slate-200'}`} data-testid={`health-${svc.service.toLowerCase().replace(' ', '-')}`}>
                                 <div className="flex items-center justify-between mb-2">
                                   <span className="text-navy-900 text-sm font-medium">{svc.service}</span>
                                   <div className={`w-2.5 h-2.5 rounded-full ${isHealthy ? 'bg-emerald-400' : isDegraded ? 'bg-red-400 animate-pulse' : 'bg-gray-500'}`} />
@@ -344,7 +344,7 @@ export const OperationsTab = ({ alertForm, alertSettings, editingAlerts, exportI
                         <Button size="sm" variant="outline" className="border-slate-200" onClick={fetchIncidents} disabled={loadingIncidents}>
                           <RefreshCw className={`w-4 h-4 ${loadingIncidents ? 'animate-spin' : ''}`} />
                         </Button>
-                        <Button size="sm" className="bg-blue-600 hover:bg-blue-500" onClick={exportIncidentPdf} disabled={exportingIncidents} data-testid="export-incident-pdf-btn">
+                        <Button size="sm" className="bg-coral-500 hover:bg-coral-500" onClick={exportIncidentPdf} disabled={exportingIncidents} data-testid="export-incident-pdf-btn">
                           <FileText className="w-4 h-4 mr-1" /> {exportingIncidents ? 'Exporting...' : 'Export PDF'}
                         </Button>
                       </div>
@@ -489,11 +489,11 @@ export const OperationsTab = ({ alertForm, alertSettings, editingAlerts, exportI
                                 const height = Math.max((d.uploads / maxUploads) * 100, 4);
                                 return (
                                   <div key={i} className="flex-1 flex flex-col items-center justify-end group relative">
-                                    <div className="absolute -top-6 hidden group-hover:block bg-gray-800 text-navy-900 text-xs px-2 py-1 rounded whitespace-nowrap z-10">
+                                    <div className="absolute -top-6 hidden group-hover:block bg-navy-800 text-navy-900 text-xs px-2 py-1 rounded whitespace-nowrap z-10">
                                       {d.date}: {d.uploads} files ({d.size_mb} MB)
                                     </div>
                                     <div
-                                      className="w-full bg-cyan-500/60 rounded-t hover:bg-cyan-400/80 transition-colors cursor-pointer"
+                                      className="w-full bg-coral-500/60 rounded-t hover:bg-coral-400/80 transition-colors cursor-pointer"
                                       style={{ height: `${height}%`, minHeight: '3px' }}
                                     />
                                   </div>
@@ -514,8 +514,8 @@ export const OperationsTab = ({ alertForm, alertSettings, editingAlerts, exportI
                                 return (
                                   <div key={i} className="flex items-center gap-3 text-sm">
                                     <span className="text-slate-500 w-48 truncate">{u.email}</span>
-                                    <div className="flex-1 h-2 bg-gray-800 rounded-full overflow-hidden">
-                                      <div className="h-full bg-blue-500/60 rounded-full" style={{ width: `${Math.max(pct, 2)}%` }} />
+                                    <div className="flex-1 h-2 bg-navy-800 rounded-full overflow-hidden">
+                                      <div className="h-full bg-coral-500/60 rounded-full" style={{ width: `${Math.max(pct, 2)}%` }} />
                                     </div>
                                     <span className="text-slate-500 w-24 text-right">{u.total_size_mb} MB ({u.file_count})</span>
                                   </div>
@@ -538,14 +538,14 @@ export const OperationsTab = ({ alertForm, alertSettings, editingAlerts, exportI
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-5">
                       <h3 className="text-lg font-bold text-navy-900 flex items-center gap-2">
-                        <Settings className="w-5 h-5 text-blue-400" />
+                        <Settings className="w-5 h-5 text-coral-500" />
                         Alert Configuration
                       </h3>
                       {!editingAlerts ? (
                         <Button
                           size="sm"
                           variant="outline"
-                          className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                          className="border-coral-300/50 text-coral-500 hover:bg-coral-500/10"
                           onClick={() => { if (!alertForm && alertSettings) setAlertForm(JSON.parse(JSON.stringify(alertSettings))); setEditingAlerts(true); }}
                           data-testid="edit-alert-settings-btn"
                         >
@@ -554,7 +554,7 @@ export const OperationsTab = ({ alertForm, alertSettings, editingAlerts, exportI
                       ) : (
                         <div className="flex gap-2">
                           <Button size="sm" variant="outline" className="border-slate-200 text-slate-500" onClick={() => { setEditingAlerts(false); setAlertForm(JSON.parse(JSON.stringify(alertSettings))); }}>Cancel</Button>
-                          <Button size="sm" className="bg-blue-600 hover:bg-blue-700" onClick={saveAlertSettings} disabled={savingAlerts} data-testid="save-alert-settings-btn">
+                          <Button size="sm" className="bg-coral-500 hover:bg-coral-600" onClick={saveAlertSettings} disabled={savingAlerts} data-testid="save-alert-settings-btn">
                             <Save className="w-4 h-4 mr-1" /> {savingAlerts ? 'Saving...' : 'Save'}
                           </Button>
                         </div>
@@ -599,7 +599,7 @@ export const OperationsTab = ({ alertForm, alertSettings, editingAlerts, exportI
                           <div className="flex gap-4">
                             <button
                               onClick={() => editingAlerts && setAlertForm(f => ({...f, email_alerts_enabled: !f.email_alerts_enabled}))}
-                              className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${alertForm.email_alerts_enabled ? 'bg-coral-500/10 border-emerald-500/40 text-coral-600' : 'bg-gray-800/50 border-slate-200 text-slate-500'} ${!editingAlerts ? 'opacity-60 cursor-default' : 'cursor-pointer'}`}
+                              className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${alertForm.email_alerts_enabled ? 'bg-coral-500/10 border-emerald-500/40 text-coral-600' : 'bg-navy-800/50 border-slate-200 text-slate-500'} ${!editingAlerts ? 'opacity-60 cursor-default' : 'cursor-pointer'}`}
                               data-testid="toggle-email-alerts"
                             >
                               {alertForm.email_alerts_enabled ? <Mail className="w-4 h-4" /> : <MailX className="w-4 h-4" />}
@@ -607,7 +607,7 @@ export const OperationsTab = ({ alertForm, alertSettings, editingAlerts, exportI
                             </button>
                             <button
                               onClick={() => editingAlerts && setAlertForm(f => ({...f, in_app_alerts_enabled: !f.in_app_alerts_enabled}))}
-                              className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${alertForm.in_app_alerts_enabled ? 'bg-coral-500/10 border-emerald-500/40 text-coral-600' : 'bg-gray-800/50 border-slate-200 text-slate-500'} ${!editingAlerts ? 'opacity-60 cursor-default' : 'cursor-pointer'}`}
+                              className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${alertForm.in_app_alerts_enabled ? 'bg-coral-500/10 border-emerald-500/40 text-coral-600' : 'bg-navy-800/50 border-slate-200 text-slate-500'} ${!editingAlerts ? 'opacity-60 cursor-default' : 'cursor-pointer'}`}
                               data-testid="toggle-inapp-alerts"
                             >
                               {alertForm.in_app_alerts_enabled ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
@@ -621,7 +621,7 @@ export const OperationsTab = ({ alertForm, alertSettings, editingAlerts, exportI
                           <label className="text-slate-500 text-xs block mb-2">Alert Thresholds</label>
                           <div className="space-y-2">
                             {alertForm.thresholds.map((t, idx) => (
-                              <div key={idx} className={`flex items-center gap-3 p-3 rounded-lg border ${t.enabled ? (t.level === 'emergency' ? 'bg-red-500/5 border-red-500/20' : t.level === 'critical' ? 'bg-coral-500/5 border-orange-500/20' : 'bg-yellow-500/5 border-yellow-500/20') : 'bg-gray-800/30 border-slate-200'}`}>
+                              <div key={idx} className={`flex items-center gap-3 p-3 rounded-lg border ${t.enabled ? (t.level === 'emergency' ? 'bg-red-500/5 border-red-500/20' : t.level === 'critical' ? 'bg-coral-500/5 border-orange-500/20' : 'bg-yellow-500/5 border-yellow-500/20') : 'bg-navy-800/30 border-slate-200'}`}>
                                 <button
                                   onClick={() => {
                                     if (!editingAlerts) return;

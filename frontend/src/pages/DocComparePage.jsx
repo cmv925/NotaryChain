@@ -17,7 +17,7 @@ const typeColors = {
   deletion: 'bg-red-500/10 text-red-400 border-red-500/20',
   modification: 'bg-coral-500/10 text-coral-600 border-amber-500/20',
 };
-const impactColors = { high: 'bg-red-500/15 text-red-400', medium: 'bg-coral-500/15 text-coral-600', low: 'bg-blue-500/15 text-blue-400' };
+const impactColors = { high: 'bg-red-500/15 text-red-400', medium: 'bg-coral-500/15 text-coral-600', low: 'bg-coral-500/15 text-coral-500' };
 
 export default function DocComparePage() {
   const navigate = useNavigate();

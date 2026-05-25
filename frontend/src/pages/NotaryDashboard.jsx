@@ -253,8 +253,8 @@ const NotaryDashboard = () => {
   const getStatusBadge = (status) => {
     const styles = {
       pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-      assigned: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-      in_progress: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+      assigned: 'bg-coral-500/20 text-coral-500 border-coral-300/30',
+      in_progress: 'bg-navy-600/20 text-navy-500 border-navy-300/30',
       reviewing: 'bg-coral-500/20 text-coral-600 border-coral-200',
       completed: 'bg-green-500/20 text-green-400 border-green-500/30',
       rejected: 'bg-red-500/20 text-red-400 border-red-500/30',
@@ -369,14 +369,14 @@ const NotaryDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-blue-600/20 to-blue-600/5 border-blue-500/30">
+          <Card className="bg-gradient-to-br from-coral-500/20 to-coral-600/5 border-coral-300/30">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-slate-500 text-xs">{t('notary.total_completed')}</p>
                   <p className="text-2xl font-bold text-navy-900">{stats?.total_completed || 0}</p>
                 </div>
-                <CheckCircle className="w-8 h-8 text-blue-400" />
+                <CheckCircle className="w-8 h-8 text-coral-500" />
               </div>
             </CardContent>
           </Card>
@@ -393,14 +393,14 @@ const NotaryDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-purple-600/20 to-purple-600/5 border-purple-500/30">
+          <Card className="bg-gradient-to-br from-navy-700/20 to-navy-700/5 border-navy-300/30">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-slate-500 text-xs">{t('notary.available_label')}</p>
                   <p className="text-2xl font-bold text-navy-900">{pendingRequests.length}</p>
                 </div>
-                <FileText className="w-8 h-8 text-purple-400" />
+                <FileText className="w-8 h-8 text-navy-500" />
               </div>
             </CardContent>
           </Card>
@@ -677,11 +677,11 @@ const NotaryDashboard = () => {
             </Card>
 
             {/* Tips */}
-            <Card className="bg-gradient-to-br from-blue-600/10 to-purple-600/10 border-blue-500/20">
+            <Card className="bg-gradient-to-br from-coral-500/10 to-navy-700/10 border-coral-300/20">
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
-                  <div className="h-8 w-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                    <Bell className="w-4 h-4 text-blue-400" />
+                  <div className="h-8 w-8 rounded-full bg-coral-500/20 flex items-center justify-center flex-shrink-0">
+                    <Bell className="w-4 h-4 text-coral-500" />
                   </div>
                   <div>
                     <p className="text-navy-900 text-sm font-medium">Pro Tip</p>
@@ -738,12 +738,12 @@ const RequestCard = ({
 }) => {
   const priority = getPriorityBadge(request);
   
-  const borderColor = type === 'pending' ? 'hover:border-purple-500/50' :
-                      type === 'assigned' ? 'hover:border-blue-500/50' :
+  const borderColor = type === 'pending' ? 'hover:border-navy-300/50' :
+                      type === 'assigned' ? 'hover:border-coral-300/50' :
                       'hover:border-green-500/50';
   
-  const iconColor = type === 'pending' ? 'text-purple-500' :
-                    type === 'assigned' ? 'text-blue-500' :
+  const iconColor = type === 'pending' ? 'text-navy-600' :
+                    type === 'assigned' ? 'text-coral-500' :
                     'text-green-500';
 
   return (
@@ -789,7 +789,7 @@ const RequestCard = ({
                     onClick={onAccept}
                     disabled={processingAction === request.id}
                     size="sm"
-                    className="bg-purple-600 hover:bg-purple-700 text-navy-900"
+                    className="bg-navy-700 hover:bg-navy-800 text-navy-900"
                     data-testid={`accept-${request.id}`}
                   >
                     {processingAction === request.id ? (
@@ -970,14 +970,14 @@ const RequestDetailModal = ({
           {request.signers?.length > 0 && (
             <div>
               <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
-                <User className="w-4 h-4 text-blue-500" />
+                <User className="w-4 h-4 text-coral-500" />
                 Signers ({request.signers.length})
               </h3>
               <div className="space-y-2">
                 {request.signers.map((signer, idx) => (
                   <div key={idx} className="bg-cream-100 rounded-lg p-3 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                      <User className="w-4 h-4 text-blue-400" />
+                    <div className="w-8 h-8 rounded-full bg-coral-500/20 flex items-center justify-center">
+                      <User className="w-4 h-4 text-coral-500" />
                     </div>
                     <div>
                       <p className="text-navy-900 text-sm">{signer.name || 'N/A'}</p>
@@ -1098,7 +1098,7 @@ const RequestDetailModal = ({
                             <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
                               f.severity === 'high' ? 'bg-red-500/20 text-red-400' :
                               f.severity === 'medium' ? 'bg-coral-500/20 text-coral-600' :
-                              'bg-blue-500/20 text-blue-400'
+                              'bg-coral-500/20 text-coral-500'
                             }`}>{f.severity?.toUpperCase()}</span>
                             <span className="text-slate-500">{f.description}</span>
                           </div>
@@ -1113,7 +1113,7 @@ const RequestDetailModal = ({
                 {copilotData.checklist?.length > 0 && (
                   <div className="bg-cream-100 rounded-lg p-3">
                     <h4 className="text-navy-900 text-xs font-semibold mb-2 flex items-center gap-1.5">
-                      <ClipboardList className="w-3.5 h-3.5 text-blue-400" /> Pre-Notarization Checklist
+                      <ClipboardList className="w-3.5 h-3.5 text-coral-500" /> Pre-Notarization Checklist
                     </h4>
                     <div className="space-y-1">
                       {copilotData.checklist.map((c, i) => (
@@ -1141,9 +1141,9 @@ const RequestDetailModal = ({
                 )}
 
                 {/* Journal Prefill */}
-                <div className="bg-blue-500/5 border border-blue-500/20 rounded-lg p-3">
+                <div className="bg-coral-500/5 border border-coral-300/20 rounded-lg p-3">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-blue-400 text-xs font-semibold flex items-center gap-1.5">
+                    <h4 className="text-coral-500 text-xs font-semibold flex items-center gap-1.5">
                       <BookOpen className="w-3.5 h-3.5" /> E-Journal Prefill
                     </h4>
                     <Button
@@ -1151,7 +1151,7 @@ const RequestDetailModal = ({
                       disabled={loadingJournal}
                       size="sm"
                       variant="ghost"
-                      className="text-blue-400 hover:text-blue-300 text-[10px] h-6 px-2"
+                      className="text-coral-500 hover:text-coral-400 text-[10px] h-6 px-2"
                       data-testid="prefill-journal-btn"
                     >
                       {loadingJournal ? <RefreshCw className="w-3 h-3 animate-spin" /> : 'Generate'}
@@ -1186,12 +1186,12 @@ const RequestDetailModal = ({
           {/* AI Document Analysis (legacy) */}
           <div>
             <h3 className="text-navy-900 font-semibold mb-3 flex items-center gap-2">
-              <Brain className="w-4 h-4 text-purple-500" />
+              <Brain className="w-4 h-4 text-navy-600" />
               AI Document Analysis
             </h3>
             {loadingAi ? (
               <div className="bg-cream-100 rounded-lg p-6 text-center">
-                <RefreshCw className="w-6 h-6 text-purple-500 animate-spin mx-auto mb-2" />
+                <RefreshCw className="w-6 h-6 text-navy-600 animate-spin mx-auto mb-2" />
                 <p className="text-slate-500 text-sm">Loading analysis...</p>
               </div>
             ) : aiAnalysis ? (
@@ -1211,7 +1211,7 @@ const RequestDetailModal = ({
                     <span className="text-slate-500 text-sm">Key Entities</span>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {aiAnalysis.key_entities.slice(0, 5).map((entity, idx) => (
-                        <Badge key={idx} className="bg-purple-500/20 text-purple-400 text-xs">
+                        <Badge key={idx} className="bg-navy-600/20 text-navy-500 text-xs">
                           {entity}
                         </Badge>
                       ))}
@@ -1244,7 +1244,7 @@ const RequestDetailModal = ({
                     href={request.hcs_explorer_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-400 text-sm flex items-center gap-1 hover:underline"
+                    className="text-coral-500 text-sm flex items-center gap-1 hover:underline"
                   >
                     <ExternalLink className="w-3 h-3" />
                     View on HashScan
@@ -1268,7 +1268,7 @@ const RequestDetailModal = ({
               <Button
                 onClick={onAccept}
                 disabled={processingAction === request.id}
-                className="flex-1 bg-purple-600 hover:bg-purple-700 text-navy-900"
+                className="flex-1 bg-navy-700 hover:bg-navy-800 text-navy-900"
               >
                 {processingAction === request.id ? (
                   <RefreshCw className="w-4 h-4 mr-2 animate-spin" />

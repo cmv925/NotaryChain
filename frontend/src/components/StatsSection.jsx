@@ -39,16 +39,16 @@ const StatsSection = () => {
             return (
               <Card
                 key={index}
-                className="bg-gradient-to-br from-white to-cream-100 border border-slate-200 hover:border-blue-500/50 transition-all duration-300 group"
+                className="bg-gradient-to-br from-white to-cream-100 border border-slate-200 hover:border-coral-300/50 transition-all duration-300 group"
               >
                 <CardContent className="p-6 text-center">
                   <div className="flex justify-center mb-4">
-                    <div className="w-14 h-14 bg-blue-500/10 rounded-full flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
-                      <Icon className="w-7 h-7 text-blue-500" />
+                    <div className="w-14 h-14 bg-coral-500/10 rounded-full flex items-center justify-center group-hover:bg-coral-500/20 transition-colors">
+                      <Icon className="w-7 h-7 text-coral-500" />
                     </div>
                   </div>
                   <div className="text-4xl font-bold text-white mb-2">{stat.value}</div>
-                  <div className="text-sm font-semibold text-blue-400 mb-1">{stat.label}</div>
+                  <div className="text-sm font-semibold text-coral-500 mb-1">{stat.label}</div>
                   <div className="text-xs text-slate-500">{stat.description}</div>
                 </CardContent>
               </Card>
