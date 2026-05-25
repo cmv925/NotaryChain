@@ -420,16 +420,24 @@ async def _submit_hcs(payload: dict) -> dict:
 
 
 async def seal_packet(packet: dict, jurisdiction_codes: list[str], jurat_ctx: dict) -> dict:
-    """For each jurisdiction code: render jurat, render PDF, submit to HCS,
-    persist an `acn_proofs` doc. Returns {proofs: [...], sealed_at, all_sealed}."""
+    """For each jurisdiction code: render jurat, render PDF (CPU-bound, off-loaded
+    to a thread pool), submit to HCS (I/O-bound, run concurrently via gather),
+    and persist an `acn_proofs` doc. Returns {proofs, sealed_at, all_sealed}.
+
+    Concurrent design: PDF generation + HCS submission for all jurisdictions
+    happen in parallel; the only sequential step is the Mongo insert (which is
+    very fast). This keeps total wall time bounded by the slowest single
+    jurisdiction (~3-5s) rather than N × that.
+    """
     now = datetime.now(timezone.utc).isoformat()
-    proofs = []
-    for code in jurisdiction_codes:
+
+    async def _build_one(code: str):
         rule = JURISDICTION_RULES.get(code)
         if not rule:
-            continue
+            return None
         jurat_text = _render_jurat(rule["jurat_template"], jurat_ctx)
-        pdf_bytes = _generate_certificate_pdf(rule, jurat_text, packet)
+        # ReportLab is CPU-bound + synchronous → push to thread pool
+        pdf_bytes = await asyncio.to_thread(_generate_certificate_pdf, rule, jurat_text, packet)
         cert_sha = hashlib.sha256(pdf_bytes).hexdigest()
         rule_version = _rule_version_hash(code)
         hcs_payload = {
@@ -444,7 +452,7 @@ async def seal_packet(packet: dict, jurisdiction_codes: list[str], jurat_ctx: di
             "sealed_at": now,
         }
         hcs = await _submit_hcs(hcs_payload)
-        proof_doc = {
+        return {
             "id": uuid.uuid4().hex,
             "packet_id": packet["id"],
             "jurisdiction_code": code,
@@ -456,9 +464,14 @@ async def seal_packet(packet: dict, jurisdiction_codes: list[str], jurat_ctx: di
             "hcs": hcs,
             "sealed_at": now,
         }
+
+    built = await asyncio.gather(*[_build_one(c) for c in jurisdiction_codes])
+    proofs = []
+    for proof_doc in built:
+        if not proof_doc:
+            continue
         await _db.acn_proofs.insert_one(proof_doc)
-        proof_doc.pop("_id", None)  # insert_one mutates dict to add ObjectId
-        # Don't return base64 in the API summary — too large
+        proof_doc.pop("_id", None)
         proofs.append({k: v for k, v in proof_doc.items() if k != "certificate_pdf_b64"})
     all_sealed = all(p["hcs"].get("submitted") for p in proofs) if proofs else False
     return {"proofs": proofs, "sealed_at": now, "all_sealed": all_sealed}
@@ -500,5 +513,5 @@ async def record_rule_update(code: str, change_summary: str, effective_date: str
     return update_doc
 
 
-# Make the module import-safe for tests
-asyncio  # noqa: F401 — re-export to satisfy linter that we imported it intentionally
+# Use asyncio for the concurrent seal pipeline
+asyncio  # noqa: F401

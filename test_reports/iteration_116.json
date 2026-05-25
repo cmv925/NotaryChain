@@ -1,0 +1,31 @@
+{
+  "summary": "Re-tested ACN after iter-115 fixes. All 3 previously-failing issues are resolved. Backend pytest: 15/15 pass in 12.87s. Admin rule-update endpoint now returns 200 (was 403), seal completes in <2s for 4-juris packet (was >100s causing 502), and bogus ceremony_id returns 404 (was 400). Frontend ACN dashboard with admin role works end-to-end: Rule Updates tab successfully records a rule change via UI (POST /api/acn/rule-updates → 200) and the new entry appears in 'Recent rule changes' panel.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "ACN /acn (any tab with <select>)", "issues": ["Pre-existing React hydration warnings: <span data-ve-dynamic> wraps <option> elements inside Source Jurisdiction <select>. Cosmetic console noise from Emergent visual-editor framework — not a functional bug, not blocking."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_acn_cross_border.py",
+    "/app/test_reports/pytest/iter116_acn.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "_is_admin() helper in acn_routes.py correctly looks up the user doc from DB and uses `if db is None` (compatible with pymongo/motor truthiness) — solid fix pattern, matches fl_journal_routes/compliance_states_routes convention.",
+    "seal_packet() now uses asyncio.gather + asyncio.to_thread for the ReportLab CPU-bound work. 4-juris seal now completes in ~0.7s in pytest (vs >100s previously). Implementation is correct and idiomatic.",
+    "Hedera HCS submission still reports submitted=false in this preview env due to TLS cert mismatch (documented mocked-behaviour). PDF sha256 + rule_version_hash chain remain cryptographically valid, so end-user verification is unaffected."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_acn_cross_border.py (renamed analyze-ceremony test to expect 404; tightened seal-perf test to assert <30s)"
+  ],
+  "success_rate": {"backend": "100% (15/15)", "frontend": "100% on retested flows (Rule Updates tab + dashboard + tabs)"},
+  "test_credentials": "Admin: admin@notarychain.com / Admin123! · User: demo@test.com / Demo123! · Notary: notarytest@test.com / Test123!",
+  "seed_data_creation": "Test run created 1 additional ACN packet for demo@test.com (multi-jurisdiction TX+NY+DE-de+EU) plus 1 packet for notarytest@test.com (FL) plus 1 rule-update record 'TEST_ACN_iter116 rule refresh from UI' for US-TX.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All iter-115 ACN issues are resolved. Mocked: Hedera HCS submit returns submitted=false in preview env (TLS) — best-effort, not a bug. If main agent needs to verify, run pytest on /app/backend/tests/test_acn_cross_border.py — all 15 should pass in ~13s. Hydration warnings on <select>/<option> are framework-injected and out of scope for ACN fix.",
+  "rca of the issue": "No outstanding issues. Iter-115 RCA-validated fixes verified: (1) DB-lookup admin helper bypasses Pydantic User-model field gap; (2) asyncio.gather+to_thread eliminates seal serialization; (3) 404 raised before the doc_text fallback check in analyze route."
+}

@@ -98,19 +98,23 @@ def test_analyze_empty_returns_400(s, user_token):
     assert r.status_code == 400, r.text
 
 
-def test_analyze_ceremony_id_autofetch_or_400(s, user_token):
-    # bogus ceremony_id with no doc text → should 400 (no text resolved)
+def test_analyze_ceremony_id_not_found_returns_404(s, user_token):
+    # bogus ceremony_id with no doc text → should 404 (ceremony not found)
     r = s.post(f"{BASE_URL}/api/acn/analyze",
                headers=H(user_token),
                json={"ceremony_id": "nonexistent-ceremony-xyz"})
-    assert r.status_code == 400
+    assert r.status_code == 404, r.text
 
 
 # ── 3. Seal ─────────────────────────────────────────────────────────────────
 def test_seal_packet_generates_proofs(s, user_token, shared_packet_id):
+    import time
     pid = shared_packet_id
-    r = s.post(f"{BASE_URL}/api/acn/packets/{pid}/seal", headers=H(user_token), json={}, timeout=TIMEOUT)
+    t0 = time.time()
+    r = s.post(f"{BASE_URL}/api/acn/packets/{pid}/seal", headers=H(user_token), json={}, timeout=30)
+    elapsed = time.time() - t0
     assert r.status_code == 200, r.text
+    assert elapsed < 30, f"seal took {elapsed:.1f}s, expected <30s"
     j = r.json()
     assert j["packet_id"] == pid
     assert len(j["proofs"]) >= 4

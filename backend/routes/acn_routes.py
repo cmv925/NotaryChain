@@ -32,6 +32,15 @@ def _lazy_hedera():
         return None
 
 
+async def _is_admin(current_user: User) -> bool:
+    """Mirrors the auth-by-DB-lookup pattern used by admin_certs / audit_export.
+    The current_user Pydantic model does not carry `role` so we re-read it."""
+    if db is None:
+        return False
+    udoc = await db.users.find_one({"email": current_user.email}, {"role": 1})
+    return bool(udoc) and udoc.get("role") == "admin"
+
+
 # ────────────────────────────────────────────────────────────────────────────
 # DETECTION + ANALYSIS
 # ────────────────────────────────────────────────────────────────────────────
@@ -54,12 +63,13 @@ async def analyze_document(request: Request, current_user: User = Depends(get_cu
     ceremony_id = body.get("ceremony_id")
     if ceremony_id and not doc_text:
         cer = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
-        if cer:
-            doc_text = (
-                (cer.get("document_name") or "") + "\n\n" +
-                (cer.get("document_summary") or cer.get("ai_summary", "")) + "\n\n" +
-                (cer.get("document_text") or "")
-            ).strip()
+        if not cer:
+            raise HTTPException(status_code=404, detail=f"Ceremony {ceremony_id} not found")
+        doc_text = (
+            (cer.get("document_name") or "") + "\n\n" +
+            (cer.get("document_summary") or cer.get("ai_summary", "")) + "\n\n" +
+            (cer.get("document_text") or "")
+        ).strip()
     if not doc_text:
         raise HTTPException(status_code=400, detail="doc_text or ceremony_id (with ingested text) is required")
 
@@ -97,7 +107,7 @@ async def seal_packet(packet_id: str, request: Request, current_user: User = Dep
     packet = await db.acn_packets.find_one({"id": packet_id}, {"_id": 0})
     if not packet:
         raise HTTPException(status_code=404, detail="Packet not found")
-    if packet.get("owner_email") != current_user.email and getattr(current_user, "role", "user") != "admin":
+    if packet.get("owner_email") != current_user.email and not await _is_admin(current_user):
         raise HTTPException(status_code=403, detail="Access denied")
 
     codes = body.get("jurisdictions") or packet.get("detected_jurisdictions") or []
@@ -146,7 +156,7 @@ async def seal_packet(packet_id: str, request: Request, current_user: User = Dep
 async def list_packets(current_user: User = Depends(get_current_user),
                        only_mine: bool = True, status: Optional[str] = None):
     query: dict = {}
-    if only_mine and getattr(current_user, "role", "user") != "admin":
+    if only_mine and not await _is_admin(current_user):
         query["owner_email"] = current_user.email
     if status:
         query["status"] = status
@@ -161,7 +171,7 @@ async def get_packet(packet_id: str, current_user: User = Depends(get_current_us
     packet = await db.acn_packets.find_one({"id": packet_id}, {"_id": 0})
     if not packet:
         raise HTTPException(status_code=404, detail="Packet not found")
-    if packet.get("owner_email") != current_user.email and getattr(current_user, "role", "user") != "admin":
+    if packet.get("owner_email") != current_user.email and not await _is_admin(current_user):
         raise HTTPException(status_code=403, detail="Access denied")
     proofs = []
     async for proof in db.acn_proofs.find({"packet_id": packet_id}, {"_id": 0, "certificate_pdf_b64": 0}):
@@ -176,7 +186,7 @@ async def download_certificate(packet_id: str, jurisdiction: str,
     packet = await db.acn_packets.find_one({"id": packet_id}, {"_id": 0})
     if not packet:
         raise HTTPException(status_code=404, detail="Packet not found")
-    if packet.get("owner_email") != current_user.email and getattr(current_user, "role", "user") != "admin":
+    if packet.get("owner_email") != current_user.email and not await _is_admin(current_user):
         raise HTTPException(status_code=403, detail="Access denied")
     proof = await db.acn_proofs.find_one(
         {"packet_id": packet_id, "jurisdiction_code": jurisdiction}, {"_id": 0}
@@ -241,7 +251,7 @@ async def list_rule_updates(current_user: User = Depends(get_current_user), limi
 @router.post("/rule-updates")
 async def post_rule_update(request: Request, current_user: User = Depends(get_current_user)):
     """Admin records a jurisdiction rule change. Affected packets get `needs_reseal=true`."""
-    if getattr(current_user, "role", "user") != "admin":
+    if not await _is_admin(current_user):
         raise HTTPException(status_code=403, detail="Admin only")
     body = await request.json()
     code = body.get("jurisdiction_code")
@@ -259,7 +269,7 @@ async def reseal_packet(packet_id: str, request: Request, current_user: User = D
     packet = await db.acn_packets.find_one({"id": packet_id}, {"_id": 0})
     if not packet:
         raise HTTPException(status_code=404, detail="Packet not found")
-    if packet.get("owner_email") != current_user.email and getattr(current_user, "role", "user") != "admin":
+    if packet.get("owner_email") != current_user.email and not await _is_admin(current_user):
         raise HTTPException(status_code=403, detail="Access denied")
     body = await request.json() if (await request.body()) else {}
     codes = body.get("jurisdictions") or packet.get("needs_reseal_for_jurisdictions") or packet.get("detected_jurisdictions") or []
