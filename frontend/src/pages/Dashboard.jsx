@@ -181,9 +181,9 @@ const Dashboard = () => {
         {/* Personalized Hero (role-aware welcome + KPIs + suggestion) */}
         <DashboardHero token={token} user={user} role={role} />
 
-        {/* Bento Grid */}
+        {/* Bento Grid — role-aware: regular users see a focused client experience */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 items-start">
-          {/* Core Actions */}
+          {/* Core Actions — visible to everyone */}
           <div className="bg-white border border-slate-200 p-6 rounded-lg relative overflow-hidden" data-testid="core-actions">
             <div className="absolute inset-0 opacity-[0.04] bg-cover bg-center mix-blend-overlay" style={{ backgroundImage: "url('https://images.pexels.com/photos/3612932/pexels-photo-3612932.jpeg?auto=compress&cs=tinysrgb&dpr=1&h=400&w=600')" }} />
             <div className="relative z-10">
@@ -192,74 +192,102 @@ const Dashboard = () => {
                 <BentoAction icon={Upload} label="Quick Seal" desc="Instant blockchain timestamp" onClick={() => navigate('/demo')} accent data-testid="quick-seal-btn" />
                 <BentoAction icon={FileText} label="Request Notarization" desc="Full notary service" onClick={() => navigate('/request-notarization')} data-testid="request-notary-btn" />
                 <BentoAction icon={Layers} label="Bulk Notarization" desc="Process multiple documents" onClick={() => navigate('/bulk-notarization')} data-testid="bulk-notarize-btn" />
+                {isUser && (
+                  <BentoAction icon={Search} label="Find Notaries" desc="Browse the marketplace" onClick={() => navigate('/marketplace')} data-testid="find-notaries-btn-core" />
+                )}
               </div>
             </div>
           </div>
 
-          {/* AI Intelligence */}
+          {/* AI Document Tools — regular users see only client-useful AI tools */}
           <div className="border border-slate-200 p-6 rounded-lg bg-cream-100" data-testid="ai-section">
-            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-5">AI Intelligence</h3>
+            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-5">
+              {isUser ? 'AI Document Tools' : 'AI Intelligence'}
+            </h3>
             <div className="space-y-2">
-              <BentoAction icon={Brain} label="AI Intelligence Hub" desc="Risk, Match, Voice" onClick={() => navigate('/ai-intelligence')} accent data-testid="ai-hub-btn" />
-              <BentoAction icon={Wand2} label="AI Doc Generator" onClick={() => navigate('/ai-generator')} data-testid="ai-gen-btn" />
+              {!isUser && (
+                <BentoAction icon={Brain} label="AI Intelligence Hub" desc="Risk, Match, Voice" onClick={() => navigate('/ai-intelligence')} accent data-testid="ai-hub-btn" />
+              )}
+              <BentoAction icon={Wand2} label="AI Doc Generator" onClick={() => navigate('/ai-generator')} accent={isUser} data-testid="ai-gen-btn" />
               <BentoAction icon={FileSearch} label="AI Summarizer" onClick={() => navigate('/ai-summarizer')} data-testid="ai-summarizer-btn" />
               <BentoAction icon={GitCompareArrows} label="Doc Compare" onClick={() => navigate('/doc-compare')} data-testid="doc-compare-btn" />
-              <BentoAction icon={Hammer} label="Doc Remediation" onClick={() => navigate('/document-remediation')} data-testid="doc-remediation-btn" />
+              {!isUser && (
+                <BentoAction icon={Hammer} label="Doc Remediation" onClick={() => navigate('/document-remediation')} data-testid="doc-remediation-btn" />
+              )}
             </div>
           </div>
 
-          {/* Security & Identity */}
-          <div className="border border-slate-200 p-6 rounded-lg bg-cream-100" data-testid="security-section">
-            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-5">Security & Identity</h3>
-            <div className="space-y-2">
-              <BentoAction icon={Network} label="Trust Hub" desc="Identity + TrustLayer + Vault" onClick={() => navigate('/trust-hub')} accent data-testid="trust-hub-btn" />
-              <BentoAction icon={Activity} label="Living Identity" desc="Continuous biometric trust" onClick={() => navigate('/identity')} data-testid="living-identity-btn" />
-              <BentoAction icon={Vault} label="Asset Vault" desc="Deeds, wills, IP, beneficiaries" onClick={() => navigate('/asset-vault')} data-testid="asset-vault-btn" />
-              <BentoAction icon={Video} label="Video Witness" onClick={() => navigate('/video-witness')} data-testid="video-witness-btn" />
-              <BentoAction icon={Fingerprint} label="Biometric Passport" onClick={() => navigate('/biometric-passport')} data-testid="biometric-btn" />
-              <BentoAction icon={Scale} label="Escrow Intelligence" onClick={() => navigate('/escrow')} data-testid="escrow-btn" />
-              <BentoAction icon={Coins} label="Tokenized Escrow" desc="HTS on Hedera" onClick={() => navigate('/tokenized-escrow')} data-testid="tokenized-escrow-btn" />
-              <BentoAction icon={ShieldCheck} label="Compliance Vault" desc="Continuous integrity & evidence" onClick={() => navigate('/pcv')} accent data-testid="pcv-btn" />
-              {(isAdmin || isNotary) && (
+          {/* Right column: regular users see "My Vault & Records"; notaries/admins see full Security & Identity */}
+          {isUser ? (
+            <div className="border border-slate-200 p-6 rounded-lg bg-cream-100" data-testid="my-vault-section">
+              <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-5">My Vault & Records</h3>
+              <div className="space-y-2">
+                <BentoAction icon={Vault} label="Asset Vault" desc="Wills, deeds, beneficiaries" onClick={() => navigate('/asset-vault')} accent data-testid="asset-vault-btn" />
+                <BentoAction icon={FileText} label="My Documents" desc="Unified document hub" onClick={() => navigate('/my-documents')} data-testid="my-documents-btn" />
+                <BentoAction icon={Save} label="My Drafts" onClick={() => navigate('/my-drafts')} data-testid="my-drafts-btn" />
+                <BentoAction icon={Timer} label="Cert Expiration" desc="Renewal tracking" onClick={() => navigate('/certificate-expiration')} data-testid="cert-expiry-btn" />
+                <BentoAction icon={Bell} label="Reminders" onClick={() => navigate('/reminders')} data-testid="reminders-btn" />
+              </div>
+            </div>
+          ) : (
+            <div className="border border-slate-200 p-6 rounded-lg bg-cream-100" data-testid="security-section">
+              <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-5">Security & Identity</h3>
+              <div className="space-y-2">
+                <BentoAction icon={Network} label="Trust Hub" desc="Identity + TrustLayer + Vault" onClick={() => navigate('/trust-hub')} accent data-testid="trust-hub-btn" />
+                <BentoAction icon={Activity} label="Living Identity" desc="Continuous biometric trust" onClick={() => navigate('/identity')} data-testid="living-identity-btn" />
+                <BentoAction icon={Vault} label="Asset Vault" desc="Deeds, wills, IP, beneficiaries" onClick={() => navigate('/asset-vault')} data-testid="asset-vault-btn" />
+                <BentoAction icon={Video} label="Video Witness" onClick={() => navigate('/video-witness')} data-testid="video-witness-btn" />
+                <BentoAction icon={Fingerprint} label="Biometric Passport" onClick={() => navigate('/biometric-passport')} data-testid="biometric-btn" />
+                <BentoAction icon={Scale} label="Escrow Intelligence" onClick={() => navigate('/escrow')} data-testid="escrow-btn" />
+                <BentoAction icon={Coins} label="Tokenized Escrow" desc="HTS on Hedera" onClick={() => navigate('/tokenized-escrow')} data-testid="tokenized-escrow-btn" />
+                <BentoAction icon={ShieldCheck} label="Compliance Vault" desc="Continuous integrity & evidence" onClick={() => navigate('/pcv')} accent data-testid="pcv-btn" />
                 <BentoAction icon={ShieldAlert} label="Fraud Intelligence" onClick={() => navigate('/fraud-intelligence')} data-testid="fraud-intel-btn" />
-              )}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Network & Tools — full width */}
-          <div className="col-span-1 md:col-span-4 pt-6 border-t border-slate-200 mt-2" data-testid="network-section">
-            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-4">Network & Tools</h3>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              <BentoAction icon={BookOpen} label="Templates" onClick={() => navigate('/templates')} data-testid="templates-btn" />
-              <BentoAction icon={CalendarClock} label="My Bookings" onClick={() => navigate('/my-bookings')} data-testid="bookings-btn" />
-              <BentoAction icon={Search} label="Find Notaries" onClick={() => navigate('/marketplace')} data-testid="find-notaries-btn" />
-              {(isAdmin || isNotary) && (
+          {/* Network & Tools — notary/admin only (regular users don't see staff tools) */}
+          {!isUser && (
+            <div className="col-span-1 md:col-span-4 pt-6 border-t border-slate-200 mt-2" data-testid="network-section">
+              <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 mb-4">Network & Tools</h3>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <BentoAction icon={BookOpen} label="Templates" onClick={() => navigate('/templates')} data-testid="templates-btn" />
+                <BentoAction icon={CalendarClock} label="My Bookings" onClick={() => navigate('/my-bookings')} data-testid="bookings-btn" />
+                <BentoAction icon={Search} label="Find Notaries" onClick={() => navigate('/marketplace')} data-testid="find-notaries-btn" />
                 <BentoAction icon={FileCheck} label="Approvals" onClick={() => navigate('/approvals')} data-testid="approvals-btn" />
-              )}
-              <BentoAction icon={Bell} label="Reminders" onClick={() => navigate('/reminders')} data-testid="reminders-btn" />
-              {(isAdmin || isNotary) && (
+                <BentoAction icon={Bell} label="Reminders" onClick={() => navigate('/reminders')} data-testid="reminders-btn" />
                 <BentoAction icon={Brain} label="ANAN Network" onClick={() => navigate('/anan')} data-testid="anan-btn" />
-              )}
-              <BentoAction icon={Palette} label="Branding" onClick={() => navigate('/branding')} data-testid="branding-btn" />
-              <BentoAction icon={Sparkles} label="Ceremony Mode" onClick={() => navigate('/ceremony')} data-testid="ceremony-btn" />
-              <BentoAction icon={Users} label="Multi-Signature" desc="2+ signers" onClick={() => navigate('/multi-signature')} data-testid="multi-sig-btn" />
-              <BentoAction icon={Timer} label="Cert Expiration" desc="Renewal & tracking" onClick={() => navigate('/certificate-expiration')} data-testid="cert-expiry-btn" />
-              <BentoAction icon={Globe} label="Public Audit Trail" onClick={() => window.open('/audit-trail', '_blank')} data-testid="audit-trail-btn" />
-              <BentoAction icon={FileText} label="My Documents" desc="Unified document hub" onClick={() => navigate('/my-documents')} data-testid="my-documents-btn" />
-              {isUser && (
-                <BentoAction icon={UserCheck} label="Become a Notary" onClick={() => navigate('/notary-professional')} data-testid="become-notary-btn" />
-              )}
-              {isNotary && (
-                <BentoAction icon={UserCheck} label="My Notary Profile" onClick={() => navigate('/notary-professional')} data-testid="notary-profile-btn" />
-              )}
+                <BentoAction icon={Palette} label="Branding" onClick={() => navigate('/branding')} data-testid="branding-btn" />
+                <BentoAction icon={Sparkles} label="Ceremony Mode" onClick={() => navigate('/ceremony')} data-testid="ceremony-btn" />
+                <BentoAction icon={Users} label="Multi-Signature" desc="2+ signers" onClick={() => navigate('/multi-signature')} data-testid="multi-sig-btn" />
+                <BentoAction icon={Timer} label="Cert Expiration" desc="Renewal & tracking" onClick={() => navigate('/certificate-expiration')} data-testid="cert-expiry-btn" />
+                <BentoAction icon={Globe} label="Public Audit Trail" onClick={() => window.open('/audit-trail', '_blank')} data-testid="audit-trail-btn" />
+                <BentoAction icon={FileText} label="My Documents" desc="Unified document hub" onClick={() => navigate('/my-documents')} data-testid="my-documents-btn" />
+                {isNotary && (
+                  <BentoAction icon={UserCheck} label="My Notary Profile" onClick={() => navigate('/notary-professional')} data-testid="notary-profile-btn" />
+                )}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Lightweight CTA for regular users: become a notary + verify */}
+          {isUser && (
+            <div className="col-span-1 md:col-span-3 pt-6 border-t border-slate-200 mt-2" data-testid="user-cta-section">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <BentoAction icon={ShieldCheck} label="Verify a Document" desc="Public verification" onClick={() => navigate('/verify')} data-testid="verify-btn" />
+                <BentoAction icon={Globe} label="Public Audit Trail" desc="Hedera transparency" onClick={() => window.open('/audit-trail', '_blank')} data-testid="audit-trail-btn-user" />
+                <BentoAction icon={UserCheck} label="Become a Notary" desc="Apply to join the network" onClick={() => navigate('/notary-professional')} data-testid="become-notary-btn" />
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* State Pickability Index */}
-        <div className="mt-8" data-testid="pickability-section">
-          <StatePickabilityWidget token={token} />
-        </div>
+        {/* State Pickability Index — notary/admin only (it's their state coverage gauge) */}
+        {!isUser && (
+          <div className="mt-8" data-testid="pickability-section">
+            <StatePickabilityWidget token={token} />
+          </div>
+        )}
 
         {/* Document Expiry Tracker */}
         <div className="mt-8">

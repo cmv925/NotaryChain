@@ -1,5 +1,15 @@
 # NotaryChain Changelog
 
+## May 25, 2026 — Dashboard Role Scoping (Critical UX Fix)
+- **Bug**: regular end-users (clients) were seeing every notary/admin feature on their `/dashboard` — Trust Hub, Living Identity, Asset Vault, Video Witness, Biometric Passport, Escrow Intelligence, Tokenized Escrow, Compliance Vault, Fraud Intelligence, the full Network & Tools (Templates, ANAN, Branding, Ceremony Mode, Multi-Sig, Approvals, etc.), State Pickability Index, and AI Intelligence Hub. This created confusion ("why does the standard user see all the same features as a notary?") and exposed notary-only workflows to clients who can't use them.
+- **Fix**: refactored `Dashboard.jsx` with proper role gating:
+  - **Regular users** now get a focused 3-panel layout: `Core Actions` (Quick Seal · Request Notarization · Bulk Notarization · Find Notaries), `AI Document Tools` (AI Doc Generator · AI Summarizer · Doc Compare — no fraud/remediation), `My Vault & Records` (Asset Vault · My Documents · My Drafts · Cert Expiration · Reminders), plus a bottom CTA strip (Verify a Document · Public Audit Trail · Become a Notary). Network & Tools and State Pickability Index hidden.
+  - **Notary/Admin** keep the full original layout (Core Actions + AI Intelligence + Security & Identity + Network & Tools + State Pickability).
+- New `data-testid`s added for QA gating: `my-vault-section`, `user-cta-section`, `find-notaries-btn-core`, `verify-btn`, `audit-trail-btn-user`.
+- Verified live: `demo@test.com` (regular user) sees focused 3-panel layout; `notarytest@test.com` (notary) sees full feature set.
+
+
+
 ## May 25, 2026 — Code Quality Pass (Critical & Important findings from review)
 
 ### Backend (Python — actionable fixes)
