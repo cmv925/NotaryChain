@@ -1,5 +1,11 @@
 # NotaryChain Changelog
 
+## May 25, 2026 — UI Verification: Scheduled Exports Panel + ACN Regulatory Oracle Watchlist
+- Visually verified `ScheduledExportsPanel` renders inside Admin → Audit Logs tab without React errors. Empty state, "New schedule" button, and refresh action all functional. (data-testid: `scheduled-exports-panel`)
+- Visually verified `Regulatory Oracle Watchlist` renders inside ACN Dashboard → Rule Updates tab. Live oracle feed shows seeded `DE-de`, `SG`, and `US-TX` events with severity badges, auto-applied indicators, and "Poll now" CTA. Mode badge correctly displays "mock". (data-testid: `acn-oracle-card`)
+- Closes verification gap from previous fork (iteration_117). No regressions detected.
+
+
 ## May 12, 2026 — Florida RON Compliance Phase 1 / M2 (KBA Integration)
 
 ### Knowledge-Based Authentication (KBA)

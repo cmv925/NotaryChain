@@ -276,19 +276,156 @@ def _build_email_html(export_id: str, generated_at: str, row_count: int,
 
 
 async def run_scheduler():
-    """Background coroutine — schedules `run_weekly_export()` every N hours."""
+    """Background coroutine — every minute, fires any scheduled_export_configs
+    whose `next_run` is due. Also keeps the legacy single-tenant weekly export
+    alive for users who haven't created a config yet."""
     global _started
     if _started:
         return
     _started = True
     initial = int(os.environ.get("SOC2_CRON_INITIAL_DELAY_SECS") or 300)
-    interval = int(os.environ.get("SOC2_CRON_INTERVAL_HOURS") or 168) * 3600
-    logger.info("[SOC2.cron] Scheduler started · initial=%ss · interval=%sh",
-                initial, interval // 3600)
+    logger.info("[SOC2.cron] Multi-tenant scheduler started · initial=%ss · tick=60s", initial)
     await asyncio.sleep(initial)
+
+    # First-boot fallback: if no configs exist, run the legacy weekly once
+    try:
+        if _db is not None and await _db.scheduled_export_configs.count_documents({}) == 0:
+            await run_weekly_export()
+    except Exception as e:
+        logger.warning("[SOC2.cron] First-boot fallback failed: %s", e)
+
     while True:
         try:
-            await run_weekly_export()
+            await _tick_scheduled_configs()
         except Exception as e:
-            logger.error("[SOC2.cron] Weekly run failed: %s", e)
-        await asyncio.sleep(interval)
+            logger.error("[SOC2.cron] Tick failed: %s", e)
+        await asyncio.sleep(60)  # check every minute
+
+
+async def _tick_scheduled_configs():
+    if _db is None:
+        return
+    now = datetime.now(timezone.utc)
+    cursor = _db.scheduled_export_configs.find(
+        {"enabled": True, "next_run": {"$lte": now.isoformat()}},
+        {"_id": 0},
+    )
+    async for cfg in cursor:
+        try:
+            await run_for_config(cfg)
+        except Exception as e:
+            logger.error("[SOC2.cron] config %s failed: %s", cfg.get("id"), e)
+
+
+async def run_for_config(cfg: dict) -> Optional[dict]:
+    """Generates an export bundle scoped to a single config + emails every
+    recipient. Returns {export_id, row_count, root_hash, sent_to[]} or None
+    if there were zero matching rows in the cadence window."""
+    if _db is None:
+        return None
+    cadence_hours = int(cfg.get("cadence_hours") or 168)
+    end = datetime.now(timezone.utc)
+    start = end - timedelta(hours=cadence_hours)
+    start_str = start.strftime("%Y-%m-%d")
+    end_str = end.strftime("%Y-%m-%d")
+
+    # Build the query — config filters override window for severity/actor/action
+    query: dict = {"timestamp": {"$gte": start.isoformat(), "$lte": end.isoformat()}}
+    filters = cfg.get("filters") or {}
+    if filters.get("actor"):
+        query["user_email"] = {"$regex": filters["actor"], "$options": "i"}
+    if filters.get("action"):
+        query["action"] = {"$regex": filters["action"], "$options": "i"}
+    if filters.get("severity"):
+        query["severity"] = filters["severity"]
+
+    rows: list = []
+    prev_hash = "0" * 64
+    async for row in _db.audit_logs.find(query, {"_id": 0}).sort("timestamp", 1):
+        row.pop("password", None)
+        payload = {k: v for k, v in row.items() if k not in ("prev_hash", "row_hash")}
+        row_hash = hashlib.sha256((prev_hash + _canonical_json(payload)).encode()).hexdigest()
+        row["prev_hash"] = prev_hash
+        row["row_hash"] = row_hash
+        rows.append(row)
+        prev_hash = row_hash
+
+    next_run = (end + timedelta(hours=cadence_hours)).isoformat()
+    if not rows:
+        # Bump the next_run anyway so the cron doesn't tight-loop
+        await _db.scheduled_export_configs.update_one(
+            {"id": cfg["id"]}, {"$set": {"last_run": end.isoformat(), "next_run": next_run}}
+        )
+        return None
+
+    export_id = f"AUDIT-CFG-{cfg.get('id', '')[:8].upper()}-{end.strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:4].upper()}"
+    root_hash = rows[-1]["row_hash"]
+    generated_at = end.isoformat()
+
+    # Hedera anchor (best-effort)
+    hcs_result = None
+    hedera_tx_id = None
+    hedera_topic = None
+    hedera_network = None
+    try:
+        from services.hedera_service import hedera_service
+        hcs_result = await hedera_service.submit_message(
+            hedera_service.default_topic_id,
+            {"type": "AUDIT_LOG_EXPORT_ANCHOR", "config_id": cfg.get("id"),
+             "export_id": export_id, "root_hash": root_hash,
+             "row_count": len(rows), "generated_at": generated_at,
+             "generated_by": "scheduled-cron"},
+        )
+        if hcs_result and hcs_result.get("success"):
+            hedera_tx_id = f"{hedera_service.account_id}@{int(end.timestamp())}"
+            hedera_topic = hedera_service.default_topic_id
+            hedera_network = hedera_service.network
+    except Exception as e:
+        logger.warning("[SOC2.cron] Hedera anchor failed: %s", e)
+
+    zip_bytes = _build_zip(rows, export_id, generated_at, f"scheduled:{cfg.get('name')}",
+                           root_hash, hcs_result, hedera_tx_id, hedera_topic,
+                           hedera_network, start_str, end_str)
+
+    await _db.audit_log_exports.insert_one({
+        "id": uuid.uuid4().hex,
+        "export_id": export_id,
+        "generated_at": generated_at,
+        "generated_by": f"scheduled:{cfg.get('name')}",
+        "row_count": len(rows),
+        "root_hash": root_hash,
+        "hedera_tx_id": hedera_tx_id,
+        "hedera_topic": hedera_topic,
+        "hedera_network": hedera_network,
+        "filters": {"start_date": start_str, "end_date": end_str, **filters},
+        "size_bytes": len(zip_bytes),
+        "scheduled": True,
+        "config_id": cfg.get("id"),
+        "email_sent_to": ", ".join(cfg.get("recipients", [])),
+        "zip_b64": __import__("base64").b64encode(zip_bytes).decode(),
+    })
+
+    # Email every recipient
+    sent_to: list[str] = []
+    try:
+        from services.email_service import EmailService
+        download_url = f"/api/admin/audit-export/scheduled/{export_id}/download"
+        html = _build_email_html(export_id, generated_at, len(rows), start_str, end_str,
+                                  root_hash, hedera_tx_id, hedera_topic, download_url)
+        subject = f"[NotaryChain SOC2] '{cfg.get('name')}' export — {len(rows)} rows · {end_str}"
+        for r in cfg.get("recipients", []):
+            try:
+                await EmailService.send_email(r, subject=subject, html_content=html)
+                sent_to.append(r)
+            except Exception as e:
+                logger.warning("[SOC2.cron] email to %s failed: %s", r, e)
+    except Exception as e:
+        logger.warning("[SOC2.cron] EmailService unavailable: %s", e)
+
+    # Update config bookkeeping
+    await _db.scheduled_export_configs.update_one(
+        {"id": cfg["id"]},
+        {"$set": {"last_run": generated_at, "last_export_id": export_id, "next_run": next_run}},
+    )
+
+    return {"export_id": export_id, "row_count": len(rows), "root_hash": root_hash, "sent_to": sent_to}

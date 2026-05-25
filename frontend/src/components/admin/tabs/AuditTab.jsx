@@ -16,6 +16,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 import AuditExportPanel from '../AuditExportPanel';
+import ScheduledExportsPanel from '../ScheduledExportsPanel';
 import { Link } from 'react-router-dom';
 
 export const AuditTab = ({ auditLogs }) => (
@@ -38,6 +39,7 @@ export const AuditTab = ({ auditLogs }) => (
             </div>
           </Link>
 
+          <ScheduledExportsPanel />
           <AuditExportPanel />
           <Card className="bg-white border-slate-200">
             <CardContent className="p-6">

@@ -659,12 +659,13 @@ async def mint_passport_nft(packet: dict, requester_email: str) -> dict:
     seed = hashlib.sha256(f"acn-nft::{packet_id}".encode()).hexdigest()
     metadata_uri = f"hedera://acn/{packet_id}"
 
-    if mode == "real" and _hedera is not None:
-        # Best-effort real HTS mint. The SDK call may not be available in the
-        # preview env; in that case we fall back to mock so the UX is never blocked.
+    if mode == "real":
+        # Real-mode mint via Hedera testnet HTS NFT collection.
         try:
-            if hasattr(_hedera, "mint_nft"):
-                res = await _hedera.mint_nft(metadata=metadata_uri.encode())
+            from services.hedera_testnet_client import get_testnet_client
+            tc = get_testnet_client()
+            if tc.ready:
+                res = await tc.mint_nft(metadata=metadata_uri.encode())
                 if res and res.get("success"):
                     return {
                         "mode": "real",
@@ -674,9 +675,11 @@ async def mint_passport_nft(packet: dict, requester_email: str) -> dict:
                         "metadata_uri": metadata_uri,
                         "transaction_id": res.get("transaction_id"),
                         "explorer_url": res.get("explorer_url"),
+                        "network": "Hedera Testnet",
                     }
+                logger.info("[ACN.nft] real mint returned no serial — falling back to mock (%s)", (res or {}).get("reason"))
         except Exception as e:
-            logger.warning("[ACN.nft] real mint failed, falling back to mock: %s", e)
+            logger.warning("[ACN.nft] real mint failed: %s — falling back to mock", e)
 
     # Mock-mode synthetic NFT
     token_num = int(seed[:10], 16) % 9_000_000 + 1_000_000

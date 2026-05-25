@@ -11,7 +11,7 @@ import os
 import re
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://merkle-dag-vault.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://acn-oracle-live.preview.emergentagent.com').rstrip('/')
 
 # Test credentials
 TEST_EMAIL = "admin@notarychain.com"

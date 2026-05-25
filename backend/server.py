@@ -128,9 +128,17 @@ audit_export_routes.set_db(db)
 from services import soc2_cron_service
 soc2_cron_service.set_db(db)
 
+# Per-org scheduled export configs (CRUD)
+from routes import scheduled_export_routes
+scheduled_export_routes.set_db(db)
+
 # Autonomous Cross-Border Notarization Network (ACN)
 from routes import acn_routes
 acn_routes.set_db(db)
+
+# ACN Regulatory Oracle — live rule-change feed
+from services import acn_oracle_service
+acn_oracle_service.set_db(db)
 
 # Feature gate middleware needs db
 from middleware.feature_gate import set_db as set_gate_db
@@ -279,6 +287,8 @@ app.include_router(admin_certs_routes.router)
 app.include_router(audit_export_routes.router)
 app.include_router(acn_routes.router)
 app.include_router(acn_routes.public_router)
+app.include_router(acn_oracle_service.router)
+app.include_router(scheduled_export_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -492,6 +502,7 @@ async def create_indexes():
         asyncio.create_task(service_health_monitor.run_service_monitor())
         asyncio.create_task(pcv_service.run_pcv_scheduler())
         asyncio.create_task(soc2_cron_service.run_scheduler())
+        asyncio.create_task(acn_oracle_service.run_scheduler())
 
         logger.info("Database indexes created/verified successfully")
     except Exception as e:

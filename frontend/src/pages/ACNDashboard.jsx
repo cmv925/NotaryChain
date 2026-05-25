@@ -497,6 +497,34 @@ function UpdatesView({ updates, jurisdictions, onRefresh }) {
   const [code, setCode] = useState('US-TX');
   const [summary, setSummary] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [oracleEvents, setOracleEvents] = useState([]);
+  const [oracleMode, setOracleMode] = useState('mock');
+  const [polling, setPolling] = useState(false);
+
+  const loadOracle = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/api/acn/oracle/events?limit=20`, { headers: authHeaders() });
+      setOracleEvents(res.data.events || []);
+      setOracleMode(res.data.mode);
+    } catch (_) { /* silent */ }
+  };
+
+  useEffect(() => { loadOracle(); /* mount only */ // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const pollNow = async () => {
+    setPolling(true);
+    try {
+      const res = await axios.post(`${BACKEND_URL}/api/acn/oracle/run-now`, {}, { headers: authHeaders() });
+      toast.success(`Oracle: ${res.data.new_events} new event(s) · ${res.data.packets_flagged} packet(s) flagged`);
+      await loadOracle();
+      onRefresh();
+    } catch (e) {
+      toast.error(e.response?.data?.detail || 'Oracle poll failed');
+    } finally {
+      setPolling(false);
+    }
+  };
 
   const post = async () => {
     if (!summary.trim()) { toast.warning('Describe the rule change first.'); return; }
@@ -515,8 +543,59 @@ function UpdatesView({ updates, jurisdictions, onRefresh }) {
     }
   };
 
+  const sevTone = {
+    high: 'bg-red-100 text-red-700 border-red-200',
+    medium: 'bg-amber-100 text-amber-700 border-amber-200',
+    low: 'bg-slate-100 text-slate-700 border-slate-200',
+  };
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="space-y-6">
+      {/* Regulatory-Oracle watchlist */}
+      <Card className="border-cyan-200 bg-gradient-to-br from-cyan-50/40 to-white" data-testid="acn-oracle-card">
+        <CardContent className="p-5">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <h3 className="text-sm font-bold text-navy-900 flex items-center gap-2">
+                <Cpu className="w-4 h-4 text-cyan-600" /> Regulatory Oracle — Watchlist
+                <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-700 font-bold">mode: {oracleMode}</span>
+              </h3>
+              <p className="text-[11px] text-slate-500 mt-0.5">
+                Auto-discovered notary-statute amendments. Each event automatically calls Rule Updates and flags affected packets for re-seal.
+              </p>
+            </div>
+            <Button size="sm" variant="outline" onClick={pollNow} disabled={polling} className="border-cyan-300 text-cyan-700 hover:bg-cyan-50" data-testid="acn-oracle-poll-btn">
+              <RefreshCw className={`w-3.5 h-3.5 mr-1 ${polling ? 'animate-spin' : ''}`} /> Poll now
+            </Button>
+          </div>
+          {oracleEvents.length === 0 ? (
+            <p className="text-center py-6 text-slate-500 text-sm">No oracle events yet — click "Poll now" to seed.</p>
+          ) : (
+            <div className="space-y-1.5 max-h-72 overflow-y-auto" data-testid="acn-oracle-events">
+              {oracleEvents.map(ev => (
+                <div key={ev.id} className="border border-slate-200 rounded p-2 bg-white/70" data-testid={`acn-oracle-${ev.jurisdiction_code}`}>
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider ${sevTone[ev.severity] || sevTone.medium}`}>{ev.severity}</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-700 font-bold">{ev.jurisdiction_code}</span>
+                    <span className="text-xs text-slate-500">eff. {ev.effective_date}</span>
+                    {ev.auto_applied && (
+                      <span className="ml-auto text-[10px] text-emerald-700 font-bold flex items-center gap-1">
+                        <ShieldCheck className="w-2.5 h-2.5" /> auto-applied · {ev.affected_packets} flagged
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-navy-900 font-medium">{ev.title}</p>
+                  <p className="text-[11px] text-slate-600 mt-0.5 line-clamp-2">{ev.summary}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5 font-mono">src: {ev.source} · {ev.discovered_at?.slice(0, 16)}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Manual rule update + history */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card className="border-slate-200">
         <CardContent className="p-5">
           <h3 className="text-sm font-bold text-navy-900 mb-3 flex items-center gap-2">
@@ -568,6 +647,7 @@ function UpdatesView({ updates, jurisdictions, onRefresh }) {
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }
