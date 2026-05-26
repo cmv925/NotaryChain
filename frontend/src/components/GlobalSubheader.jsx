@@ -57,7 +57,8 @@ export default function GlobalSubheader() {
     localStorage.setItem(VIEW_MODE_KEY, mode);
     // Notify any listeners (sidebar widgets, etc.) that mode changed
     window.dispatchEvent(new CustomEvent('nc:admin-view-mode-change', { detail: mode }));
-    navigate(mode === 'admin' ? '/admin' : '/dashboard');
+    // 'admin' → admin home, 'notary' → notary workspace (NOT the end-user dashboard)
+    navigate(mode === 'admin' ? '/admin' : '/notary/dashboard');
   };
 
   // If nothing to show on this page (home + not admin), render nothing.

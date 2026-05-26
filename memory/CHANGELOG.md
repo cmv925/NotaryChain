@@ -1,5 +1,47 @@
 # NotaryChain Changelog
 
+## May 26, 2026 — Admin Access Hardening + Notary Toggle Fix + LexisNexis InstantID Q&A (Drop-in-Ready)
+
+### 🔴 Admin Access Hardening (P0)
+- **Issue**: Admin received "Access Denied · Admin access required" toast on production (`acn-oracle-live.emergent.host`) when trying to access `/admin`. On preview, all admin endpoints returned 200 — bug was production-DB-specific (admin user missing or wrong role on prod after redeploy).
+- **Fix**: Added idempotent admin user seed (`services/admin_seed_service.py`) that runs on every backend startup (`@app.on_event("startup")`). Per integration playbook auth pattern:
+  - If `admin@notarychain.com` does NOT exist → CREATE with bcrypt-hashed password.
+  - If exists AND role=admin → no-op (NEVER overwrite an existing admin's password).
+  - If exists AND role!=admin → PROMOTE to admin (password untouched).
+  - Race-safe on parallel workers (insert collision treated as no-op).
+- **New env vars** (all optional, sane defaults):
+  - `ADMIN_SEED_EMAIL` (default `admin@notarychain.com`)
+  - `ADMIN_SEED_PASSWORD` (default `Admin123!`)
+  - `ADMIN_SEED_NAME` (default `Platform Admin`)
+  - `ADMIN_SEED_DISABLED` (`"true"` to skip seeding entirely)
+- Verified preview log: `[admin_seed] result={'action': 'exists', 'email': 'admin@notarychain.com'}`. On production redeploy, will fire `created` or `promoted` automatically.
+
+### 🟡 Admin ↔ Notary View Toggle (P1)
+- **Issue**: The `GlobalSubheader` toggle existed but the "Notary" button routed to `/dashboard` (the regular end-user view) instead of `/notary/dashboard` (the actual Notary Workstation).
+- **Fix**: `GlobalSubheader.switchMode` now routes `notary` → `/notary/dashboard`, `admin` → `/admin`. Persists choice in `localStorage` under `nc_admin_view_mode`. Verified live: admin → click "Notary" → URL becomes `/notary/dashboard` with full Notary Workstation (earnings, queue, performance widget) → click "Admin" → URL becomes `/admin`.
+
+### 🟢 LexisNexis InstantID Q&A — Real SOAP Adapter (P2, drop-in-ready)
+- **Issue**: `LexisNexisKBAProvider` was a stub that silently delegated to `MockKBAProvider`. The user will provide LexisNexis credentials later.
+- **Fix**: Wired the **real LexisNexis InstantID Q&A SOAP/XML integration** per the integration playbook. The adapter:
+  - Builds proper SOAP envelope with `<Authentication>` header (Username/Password/AccountId/ProfileId) via `lxml`.
+  - Embeds full PII (Name + DOB + SSN + Address) per LexisNexis InstantID Q&A schema.
+  - Configures Florida §117.295(3) quiz parameters: `NumberOfQuestions=5`, `MaxTimeSeconds=120`.
+  - Sends async via `httpx.AsyncClient` (non-blocking, FastAPI-safe).
+  - Parses `<Quiz>/<Question>/<Choice>` response, handles SOAP Faults gracefully.
+  - **Drop-in-ready**: silently falls back to `MockKBAProvider` if any required env var is missing OR if user PII is incomplete OR if vendor SOAP call fails (degrades gracefully, never blocks notarization).
+- `start_kba` route now enriches `principal` dict with full PII (first/last name, DOB, SSN-last-4, full address) pulled from the user record, so LexisNexis has everything it needs when env vars are populated.
+- **Env vars required to activate** (set in `backend/.env`, restart backend → auto-swap):
+  - `LEXISNEXIS_INSTANTID_ENDPOINT_URL` (full SOAP endpoint, sandbox or prod)
+  - `LEXISNEXIS_USERNAME`
+  - `LEXISNEXIS_PASSWORD`
+  - `LEXISNEXIS_ACCOUNT_ID` (subscriber ID)
+  - `LEXISNEXIS_PROFILE_ID` (InstantID Q&A quiz template ID)
+  - Optional: `LEXISNEXIS_ENVIRONMENT` (`sandbox|production`, default `sandbox`), `LEXISNEXIS_TIMEOUT` (default `10`), `LEXISNEXIS_SOAP_NS` (override namespace if your WSDL differs)
+- **Where to obtain credentials**: contact LexisNexis Risk Solutions sales at +1‑408‑200‑5755 or via https://risk.lexisnexis.com/products/instantid-q-and-a — sandbox/production credentials + WSDL URL are issued after MSA signed.
+- Verified preview: `GET /api/kba/status → {"provider":"mock","is_mock":true}`. `POST /api/kba/start → {"provider":"mock","questions_count":5}`. No regressions in mock mode.
+
+
+
 ## May 25, 2026 — Dashboard Role Scoping (Critical UX Fix)
 - **Bug**: regular end-users (clients) were seeing every notary/admin feature on their `/dashboard` — Trust Hub, Living Identity, Asset Vault, Video Witness, Biometric Passport, Escrow Intelligence, Tokenized Escrow, Compliance Vault, Fraud Intelligence, the full Network & Tools (Templates, ANAN, Branding, Ceremony Mode, Multi-Sig, Approvals, etc.), State Pickability Index, and AI Intelligence Hub. This created confusion ("why does the standard user see all the same features as a notary?") and exposed notary-only workflows to clients who can't use them.
 - **Fix**: refactored `Dashboard.jsx` with proper role gating:

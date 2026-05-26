@@ -493,6 +493,14 @@ async def create_indexes():
         from services.fraud_intelligence_service import seed_fraud_intelligence
         await seed_fraud_intelligence(db)
 
+        # Idempotent admin user seed (guarantees admin@notarychain.com exists on every deploy)
+        from services.admin_seed_service import seed_admin_user
+        try:
+            seed_result = await seed_admin_user(db)
+            logger.info(f"[admin_seed] result={seed_result}")
+        except Exception as e:
+            logger.warning(f"[admin_seed] failed (non-fatal): {e}")
+
         # Start document expiry background checker
         asyncio.create_task(expiry_service.run_expiry_checker())
         asyncio.create_task(reminder_service.run_reminder_checks())
