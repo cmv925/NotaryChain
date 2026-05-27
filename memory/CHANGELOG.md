@@ -1,5 +1,26 @@
 # NotaryChain Changelog
 
+## May 27, 2026 — Production Blank-Page Fix (Service Worker Stale-Cache Bug)
+- **Bug**: After redeploy to `notarychain.app`, the production site rendered a completely blank body (only the `<title>` showed in the browser tab title). Preview was unaffected.
+- **Root cause**: `public/sw.js` used a **cache-first** strategy for `/` and `/index.html` (lines 2-6, 64-67) with a never-changing `CACHE_NAME = 'notarychain-v1'`. Classic SPA + service-worker stale-cache failure mode:
+  1. First production visit installed the SW and cached the OLD `/index.html` (which referenced OLD hashed JS bundles like `main.abc123.js`).
+  2. Redeploy → new build produced NEW JS bundle filenames (`main.xyz789.js`); the old bundle no longer existed.
+  3. Subsequent visits → SW served cached OLD `/index.html` → browser tried to load OLD bundle → 404 → React never mounted → blank page.
+  Since `CACHE_NAME` never changed, old caches were never evicted, so the bug self-perpetuated across every deploy.
+- **Fix** (`public/sw.js` fully rewritten):
+  - Bumped to versioned cache names: `notarychain-shell-v3-2026-05-27`, `notarychain-api-v3-...`, `notarychain-certs-v3-...`. Old caches now evicted on every deploy.
+  - **Navigation requests + `text/html` + everything else → NETWORK-FIRST** (with cached-shell fallback only when offline). Fresh `/index.html` always reflects the deployed build.
+  - **Hashed `/static/*` assets → CACHE-FIRST** (filenames include build hash → immutable → safe).
+  - `/api/*` → network-first (unchanged).
+  - `/certificate*` → cache-first for offline-viewable PDFs (unchanged).
+  - `skipWaiting()` on install + `clients.claim()` on activate so the new SW takes control immediately.
+  - On activate, the new SW posts `{type:'SW_UPDATED'}` to every open client so they auto-refresh — fixes users stuck on the broken cached shell without making them manually clear cache.
+- **Fix** (`src/index.js`):
+  - Listens for `SW_UPDATED` messages + `controllerchange` event → triggers `window.location.reload()` once per session. Users stuck on the cached broken HTML get the fresh shell on their very next page load with zero manual intervention.
+- **Future-proofing**: bump `CACHE_VERSION` on every meaningful deploy (or just leave it alone — the network-first navigation strategy means stale-HTML can never block users again).
+- Verified live on preview: React mounts, SW registered & activated, full landing page renders, zero console errors.
+
+
 ## May 27, 2026 — Primary CTA Button Color Fix (Accept buttons + illegible navy-on-navy regression)
 - **Issue**: Notary Workstation "Accept" buttons (and several other primary CTAs across the app) appeared as **dark navy on dark navy** — the "Accept" text was barely legible. Root cause: my earlier gray→navy sweep (May 25) over-applied to primary CTA buttons that originally read `bg-gray-700 hover:bg-gray-800 text-gray-900` — that pattern was meant for raised dark CTAs that worked when the text was inheriting from light parent, but the sweep made it dark-on-dark.
 - **Fix** (4 surgical sweeps across all 228 `.jsx/.js` files):
