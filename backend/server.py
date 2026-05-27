@@ -299,6 +299,11 @@ oracle_watchlist_routes.set_db(db)
 app.include_router(oracle_watchlist_routes.router)
 app.include_router(scheduled_export_routes.router)
 
+# Dashboard Telemetry — audit stream for admin/notary surfaces + tour analytics
+from routes import telemetry_routes
+telemetry_routes.set_db(db)
+app.include_router(telemetry_routes.router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

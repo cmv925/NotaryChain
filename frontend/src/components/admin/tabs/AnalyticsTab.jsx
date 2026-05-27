@@ -11,6 +11,7 @@ import {
 import { Button } from '../../ui/button';
 import { Card, CardContent } from '../../ui/card';
 import { Input } from '../../ui/input';
+import TourCompletionCard from '../TourCompletionCard';
 import {
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart as RechartsPie, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -468,6 +469,9 @@ export const AnalyticsTab = ({ analyticsData, analyticsPeriod, ceremonyAnalytics
                 </CardContent>
               </Card>
             )}
+
+            {/* Onboarding Tour Engagement (always shown — uses own endpoint) */}
+            <TourCompletionCard />
           </div>
 );
 

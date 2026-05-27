@@ -19,6 +19,7 @@ import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useWS } from '../contexts/WebSocketContext';
 import { toast } from './use-toast';
+import { emitTelemetry } from './useDashboardTelemetry';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -267,8 +268,10 @@ export default function useAdminData({ onForbidden } = {}) {
     try {
       await axios.post(`${API}/admin/notaries/${notaryId}/approve`, {}, authHeaders);
       toast({ title: 'Success', description: 'Notary application approved' });
+      emitTelemetry({ surface: 'command_authority', action: 'approve_notary', target_id: notaryId, outcome: 'success' });
       fetchDashboardData();
     } catch {
+      emitTelemetry({ surface: 'command_authority', action: 'approve_notary', target_id: notaryId, outcome: 'error' });
       toast({ title: 'Error', description: 'Failed to approve application', variant: 'destructive' });
     } finally {
       setProcessingAction(null);
@@ -280,8 +283,10 @@ export default function useAdminData({ onForbidden } = {}) {
     try {
       await axios.post(`${API}/admin/notaries/${notaryId}/reject`, {}, authHeaders);
       toast({ title: 'Success', description: 'Notary application rejected' });
+      emitTelemetry({ surface: 'command_authority', action: 'reject_notary', target_id: notaryId, outcome: 'success' });
       fetchDashboardData();
     } catch {
+      emitTelemetry({ surface: 'command_authority', action: 'reject_notary', target_id: notaryId, outcome: 'error' });
       toast({ title: 'Error', description: 'Failed to reject application', variant: 'destructive' });
     } finally {
       setProcessingAction(null);
@@ -296,9 +301,21 @@ export default function useAdminData({ onForbidden } = {}) {
         title: 'Success',
         description: `User ${newStatus === 'active' ? 'enabled' : 'disabled'}`,
       });
+      emitTelemetry({
+        surface: 'command_authority',
+        action: newStatus === 'active' ? 'enable_user' : 'disable_user',
+        target_id: userId,
+        outcome: 'success',
+      });
       fetchDashboardData();
       setSelectedUser(null);
     } catch {
+      emitTelemetry({
+        surface: 'command_authority',
+        action: newStatus === 'active' ? 'enable_user' : 'disable_user',
+        target_id: userId,
+        outcome: 'error',
+      });
       toast({ title: 'Error', description: 'Failed to update user status', variant: 'destructive' });
     } finally {
       setProcessingAction(null);

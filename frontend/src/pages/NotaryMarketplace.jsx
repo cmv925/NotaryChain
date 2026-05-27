@@ -8,7 +8,7 @@ import { Input } from '../components/ui/input';
 import { Card, CardContent } from '../components/ui/card';
 import {
   Search, Star, MapPin, Shield, Filter, Users, Award,
-  ChevronRight, Loader2, MessageSquare, Video, Calendar as CalendarIcon,
+  ChevronRight, Loader2, MessageSquare, Video, Calendar as CalendarIcon, UserCheck,
 } from 'lucide-react';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { toast } from '../hooks/use-toast';
@@ -310,7 +310,34 @@ const NotaryMarketplace = () => {
                 <Card className="bg-white border-slate-200">
                   <CardContent className="p-12 text-center">
                     <Users className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                    <p className="text-slate-500">{t('marketplace.no_results')}</p>
+                    <p className="text-slate-500 mb-6">{t('marketplace.no_results')}</p>
+                    {/* Supply-side recruitment CTA: only shown when search returns zero notaries. */}
+                    <div
+                      className="max-w-md mx-auto bg-gradient-to-br from-coral-50 to-cream-200 border border-coral-200 rounded-xl p-5 text-left"
+                      data-testid="marketplace-recruit-cta"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-coral-500 flex items-center justify-center flex-shrink-0">
+                          <UserCheck className="w-4.5 h-4.5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-navy-900 font-semibold text-sm">
+                            Couldn't find one in your state?
+                          </p>
+                          <p className="text-slate-600 text-xs mt-1">
+                            Apply to join NotaryChain — earn $25 per notarization and get matched the moment a client searches your area.
+                          </p>
+                          <Button
+                            onClick={() => navigate('/notary-professional')}
+                            size="sm"
+                            className="mt-3 bg-coral-500 hover:bg-coral-600 text-white"
+                            data-testid="marketplace-become-notary-btn"
+                          >
+                            Apply to join the network <ChevronRight className="w-3.5 h-3.5 ml-1" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               ) : (

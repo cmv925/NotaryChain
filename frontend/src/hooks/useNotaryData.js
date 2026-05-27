@@ -21,6 +21,7 @@ import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useWS } from '../contexts/WebSocketContext';
 import { toast } from './use-toast';
+import { emitTelemetry } from './useDashboardTelemetry';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -88,8 +89,10 @@ export default function useNotaryData() {
     try {
       await axios.post(`${API}/notary/requests/${requestId}/assign`, {}, authHeaders);
       toast({ title: 'Success', description: 'Request assigned to you' });
+      emitTelemetry({ surface: 'assurance', action: 'assign_request', target_id: requestId, outcome: 'success' });
       fetchDashboardData();
     } catch (error) {
+      emitTelemetry({ surface: 'assurance', action: 'assign_request', target_id: requestId, outcome: 'error' });
       toast({
         title: 'Error',
         description: error.response?.data?.detail || 'Failed to assign request',
@@ -105,8 +108,10 @@ export default function useNotaryData() {
     try {
       await axios.post(`${API}/video/rooms`, { notary_request_id: requestId }, authHeaders);
       toast({ title: 'Session Created', description: 'Redirecting to video session...' });
+      emitTelemetry({ surface: 'assurance', action: 'start_session', target_id: requestId, outcome: 'success' });
       navigate(`/session/${requestId}`);
     } catch (error) {
+      emitTelemetry({ surface: 'assurance', action: 'start_session', target_id: requestId, outcome: 'error' });
       toast({
         title: 'Error',
         description: error.response?.data?.detail || 'Failed to start session',
@@ -129,10 +134,12 @@ export default function useNotaryData() {
         title: 'Notarization Complete',
         description: 'Document notarized and sealed on blockchain',
       });
+      emitTelemetry({ surface: 'assurance', action: 'complete_notarization', target_id: requestId, outcome: 'success' });
       setSelectedRequest(null);
       fetchDashboardData();
       return true;
     } catch (error) {
+      emitTelemetry({ surface: 'assurance', action: 'complete_notarization', target_id: requestId, outcome: 'error' });
       toast({
         title: 'Error',
         description: error.response?.data?.detail || 'Failed to complete notarization',
@@ -154,10 +161,12 @@ export default function useNotaryData() {
         authHeaders,
       );
       toast({ title: 'Request Rejected', description: 'The request has been released back to the pool' });
+      emitTelemetry({ surface: 'assurance', action: 'reject_request', target_id: requestId, outcome: 'success' });
       setSelectedRequest(null);
       fetchDashboardData();
       return true;
     } catch (error) {
+      emitTelemetry({ surface: 'assurance', action: 'reject_request', target_id: requestId, outcome: 'error' });
       toast({
         title: 'Error',
         description: error.response?.data?.detail || 'Failed to reject request',

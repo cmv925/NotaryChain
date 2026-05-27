@@ -11,6 +11,7 @@ import {
 import { Button } from '../../ui/button';
 import { Card, CardContent } from '../../ui/card';
 import { Input } from '../../ui/input';
+import RecentActivityPanel from '../RecentActivityPanel';
 import {
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart as RechartsPie, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -673,6 +674,9 @@ export const OperationsTab = ({ alertForm, alertSettings, editingAlerts, exportI
                 </CardContent>
               </Card>
             )}
+
+            {/* Live operator activity feed — fed by useDashboardTelemetry. */}
+            <RecentActivityPanel />
           </div>
 );
 

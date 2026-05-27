@@ -207,6 +207,13 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 
 
 ## Changelog (Recent)
+- **2026-05-27 (v3, fifth pass):**
+  - **Marketplace recruitment CTA** (`NotaryMarketplace.jsx`): When a search returns zero notaries, an inline coral banner now appears with "Couldn't find one in your state? Apply to join NotaryChain — earn $25 per notarization" + an *Apply to join the network* button → `/notary-professional`. testids `marketplace-recruit-cta`, `marketplace-become-notary-btn`.
+  - **Unified `useDashboardTelemetry()` hook** (`/hooks/useDashboardTelemetry.js`): Single audit stream for both portals + onboarding tour. Module-level ring buffer (last 200 events), `emitTelemetry()` standalone helper (no hook needed — used by `OnboardingTour`), fire-and-forget POST to `/api/telemetry/event`, window-event bridge for cross-tree emitters.
+  - **Telemetry backend** (`/backend/routes/telemetry_routes.py`): `POST /api/telemetry/event` (any authed user), `GET /api/admin/telemetry/recent` (admin), `GET /api/admin/analytics/tour-completion` (admin). Stored in `dashboard_telemetry` collection with auto-trim at 5,000 events. Mongo aggregation pipeline computes per-portal started/completed/skipped + completion rate by distinct actor.
+  - **Wired telemetry across all dashboard mutations** in `useAdminData` (approve/reject notary, enable/disable user) and `useNotaryData` (assign/start/complete/reject request) — every action posts `surface + action + target_id + outcome`.
+  - **`TourCompletionCard.jsx`** added to admin Analytics tab. Per-portal rows + gradient global completion bar. Verified end-to-end: card renders with live data (1 started · 1 completed · 100% rate for Command Authority Suite portal).
+  - **`RecentActivityPanel.jsx`** added to admin Operations tab. Merges live in-memory ring buffer + last 50 server-side events, dedupes by ts+action+target_id, color-coded by surface (Command/Assurance/Client/Tour) with outcome checkmarks and relative timestamps.
 - **2026-05-27 (v3, fourth pass):**
   - **Fixed final ESLint warning:** `OracleWatchlistPanel.jsx:48` — moved `eslint-disable-next-line react-hooks/exhaustive-deps` comment above the dep array (was misplaced inside the callback). Frontend now compiles with **zero warnings**.
   - **Extracted `useNotaryData()` hook** (`/hooks/useNotaryData.js`, 275 lines). Owns 8 data slots, 4 loading flags, 1 baseline fetcher, 4 mutations (assign/start/complete/reject), 3 AI fetchers (analysis/copilot/journal-prefill), plus the WebSocket subscriptions and derived metrics (estimatedEarnings, todayEarnings). Returns `{ data, flags, actions }`.
