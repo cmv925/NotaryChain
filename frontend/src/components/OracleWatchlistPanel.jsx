@@ -45,7 +45,10 @@ export default function OracleWatchlistPanel({ token }) {
 
   const headers = { Authorization: `Bearer ${token}` };
 
-  useEffect(() => { fetchList(); /* eslint-disable-next-line */ }, [token]);
+  useEffect(() => {
+    fetchList();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchList is intentionally re-created per render; only re-run on token change
+  }, [token]);
 
   function blankForm() {
     return {

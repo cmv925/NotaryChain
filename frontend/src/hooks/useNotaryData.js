@@ -1,0 +1,275 @@
+/**
+ * useNotaryData — owns ALL data fetching, mutations, and per-request state
+ * for the Assurance Portal (NotaryDashboard).
+ *
+ * Returns three buckets:
+ *   • data:    server-side state + derived split lists (pending/assigned/completed)
+ *   • flags:   loading / processing flags
+ *   • actions: imperative fetchers + mutations (assign, complete, reject…)
+ *
+ * Real-time: subscribes to `notary_queue_update`, `request_assigned`,
+ * `request_completed` and re-fetches the baseline.
+ *
+ * The split between "notary view" (queue + assigned-to-me) and "client view"
+ * (their own requests) is preserved via the `is_notary` flag from
+ * GET /api/notary/stats — we silently fall back to client-side request lists
+ * for non-notary users so the dashboard still works.
+ */
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
+import { useWS } from '../contexts/WebSocketContext';
+import { toast } from './use-toast';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
+
+export default function useNotaryData() {
+  const { token } = useAuth();
+  const { subscribe } = useWS();
+  const navigate = useNavigate();
+
+  // ─── Baseline data ─────────────────────────────────────────────
+  const [stats, setStats] = useState(null);
+  const [pendingRequests, setPendingRequests] = useState([]);
+  const [assignedRequests, setAssignedRequests] = useState([]);
+  const [completedRequests, setCompletedRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // ─── Detail / per-row state ────────────────────────────────────
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [processingAction, setProcessingAction] = useState(null);
+  const [aiAnalysis, setAiAnalysis] = useState(null);
+  const [copilotData, setCopilotData] = useState(null);
+  const [journalPrefill, setJournalPrefill] = useState(null);
+
+  // ─── Loading flags ─────────────────────────────────────────────
+  const [loadingAi, setLoadingAi] = useState(false);
+  const [loadingCopilot, setLoadingCopilot] = useState(false);
+  const [loadingJournal, setLoadingJournal] = useState(false);
+
+  const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
+
+  // ─── Fetchers ─────────────────────────────────────────────────
+  const fetchDashboardData = async () => {
+    try {
+      const [statsRes, pendingRes, assignedRes, myReqsRes] = await Promise.all([
+        axios.get(`${API}/notary/stats`, authHeaders).catch(() => ({ data: { is_notary: false } })),
+        axios.get(`${API}/notary/requests/pending`, authHeaders).catch(() => ({ data: [] })),
+        axios.get(`${API}/notary/requests/assigned`, authHeaders).catch(() => ({ data: [] })),
+        axios.get(`${API}/notary/requests/my`, authHeaders).catch(() => ({ data: [] })),
+      ]);
+
+      const isNotary = !!statsRes.data?.is_notary;
+      setStats(statsRes.data);
+
+      if (isNotary) {
+        setPendingRequests(pendingRes.data);
+        const assigned = assignedRes.data;
+        setAssignedRequests(assigned.filter((r) => r.status !== 'completed'));
+        setCompletedRequests(assigned.filter((r) => r.status === 'completed'));
+      } else {
+        const myReqs = myReqsRes.data || [];
+        setPendingRequests(myReqs.filter((r) => ['pending', 'submitted', 'reviewing'].includes(r.status)));
+        setAssignedRequests(myReqs.filter((r) => ['assigned', 'in_progress'].includes(r.status)));
+        setCompletedRequests(myReqs.filter((r) => r.status === 'completed'));
+      }
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ─── Mutations ────────────────────────────────────────────────
+  const handleAssignRequest = async (requestId) => {
+    setProcessingAction(requestId);
+    try {
+      await axios.post(`${API}/notary/requests/${requestId}/assign`, {}, authHeaders);
+      toast({ title: 'Success', description: 'Request assigned to you' });
+      fetchDashboardData();
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error.response?.data?.detail || 'Failed to assign request',
+        variant: 'destructive',
+      });
+    } finally {
+      setProcessingAction(null);
+    }
+  };
+
+  const handleStartSession = async (requestId) => {
+    setProcessingAction(requestId);
+    try {
+      await axios.post(`${API}/video/rooms`, { notary_request_id: requestId }, authHeaders);
+      toast({ title: 'Session Created', description: 'Redirecting to video session...' });
+      navigate(`/session/${requestId}`);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error.response?.data?.detail || 'Failed to start session',
+        variant: 'destructive',
+      });
+    } finally {
+      setProcessingAction(null);
+    }
+  };
+
+  const handleCompleteNotarization = async (requestId) => {
+    setProcessingAction(requestId);
+    try {
+      await axios.post(
+        `${API}/notary/requests/${requestId}/complete`,
+        { notes: 'Notarization completed successfully', seal_package: true },
+        authHeaders,
+      );
+      toast({
+        title: 'Notarization Complete',
+        description: 'Document notarized and sealed on blockchain',
+      });
+      setSelectedRequest(null);
+      fetchDashboardData();
+      return true;
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error.response?.data?.detail || 'Failed to complete notarization',
+        variant: 'destructive',
+      });
+      return false;
+    } finally {
+      setProcessingAction(null);
+    }
+  };
+
+  const handleRejectRequest = async (requestId) => {
+    if (!window.confirm('Are you sure you want to reject this request?')) return false;
+    setProcessingAction(requestId);
+    try {
+      await axios.post(
+        `${API}/notary/requests/${requestId}/reject`,
+        { reason: 'Unable to process this request' },
+        authHeaders,
+      );
+      toast({ title: 'Request Rejected', description: 'The request has been released back to the pool' });
+      setSelectedRequest(null);
+      fetchDashboardData();
+      return true;
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error.response?.data?.detail || 'Failed to reject request',
+        variant: 'destructive',
+      });
+      return false;
+    } finally {
+      setProcessingAction(null);
+    }
+  };
+
+  // ─── AI / Copilot ─────────────────────────────────────────────
+  const fetchAiAnalysis = async (requestId) => {
+    setLoadingAi(true);
+    try {
+      const res = await axios.get(`${API}/ai/analysis/${requestId}`, authHeaders);
+      setAiAnalysis(res.data);
+    } catch {
+      setAiAnalysis(null);
+    } finally {
+      setLoadingAi(false);
+    }
+  };
+
+  const fetchCopilotAnalysis = async (requestId) => {
+    setLoadingCopilot(true);
+    setCopilotData(null);
+    try {
+      const res = await axios.post(`${API}/ai-copilot/analyze`, { request_id: requestId }, authHeaders);
+      setCopilotData(res.data);
+    } catch {
+      toast({ title: 'Copilot Error', description: 'Failed to get AI analysis', variant: 'destructive' });
+    } finally {
+      setLoadingCopilot(false);
+    }
+  };
+
+  const fetchJournalPrefill = async (requestId) => {
+    setLoadingJournal(true);
+    setJournalPrefill(null);
+    try {
+      const res = await axios.post(`${API}/ai-copilot/prefill-journal`, { request_id: requestId }, authHeaders);
+      setJournalPrefill(res.data);
+    } catch {
+      toast({ title: 'Error', description: 'Failed to prefill journal', variant: 'destructive' });
+    } finally {
+      setLoadingJournal(false);
+    }
+  };
+
+  const openRequest = async (request) => {
+    setSelectedRequest(request);
+    setAiAnalysis(null);
+    setCopilotData(null);
+    setJournalPrefill(null);
+    await fetchAiAnalysis(request.id);
+  };
+
+  const closeRequest = () => setSelectedRequest(null);
+
+  // ─── Lifecycle ────────────────────────────────────────────────
+  useEffect(() => {
+    fetchDashboardData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only baseline
+  }, []);
+
+  useEffect(() => {
+    const unsub1 = subscribe('notary_queue_update', () => fetchDashboardData());
+    const unsub2 = subscribe('request_assigned', () => fetchDashboardData());
+    const unsub3 = subscribe('request_completed', () => fetchDashboardData());
+    return () => { unsub1(); unsub2(); unsub3(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subscribe]);
+
+  // Derived metrics — kept here so the page stays declarative.
+  const estimatedEarnings = (stats?.total_completed || 0) * 25;
+  const todayEarnings = completedRequests.filter((r) => {
+    const completed = new Date(r.completed_at || r.created_at);
+    const today = new Date();
+    return completed.toDateString() === today.toDateString();
+  }).length * 25;
+
+  return {
+    data: {
+      stats,
+      pendingRequests,
+      assignedRequests,
+      completedRequests,
+      selectedRequest,
+      processingAction,
+      aiAnalysis,
+      copilotData,
+      journalPrefill,
+      estimatedEarnings,
+      todayEarnings,
+    },
+    flags: {
+      loading,
+      loadingAi,
+      loadingCopilot,
+      loadingJournal,
+    },
+    actions: {
+      fetchDashboardData,
+      handleAssignRequest,
+      handleStartSession,
+      handleCompleteNotarization,
+      handleRejectRequest,
+      fetchCopilotAnalysis,
+      fetchJournalPrefill,
+      openRequest,
+      closeRequest,
+    },
+  };
+}

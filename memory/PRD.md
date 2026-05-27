@@ -207,10 +207,15 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 
 
 ## Changelog (Recent)
+- **2026-05-27 (v3, fourth pass):**
+  - **Fixed final ESLint warning:** `OracleWatchlistPanel.jsx:48` — moved `eslint-disable-next-line react-hooks/exhaustive-deps` comment above the dep array (was misplaced inside the callback). Frontend now compiles with **zero warnings**.
+  - **Extracted `useNotaryData()` hook** (`/hooks/useNotaryData.js`, 275 lines). Owns 8 data slots, 4 loading flags, 1 baseline fetcher, 4 mutations (assign/start/complete/reject), 3 AI fetchers (analysis/copilot/journal-prefill), plus the WebSocket subscriptions and derived metrics (estimatedEarnings, todayEarnings). Returns `{ data, flags, actions }`.
+  - **NotaryDashboard.jsx: 731 → 508 lines** (cumulative 1335 → 508 = **62% smaller**). Inlined 3 tiny presentational sub-components (`StatCard`, `RequestList`, `NotaryQuickPanel`/`QuickActionBtn`) and pulled the data layer fully into the hook.
+  - Verified end-to-end via screenshot tool — stats grid, tabs (Available/My Requests/History/Schedule), tab switching, request cards from real backend data, right-side Performance/Quick Actions panel all functional. Zero console errors.
 - **2026-05-27 (v3, third pass):**
   - **Fixed React "missing key prop" warning on `/dashboard`:** root cause was `GET /api/documents/seals` projection (`document_routes.py`) excluding `id` — every doc came back with `id: null`, so `key={doc.id}` was undefined. Fixed the projection AND added robust fallback keys (`doc.id || doc.sha256_hash || doc.transaction_id || \`doc-${idx}\``) in `Dashboard.jsx` for both maps. Console now clean.
   - **Extracted `useAdminData()` hook** (`/hooks/useAdminData.js`, 357 lines). Owns ALL admin data state (15 stateful slots), loading flags (11 slots), fetchers (12), and mutations (4) plus the mount-only effect + WS subscriptions. Returns `{ data, flags, actions }`.
-  - **AdminDashboard.jsx: 403 → 203 lines** (now ~70% smaller than the original 671). Pure layout + UI-state composition. Verified end-to-end: stats grid renders, tabs lazy-load (Operations tab populated full Hedera/Storage/Payments/Database panels after click), zero console errors.
+  - **AdminDashboard.jsx: 403 → 203 lines** (now ~70% smaller than the original 671). Pure layout + UI-state composition.
 - **2026-05-27 (v3, second pass):**
   - **UserDropdown:** Added one-click "Restart tour" entry (`[data-testid=user-dropdown-restart-tour]`). Detects the current portal via `useViewMode`, calls `resetOnboarding(portal)` to clear that portal's localStorage key, and reloads/navigates to the canonical portal route so the tour auto-fires fresh.
   - **AdminDashboard refactor:** 671 → 403 lines. Extracted `AdminHeader.jsx`, `AdminStatsGrid.jsx`, `AdminTabsNav.jsx`, `UserDetailsModal.jsx` under `/components/admin/`.
