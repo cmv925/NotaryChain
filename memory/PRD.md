@@ -207,7 +207,12 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 
 
 ## Changelog (Recent)
-- **2026-05-27 (v3):**
+- **2026-05-27 (v3, second pass):**
+  - **UserDropdown:** Added one-click "Restart tour" entry (`[data-testid=user-dropdown-restart-tour]`). Detects the current portal via `useViewMode`, calls `resetOnboarding(portal)` to clear that portal's localStorage key, and reloads/navigates to the canonical portal route so the tour auto-fires fresh.
+  - **AdminDashboard refactor:** 671 → 403 lines. Extracted `AdminHeader.jsx`, `AdminStatsGrid.jsx`, `AdminTabsNav.jsx`, `UserDetailsModal.jsx` under `/components/admin/`.
+  - **NotaryDashboard refactor:** 1335 → 731 lines. Extracted `RequestCard.jsx` and `RequestDetailModal.jsx` under `/components/notary/`. Also fixed: the `<OnboardingTour portal="assurance" />` mount that had been mistakenly nested inside `RequestDetailModal` (so it only fired when the modal was open) is now at the page root.
+  - Frontend smoke + Restart-Tour flow verified PASS via testing agent (iteration_118).
+- **2026-05-27 (v3, first pass):**
   - Fixed `ChunkLoadError` on `/admin` (root cause: dynamic `import('@sentry/react')` in `ErrorBoundary` generating a broken vendor chunk because the package is not installed). Removed the dynamic import.
   - Rewrote `OnboardingTour.jsx` to be portal-bound (3 steps each, separate localStorage keys per portal: `nc_tour_command_authority_v1`, `nc_tour_assurance_v1`, `nc_tour_client_sovereign_v1`).
   - Tour now mounts on `AdminDashboard` (Command Authority Suite), `NotaryDashboard` (Assurance Portal), and `Dashboard` (Client Sovereign Hub). Added testid anchors `admin-stats-grid`, `admin-tabs-nav`, `notary-stats-grid`, `notary-tabs-nav`.
