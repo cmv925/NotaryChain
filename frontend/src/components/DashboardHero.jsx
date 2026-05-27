@@ -16,6 +16,7 @@ import axios from 'axios';
 import { FileText, Upload, Search, Hammer, BookOpen, ChevronRight, Sparkles, ShieldCheck, Clock, CheckCircle2, Star, Scale, Diamond } from 'lucide-react';
 import { Button } from './ui/button';
 import { useWS } from '../contexts/WebSocketContext';
+import useViewMode from '../hooks/useViewMode';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -61,12 +62,24 @@ export default function DashboardHero({ token, user, role }) {
 
   const isNotary = role === 'notary' || user?.is_notary;
   const isAdmin = role === 'admin';
+
+  // Respect the user's currently-selected view-mode (set via UserDropdown).
+  // A notary/admin who flipped into Client view should see the Client Sovereign Hub
+  // hero, not the Assurance Portal hero, even though their primary role hasn't changed.
+  const [viewMode] = useViewMode();
+  const primaryRole = isAdmin ? 'admin' : (isNotary ? 'notary' : 'client');
+  const allowedViews = primaryRole === 'admin'  ? ['admin', 'notary', 'client']
+                     : primaryRole === 'notary' ? ['notary', 'client']
+                     :                            ['client'];
+  const effectiveView = allowedViews.includes(viewMode) ? viewMode : primaryRole;
+  const showNotaryHero = effectiveView === 'notary';
+  const showAdminHero = effectiveView === 'admin';
   const firstName = (user?.full_name || user?.email || 'there').split(' ')[0].split('@')[0];
 
   const fetchAll = async () => {
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      if (isNotary || isAdmin) {
+      if (showNotaryHero || showAdminHero) {
         const [p, a] = await Promise.allSettled([
           axios.get(`${API}/notary/requests/pending`, { headers }),
           axios.get(`${API}/notary/requests/assigned`, { headers }),
@@ -90,14 +103,14 @@ export default function DashboardHero({ token, user, role }) {
     (async () => { if (!cancelled) await fetchAll(); })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, isNotary, isAdmin]);
+  }, [token, showNotaryHero, showAdminHero]);
 
   // Live WS subscriptions — pulse the relevant KPI card + re-count on every event.
   useEffect(() => {
     if (!token) return undefined;
     const unsubs = [];
 
-    if (isNotary || isAdmin) {
+    if (showNotaryHero || showAdminHero) {
       // New request hits the state queue → pulse "Pending in queue"
       unsubs.push(subscribe('notary_queue_update', async () => {
         triggerPulse('hero-kpi-pending');
@@ -138,7 +151,7 @@ export default function DashboardHero({ token, user, role }) {
       if (pulseTimeoutRef.current) clearTimeout(pulseTimeoutRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, isNotary, isAdmin]);
+  }, [token, showNotaryHero, showAdminHero]);
 
   return (
     <div className="mt-6 mb-2" data-testid="dashboard-hero">
@@ -146,9 +159,9 @@ export default function DashboardHero({ token, user, role }) {
       <div className="flex items-end justify-between flex-wrap gap-4 mb-5">
         <div>
           <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-coral-600 mb-1.5 flex items-center gap-1.5">
-            {isNotary ? (
+            {showNotaryHero ? (
               <><Scale className="w-3 h-3 text-navy-700" /> Assurance Portal</>
-            ) : isAdmin ? (
+            ) : showAdminHero ? (
               <><Star className="w-3 h-3 text-coral-600 fill-coral-600" /> Command Authority Suite</>
             ) : (
               <><Diamond className="w-3 h-3 text-gold-500 fill-gold-500" /> Client Sovereign Hub</>
@@ -158,7 +171,7 @@ export default function DashboardHero({ token, user, role }) {
             Good to see you, <span className="text-coral-600">{firstName}</span>.
           </h1>
           <p className="text-slate-700 text-[15px] mt-2 max-w-xl">
-            {isNotary
+            {showNotaryHero
               ? 'Your queue, journal, and compliance gates — all one click away.'
               : 'Notarize, vault, or verify a document. We\'ll keep your ledger sealed on Hedera.'}
           </p>
@@ -166,7 +179,7 @@ export default function DashboardHero({ token, user, role }) {
 
         {/* Quick action pill */}
         <div className="flex items-center gap-2 flex-wrap">
-          {isNotary ? (
+          {showNotaryHero ? (
             <>
               <Button
                 onClick={() => navigate('/approvals')}
@@ -215,7 +228,7 @@ export default function DashboardHero({ token, user, role }) {
       </div>
 
       {/* Role-aware KPI strip */}
-      {isNotary ? (
+      {showNotaryHero ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3" data-testid="hero-notary-kpis">
           <StatCell
             label="Pending in queue"
@@ -285,7 +298,7 @@ export default function DashboardHero({ token, user, role }) {
       )}
 
       {/* Smart suggestion strip */}
-      {!loading && isNotary && data.pending.length > 0 && (
+      {!loading && showNotaryHero && data.pending.length > 0 && (
         <button
           onClick={() => navigate('/approvals')}
           className="mt-4 w-full text-left flex items-center gap-3 bg-coral-50 border border-coral-200 hover:bg-coral-100 rounded-lg p-3.5 transition-colors group"
@@ -303,7 +316,7 @@ export default function DashboardHero({ token, user, role }) {
           <ChevronRight className="w-4 h-4 text-coral-600 group-hover:translate-x-1 transition-transform" />
         </button>
       )}
-      {!loading && !isNotary && data.my.filter(r => ['identity_pending','signature_pending'].includes(r.status)).length > 0 && (
+      {!loading && !showNotaryHero && data.my.filter(r => ['identity_pending','signature_pending'].includes(r.status)).length > 0 && (
         <button
           onClick={() => {
             const next = data.my.find(r => ['identity_pending','signature_pending'].includes(r.status));
@@ -322,7 +335,7 @@ export default function DashboardHero({ token, user, role }) {
           <ChevronRight className="w-4 h-4 text-coral-600 group-hover:translate-x-1 transition-transform" />
         </button>
       )}
-      {!loading && !isNotary && data.my.filter(r => ['pending','assigned','in_session','identity_pending','signature_pending'].includes(r.status)).length === 0 && (
+      {!loading && !showNotaryHero && data.my.filter(r => ['pending','assigned','in_session','identity_pending','signature_pending'].includes(r.status)).length === 0 && (
         <button
           onClick={() => navigate('/request-notarization')}
           className="mt-4 w-full text-left flex items-center gap-3 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded-lg p-3.5 transition-colors group"
