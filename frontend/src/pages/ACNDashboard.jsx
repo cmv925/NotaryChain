@@ -8,6 +8,8 @@ import {
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Input } from '../components/ui/input';
+import OracleWatchlistPanel from '../components/OracleWatchlistPanel';
+import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -37,6 +39,7 @@ Notarial acknowledgment shall be valid in California upon equivalent in-person e
 
 export default function ACNDashboard() {
   const navigate = useNavigate();
+  const { token } = useAuth();
   const [tab, setTab] = useState('new');
   const [packets, setPackets] = useState([]);
   const [updates, setUpdates] = useState([]);
@@ -229,7 +232,7 @@ export default function ACNDashboard() {
           <PacketsView packets={packets} onOpen={openPacket} onReseal={reseal} onMintNft={mintNft} loading={loading} active={active} onClose={() => setActive(null)} downloadCert={downloadCert} navigate={navigate} />
         )}
 
-        {tab === 'updates' && <UpdatesView updates={updates} jurisdictions={jurisdictions} onRefresh={refresh} />}
+        {tab === 'updates' && <UpdatesView updates={updates} jurisdictions={jurisdictions} onRefresh={refresh} token={token} />}
 
         {tab === 'jurisdictions' && <JurisdictionsView jurisdictions={jurisdictions} />}
       </div>
@@ -493,7 +496,7 @@ function PacketDetail({ packet, onClose, onReseal, onMintNft, downloadCert, navi
   );
 }
 
-function UpdatesView({ updates, jurisdictions, onRefresh }) {
+function UpdatesView({ updates, jurisdictions, onRefresh, token }) {
   const [code, setCode] = useState('US-TX');
   const [summary, setSummary] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -593,6 +596,9 @@ function UpdatesView({ updates, jurisdictions, onRefresh }) {
           )}
         </CardContent>
       </Card>
+
+      {/* Per-admin Oracle alert subscriptions */}
+      <OracleWatchlistPanel token={token} />
 
       {/* Manual rule update + history */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

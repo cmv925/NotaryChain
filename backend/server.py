@@ -140,6 +140,10 @@ acn_routes.set_db(db)
 from services import acn_oracle_service
 acn_oracle_service.set_db(db)
 
+# Per-admin Oracle watchlists (email + Slack alerts)
+from services import oracle_watchlist_service
+oracle_watchlist_service.set_db(db)
+
 # Feature gate middleware needs db
 from middleware.feature_gate import set_db as set_gate_db
 set_gate_db(db)
@@ -288,6 +292,11 @@ app.include_router(audit_export_routes.router)
 app.include_router(acn_routes.router)
 app.include_router(acn_routes.public_router)
 app.include_router(acn_oracle_service.router)
+
+# Per-admin Oracle Watchlists (admin-gated; email + Slack alerts)
+from routes import oracle_watchlist_routes
+oracle_watchlist_routes.set_db(db)
+app.include_router(oracle_watchlist_routes.router)
 app.include_router(scheduled_export_routes.router)
 
 app.add_middleware(

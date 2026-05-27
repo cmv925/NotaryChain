@@ -206,6 +206,16 @@ async def run_once() -> dict:
         oracle_doc.pop("_id", None)
         new_events.append(oracle_doc)
 
+        # Fan-out per-jurisdiction watchlist alerts (email + Slack).
+        # Never raises — failures are swallowed inside the service.
+        try:
+            from services import oracle_watchlist_service
+            dispatch = await oracle_watchlist_service.dispatch_alerts(oracle_doc)
+            if dispatch.get("watchlists_matched", 0) > 0:
+                logger.info("[ACN.oracle] dispatched alerts: %s", dispatch)
+        except Exception as e:
+            logger.warning("[ACN.oracle] watchlist dispatch failed: %s", e)
+
     return {
         "events_found": len(events),
         "new_events": len(new_events),

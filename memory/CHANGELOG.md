@@ -1,5 +1,36 @@
 # NotaryChain Changelog
 
+## May 27, 2026 — Regulatory Oracle Watchlist Alerts (Email + Slack/Discord)
+
+Turned the Regulatory Oracle from a passive dashboard into a proactive ops tool. Admins can now subscribe to per-jurisdiction watchlist alerts and get an instant ping the moment a rule change in their watched states auto-flags packets.
+
+### Backend
+- **NEW** `services/oracle_watchlist_service.py`:
+  - CRUD over a new `oracle_watchlists` collection (per admin, per jurisdiction list, with severity floor + `auto_applied_only` flag + email + Slack/Discord webhook channels).
+  - `dispatch_alerts(event)` — fans out to every matching watchlist; sends branded HTML email via `EmailService.send_email` and posts a Slack/Discord-compatible incoming-webhook payload via `httpx`.
+  - `send_test_alert(...)` for the "Test send" UI button.
+  - Failure-mode: NEVER raises. All per-subscription errors are logged + skipped so Oracle polling never breaks.
+- **NEW** `routes/oracle_watchlist_routes.py` (admin-gated via `/api/admin/oracle-watchlists`):
+  - `GET ""` · `POST ""` · `PATCH "/{id}"` · `DELETE "/{id}"` · `POST "/{id}/test"`
+  - Verifies admin role by re-reading the user's DB record (not trusting JWT claims).
+- **Wired into the existing Oracle polling loop** (`acn_oracle_service.poll_and_apply` — right after `_db.acn_oracle_events.insert_one`) so every newly-discovered event triggers `dispatch_alerts`.
+- Server startup binds DB to both the service and the route module.
+
+### Frontend
+- **NEW** `components/OracleWatchlistPanel.jsx`:
+  - Lives inside ACN Dashboard → Rule Updates tab, directly below the Oracle live feed card.
+  - List view: row per watchlist with jurisdiction chips (coral), severity floor badge (navy), `auto-flagged only` badge (amber when set), email + webhook channel indicators, dispatch counter, plus per-row Enable/Disable toggle, Send-test, and Delete actions.
+  - Inline create form: label · 12 common jurisdiction chips + "Any" wildcard · severity-floor select · auto-applied-only checkbox · email-me checkbox · Slack/Discord webhook URL input.
+  - All actions wired to the new admin endpoints, with optimistic refresh.
+  - `data-testid`s on every interactive element for QA.
+- `ACNDashboard.jsx`: imports `useAuth`, forwards `token` into `UpdatesView`, and mounts the new panel.
+
+### Verification (live)
+- Backend: `POST /api/admin/oracle-watchlists` → returns full doc with `id`, `severity_floor: medium`, `jurisdictions: [US-FL, US-TX]`. `PATCH .../id` toggles enabled. `DELETE` returns `{deleted: true}`. `POST .../id/test` dispatches a real branded email + reports `email_sent: true`.
+- Frontend (Playwright): panel renders inside Rule Updates tab. "New watchlist" button opens form. Filling label + severity=high + Subscribe creates a row. Row shows `US-FL` chip + `HIGH+` badge + admin email + `dispatched 0x` + toggle/test/delete actions.
+
+
+
 ## May 27, 2026 — Three Value-Add Features: Live KPIs · PCV Marketing · ACN Auto-Passport
 
 ### 1) Live WebSocket-driven KPI cards in DashboardHero
