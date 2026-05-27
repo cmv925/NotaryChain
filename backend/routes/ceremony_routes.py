@@ -612,6 +612,24 @@ async def execute_ceremony(ceremony_id: str, request: Request = None):
     if final_status == "sealed":
         await _generate_and_store_certificate(ceremony_id)
 
+        # Auto-create ACN cross-border passport — every sealed ceremony becomes
+        # instantly multi-jurisdictional with zero extra clicks. Never blocks
+        # the seal (errors swallowed inside the service).
+        try:
+            from services.acn_auto_packet_service import auto_create_acn_packet_for_ceremony
+            sealed_ceremony = await db.ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
+            if sealed_ceremony:
+                acn_result = await auto_create_acn_packet_for_ceremony(db, sealed_ceremony)
+                if acn_result:
+                    await _emit_ceremony_stage(
+                        ceremony_id,
+                        "acn_passport_minted",
+                        acn_result,
+                        ceremony.get("initiated_by", ""),
+                    )
+        except Exception as e:
+            logger.warning(f"ACN auto-packet skipped for ceremony={ceremony_id}: {e}")
+
     # Auto-learning threat detection: analyze this ceremony for new patterns
     try:
         from services.threat_learning_service import analyze_ceremony_response
@@ -1059,6 +1077,12 @@ async def verify_certificate(cert_hash: str):
             "explorer_url": seal.get("explorer_url") if seal else None,
             "sealed_at": seal.get("sealed_at") if seal else None,
         } if seal else None,
+        "acn_passport": {
+            "packet_id": ceremony.get("acn_packet_id"),
+            "public_verify_url": ceremony.get("acn_public_verify_url"),
+            "jurisdictions": ceremony.get("acn_jurisdictions") or [],
+            "all_sealed": bool(ceremony.get("acn_all_sealed")),
+        } if ceremony.get("acn_packet_id") else None,
         "message": "This certificate has been verified. The notarization was processed by NotaryChain's Multi-Agent Ceremony Protocol and sealed on Hedera Mainnet."
     }
 

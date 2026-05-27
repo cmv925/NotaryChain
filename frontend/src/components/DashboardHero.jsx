@@ -10,17 +10,18 @@
  * Designed to replace the generic 3-cell stats strip with something that
  * tells the user *what to do next* the moment they land.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FileText, Upload, Search, Hammer, BookOpen, ChevronRight, Sparkles, ShieldCheck, Clock, CheckCircle2, Star, Scale, Diamond } from 'lucide-react';
 import { Button } from './ui/button';
+import { useWS } from '../contexts/WebSocketContext';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const formatNumber = (n) => Number.isFinite(n) ? n.toLocaleString() : '—';
 
-function StatCell({ label, value, hint, tone = 'cream', testid }) {
+function StatCell({ label, value, hint, tone = 'cream', testid, pulse = false }) {
   const tones = {
     cream: 'bg-cream-200/50 border-slate-200',
     amber: 'bg-amber-50 border-amber-200',
@@ -32,7 +33,10 @@ function StatCell({ label, value, hint, tone = 'cream', testid }) {
   const valueColor = tone === 'ink' ? 'text-cream-100' : 'text-ink-900';
   const hintColor = tone === 'ink' ? 'text-ink-300' : 'text-slate-500';
   return (
-    <div className={`border rounded-lg p-4 ${tones[tone]}`} data-testid={testid}>
+    <div
+      className={`border rounded-lg p-4 transition-shadow ${tones[tone]} ${pulse ? 'ring-2 ring-coral-400 ring-offset-2 ring-offset-cream-100 animate-pulse' : ''}`}
+      data-testid={testid}
+    >
       <p className={`text-[11px] font-semibold tracking-[0.18em] uppercase mb-1.5 ${labelColor}`}>{label}</p>
       <p className={`font-light text-3xl tracking-tight ${valueColor}`}>{value}</p>
       {hint && <p className={`text-[12px] mt-1 ${hintColor}`}>{hint}</p>}
@@ -42,39 +46,98 @@ function StatCell({ label, value, hint, tone = 'cream', testid }) {
 
 export default function DashboardHero({ token, user, role }) {
   const navigate = useNavigate();
+  const { subscribe } = useWS();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({ pending: [], assigned: [], my: [] });
+  // pulseKey: which testid is currently pulsing (string) — cleared 1.6s later
+  const [pulseKey, setPulseKey] = useState(null);
+  const pulseTimeoutRef = useRef(null);
+
+  const triggerPulse = (testid) => {
+    setPulseKey(testid);
+    if (pulseTimeoutRef.current) clearTimeout(pulseTimeoutRef.current);
+    pulseTimeoutRef.current = setTimeout(() => setPulseKey(null), 1600);
+  };
 
   const isNotary = role === 'notary' || user?.is_notary;
   const isAdmin = role === 'admin';
   const firstName = (user?.full_name || user?.email || 'there').split(' ')[0].split('@')[0];
 
+  const fetchAll = async () => {
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+      if (isNotary || isAdmin) {
+        const [p, a] = await Promise.allSettled([
+          axios.get(`${API}/notary/requests/pending`, { headers }),
+          axios.get(`${API}/notary/requests/assigned`, { headers }),
+        ]);
+        setData((prev) => ({
+          ...prev,
+          pending: p.status === 'fulfilled' ? p.value.data : prev.pending,
+          assigned: a.status === 'fulfilled' ? a.value.data : prev.assigned,
+        }));
+      } else {
+        const m = await axios.get(`${API}/notary/requests/my`, { headers }).catch(() => ({ data: [] }));
+        setData((prev) => ({ ...prev, my: m.data || [] }));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      try {
-        const headers = { Authorization: `Bearer ${token}` };
-        if (isNotary || isAdmin) {
-          const [p, a] = await Promise.allSettled([
-            axios.get(`${API}/notary/requests/pending`, { headers }),
-            axios.get(`${API}/notary/requests/assigned`, { headers }),
-          ]);
-          if (!cancelled) {
-            setData({
-              pending: p.status === 'fulfilled' ? p.value.data : [],
-              assigned: a.status === 'fulfilled' ? a.value.data : [],
-              my: [],
-            });
-          }
-        } else {
-          const m = await axios.get(`${API}/notary/requests/my`, { headers }).catch(() => ({ data: [] }));
-          if (!cancelled) setData({ pending: [], assigned: [], my: m.data || [] });
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
+    (async () => { if (!cancelled) await fetchAll(); })();
     return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, isNotary, isAdmin]);
+
+  // Live WS subscriptions — pulse the relevant KPI card + re-count on every event.
+  useEffect(() => {
+    if (!token) return undefined;
+    const unsubs = [];
+
+    if (isNotary || isAdmin) {
+      // New request hits the state queue → pulse "Pending in queue"
+      unsubs.push(subscribe('notary_queue_update', async () => {
+        triggerPulse('hero-kpi-pending');
+        await fetchAll();
+      }));
+      // Request assigned to this notary → pulse "Assigned to you"
+      unsubs.push(subscribe('request_assigned', async () => {
+        triggerPulse('hero-kpi-assigned');
+        await fetchAll();
+      }));
+      // Ceremony progressed to pre-seal stage → pulse "Ready to seal"
+      unsubs.push(subscribe('request_in_session', async () => {
+        triggerPulse('hero-kpi-ready');
+        await fetchAll();
+      }));
+      // Sealed → pulse "Assigned to you" (counts will drop)
+      unsubs.push(subscribe('request_completed', async () => {
+        triggerPulse('hero-kpi-assigned');
+        await fetchAll();
+      }));
+    } else {
+      // Client-side: their request state changed → pulse the matching card
+      unsubs.push(subscribe('request_status_change', async (payload) => {
+        const next = payload?.status;
+        if (['completed', 'sealed'].includes(next)) triggerPulse('hero-kpi-sealed');
+        else if (['identity_pending', 'signature_pending'].includes(next)) triggerPulse('hero-kpi-action');
+        else triggerPulse('hero-kpi-open');
+        await fetchAll();
+      }));
+      unsubs.push(subscribe('request_completed', async () => {
+        triggerPulse('hero-kpi-sealed');
+        await fetchAll();
+      }));
+    }
+
+    return () => {
+      unsubs.forEach((u) => typeof u === 'function' && u());
+      if (pulseTimeoutRef.current) clearTimeout(pulseTimeoutRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, isNotary, isAdmin]);
 
   return (
@@ -160,6 +223,7 @@ export default function DashboardHero({ token, user, role }) {
             hint={data.pending.length > 0 ? 'Awaiting a notary' : 'You\'re all caught up'}
             tone={data.pending.length > 0 ? 'amber' : 'cream'}
             testid="hero-kpi-pending"
+            pulse={pulseKey === 'hero-kpi-pending'}
           />
           <StatCell
             label="Assigned to you"
@@ -167,6 +231,7 @@ export default function DashboardHero({ token, user, role }) {
             hint={data.assigned.length > 0 ? 'Ceremonies in progress' : 'No active sessions'}
             tone={data.assigned.length > 0 ? 'coral' : 'cream'}
             testid="hero-kpi-assigned"
+            pulse={pulseKey === 'hero-kpi-assigned'}
           />
           <StatCell
             label="Ready to seal"
@@ -174,6 +239,7 @@ export default function DashboardHero({ token, user, role }) {
             hint="Pass pre-seal evaluator"
             tone="emerald"
             testid="hero-kpi-ready"
+            pulse={pulseKey === 'hero-kpi-ready'}
           />
           <StatCell
             label="Commission state"
@@ -191,6 +257,7 @@ export default function DashboardHero({ token, user, role }) {
             hint="In progress"
             tone={(data.my.filter(r => ['pending','assigned','in_session'].includes(r.status)).length > 0) ? 'amber' : 'cream'}
             testid="hero-kpi-open"
+            pulse={pulseKey === 'hero-kpi-open'}
           />
           <StatCell
             label="Sealed documents"
@@ -198,6 +265,7 @@ export default function DashboardHero({ token, user, role }) {
             hint="On Hedera"
             tone="emerald"
             testid="hero-kpi-sealed"
+            pulse={pulseKey === 'hero-kpi-sealed'}
           />
           <StatCell
             label="Awaiting your action"
@@ -205,6 +273,7 @@ export default function DashboardHero({ token, user, role }) {
             hint="Tap to continue"
             tone={(data.my.filter(r => ['identity_pending','signature_pending'].includes(r.status)).length > 0) ? 'coral' : 'cream'}
             testid="hero-kpi-action"
+            pulse={pulseKey === 'hero-kpi-action'}
           />
           <StatCell
             label="Member since"

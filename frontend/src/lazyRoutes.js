@@ -105,6 +105,7 @@ export const CertificateExpiration = lazy(() => import('./pages/CertificateExpir
 export const TokenizedEscrow = lazy(() => import('./pages/TokenizedEscrow'));
 export const PCVDashboard = lazy(() => import('./pages/PCVDashboard'));
 export const PCVPublicVerify = lazy(() => import('./pages/PCVPublicVerify'));
+export const PCVMarketing = lazy(() => import('./pages/PCVMarketing'));
 export const BatchCertificates = lazy(() => import('./pages/BatchCertificates'));
 export const ACNDashboard = lazy(() => import('./pages/ACNDashboard'));
 export const ACNPublicVerify = lazy(() => import('./pages/ACNPublicVerify'));

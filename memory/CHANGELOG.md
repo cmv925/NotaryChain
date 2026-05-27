@@ -1,5 +1,45 @@
 # NotaryChain Changelog
 
+## May 27, 2026 — Three Value-Add Features: Live KPIs · PCV Marketing · ACN Auto-Passport
+
+### 1) Live WebSocket-driven KPI cards in DashboardHero
+- Hero KPI cards now subscribe to `useWS()` events and **pulse + re-count in real time** on every relevant event — no refresh needed.
+- Notary/Admin subscriptions: `notary_queue_update` (Pending in queue), `request_assigned` (Assigned to you), `request_in_session` (Ready to seal), `request_completed` (Assigned to you re-counts).
+- Client subscriptions: `request_status_change` (routes pulse to Open/Action/Sealed based on new status), `request_completed` (Sealed Documents).
+- Visual feedback: 1.6-second `ring-2 ring-coral-400 animate-pulse` glow on the updated card.
+- Cleanup: each subscription returns its unsubscribe function and they're all flushed on unmount + the pulse timeout is cleared.
+
+### 2) PCV Marketing public landing page (`/pcv/marketing`)
+- New route: `frontend/src/pages/PCVMarketing.jsx` (auth-free, ~340 lines)
+- Targeted at compliance officers at title companies, law firms, RIAs, multi-state ops
+- Sections:
+  - HERO: "Stop preparing for audits. Start passing them by default." + book-demo CTA + see-vault secondary CTA
+  - LIVE PROOF-WITHOUT-TRUST DEMO: paste a hash → hits existing `/verify?hash=...` public verifier
+  - PAIN STRIP: 3 stats (3-6 wks SOC 2 effort · $4.4M IBM 2024 avg audit miss · <4 sec PCV proof)
+  - PERSONAS: 4-card grid (Title · Law · RIAs · Multi-state)
+  - HOW IT WORKS: 4-step (Ingest → Anchor → Predict → Export)
+  - DIFFERENTIATORS + customer-quote card (navy bg, coral accent)
+  - PRICING: 3-band (Starter $499 · Continuous Audit $1,499 ⭐ · Enterprise $4,999)
+  - FINAL CTA: coral gradient banner
+- Wired into `App.js` + `lazyRoutes.js`. Brand-aligned (coral/navy/cream/gold), `data-testid`s on every section.
+
+### 3) Auto-create ACN cross-border packet on ceremony seal
+- New service: `backend/services/acn_auto_packet_service.py`
+  - `auto_create_acn_packet_for_ceremony(db, ceremony)` — idempotent (skips if packet already exists for this ceremony_id), uses existing `acn_service.detect_jurisdictions` + `score_risk` + `seal_packet` helpers.
+  - Persists `acn_packet_id`, `acn_public_verify_url`, `acn_jurisdictions`, `acn_all_sealed` back onto the ceremony doc.
+  - Failure-mode: NEVER raises; all errors are swallowed + logged so notarization seal is never blocked by ACN value-add.
+- Hooked into `routes/ceremony_routes.py` seal block (right after PDF cert generation). Emits a new `acn_passport_minted` ceremony stage event.
+- Public verifier endpoint `/api/ceremony/verify/certificate/{hash}` now returns an `acn_passport` block when present.
+- Frontend `VerifyCertificate.jsx`: new "Cross-Border Passport" card (coral gradient, Globe2 icon) appears below the Blockchain Seal card when ACN data is available — shows jurisdiction chips + "All Sealed / Sealing" badge + a "View cross-border passport" CTA that opens the public ACN packet verifier.
+- `PUBLIC_VERIFIER_BASE_URL` env var override available; falls back to `REACT_APP_BACKEND_URL`.
+
+### Verification
+- `/pcv/marketing` returns 200 + all 5 sections render (verified via Playwright)
+- `/api/ceremony/verify/certificate/{...}` returns 200 with `verified: false` for non-existent hash (no regression)
+- Backend restarts clean, no errors in logs
+- Both lint passes clean (ruff + eslint)
+
+
 ## May 27, 2026 — Mode-Aware Navigation + Role Badge + UserDropdown + Portal Glyphs
 
 Three connected improvements for identity-first UX:

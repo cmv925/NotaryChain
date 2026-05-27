@@ -41,7 +41,7 @@ import {
   Auth0Callback, OktaCallback, OnboardingPage, InvestorDeck, CeremonyDashboard,
   VerifyCertificate, EscrowDashboard, ANANDashboard, FraudIntelligencePage, AIIntelligenceHub,
   PublicAuditTrail, CeremonyReplay, MultiSignature, CertificateExpiration, TokenizedEscrow,
-  PCVDashboard, PCVPublicVerify,
+  PCVDashboard, PCVPublicVerify, PCVMarketing,
   BatchCertificates,
   ACNDashboard, ACNPublicVerify,
 } from './lazyRoutes';
@@ -718,6 +718,7 @@ function App() {
               }
             />
             <Route path="/pcv/verify/:packetId" element={<PCVPublicVerify />} />
+            <Route path="/pcv/marketing" element={<PCVMarketing />} />
             <Route
               path="/admin/batch-certificates"
               element={
