@@ -225,7 +225,6 @@ const Dashboard = () => {
                 <BentoAction icon={Vault} label="Asset Vault" desc="Wills, deeds, beneficiaries" onClick={() => navigate('/asset-vault')} accent data-testid="asset-vault-btn" />
                 <BentoAction icon={FileText} label="My Documents" desc="Unified document hub" onClick={() => navigate('/my-documents')} data-testid="my-documents-btn" />
                 <BentoAction icon={Save} label="My Drafts" onClick={() => navigate('/my-drafts')} data-testid="my-drafts-btn" />
-                <BentoAction icon={Timer} label="Cert Expiration" desc="Renewal tracking" onClick={() => navigate('/certificate-expiration')} data-testid="cert-expiry-btn" />
                 <BentoAction icon={Bell} label="Reminders" onClick={() => navigate('/reminders')} data-testid="reminders-btn" />
               </div>
             </div>
@@ -270,13 +269,12 @@ const Dashboard = () => {
             </div>
           )}
 
-          {/* Lightweight CTA for regular users: become a notary + verify */}
+          {/* Lightweight CTA for regular users: verify a doc + audit trail */}
           {isUser && (
             <div className="col-span-1 md:col-span-3 pt-6 border-t border-slate-200 mt-2" data-testid="user-cta-section">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <BentoAction icon={ShieldCheck} label="Verify a Document" desc="Public verification" onClick={() => navigate('/verify')} data-testid="verify-btn" />
                 <BentoAction icon={Globe} label="Public Audit Trail" desc="Hedera transparency" onClick={() => window.open('/audit-trail', '_blank')} data-testid="audit-trail-btn-user" />
-                <BentoAction icon={UserCheck} label="Become a Notary" desc="Apply to join the network" onClick={() => navigate('/notary-professional')} data-testid="become-notary-btn" />
               </div>
             </div>
           )}
