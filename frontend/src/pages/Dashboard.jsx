@@ -422,7 +422,7 @@ const Dashboard = () => {
           )}
         </div>
       </div>
-      <OnboardingTour userRole={user?.role} />
+      <OnboardingTour portal="client_sovereign" />
     </div>
   );
 };

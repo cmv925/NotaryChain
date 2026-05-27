@@ -205,6 +205,14 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 - Audit Log Export (SOC2/ISO) (P3)
 - Smart Contract Escrow (Hedera native contracts) (P3)
 
+
+## Changelog (Recent)
+- **2026-05-27 (v3):**
+  - Fixed `ChunkLoadError` on `/admin` (root cause: dynamic `import('@sentry/react')` in `ErrorBoundary` generating a broken vendor chunk because the package is not installed). Removed the dynamic import.
+  - Rewrote `OnboardingTour.jsx` to be portal-bound (3 steps each, separate localStorage keys per portal: `nc_tour_command_authority_v1`, `nc_tour_assurance_v1`, `nc_tour_client_sovereign_v1`).
+  - Tour now mounts on `AdminDashboard` (Command Authority Suite), `NotaryDashboard` (Assurance Portal), and `Dashboard` (Client Sovereign Hub). Added testid anchors `admin-stats-grid`, `admin-tabs-nav`, `notary-stats-grid`, `notary-tabs-nav`.
+  - Added build version footprint `Build 2026-05-27 · v3` to `PlatformFooter`.
+
 ## Key API Endpoints (Recent)
 - `GET /api/escrow/templates` — returns real_estate, freelancer, supply_chain
 - `GET /api/email/status` — email service mode/sender info

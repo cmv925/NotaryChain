@@ -17,6 +17,7 @@ import { Input } from '../components/ui/input';
 import { NotificationBell } from '../components/NotificationBell';
 import UserDropdown from '../components/UserDropdown';
 import useViewMode from '../hooks/useViewMode';
+import { OnboardingTour } from '../components/OnboardingTour';
 import { toast } from '../hooks/use-toast';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import axios from 'axios';
@@ -449,7 +450,7 @@ const AdminDashboard = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Stats Overview */}
         {stats && (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8" data-testid="admin-stats-grid">
             <Card className="bg-gradient-to-br from-coral-500/20 to-coral-600/10 border-coral-300/30">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
@@ -517,7 +518,7 @@ const AdminDashboard = () => {
 
         {/* Tabs */}
         <div className="mb-6">
-          <div className="flex gap-2 border-b border-slate-200 overflow-x-auto">
+          <div className="flex gap-2 border-b border-slate-200 overflow-x-auto" data-testid="admin-tabs-nav">
             {[
               { id: 'overview', label: 'Overview', icon: BarChart3 },
               { id: 'operations', label: 'Operations', icon: Server },
@@ -664,6 +665,7 @@ const AdminDashboard = () => {
           </div>
         </div>
       )}
+      <OnboardingTour portal="command_authority" />
     </div>
   );
 };

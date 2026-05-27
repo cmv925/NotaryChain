@@ -125,6 +125,8 @@ export default function PlatformFooter() {
             </span>
             <span className="opacity-50">·</span>
             <span>Hedera mainnet · Topic 0.0.10373605</span>
+            <span className="opacity-50">·</span>
+            <span data-testid="footer-build-version" title="Build footprint">Build 2026-05-27 · v3</span>
           </div>
         </div>
       </div>

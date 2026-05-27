@@ -18,6 +18,7 @@ import { Badge } from '../components/ui/badge';
 import { Progress } from '../components/ui/progress';
 import { NotificationBell } from '../components/NotificationBell';
 import UserDropdown from '../components/UserDropdown';
+import { OnboardingTour } from '../components/OnboardingTour';
 import { toast } from '../hooks/use-toast';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { useTranslation } from 'react-i18next';
@@ -360,7 +361,7 @@ const NotaryDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {/* Quick Stats Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6" data-testid="notary-stats-grid">
           <Card className="bg-gradient-to-br from-green-600/20 to-green-600/5 border-green-500/30">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -458,7 +459,7 @@ const NotaryDashboard = () => {
           <div className="lg:col-span-3 space-y-6">
             {/* Tabs & Search */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex gap-1 bg-white p-1 rounded-lg">
+              <div className="flex gap-1 bg-white p-1 rounded-lg" data-testid="notary-tabs-nav">
                 {[
                   { id: 'pending', label: t('notary.tab_available'), count: pendingRequests.length, color: 'purple' },
                   { id: 'assigned', label: t('notary.tab_my_requests'), count: assignedRequests.length, color: 'blue' },
@@ -1326,6 +1327,7 @@ const RequestDetailModal = ({
           </div>
         </div>
       </div>
+      <OnboardingTour portal="assurance" />
     </div>
   );
 };

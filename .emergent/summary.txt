@@ -1,64 +1,75 @@
 <analysis>**original_problem_statement**: 
-Build a sophisticated, futuristic notarization platform named NotaryChain with AI-powered document analysis, blockchain sealing, and enterprise features. 
+Build a sophisticated, futuristic notarization platform named NotaryChain with AI-powered document analysis, blockchain sealing, and enterprise features.
 PRODUCT REQUIREMENTS:
 1. Verify Phase 2 (Public Directory & Profiles)
-2. TrustLayer Phase 1 MVP (Federated Trust Network)
-3. Smart Asset Life-Cycle Vault (SALV) Phase 1 MVP
+2. TrustLayer Phase 1 & 2 (Federated Trust Network, Ed25519, HCS)
+3. Smart Asset Life-Cycle Vault (SALV) Phase 1 & 2 (Encrypted docs, partial handoffs)
 4. Trust Network Integration Layer (SALV auto-attestations, Trust Hub)
 5. NCH Utility Credits + HBAR Checkout
-6. Florida RON Compliance Phase 1 (M1-M5 Complete)
-7. Field Document Scanner Phase 1 (Complete)
-8. Trust Badge Widget (Complete)
-9. Embeddable Notarize SDK (Phase 1 Specced & Pending)
+6. Florida RON Compliance Phase 1
+7. Field Document Scanner Phase 1 
+8. Trust Badge Widget + Auto-Verify Web Component
+9. Embeddable Notarize SDK Phase 1 & 2 
+10. Multi-state Compliance Phase 2 (Evaluator for FL, TX, NY, CA, VA)
+11. Admin Ceremony Analytics Dashboard
+12. Client Portal & Beneficiary Viral Loop
+13. Predictive Compliance Vault (PCV)
+14. Batch Certificate Generation
+15. Audit Log Export (SOC2/ISO)
+16. Smart Contract Escrow (Hedera real HSCS testnet)
+17. Autonomous Cross-Border Notarization Network (ACN) with Hedera NFT passports and Regulatory Oracle
+18. Role-aware Dashboards (Command Authority Suite, Assurance Portal, Client Sovereign Hub)
+19. LexisNexis InstantID Q&A (KBA) integration
 
 **User's preferred language**: English (INSTRUCT next agent to respond in English only)
 
 **what currently exists?** 
-A deployment-ready, highly advanced Remote Online Notarization (RON) platform (React, FastAPI, MongoDB) featuring Hedera HCS/HTS sealing, GPT-5.2 Vision analysis, Living Identity biometric tracking, and TrustLayer federated trust. Florida RON Compliance (M1-M5) is 100% complete. The platform features a Trust Badge embeddable widget (Stripe-gated at 9/mo), a Field Document Scanner, and a public viral . The entire UI just underwent a massive visual redesign to a light, professional Corporate Trust Notary aesthetic (Notarize.com style) utilizing Cream, Navy, Coral accents, and Playfair Display serif fonts.
+A production-ready Remote Online Notarization (RON) platform with a React/FastAPI/MongoDB stack. It includes Hedera HCS/HSCS integration, Smart Contract Escrow, ACN Network with NFT Passports, Predictive Compliance Vault (PCV), and SOC2/ISO exports. The UI has been heavily refined for brand cohesion (coral/navy/cream), role-specific dashboard views, real-time WebSocket KPIs, and mode-aware navigation. LexisNexis KBA is integrated (currently mocked pending env vars). The app uses a network-first Service Worker to prevent stale PWA caching.
 
 **Last working item**: 
-    - Last item agent was working: Theming the  to match the newly implemented Corporate Trust Notary brand aesthetic (Cream/Navy/Coral), requested by the user via an uploaded image.
+    - Last item agent was working: Investigating a  (vendors-node_modules_lucide-react) reported by the user via an image upload. The error occurs when loading the preview environment's admin page.
     - Status: IN PROGRESS
     - Agent Testing Done: N
     - Which testing method agent to use? screenshot tool
     - User Testing Done: N
 
 **All Pending/In progress Issue list**: 
-  None
+  Issue 1: Fix  on Frontend Admin Page (Priority P0)
+  
+  Issues Detail:
+  - Issue 1: 
+     - Attempted fixes: Agent just started executing bash to inspect the preview environment state. No fixes attempted yet.
+     - Next debug checklist: Check if  or the Webpack dev server crashed/restarted while serving chunks. Clear  or restart the frontend supervisor process. Verify that  imports are correct and not causing chunk splitting failures.
+     - Why fix this issue and what will be achieved with the fix? Blocks UI rendering on the preview environment. Fixing it restores frontend access.
+     - Status: IN PROGRESS
+     - Is recurring issue? N
+     - Should Test frontend/backend/both after fix? frontend
+     - Blocked on other issue: None
 
 **In progress Task List**: 
-  Task 1: Theme  (P0)
-     - Where to resume: The agent just ran a bash replacement on  to remove dark theme () and apply the new / aesthetic. Review the file, ensure all dark/tech UI elements are replaced, and verify the UI looks correct based on the new design guidelines.
-     - What will be achieved with this? Brings the core user dashboard inline with the massive site-wide rebrand.
-     - Status: IN PROGRESS
-     - Should Test frontend/backend/both after fix? frontend (screenshot tool)
-     - Blocked on something: None
+  None
 
 **Upcoming and Future Tasks**
-    Upcoming Tasks:
-    - Embeddable Notarize SDK - Phase 1 (M1 to M5) (P0) - *Note: This was thoroughly specced out and approved in the history. It allows SaaS companies to drop a script tag and trigger an iframe ceremony.*
-    - Client Portal () (P1)
-    - Beneficiary viral loop (Handoff to signup) (P2)
-    
     Future Tasks:
-    - Multi-state Compliance-as-a-Service (TX/NY/CA/VA abstracts) (P2)
-    - Notary Marketplace with reviews + dynamic pricing (P2)
-    - TrustLayer Phase 2 (Ed25519 signatures, HCS anchoring, SDKs) (P3)
-    - SALV Phase 2 (S3 encrypted docs, partial handoffs) (P3)
-    - Ceremony Analytics Dashboard (Admin facing) (P3)
+    - Portal-bound Onboarding Tour (P1): First time a user lands on each portal, a 3-step Hotspots tour walks them through the unique value of that surface.
     - The Tribunal (5-Agent Premium Ceremony Consensus) (P3)
 
 **Completed work in this session**
-- Florida RON Compliance M3 (Witness & Readiness wiring, Hard Pre-Seal gate) (DONE)
-- Florida RON Compliance M4 (FL journal logging, CSV export, Admin Subpoena Workflow) (DONE)
-- Florida RON Compliance M5 (Public launch polish, RONSP filing tracker, Recruitment Portal) (DONE)
-- Field Document Scanner Phase 1 (Mobile camera capture + GPT-5.2 Vision forgery analysis + SHA256) (DONE)
-- Trust Badge Widget Polish (Created standalone 9/mo Stripe tier, raised Pro to 9/mo, added cross-sell CTA on Notary profiles) (DONE)
-- Massive Site-Wide Brand Redesign (Migrated 90+ pages from dark cyberpunk theme to light Notarize.com Corporate Trust theme with Playfair Display) (DONE)
-- Public Viral AI Demo () with rate-limiting and live GPT-5.2 vision inference (DONE)
+- Global Brand Color Sweep: Removed blue/purple/gray and enforced coral/navy/cream theme across 228 UI files (DONE)
+- Code Quality Fixes: Resolved unused/undefined variables in backend (Ruff lint is now clean) (DONE)
+- Dashboard Role Scoping: Restricted client dashboard to standard features, hiding notary/admin tools (DONE)
+- Admin Seed Idempotency: Auto-seeds admin user on backend startup to fix deployment access (DONE)
+- LexisNexis InstantID Q&A Integration: Added SOAP adapter for KBA, defaulting to mock mode (DONE)
+- Service Worker Cache Fix: Rewrote  and  to clear stale React SPA caches on production (DONE)
+- Asset Hierarchy Re-framing: Renamed interfaces to Command Authority Suite, Assurance Portal, Client Sovereign Hub (DONE)
+- Mode-Aware Navigation: Added role-switcher dropdown and context-aware top navigation bars (DONE)
+- Live WebSocket KPIs: Dashboard hero cards pulse and update in real-time without refreshing (DONE)
+- PCV Marketing Page: Built  public landing page (DONE)
+- Auto-ACN Packet Generation: Ceremonies auto-create ACN packets on seal and display them on certificates (DONE)
+- Regulatory Oracle Watchlist Alerts: Email/Slack alerts for admins on jurisdiction rule updates (DONE)
 
 **Earlier issues found/mentioned but not fixed**
-None.
+  None
 
 **Known issue recurrence from previous fork**
   - Issue recurrence in previous fork: None
@@ -69,86 +80,93 @@ None.
 
 
 **Key Technical Concepts**
-React, FastAPI, MongoDB, Stripe, Hedera HCS/HTS, AWS S3 (Object Lock), LexisNexis KBA (Mocked), GPT-5.2 Vision integration, Iframe embedding (upcoming SDK), Tailwind CSS redesign.
+React, FastAPI, MongoDB, Hedera HCS/HTS/HSCS, Solidity Bytecode, NFT Minting, Stripe, OpenAI GPT-5.2 Vision, Ed25519 Cryptography, AES-GCM-256 Encryption, Service Workers, WebSockets.
 
 **key DB schema**
-  - : {entry_id, ceremony_id, notary_id, timestamp, ...}
-  - : {state_code, ronsp_registration, live_in_state}
-  - : {scan_id, ai_powered, overall_risk, recommendation, ...}
-  - : {ip_address, date, count}
+  - : {jurisdictions, proofs, status, token_id, minted}
+  - : {id, label, jurisdictions, severity_floor, auto_flag_only, notify_email, email_addresses, notify_slack, slack_webhook}
+  - : {email, role, ...}
 
 **changes in tech stack**
--  was heavily modified to include a , , , and  color palette, alongside  (Playfair Display) for headlines.
-- Introduction of  and  from  inside  to handle GPT-5.2 Vision image analysis.
+-  added for Identity Verification (replaces Mock provider when env vars are present).
 
 **All files of reference** 
--  (Currently mid-edit for theming)
--  (Contains new theme tokens)
--  (Source of truth for the new UI aesthetic)
--  (Updated regularly)
+-  (Where the current ChunkLoadError is occurring)
+- 
+- 
+- 
 
 **Areas that need refactoring**: 
-The agent executed a bulk bash search/replace to sweep 83 internal components to the new theme. While successful, complex inline templates or explicit HEX codes () in lower-traffic internal components (like the Dashboard, which is currently being fixed) might still contain legacy styles. Spot-check pages when touching them.
+-  and  are growing extremely large (>1000 lines) and should be broken down into smaller sub-components for better maintainability.
 
 **key api endpoints**
--  (Notary journal logging / admin export)
--  (Subpoena response workflow)
--  (Public stats, RONSP tracking)
--  (Field document scanner)
--  (Unauthenticated, rate-limited viral demo)
--  (Dynamic Trust Badge generation)
+- 
+- 
+- 
+- 
 
 **Critical Info for New Agent** 
-- You are mid-way through fixing  to match the new Corporate Trust Notary light theme. Complete the styling, take a screenshot to verify, and call finish.
-- **Embeddable SDK**: The user heavily prioritized and approved the spec for Embeddable Notarize SDK (Phase 1, M1-M5). You should pivot directly to M1-SDK after finishing the dashboard.
-- Pricing structure has changed: It is now Free (/bin/bash) -> Trust Badge (9) -> Professional (9) -> Enterprise (99).
-- For deployments,  and Trust Badge widget hardcoded URLs need to be aware of the custom domain when deployed.
+- **LexisNexis**: Fully wired but running in *mock* mode. Will auto-activate when  and associated credentials are added to the .
+- **Admin Access**: If admin gets locked out, restart the backend. The  runs on startup and ensures  is granted admin privileges.
+- **Service Worker**: Modifying React code might require a hard refresh if the Service Worker holds a stale cache, though the new network-first navigation strategy should mitigate this.
+- **Role Scoping**: Users can toggle their view using . Ensure new features respect  context.
 
 **documents and test reports created in this job** 
-  -  (FL Compliance M3)
-  -  (FL Compliance M4)
-  -  (FL Compliance M5)
-  -  (Field Scanner Phase 1)
-  - 
-  - 
+  - None created strictly as  docs, but code quality was assessed via parallel lint commands.
 
 **Last 10 User Messages and any pending HUMAN messages** 
- - User: proceed with a. then to b. then to c. (COMPLETED)
- - User: proceed with your sugestions (COMPLETED)
- - User: do number 2 (COMPLETED)
- - User: [Uploaded image.png] check the attached image and match the dashboard with the new color theme (IN PROGRESS - Agent was executing bash replacement on  to swap colors before cutoff).
+ 1. User: proceed with ask_human (COMPLETED)
+ 2. User: Uploads image of Access Denied error for admin + asks for Admin/Notary toggle + Wire LexisNexis (COMPLETED)
+ 3. User: 1 both 2 key later (COMPLETED)
+ 4. User: Uploads image to fix button colors to match theme (coral instead of navy) (COMPLETED)
+ 5. User: Call Deployer Agent and Run Health Check to Check for Readiness for Deployment (COMPLETED)
+ 6. User: Uploads build error logs showing deployment failure  (COMPLETED)
+ 7. User: Uploads image showing blank page on production URL (COMPLETED)
+ 8. User: Reframe interface titles to Command Authority Suite, Assurance Portal, Client Sovereign Hub (COMPLETED)
+ 9. User: Requests role-switcher in user dropdown, mode-aware navigation menus, live WS-driven KPI cards, PCV marketing page, ACN packet auto-create on seal. (COMPLETED)
+ 10. User: Requests Regulatory Oracle Watchlist Alerts AND Portal-bound Onboarding Tour. (PARTIALLY COMPLETED - Onboarding Tour missed)
+ 11. User: Uploads image showing  on  page (PENDING - P0 Issue)
 
 **Project Health Check:**
-Healthy. Mocked elements: .
+- Broken: Frontend preview environment is throwing a .
+- Mocked: LexisNexis InstantID Q&A.
 
 **3rd Party Integrations** 
- - OpenAI GPT-5.2 Vision & Text — uses Emergent LLM Key
- - Hedera Hashgraph (Mainnet) HCS/HTS — requires User API Key
- - Stripe (Subscriptions & Trust Badges) — requires User API Key
- - AWS S3 (with Object Lock enabled) — requires User API Key
+ - OpenAI GPT-5.2 Vision & Text — uses Emergent LLM Key 
+ - Hedera Hashgraph (Mainnet & Testnet) — requires User API Key
+ - Stripe — requires User API Key
+ - AWS S3 — requires User API Key
  - GoHighLevel CRM — requires User API Key
- - Resend — requires User API Key
+ - Resend (Emails) — requires User API Key
+ - LexisNexis InstantID Q&A — requires User API Key (Currently MOCKED)
 
 **Testing status**
-  - Testing agent used after significant changes: YES (Iterations 98-101 passed perfectly)
+  - Testing agent used after significant changes: NO (Self-tested via screenshot tool)
   - Troubleshoot agent used after agent stuck in loop: NO
-  - Test files created: [iteration_98.json to iteration_101.json, test_fl_journal_m4.py, test_fl_launch_m5.py, test_field_scanner.py, test_fl_preseal_gate.py]
-  - Known regressions: None
+  - Test files created: None
+  - Known regressions:  on  page.
 
 **Credentials to test flow:**
   - Admin: admin@notarychain.com / Admin123!
   - Regular User: demo@test.com / Demo123!
-  - FL Notary: notarytest@test.com / GG987654 (FL Commission)
-  - See  for full list.
+  - FL Notary: notarytest@test.com / Test123!
 
 **What agent forgot to execute**
-The agent was in the middle of executing a bash replacement command on  to strip the dark theme () and add the light cream/navy UI, but ran out of context before checking the UI with the screenshot tool and finishing.
+- The agent completely forgot to build the **Portal-bound Onboarding Tour** (3-step Hotspots/Joyride tour) requested in the message alongside the Regulatory Oracle Watchlist Alerts.
+- The agent did not add the build version footprint () to the footer, which it had previously suggested doing.
 
 **Debugging checklist for current issue**
-    Issue: Complete  visual redesign
+    Issue:  when loading  on the preview frontend.
+
     Frontend files to check: 
     - 
-    Steps:
-    1. Ensure all , ,  etc. are replaced with , , , .
-    2. Start the frontend, navigate to  (Login as demo@test.com / Demo123!).
-    3. Take a screenshot to verify it matches the light-mode Notarize.com brand.</analysis>
+    - 
+  
+    Steps to fix:
+    1. This is likely a Webpack/Craco chunk splitting issue exacerbated by hot-reloading or stale cache during development.
+    2. Try restarting the frontend supervisor process: frontend: ERROR (not running)
+frontend: started.
+    3. If the error persists, ensure  is correctly installed and imported without broken named imports.
+    4. Run yarn run v1.22.22
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command. to ensure the frontend compiles without missing module errors. 
+    5. Test via .</analysis>

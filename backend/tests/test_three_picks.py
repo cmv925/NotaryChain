@@ -9,7 +9,7 @@ import uuid
 import pytest
 import requests
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://acn-oracle-live.preview.emergentagent.com").rstrip("/")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://notary-chain-preview-2.preview.emergentagent.com").rstrip("/")
 DEMO = ("demo@test.com", "Demo123!")
 BAD_ATTESTATION_ID = "deadbeef00000000"
 GOOD_ATTESTATION_ID = "1f6cf50a582941dd"
