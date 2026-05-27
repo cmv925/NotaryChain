@@ -8,7 +8,7 @@ import {
   DollarSign, Star, Award, BarChart3, Filter, Search, ChevronRight,
   Brain, ScanFace, Link2, ExternalLink, Download, Play, History,
   MessageSquare, Bell, Settings, Briefcase, CalendarClock, Sparkles,
-  ClipboardList, ShieldAlert, Gauge, BookOpen
+  ClipboardList, ShieldAlert, Gauge, BookOpen, Scale
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import NotaryAvailabilitySettings from '../components/NotaryAvailabilitySettings';
@@ -17,6 +17,7 @@ import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
 import { Progress } from '../components/ui/progress';
 import { NotificationBell } from '../components/NotificationBell';
+import UserDropdown from '../components/UserDropdown';
 import { toast } from '../hooks/use-toast';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { useTranslation } from 'react-i18next';
@@ -326,7 +327,10 @@ const NotaryDashboard = () => {
               <span className="text-slate-600 hidden sm:inline">|</span>
               <div className="hidden sm:flex items-center gap-2">
                 <Briefcase className="w-5 h-5 text-coral-600" />
-                <span className="text-coral-600 font-semibold">{t('notary.workstation')}</span>
+                <span className="text-coral-600 font-semibold inline-flex items-center gap-1.5">
+                  <Scale className="w-3.5 h-3.5 text-navy-700" />
+                  {t('notary.workstation')}
+                </span>
               </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
@@ -348,14 +352,7 @@ const NotaryDashboard = () => {
               >
                 {t('notary.user_view')}
               </Button>
-              <Button
-                onClick={handleLogout}
-                variant="outline"
-                size="sm"
-                className="border-slate-200 text-slate-500 hover:text-navy-900 hover:border-red-500"
-              >
-                <LogOut className="w-4 h-4" />
-              </Button>
+              <UserDropdown />
             </div>
           </div>
         </div>

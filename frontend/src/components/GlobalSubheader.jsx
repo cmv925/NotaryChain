@@ -13,7 +13,7 @@
  */
 import React from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Star, Scale, Diamond } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 // Pages where a back button would loop back to itself.
@@ -79,10 +79,14 @@ export default function GlobalSubheader() {
               Back
             </button>
           ) : (
-            <span className="text-[11px] uppercase tracking-[0.2em] text-ink-300 font-bold">
-              {pathname === '/admin' ? 'Command Authority Suite' :
-               pathname === '/notary/dashboard' ? 'Assurance Portal' :
-               pathname === '/dashboard' ? 'Client Sovereign Hub' : 'Home'}
+            <span className="text-[11px] uppercase tracking-[0.2em] text-ink-300 font-bold flex items-center gap-1.5">
+              {pathname === '/admin' ? (
+                <><Star className="w-3 h-3 text-coral-500 fill-coral-500" /> Command Authority Suite</>
+              ) : pathname === '/notary/dashboard' ? (
+                <><Scale className="w-3 h-3 text-cream-200" /> Assurance Portal</>
+              ) : pathname === '/dashboard' ? (
+                <><Diamond className="w-3 h-3 text-gold-400 fill-gold-400" /> Client Sovereign Hub</>
+              ) : 'Home'}
             </span>
           )}
           {!onHome && (

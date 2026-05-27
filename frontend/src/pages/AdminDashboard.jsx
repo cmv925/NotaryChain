@@ -9,12 +9,14 @@ import {
   Eye, UserCheck, UserX, Settings, AlertTriangle, PieChart, Plus,
   Server, HardDrive, Zap, Database, Globe, AlertCircle,
   Lock, Bell, BellOff, Mail, MailX, Save, ToggleLeft, ToggleRight,
-  ShieldCheck, Key, Fingerprint, Network
+  ShieldCheck, Key, Fingerprint, Network, Star
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { NotificationBell } from '../components/NotificationBell';
+import UserDropdown from '../components/UserDropdown';
+import useViewMode from '../hooks/useViewMode';
 import { toast } from '../hooks/use-toast';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import axios from 'axios';
@@ -37,6 +39,8 @@ const AdminDashboard = () => {
   const { token, logout } = useAuth();
   const { subscribe } = useWS();
   const navigate = useNavigate();
+  const [viewMode] = useViewMode();
+  const isNotaryMode = viewMode === 'notary';
   
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
@@ -362,46 +366,81 @@ const AdminDashboard = () => {
                 </span>
               </div>
               <span className="text-slate-500 hidden sm:inline">|</span>
-              <span className="text-coral-600 font-semibold hidden sm:inline">Command Authority Suite</span>
+              <span className="text-coral-600 font-semibold hidden sm:inline-flex items-center gap-1.5">
+                <Star className="w-3.5 h-3.5 fill-coral-500 text-coral-500" />
+                Command Authority Suite
+              </span>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button
-                onClick={() => navigate('/admin/blueprints/create')}
-                variant="outline"
-                size="sm"
-                className="border-green-600/50 text-green-400 hover:bg-green-600/20 hidden sm:flex"
-              >
-                <Plus className="w-4 h-4 sm:mr-1" />
-                <span className="hidden lg:inline">Blueprint</span>
-              </Button>
-              <Button
-                onClick={() => navigate('/admin/ron-compliance')}
-                variant="outline"
-                size="sm"
-                className="border-coral-500/50 text-coral-500 hover:bg-coral-500/20 hidden sm:flex"
-                data-testid="ron-compliance-btn"
-              >
-                <Shield className="w-4 h-4 sm:mr-1" />
-                <span className="hidden lg:inline">RON Compliance</span>
-              </Button>
+              {/* Mode-aware quick actions */}
+              {!isNotaryMode ? (
+                <>
+                  <Button
+                    onClick={() => navigate('/admin/blueprints/create')}
+                    variant="outline"
+                    size="sm"
+                    className="border-green-600/50 text-green-700 hover:bg-green-50 hidden sm:flex"
+                    data-testid="header-blueprint-btn"
+                  >
+                    <Plus className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden lg:inline">Blueprint</span>
+                  </Button>
+                  <Button
+                    onClick={() => navigate('/admin/ron-compliance')}
+                    variant="outline"
+                    size="sm"
+                    className="border-coral-500/50 text-coral-600 hover:bg-coral-50 hidden sm:flex"
+                    data-testid="ron-compliance-btn"
+                  >
+                    <Shield className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden lg:inline">RON Compliance</span>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    onClick={() => navigate('/approvals')}
+                    variant="outline"
+                    size="sm"
+                    className="border-coral-500/50 text-coral-600 hover:bg-coral-50 hidden sm:flex"
+                    data-testid="header-approvals-btn"
+                  >
+                    <CheckCircle className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden lg:inline">Approvals queue</span>
+                  </Button>
+                  <Button
+                    onClick={() => navigate('/notary/journal')}
+                    variant="outline"
+                    size="sm"
+                    className="border-navy-300 text-navy-800 hover:bg-cream-200 hidden sm:flex"
+                    data-testid="header-journal-btn"
+                  >
+                    <FileText className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden lg:inline">Journal</span>
+                  </Button>
+                  <Button
+                    onClick={() => navigate('/transactions/new')}
+                    variant="outline"
+                    size="sm"
+                    className="border-emerald-500/50 text-emerald-700 hover:bg-emerald-50 hidden sm:flex"
+                    data-testid="header-start-session-btn"
+                  >
+                    <Plus className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden lg:inline">Start session</span>
+                  </Button>
+                </>
+              )}
               <Button
                 onClick={fetchDashboardData}
                 variant="ghost"
                 size="sm"
                 className="text-slate-500 hover:text-navy-900"
+                data-testid="header-refresh-btn"
               >
                 <RefreshCw className="w-4 h-4" />
               </Button>
               <NotificationBell token={token} />
-              <Button
-                onClick={handleLogout}
-                variant="outline"
-                size="sm"
-                className="border-slate-200 text-slate-500 hover:text-navy-900"
-              >
-                <LogOut className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Logout</span>
-              </Button>
+              <UserDropdown />
             </div>
           </div>
         </div>

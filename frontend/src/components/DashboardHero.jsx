@@ -13,7 +13,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FileText, Upload, Search, Hammer, BookOpen, ChevronRight, Sparkles, ShieldCheck, Clock, CheckCircle2 } from 'lucide-react';
+import { FileText, Upload, Search, Hammer, BookOpen, ChevronRight, Sparkles, ShieldCheck, Clock, CheckCircle2, Star, Scale, Diamond } from 'lucide-react';
 import { Button } from './ui/button';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -82,8 +82,14 @@ export default function DashboardHero({ token, user, role }) {
       {/* Welcome strip */}
       <div className="flex items-end justify-between flex-wrap gap-4 mb-5">
         <div>
-          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-coral-600 mb-1.5">
-            {isNotary ? 'Assurance Portal' : isAdmin ? 'Command Authority Suite' : 'Client Sovereign Hub'}
+          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-coral-600 mb-1.5 flex items-center gap-1.5">
+            {isNotary ? (
+              <><Scale className="w-3 h-3 text-navy-700" /> Assurance Portal</>
+            ) : isAdmin ? (
+              <><Star className="w-3 h-3 text-coral-600 fill-coral-600" /> Command Authority Suite</>
+            ) : (
+              <><Diamond className="w-3 h-3 text-gold-500 fill-gold-500" /> Client Sovereign Hub</>
+            )}
           </p>
           <h1 className="font-serif text-4xl md:text-5xl text-ink-900 tracking-tight">
             Good to see you, <span className="text-coral-600">{firstName}</span>.

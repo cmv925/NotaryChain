@@ -1,5 +1,57 @@
 # NotaryChain Changelog
 
+## May 27, 2026 — Mode-Aware Navigation + Role Badge + UserDropdown + Portal Glyphs
+
+Three connected improvements for identity-first UX:
+
+### 1) Visual fingerprints for each portal
+Added distinct glyph + accent tone so each surface feels like its own destination:
+- **Command Authority Suite** → ★ filled coral star
+- **Assurance Portal** → ⚖ navy scales
+- **Client Sovereign Hub** → ◆ filled gold diamond
+
+Glyphs appear in: `GlobalSubheader` page-indicator strip, `DashboardHero` eyebrow text, AdminDashboard top pill, NotaryDashboard top pill.
+
+### 2) Role badge + quick role-switcher in user dropdown (`components/UserDropdown.jsx`)
+Replaces the standalone Logout button in both AdminDashboard + NotaryDashboard. Contents:
+- Avatar (initials) + name + email
+- Role badge: `Admin` (coral), `Notary` (navy), or `Client` (gold) — tinted per role
+- **"Switch view" section** (only when the user has multiple eligible profiles):
+  - Admins → can flip to **Assurance Portal** or **Client Sovereign Hub**
+  - Notaries → can flip to **Client Sovereign Hub**
+  - Clients → no switcher (single mode, hidden)
+- Each switch entry shows the destination's title + glyph + a `Preview the X experience` subtitle
+- Clicking writes `nc_admin_view_mode` to localStorage AND navigates to the canonical landing path for that mode → the whole UI re-skins
+- Sign out at the bottom
+
+### 3) Mode-aware top-bar actions in AdminDashboard
+Wired via a new `hooks/useViewMode.js` hook (subscribes to `nc_admin_view_mode` localStorage + cross-tab `storage` events + the existing `nc:admin-view-mode-change` custom event already dispatched by GlobalSubheader).
+
+When admin is in **admin** mode (default):
+- Top header shows `Blueprint` + `RON Compliance` (existing admin tools)
+
+When admin flips to **notary** mode:
+- Those admin-only buttons are hidden
+- Replaced with notary-oriented quick actions: `Approvals queue` (coral), `Journal` (navy), `Start session` (emerald)
+
+This means the toggle isn't merely a navigation shortcut — even if the admin manually navigates back to `/admin` while in notary mode, the chrome re-skins to match the context they're working in.
+
+### Files
+- NEW `hooks/useViewMode.js` — shared cross-component view-mode state with localStorage + event sync
+- NEW `components/UserDropdown.jsx` — role badge + switcher + logout
+- `pages/AdminDashboard.jsx` — top header buttons gated on `isNotaryMode`, swapped Logout → `<UserDropdown />`, added ★ glyph to top pill
+- `pages/NotaryDashboard.jsx` — swapped Logout → `<UserDropdown />`, added ⚖ glyph to top pill
+- `components/DashboardHero.jsx` — glyphs in role-aware eyebrow
+- `components/GlobalSubheader.jsx` — glyphs in pathname-mapped page indicator
+
+### Verification (live, with admin@notarychain.com)
+- `/admin` in admin mode → Blueprint/RON Compliance visible (1,1,0)
+- Click UserDropdown → switch to Notary → URL becomes `/notary/dashboard`
+- Navigate back to `/admin` → Blueprint/RON Compliance gone (0,0), Approvals/Journal/Start session visible (1,1,1)
+- Switch back to Admin → state restored
+
+
+
 ## May 27, 2026 — Asset Hierarchy Re-framing (Identity-First Naming)
 Pivoted from generic "Dashboard" labels to identity-first framing per the user's brand strategy. Routes/URLs deliberately unchanged so bookmarks, links, and SEO stay intact — only display labels were updated.
 
