@@ -362,7 +362,7 @@ const AdminDashboard = () => {
                 </span>
               </div>
               <span className="text-slate-500 hidden sm:inline">|</span>
-              <span className="text-red-400 font-semibold hidden sm:inline">Admin Dashboard</span>
+              <span className="text-coral-600 font-semibold hidden sm:inline">Command Authority Suite</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
               <Button
@@ -474,7 +474,7 @@ const AdminDashboard = () => {
         )}
 
         {/* Breadcrumbs */}
-        <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Admin Dashboard' }]} />
+        <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Command Authority Suite' }]} />
 
         {/* Tabs */}
         <div className="mb-6">

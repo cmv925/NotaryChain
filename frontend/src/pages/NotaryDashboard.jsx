@@ -454,7 +454,7 @@ const NotaryDashboard = () => {
 
         {/* Main Content */}
         {/* Breadcrumbs */}
-        <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Notary Workstation' }]} />
+        <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Assurance Portal' }]} />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Left Panel - Request Lists */}

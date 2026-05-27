@@ -80,7 +80,9 @@ export default function GlobalSubheader() {
             </button>
           ) : (
             <span className="text-[11px] uppercase tracking-[0.2em] text-ink-300 font-bold">
-              {pathname === '/admin' ? 'Admin home' : pathname === '/dashboard' ? 'Workspace' : 'Home'}
+              {pathname === '/admin' ? 'Command Authority Suite' :
+               pathname === '/notary/dashboard' ? 'Assurance Portal' :
+               pathname === '/dashboard' ? 'Client Sovereign Hub' : 'Home'}
             </span>
           )}
           {!onHome && (

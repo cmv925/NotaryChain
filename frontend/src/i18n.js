@@ -66,7 +66,7 @@ const resources = {
         available: 'Available',
       },
       notary: {
-        workstation: 'Notary Workstation',
+        workstation: 'Assurance Portal',
         user_view: 'User View',
         todays_earnings: "Today's Earnings",
         total_completed: 'Total Completed',

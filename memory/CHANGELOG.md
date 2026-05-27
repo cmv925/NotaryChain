@@ -1,5 +1,25 @@
 # NotaryChain Changelog
 
+## May 27, 2026 — Asset Hierarchy Re-framing (Identity-First Naming)
+Pivoted from generic "Dashboard" labels to identity-first framing per the user's brand strategy. Routes/URLs deliberately unchanged so bookmarks, links, and SEO stay intact — only display labels were updated.
+
+| Route | OLD label | NEW label |
+|---|---|---|
+| `/admin` | "Admin Dashboard" / "Administrator console" | **Command Authority Suite** |
+| `/notary/dashboard` | "Notary Workstation" / "Notary workspace" | **Assurance Portal** |
+| `/dashboard` | "Welcome back" / "Dashboard" / "Workspace" | **Client Sovereign Hub** |
+
+**Files updated:**
+- `components/DashboardHero.jsx` — role-aware eyebrow text
+- `components/GlobalSubheader.jsx` — pathname-mapped page indicator
+- `pages/AdminDashboard.jsx` — top-bar pill (now coral, no longer red) + Breadcrumb leaf
+- `pages/NotaryDashboard.jsx` — Breadcrumb leaf
+- `i18n.js` — `notary.workstation` translation key value
+
+Verified live on all three routes via Playwright: each page renders its new framing in the subheader, top pill, breadcrumb, and hero eyebrow.
+
+
+
 ## May 27, 2026 — Production Blank-Page Fix (Service Worker Stale-Cache Bug)
 - **Bug**: After redeploy to `notarychain.app`, the production site rendered a completely blank body (only the `<title>` showed in the browser tab title). Preview was unaffected.
 - **Root cause**: `public/sw.js` used a **cache-first** strategy for `/` and `/index.html` (lines 2-6, 64-67) with a never-changing `CACHE_NAME = 'notarychain-v1'`. Classic SPA + service-worker stale-cache failure mode:

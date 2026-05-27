@@ -83,7 +83,7 @@ export default function DashboardHero({ token, user, role }) {
       <div className="flex items-end justify-between flex-wrap gap-4 mb-5">
         <div>
           <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-coral-600 mb-1.5">
-            {isNotary ? 'Notary workspace' : isAdmin ? 'Administrator console' : 'Welcome back'}
+            {isNotary ? 'Assurance Portal' : isAdmin ? 'Command Authority Suite' : 'Client Sovereign Hub'}
           </p>
           <h1 className="font-serif text-4xl md:text-5xl text-ink-900 tracking-tight">
             Good to see you, <span className="text-coral-600">{firstName}</span>.
