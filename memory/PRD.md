@@ -207,6 +207,10 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 
 
 ## Changelog (Recent)
+- **2026-05-27 (v3, third pass):**
+  - **Fixed React "missing key prop" warning on `/dashboard`:** root cause was `GET /api/documents/seals` projection (`document_routes.py`) excluding `id` — every doc came back with `id: null`, so `key={doc.id}` was undefined. Fixed the projection AND added robust fallback keys (`doc.id || doc.sha256_hash || doc.transaction_id || \`doc-${idx}\``) in `Dashboard.jsx` for both maps. Console now clean.
+  - **Extracted `useAdminData()` hook** (`/hooks/useAdminData.js`, 357 lines). Owns ALL admin data state (15 stateful slots), loading flags (11 slots), fetchers (12), and mutations (4) plus the mount-only effect + WS subscriptions. Returns `{ data, flags, actions }`.
+  - **AdminDashboard.jsx: 403 → 203 lines** (now ~70% smaller than the original 671). Pure layout + UI-state composition. Verified end-to-end: stats grid renders, tabs lazy-load (Operations tab populated full Hedera/Storage/Payments/Database panels after click), zero console errors.
 - **2026-05-27 (v3, second pass):**
   - **UserDropdown:** Added one-click "Restart tour" entry (`[data-testid=user-dropdown-restart-tour]`). Detects the current portal via `useViewMode`, calls `resetOnboarding(portal)` to clear that portal's localStorage key, and reloads/navigates to the canonical portal route so the tour auto-fires fresh.
   - **AdminDashboard refactor:** 671 → 403 lines. Extracted `AdminHeader.jsx`, `AdminStatsGrid.jsx`, `AdminTabsNav.jsx`, `UserDetailsModal.jsx` under `/components/admin/`.

@@ -302,8 +302,8 @@ const Dashboard = () => {
               <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-slate-600">My Notarization Requests</h2>
             </div>
             <div className="divide-y divide-slate-200">
-              {notaryRequests.slice(0, 5).map((request) => (
-                <div key={request.id}>
+              {notaryRequests.slice(0, 5).map((request, idx) => (
+                <div key={request.id || `req-${idx}`}>
                   <div className="px-6 py-4 hover:bg-cream-200/20 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -382,8 +382,8 @@ const Dashboard = () => {
             </div>
           ) : (
             <div className="divide-y divide-slate-200">
-              {documents.map((doc) => (
-                <div key={doc.id} className="px-6 py-5 hover:bg-cream-200/20 transition-colors">
+              {documents.map((doc, idx) => (
+                <div key={doc.id || doc.sha256_hash || doc.transaction_id || `doc-${idx}`} className="px-6 py-5 hover:bg-cream-200/20 transition-colors">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-4 flex-1">
                       <div className="w-10 h-10 bg-cream-200 rounded-lg flex items-center justify-center flex-shrink-0 border border-slate-200">

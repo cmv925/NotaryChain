@@ -44,7 +44,7 @@ async def get_user_document_seals(
     # Get user's document seals
     cursor = db.document_seals.find(
         {"user_id": current_user.id},
-        {"_id": 0, "file_name": 1, "fileName": 1, "file_size": 1, "fileSize": 1, "file_type": 1, "fileType": 1, "sha256_hash": 1, "transaction_id": 1, "timestamp": 1, "user_id": 1, "topic_id": 1, "status": 1}
+        {"_id": 0, "id": 1, "file_name": 1, "fileName": 1, "file_size": 1, "fileSize": 1, "file_type": 1, "fileType": 1, "sha256_hash": 1, "transaction_id": 1, "timestamp": 1, "user_id": 1, "topic_id": 1, "status": 1}
     )
     cursor = cursor.sort("timestamp", -1).skip(skip).limit(limit)
     
