@@ -56,15 +56,17 @@ export default function UserDropdown() {
                    : (user.is_notary || user.role === 'notary') ? 'notary'
                    : 'client';
 
-  // Available alternative views (excludes the primary role itself).
-  const switchableViews = (() => {
-    if (primaryRole === 'admin')  return ['notary', 'client'];
-    if (primaryRole === 'notary') return ['client'];
-    return [];
-  })();
+  // Views this role is allowed to inhabit.
+  const allowedViews = primaryRole === 'admin'  ? ['admin', 'notary', 'client']
+                     : primaryRole === 'notary' ? ['notary', 'client']
+                     :                            ['client'];
 
-  // Effective mode = stored mode if user is admin (admins can flip); otherwise primaryRole.
-  const effectiveMode = primaryRole === 'admin' ? mode : primaryRole;
+  // Effective mode = stored mode if it's allowed for this role, else fall back
+  // to primary. Lets notaries flip between Assurance Portal ↔ Client Sovereign Hub
+  // (and back), not just one-way.
+  const effectiveMode = allowedViews.includes(mode) ? mode : primaryRole;
+  const switchableViews = allowedViews.filter((v) => v !== effectiveMode);
+
   const badge = ROLE_META[effectiveMode];
   const BadgeIcon = badge.Icon;
 
