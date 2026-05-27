@@ -278,7 +278,7 @@ export default function ANANDashboard() {
   // ═══════════════════════════════════════════════════════
   if (view === 'list' || !ceremonyId) {
     return (
-      <div className="min-h-screen bg-navy-900 text-navy-900">
+      <div className="min-h-screen bg-cream-100 text-navy-900">
         <div className="bg-cream-100 border-b border-slate-200 sticky top-0 z-20">
           <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -439,15 +439,15 @@ export default function ANANDashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="text-slate-600 text-xs block mb-1">Document Name *</label>
-                    <Input value={form.document_name} onChange={e => setForm(f => ({ ...f, document_name: e.target.value }))} placeholder="e.g. Affidavit of Identity" className="bg-navy-900 border-slate-200 text-navy-900" data-testid="anan-doc-name" />
+                    <Input value={form.document_name} onChange={e => setForm(f => ({ ...f, document_name: e.target.value }))} placeholder="e.g. Affidavit of Identity" className="bg-white border-slate-200 text-navy-900" data-testid="anan-doc-name" />
                   </div>
                   <div>
                     <label className="text-slate-600 text-xs block mb-1">Signer Name *</label>
-                    <Input value={form.signer_name} onChange={e => setForm(f => ({ ...f, signer_name: e.target.value }))} placeholder="e.g. John Smith" className="bg-navy-900 border-slate-200 text-navy-900" data-testid="anan-signer-name" />
+                    <Input value={form.signer_name} onChange={e => setForm(f => ({ ...f, signer_name: e.target.value }))} placeholder="e.g. John Smith" className="bg-white border-slate-200 text-navy-900" data-testid="anan-signer-name" />
                   </div>
                   <div>
                     <label className="text-slate-600 text-xs block mb-1">Document Type</label>
-                    <select value={form.document_type} onChange={e => setForm(f => ({ ...f, document_type: e.target.value }))} className="w-full px-3 py-2 bg-navy-900 border border-slate-200 text-navy-900 rounded-md text-sm" data-testid="anan-doc-type">
+                    <select value={form.document_type} onChange={e => setForm(f => ({ ...f, document_type: e.target.value }))} className="w-full px-3 py-2 bg-white border border-slate-200 text-navy-900 rounded-md text-sm" data-testid="anan-doc-type">
                       <option value="affidavit">Affidavit</option>
                       <option value="power_of_attorney">Power of Attorney</option>
                       <option value="deed">Deed</option>
@@ -458,7 +458,7 @@ export default function ANANDashboard() {
                   </div>
                   <div>
                     <label className="text-slate-600 text-xs block mb-1">Jurisdiction</label>
-                    <select value={form.jurisdiction} onChange={e => setForm(f => ({ ...f, jurisdiction: e.target.value }))} className="w-full px-3 py-2 bg-navy-900 border border-slate-200 text-navy-900 rounded-md text-sm" data-testid="anan-jurisdiction">
+                    <select value={form.jurisdiction} onChange={e => setForm(f => ({ ...f, jurisdiction: e.target.value }))} className="w-full px-3 py-2 bg-white border border-slate-200 text-navy-900 rounded-md text-sm" data-testid="anan-jurisdiction">
                       <option value="US-FL">Florida (FL)</option>
                       <option value="US-TX">Texas (TX)</option>
                       <option value="US-VA">Virginia (VA)</option>
@@ -574,7 +574,7 @@ export default function ANANDashboard() {
   const canExecute = c.status === 'pending' || c.status === 'escalated';
 
   return (
-    <div className="min-h-screen bg-navy-900 text-navy-900">
+    <div className="min-h-screen bg-cream-100 text-navy-900">
       {/* Header */}
       <div className="bg-cream-100 border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">

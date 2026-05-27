@@ -796,7 +796,7 @@ const RequestCard = ({
                     onClick={onAccept}
                     disabled={processingAction === request.id}
                     size="sm"
-                    className="bg-navy-700 hover:bg-navy-800 text-navy-900"
+                    className="bg-coral-500 hover:bg-coral-600 text-white"
                     data-testid={`accept-${request.id}`}
                   >
                     {processingAction === request.id ? (
@@ -1275,7 +1275,7 @@ const RequestDetailModal = ({
               <Button
                 onClick={onAccept}
                 disabled={processingAction === request.id}
-                className="flex-1 bg-navy-700 hover:bg-navy-800 text-navy-900"
+                className="flex-1 bg-coral-500 hover:bg-coral-600 text-white"
               >
                 {processingAction === request.id ? (
                   <RefreshCw className="w-4 h-4 mr-2 animate-spin" />

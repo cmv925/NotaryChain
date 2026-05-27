@@ -1,5 +1,16 @@
 # NotaryChain Changelog
 
+## May 27, 2026 — Primary CTA Button Color Fix (Accept buttons + illegible navy-on-navy regression)
+- **Issue**: Notary Workstation "Accept" buttons (and several other primary CTAs across the app) appeared as **dark navy on dark navy** — the "Accept" text was barely legible. Root cause: my earlier gray→navy sweep (May 25) over-applied to primary CTA buttons that originally read `bg-gray-700 hover:bg-gray-800 text-gray-900` — that pattern was meant for raised dark CTAs that worked when the text was inheriting from light parent, but the sweep made it dark-on-dark.
+- **Fix** (4 surgical sweeps across all 228 `.jsx/.js` files):
+  1. Primary CTA buttons: `bg-navy-700/800/900 hover:bg-navy-700/800/900 text-navy-900` → `bg-coral-500 hover:bg-coral-600 text-white`. Now matches the brand's primary-action color.
+  2. Form inputs: `bg-navy-900 ...text-navy-900` → `bg-white ...text-navy-900` (inputs are no longer dark-on-dark).
+  3. Page wrappers: `min-h-screen bg-navy-900 text-navy-900` → `min-h-screen bg-cream-100 text-navy-900` (entire pages no longer dark-on-dark).
+  4. One tooltip in `OperationsTab.jsx` manually fixed: `bg-navy-800 text-navy-900` → `bg-navy-900 text-cream-100` (tooltip stays dark with light text, which is correct).
+- Verified live on `/notary/dashboard` — every Accept button + "User View" toggle + Performance icons + Pro Tip card render in proper coral with full legibility.
+
+
+
 ## May 26, 2026 — Admin Access Hardening + Notary Toggle Fix + LexisNexis InstantID Q&A (Drop-in-Ready)
 
 ### 🔴 Admin Access Hardening (P0)

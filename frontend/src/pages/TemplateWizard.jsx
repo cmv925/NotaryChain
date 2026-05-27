@@ -660,7 +660,7 @@ const TemplateWizard = () => {
               <Button size="sm" onClick={() => handleShareDraft(false)} className={`flex-1 ${!shareToken ? 'bg-coral-500' : 'bg-gray-700'} text-navy-900`} data-testid="share-view-only">
                 View Only
               </Button>
-              <Button size="sm" onClick={() => handleShareDraft(true)} className="flex-1 bg-navy-700 hover:bg-navy-800 text-navy-900" data-testid="share-allow-edit">
+              <Button size="sm" onClick={() => handleShareDraft(true)} className="flex-1 bg-coral-500 hover:bg-coral-600 text-white" data-testid="share-allow-edit">
                 Allow Editing
               </Button>
             </div>

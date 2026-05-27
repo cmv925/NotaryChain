@@ -489,7 +489,7 @@ export const OperationsTab = ({ alertForm, alertSettings, editingAlerts, exportI
                                 const height = Math.max((d.uploads / maxUploads) * 100, 4);
                                 return (
                                   <div key={i} className="flex-1 flex flex-col items-center justify-end group relative">
-                                    <div className="absolute -top-6 hidden group-hover:block bg-navy-800 text-navy-900 text-xs px-2 py-1 rounded whitespace-nowrap z-10">
+                                    <div className="absolute -top-6 hidden group-hover:block bg-navy-900 text-cream-100 text-xs px-2 py-1 rounded whitespace-nowrap z-10">
                                       {d.date}: {d.uploads} files ({d.size_mb} MB)
                                     </div>
                                     <div

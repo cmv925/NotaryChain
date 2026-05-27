@@ -111,7 +111,7 @@ export default function FraudIntelligencePage() {
   }
 
   return (
-    <div className="min-h-screen bg-navy-900 text-navy-900">
+    <div className="min-h-screen bg-cream-100 text-navy-900">
       <div className="bg-cream-100 border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -171,7 +171,7 @@ export default function FraudIntelligencePage() {
                     <div>
                       <label className="text-slate-600 text-[10px] block mb-1">Category</label>
                       <select value={form.category} onChange={e => setForm(f => ({...f, category: e.target.value}))}
-                        className="w-full px-3 py-2 bg-navy-900 border border-slate-200 text-navy-900 rounded text-xs" data-testid="fraud-category">
+                        className="w-full px-3 py-2 bg-white border border-slate-200 text-navy-900 rounded text-xs" data-testid="fraud-category">
                         <option value="identity">Identity</option>
                         <option value="document">Document</option>
                         <option value="biometric">Biometric</option>
@@ -181,7 +181,7 @@ export default function FraudIntelligencePage() {
                     <div>
                       <label className="text-slate-600 text-[10px] block mb-1">Severity</label>
                       <select value={form.severity} onChange={e => setForm(f => ({...f, severity: e.target.value}))}
-                        className="w-full px-3 py-2 bg-navy-900 border border-slate-200 text-navy-900 rounded text-xs" data-testid="fraud-severity">
+                        className="w-full px-3 py-2 bg-white border border-slate-200 text-navy-900 rounded text-xs" data-testid="fraud-severity">
                         <option value="critical">Critical</option>
                         <option value="high">High</option>
                         <option value="medium">Medium</option>
@@ -190,12 +190,12 @@ export default function FraudIntelligencePage() {
                     </div>
                   </div>
                   <Input value={form.title} onChange={e => setForm(f => ({...f, title: e.target.value}))}
-                    placeholder="Pattern title" className="mb-2 bg-navy-900 border-slate-200 text-navy-900 text-sm" data-testid="fraud-title" />
+                    placeholder="Pattern title" className="mb-2 bg-white border-slate-200 text-navy-900 text-sm" data-testid="fraud-title" />
                   <textarea value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))}
                     placeholder="Description..." rows={2}
-                    className="w-full px-3 py-2 mb-2 bg-navy-900 border border-slate-200 text-navy-900 rounded text-sm resize-none" data-testid="fraud-desc" />
+                    className="w-full px-3 py-2 mb-2 bg-white border border-slate-200 text-navy-900 rounded text-sm resize-none" data-testid="fraud-desc" />
                   <Input value={form.indicators} onChange={e => setForm(f => ({...f, indicators: e.target.value}))}
-                    placeholder="Indicators (comma-separated)" className="mb-3 bg-navy-900 border-slate-200 text-navy-900 text-sm" data-testid="fraud-indicators" />
+                    placeholder="Indicators (comma-separated)" className="mb-3 bg-white border-slate-200 text-navy-900 text-sm" data-testid="fraud-indicators" />
                   <div className="flex gap-2">
                     <Button onClick={handleCreatePattern} disabled={actionLoading === 'create'} className="bg-red-600 hover:bg-red-700 text-xs" data-testid="fraud-submit-btn">
                       {actionLoading === 'create' ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Plus className="w-3 h-3 mr-1" />} Create

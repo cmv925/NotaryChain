@@ -132,7 +132,7 @@ const SSOLoginPage = () => {
                   />
                   <p className="text-slate-600 text-xs mt-1">We'll check if your organization has SSO enabled</p>
                 </div>
-                <Button type="submit" disabled={discovering || !email.trim()} className="w-full bg-navy-700 hover:bg-navy-800 text-navy-900" data-testid="sso-discover-btn">
+                <Button type="submit" disabled={discovering || !email.trim()} className="w-full bg-coral-500 hover:bg-coral-600 text-white" data-testid="sso-discover-btn">
                   {discovering ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Globe className="w-4 h-4 mr-2" />}
                   Continue with SSO
                 </Button>
@@ -212,7 +212,7 @@ const SSOLoginPage = () => {
                   <Button onClick={() => { setStep('email'); setError(''); }} variant="outline" className="flex-1 border-slate-200 text-slate-500" data-testid="sso-deny-btn">
                     <X className="w-4 h-4 mr-1" /> Deny
                   </Button>
-                  <Button onClick={handleAuthorize} disabled={authorizing} className="flex-1 bg-navy-700 hover:bg-navy-800 text-navy-900" data-testid="sso-authorize-btn">
+                  <Button onClick={handleAuthorize} disabled={authorizing} className="flex-1 bg-coral-500 hover:bg-coral-600 text-white" data-testid="sso-authorize-btn">
                     {authorizing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <UserCheck className="w-4 h-4 mr-2" />}
                     Authorize
                   </Button>
