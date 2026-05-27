@@ -2,29 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useWS } from '../contexts/WebSocketContext';
-import {
-  Shield, Users, FileText, TrendingUp, DollarSign,
-  CheckCircle, XCircle, Clock, RefreshCw, Search,
-  BarChart3, Activity, Wallet, LogOut, ChevronDown,
-  Eye, UserCheck, UserX, Settings, AlertTriangle, PieChart, Plus,
-  Server, HardDrive, Zap, Database, Globe, AlertCircle,
-  Lock, Bell, BellOff, Mail, MailX, Save, ToggleLeft, ToggleRight,
-  ShieldCheck, Key, Fingerprint, Network, Star
-} from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { Card, CardContent } from '../components/ui/card';
-import { Input } from '../components/ui/input';
-import { NotificationBell } from '../components/NotificationBell';
-import UserDropdown from '../components/UserDropdown';
-import useViewMode from '../hooks/useViewMode';
+import { RefreshCw } from 'lucide-react';
 import { OnboardingTour } from '../components/OnboardingTour';
+import useViewMode from '../hooks/useViewMode';
 import { toast } from '../hooks/use-toast';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import axios from 'axios';
-import {
-  LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart as RechartsPie, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
-} from 'recharts';
 import { OverviewTab } from '../components/admin/tabs/OverviewTab';
 import { OperationsTab } from '../components/admin/tabs/OperationsTab';
 import { SecurityTab } from '../components/admin/tabs/SecurityTab';
@@ -32,6 +15,10 @@ import { AnalyticsTab } from '../components/admin/tabs/AnalyticsTab';
 import { UsersTab } from '../components/admin/tabs/UsersTab';
 import { NotariesTab } from '../components/admin/tabs/NotariesTab';
 import { AuditTab } from '../components/admin/tabs/AuditTab';
+import AdminHeader from '../components/admin/AdminHeader';
+import AdminStatsGrid from '../components/admin/AdminStatsGrid';
+import AdminTabsNav from '../components/admin/AdminTabsNav';
+import UserDetailsModal from '../components/admin/UserDetailsModal';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -355,205 +342,33 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-cream-100">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-                <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-coral-500" />
-                <span className="text-lg sm:text-xl font-bold text-navy-900">
-                  Notary<span className="text-coral-500">Chain</span>
-                </span>
-              </div>
-              <span className="text-slate-500 hidden sm:inline">|</span>
-              <span className="text-coral-600 font-semibold hidden sm:inline-flex items-center gap-1.5">
-                <Star className="w-3.5 h-3.5 fill-coral-500 text-coral-500" />
-                Command Authority Suite
-              </span>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-4">
-              {/* Mode-aware quick actions */}
-              {!isNotaryMode ? (
-                <>
-                  <Button
-                    onClick={() => navigate('/admin/blueprints/create')}
-                    variant="outline"
-                    size="sm"
-                    className="border-green-600/50 text-green-700 hover:bg-green-50 hidden sm:flex"
-                    data-testid="header-blueprint-btn"
-                  >
-                    <Plus className="w-4 h-4 sm:mr-1" />
-                    <span className="hidden lg:inline">Blueprint</span>
-                  </Button>
-                  <Button
-                    onClick={() => navigate('/admin/ron-compliance')}
-                    variant="outline"
-                    size="sm"
-                    className="border-coral-500/50 text-coral-600 hover:bg-coral-50 hidden sm:flex"
-                    data-testid="ron-compliance-btn"
-                  >
-                    <Shield className="w-4 h-4 sm:mr-1" />
-                    <span className="hidden lg:inline">RON Compliance</span>
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    onClick={() => navigate('/approvals')}
-                    variant="outline"
-                    size="sm"
-                    className="border-coral-500/50 text-coral-600 hover:bg-coral-50 hidden sm:flex"
-                    data-testid="header-approvals-btn"
-                  >
-                    <CheckCircle className="w-4 h-4 sm:mr-1" />
-                    <span className="hidden lg:inline">Approvals queue</span>
-                  </Button>
-                  <Button
-                    onClick={() => navigate('/notary/journal')}
-                    variant="outline"
-                    size="sm"
-                    className="border-navy-300 text-navy-800 hover:bg-cream-200 hidden sm:flex"
-                    data-testid="header-journal-btn"
-                  >
-                    <FileText className="w-4 h-4 sm:mr-1" />
-                    <span className="hidden lg:inline">Journal</span>
-                  </Button>
-                  <Button
-                    onClick={() => navigate('/transactions/new')}
-                    variant="outline"
-                    size="sm"
-                    className="border-emerald-500/50 text-emerald-700 hover:bg-emerald-50 hidden sm:flex"
-                    data-testid="header-start-session-btn"
-                  >
-                    <Plus className="w-4 h-4 sm:mr-1" />
-                    <span className="hidden lg:inline">Start session</span>
-                  </Button>
-                </>
-              )}
-              <Button
-                onClick={fetchDashboardData}
-                variant="ghost"
-                size="sm"
-                className="text-slate-500 hover:text-navy-900"
-                data-testid="header-refresh-btn"
-              >
-                <RefreshCw className="w-4 h-4" />
-              </Button>
-              <NotificationBell token={token} />
-              <UserDropdown />
-            </div>
-          </div>
-        </div>
-      </header>
+      <AdminHeader
+        isNotaryMode={isNotaryMode}
+        onRefresh={fetchDashboardData}
+        token={token}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        {/* Stats Overview */}
-        {stats && (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8" data-testid="admin-stats-grid">
-            <Card className="bg-gradient-to-br from-coral-500/20 to-coral-600/10 border-coral-300/30">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-slate-500 text-xs">Total Users</p>
-                    <p className="text-2xl font-bold text-navy-900">{stats.total_users}</p>
-                  </div>
-                  <Users className="w-8 h-8 text-coral-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-green-600/20 to-green-600/10 border-green-500/30">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-slate-500 text-xs">Active Notaries</p>
-                    <p className="text-2xl font-bold text-navy-900">{stats.total_notaries}</p>
-                  </div>
-                  <UserCheck className="w-8 h-8 text-green-400" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-navy-700/20 to-navy-700/10 border-navy-300/30">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-slate-500 text-xs">Notarizations</p>
-                    <p className="text-2xl font-bold text-navy-900">{stats.total_notarizations}</p>
-                  </div>
-                  <FileText className="w-8 h-8 text-navy-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-orange-600/20 to-orange-600/10 border-coral-200">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-slate-500 text-xs">Revenue (USD)</p>
-                    <p className="text-2xl font-bold text-navy-900">${stats.total_revenue_usd}</p>
-                  </div>
-                  <DollarSign className="w-8 h-8 text-coral-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-yellow-600/20 to-yellow-600/10 border-yellow-500/30">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-slate-500 text-xs">Pending Apps</p>
-                    <p className="text-2xl font-bold text-navy-900">{stats.pending_notary_applications}</p>
-                  </div>
-                  <Clock className="w-8 h-8 text-yellow-400" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+        <AdminStatsGrid stats={stats} />
 
         {/* Breadcrumbs */}
         <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Dashboard', path: '/dashboard' }, { label: 'Command Authority Suite' }]} />
 
-        {/* Tabs */}
-        <div className="mb-6">
-          <div className="flex gap-2 border-b border-slate-200 overflow-x-auto" data-testid="admin-tabs-nav">
-            {[
-              { id: 'overview', label: 'Overview', icon: BarChart3 },
-              { id: 'operations', label: 'Operations', icon: Server },
-              { id: 'security', label: 'Security', icon: ShieldCheck },
-              { id: 'analytics', label: 'Analytics', icon: PieChart },
-              { id: 'users', label: 'Users', icon: Users },
-              { id: 'notaries', label: 'Notaries', icon: UserCheck },
-              { id: 'audit', label: 'Audit Logs', icon: Activity },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => {
-                  setActiveTab(tab.id);
-                  if (tab.id === 'audit') fetchAuditLogs();
-                  if (tab.id === 'analytics' && !analyticsData) fetchAnalyticsData();
-                  if (tab.id === 'analytics' && !ceremonyAnalytics) fetchCeremonyAnalytics();
-                  if (tab.id === 'operations' && !opsData) fetchOpsMetrics();
-                  if (tab.id === 'operations' && !alertSettings) fetchAlertSettings();
-                  if (tab.id === 'operations' && !storageAnalytics) fetchStorageAnalytics();
-                  if (tab.id === 'operations' && !serviceHealth) fetchServiceHealth();
-                  if (tab.id === 'operations' && !incidents) fetchIncidents();
-                  if (tab.id === 'security' && !securityData) fetchSecurityCompliance();
-                }}
-                className={`flex items-center gap-2 px-4 py-3 font-medium transition-all whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? 'text-coral-500 border-b-2 border-coral-300'
-                    : 'text-slate-500 hover:text-navy-900'
-                }`}
-              >
-                <tab.icon className="w-4 h-4" />
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        <AdminTabsNav
+          activeTab={activeTab}
+          onSelect={(tabId) => {
+            setActiveTab(tabId);
+            if (tabId === 'audit') fetchAuditLogs();
+            if (tabId === 'analytics' && !analyticsData) fetchAnalyticsData();
+            if (tabId === 'analytics' && !ceremonyAnalytics) fetchCeremonyAnalytics();
+            if (tabId === 'operations' && !opsData) fetchOpsMetrics();
+            if (tabId === 'operations' && !alertSettings) fetchAlertSettings();
+            if (tabId === 'operations' && !storageAnalytics) fetchStorageAnalytics();
+            if (tabId === 'operations' && !serviceHealth) fetchServiceHealth();
+            if (tabId === 'operations' && !incidents) fetchIncidents();
+            if (tabId === 'security' && !securityData) fetchSecurityCompliance();
+          }}
+        />
 
         {/* Tab Content */}
         {activeTab === 'overview' && <OverviewTab handleApproveNotary={handleApproveNotary} handleRejectNotary={handleRejectNotary} pendingApplications={pendingApplications} processingAction={processingAction} revenueData={revenueData} stats={stats} />}
@@ -573,97 +388,12 @@ const AdminDashboard = () => {
 
       {/* User Details Modal */}
       {showUserModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl border border-slate-200 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-slate-200">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-navy-900">User Details</h2>
-                <Button
-                  variant="ghost"
-                  onClick={() => { setShowUserModal(false); setSelectedUser(null); }}
-                  className="text-slate-500 hover:text-navy-900"
-                >
-                  <XCircle className="w-5 h-5" />
-                </Button>
-              </div>
-            </div>
-            <div className="p-6 space-y-6">
-              {/* User Info */}
-              <div>
-                <h3 className="text-navy-900 font-semibold mb-3">Profile</h3>
-                <div className="bg-cream-100 rounded-lg p-4 grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-slate-500 text-xs">Email</p>
-                    <p className="text-navy-900">{selectedUser.user?.email}</p>
-                  </div>
-                  <div>
-                    <p className="text-slate-500 text-xs">Full Name</p>
-                    <p className="text-navy-900">{selectedUser.user?.full_name || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <p className="text-slate-500 text-xs">Role</p>
-                    <p className="text-navy-900 capitalize">{selectedUser.user?.role || 'user'}</p>
-                  </div>
-                  <div>
-                    <p className="text-slate-500 text-xs">Status</p>
-                    <p className={selectedUser.user?.status === 'active' ? 'text-green-400' : 'text-red-400'}>
-                      {selectedUser.user?.status || 'active'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Notary Profile */}
-              {selectedUser.notary_profile && (
-                <div>
-                  <h3 className="text-navy-900 font-semibold mb-3">Notary Profile</h3>
-                  <div className="bg-cream-100 rounded-lg p-4 grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-slate-500 text-xs">Commission #</p>
-                      <p className="text-navy-900">{selectedUser.notary_profile.commission_number || 'N/A'}</p>
-                    </div>
-                    <div>
-                      <p className="text-slate-500 text-xs">State</p>
-                      <p className="text-navy-900">{selectedUser.notary_profile.state || 'N/A'}</p>
-                    </div>
-                    <div>
-                      <p className="text-slate-500 text-xs">Status</p>
-                      <span className={`px-2 py-1 rounded text-xs ${
-                        selectedUser.notary_profile.status === 'approved' ? 'bg-green-500/20 text-green-400' :
-                        'bg-yellow-500/20 text-yellow-400'
-                      }`}>
-                        {selectedUser.notary_profile.status}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Actions */}
-              <div className="flex gap-3 pt-4 border-t border-slate-200">
-                {selectedUser.user?.status === 'active' ? (
-                  <Button
-                    onClick={() => handleUserStatusChange(selectedUser.user.id, 'disabled')}
-                    disabled={processingAction === selectedUser.user?.id}
-                    className="bg-red-600 hover:bg-red-700"
-                  >
-                    <UserX className="w-4 h-4 mr-2" />
-                    Disable User
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => handleUserStatusChange(selectedUser.user.id, 'active')}
-                    disabled={processingAction === selectedUser.user?.id}
-                    className="bg-green-600 hover:bg-green-700"
-                  >
-                    <UserCheck className="w-4 h-4 mr-2" />
-                    Enable User
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+        <UserDetailsModal
+          user={selectedUser}
+          processingAction={processingAction}
+          onClose={() => { setShowUserModal(false); setSelectedUser(null); }}
+          onStatusChange={handleUserStatusChange}
+        />
       )}
       <OnboardingTour portal="command_authority" />
     </div>

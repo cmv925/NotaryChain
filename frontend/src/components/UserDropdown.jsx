@@ -18,10 +18,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Shield, Briefcase, User as UserIcon, LogOut, ChevronDown,
-  Eye, Star, Scale, Diamond
+  Eye, Star, Scale, Diamond, Sparkles
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import useViewMode from '../hooks/useViewMode';
+import { resetOnboarding } from './OnboardingTour';
 
 const ROLE_META = {
   admin:  { label: 'Admin',  Icon: Shield,   color: 'bg-coral-50 text-coral-700 border-coral-200' },
@@ -30,9 +31,9 @@ const ROLE_META = {
 };
 
 const VIEW_META = {
-  admin:  { label: 'Command Authority Suite', path: '/admin',              Glyph: Star },
-  notary: { label: 'Assurance Portal',        path: '/notary/dashboard',   Glyph: Scale },
-  client: { label: 'Client Sovereign Hub',    path: '/dashboard',          Glyph: Diamond },
+  admin:  { label: 'Command Authority Suite', path: '/admin',              Glyph: Star,    portal: 'command_authority' },
+  notary: { label: 'Assurance Portal',        path: '/notary/dashboard',   Glyph: Scale,   portal: 'assurance' },
+  client: { label: 'Client Sovereign Hub',    path: '/dashboard',          Glyph: Diamond, portal: 'client_sovereign' },
 };
 
 export default function UserDropdown() {
@@ -148,6 +149,33 @@ export default function UserDropdown() {
               <div className="my-2 border-t border-slate-100" />
             </>
           )}
+
+          {/* Restart tour for the current portal */}
+          <button
+            onClick={() => {
+              const meta = VIEW_META[effectiveMode];
+              resetOnboarding(meta.portal);
+              setOpen(false);
+              if (window.location.pathname === meta.path) {
+                window.location.reload();
+              } else {
+                navigate(meta.path);
+              }
+            }}
+            className="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-cream-100 transition-colors"
+            data-testid="user-dropdown-restart-tour"
+          >
+            <span className="w-7 h-7 rounded-md bg-coral-50 flex items-center justify-center">
+              <Sparkles className="w-3.5 h-3.5 text-coral-600" />
+            </span>
+            <span className="flex-1">
+              <span className="block text-sm font-semibold text-navy-900">Restart tour</span>
+              <span className="block text-[11px] text-slate-500">
+                Replay the {VIEW_META[effectiveMode].label} walkthrough
+              </span>
+            </span>
+          </button>
+          <div className="my-2 border-t border-slate-100" />
 
           {/* Logout */}
           <button
