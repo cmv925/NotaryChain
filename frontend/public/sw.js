@@ -14,7 +14,7 @@
  */
 
 // 🔁 Bump this on every deploy so old caches are evicted.
-const CACHE_VERSION = 'v3-2026-05-27';
+const CACHE_VERSION = 'v3-2026-05-27-r4';
 const CACHE_NAME = `notarychain-shell-${CACHE_VERSION}`;
 const API_CACHE = `notarychain-api-${CACHE_VERSION}`;
 const CERT_CACHE = `notarychain-certs-${CACHE_VERSION}`;

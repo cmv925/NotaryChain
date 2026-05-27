@@ -36,15 +36,18 @@ function _push(event) {
  * Backend dispatch uses the auth token attached by `useDashboardTelemetry`'s
  * mount-time installer; if no token is in localStorage we skip the network
  * round-trip and only update the in-memory buffer.
+ *
+ * Wrapped in try/catch + a no-op fallback so a stale-chunk or missing-export
+ * scenario can never break the calling component.
  */
 export function emitTelemetry(event) {
-  const enriched = {
-    ...event,
-    ts: new Date().toISOString(),
-    client_only: true,
-  };
-  _push(enriched);
   try {
+    const enriched = {
+      ...event,
+      ts: new Date().toISOString(),
+      client_only: true,
+    };
+    _push(enriched);
     const token =
       localStorage.getItem('access_token') ||
       localStorage.getItem('token') ||
@@ -57,7 +60,7 @@ export function emitTelemetry(event) {
         .catch(() => {});
     }
   } catch {
-    /* silent */
+    /* silent — telemetry must never break user flow */
   }
 }
 

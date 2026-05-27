@@ -109,11 +109,15 @@ export function OnboardingTour({ portal, userRole }) {
       if (document.querySelector(steps[0]?.target)) {
         setActive(true);
         setStep(0);
-        emitTelemetry({
-          surface: 'tour',
-          action: 'tour_started',
-          meta: { portal: resolvedPortal, total_steps: steps.length },
-        });
+        try {
+          if (typeof emitTelemetry === 'function') {
+            emitTelemetry({
+              surface: 'tour',
+              action: 'tour_started',
+              meta: { portal: resolvedPortal, total_steps: steps.length },
+            });
+          }
+        } catch { /* silent */ }
       } else {
         // Quietly mark as completed if portal has no anchors so we don't loop.
         // Next visit can re-attempt after we ship those anchors.
