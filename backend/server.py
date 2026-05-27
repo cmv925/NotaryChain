@@ -304,6 +304,11 @@ from routes import telemetry_routes
 telemetry_routes.set_db(db)
 app.include_router(telemetry_routes.router)
 
+# Dashboard "Next Action" nudge — single decisive CTA for the current user
+from routes import next_action_routes
+next_action_routes.set_db(db)
+app.include_router(next_action_routes.router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

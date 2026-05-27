@@ -12,6 +12,7 @@ import { ExpiryWidget, ExpiryBadge, SetExpiryButton } from '../components/Expiry
 import BlockchainAuditTrail from '../components/BlockchainAuditTrail';
 import StatePickabilityWidget from '../components/StatePickabilityWidget';
 import DashboardHero from '../components/DashboardHero';
+import NextActionCard from '../components/NextActionCard';
 import { OnboardingTour } from '../components/OnboardingTour';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
@@ -184,6 +185,11 @@ const Dashboard = () => {
       </header>
 
       <div className="max-w-7xl mx-auto px-6 space-y-8 pb-12">
+        {/* "What's next?" — single decisive next-step nudge for this user */}
+        <div className="pt-6">
+          <NextActionCard token={token} />
+        </div>
+
         {/* Personalized Hero (role-aware welcome + KPIs + suggestion) */}
         <DashboardHero token={token} user={user} role={role} />
 
