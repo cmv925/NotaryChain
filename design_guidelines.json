@@ -1,117 +1,69 @@
 {
-  "theme": "light",
-  "archetype": "corporate_trust_notary",
-  "typography": {
-    "heading_font": "Playfair Display",
-    "heading_fallback": "Georgia, serif",
-    "body_font": "IBM Plex Sans",
-    "body_fallback": "sans-serif",
-    "hierarchy": {
-      "h1": "text-4xl sm:text-5xl lg:text-6xl font-serif tracking-tight text-navy-900",
-      "h2": "text-3xl sm:text-4xl font-serif tracking-tight text-navy-900",
-      "h3": "text-2xl sm:text-3xl font-serif text-navy-800",
-      "h4": "text-xl font-serif text-navy-800",
-      "body": "text-base text-slate-600 leading-relaxed font-sans",
-      "label": "text-xs font-sans uppercase tracking-wider font-semibold text-slate-500"
-    }
+  "theme_and_archetype": {
+    "theme": "Light",
+    "archetype": "4 (Swiss & High-Contrast with Organic Warmth)",
+    "description": "Maintains authority and clarity via structured cards and a 12-column grid, while preserving the existing warm brand palette (coral, cream, navy)."
   },
   "colors": {
-    "background": {
-      "page": "#FDFCF8", 
-      "card": "#FFFFFF",
-      "subtle": "#F3F4F6",
-      "dark_section": "#0A192F"
-    },
-    "primary": {
-      "DEFAULT": "#0A192F",
-      "hover": "#112A46",
-      "text": "#FFFFFF",
-      "tailwind_name": "navy"
-    },
-    "accent": {
-      "coral": "#E15A46",
-      "coral_hover": "#C94E3C",
-      "gold": "#D4AF37",
-      "gold_hover": "#B8962A"
-    },
-    "text": {
-      "primary": "#0A192F",
-      "secondary": "#475569",
-      "muted": "#64748B"
-    },
-    "border": {
-      "DEFAULT": "#E2E8F0",
-      "focus": "#0A192F"
-    },
+    "primary": "coral (#F88260)",
+    "text_primary": "navy/ink",
+    "background": "cream-100 (#F8F4EA)",
+    "surface": "white",
     "status": {
-      "success": "#166534",
-      "success_bg": "#DCFCE7",
-      "warning": "#9A3412",
-      "warning_bg": "#FFEDD5",
-      "danger": "#991B1B",
-      "danger_bg": "#FEE2E2"
+      "success": "emerald",
+      "warning": "amber",
+      "error": "red"
     }
   },
-  "layout": {
-    "spacing_strategy": "Generous padding. Use p-8 to p-16 for sections to give breathing room. Avoid cramped data unless in specific admin tables.",
-    "cards": "bg-white rounded-md border border-slate-200 shadow-sm. No neon glows or dark glassmorphism.",
-    "buttons": {
-      "primary": "bg-[#0A192F] text-white rounded-md px-6 py-3 font-sans font-medium transition-colors hover:bg-[#112A46] shadow-sm",
-      "secondary": "bg-white text-[#0A192F] border border-[#0A192F] rounded-md px-6 py-3 font-sans font-medium transition-colors hover:bg-slate-50",
-      "accent": "bg-[#E15A46] text-white rounded-md px-6 py-3 font-sans font-medium transition-colors hover:bg-[#C94E3C] shadow-sm"
+  "typography": {
+    "headings": "serif (Playfair-ish) for hero <h1>",
+    "body": "sans-serif"
+  },
+  "layout_grid": {
+    "description": "12-column grid separating actions from insights.",
+    "wrapper_classes": "grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8 items-start",
+    "primary_column_classes": "lg:col-span-8 space-y-8",
+    "secondary_column_classes": "lg:col-span-4 space-y-8"
+  },
+  "component_updates": {
+    "BentoAction": {
+      "description": "A refined, subtle action row. Fixes stray accent rings by only using the accent style when explicitly required (e.g., Quick Seal). Replaces heavy borders with transparent ones that appear on hover.",
+      "js_implementation": "function BentoAction({ icon: Icon, label, desc, onClick, accent, ...props }) { return ( <button onClick={onClick} className={`group flex items-center gap-3 w-full p-2.5 text-sm rounded-md transition-all duration-200 text-left border border-transparent ${accent ? 'bg-coral-50/50 hover:bg-coral-50 hover:border-coral-200' : 'hover:bg-slate-50 hover:border-slate-200'}`} {...props}> <div className={`flex flex-shrink-0 items-center justify-center w-8 h-8 rounded-md ${accent ? 'bg-coral-100 text-coral-600' : 'bg-white border border-slate-200 text-slate-600 group-hover:text-navy-900'}`}> <Icon className=\"w-4 h-4\" /> </div> <div className=\"flex-1 min-w-0\"> <span className={`font-medium text-sm block truncate ${accent ? 'text-coral-900' : 'text-navy-800'}`}>{label}</span> {desc && <span className=\"text-slate-500 text-[10px] block truncate mt-0.5\">{desc}</span>} </div> <ChevronRight className={`w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all ${accent ? 'text-coral-400' : 'text-slate-400'}`} /> </button> ); }"
+    },
+    "CommandCenter": {
+      "description": "Treats the 3 feature columns (Core Actions, AI Intelligence, Security & Identity) as one cohesive card with vertical dividers.",
+      "wrapper": "<Card className=\"border-slate-200 shadow-sm overflow-hidden\" data-testid=\"command-center\">",
+      "grid": "<div className=\"grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-100\">",
+      "column_classes": "p-6 bg-white"
+    },
+    "NetworkAndTools": {
+      "description": "Replaces the flat grid with a properly contained card section.",
+      "wrapper": "<Card className=\"border-slate-200 shadow-sm\" data-testid=\"network-section\">",
+      "header": "<CardHeader className=\"bg-slate-50/80 border-b border-slate-100 pb-4\"><CardTitle className=\"text-xs font-semibold tracking-[0.2em] uppercase text-slate-600\">Network & Tools</CardTitle></CardHeader>",
+      "content": "<CardContent className=\"p-6 pt-4\"><div className=\"grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-4 gap-y-1\">{/* BentoActions here */}</div></CardContent>"
+    },
+    "NotaryRequests": {
+      "description": "Wrap in standard Card component with a clear header.",
+      "wrapper": "<Card className=\"border-slate-200 shadow-sm\" data-testid=\"notary-requests\">",
+      "header": "<CardHeader className=\"bg-slate-50/80 border-b border-slate-100 pb-4 flex flex-row items-center gap-2\"><FileText className=\"w-4 h-4 text-coral-600\" /><CardTitle className=\"text-xs font-semibold tracking-[0.2em] uppercase text-slate-600 !mt-0\">My Notarization Requests</CardTitle></CardHeader>",
+      "content": "<CardContent className=\"p-0\"><div className=\"divide-y divide-slate-100\">{/* Request Rows here */}</div></CardContent>"
+    },
+    "RecentDocumentSeals": {
+      "description": "Wrap in standard Card component. Modernize empty state so it is slimmer and inline.",
+      "wrapper": "<Card className=\"border-slate-200 shadow-sm\" data-testid=\"recent-seals-section\">",
+      "header": "<CardHeader className=\"bg-slate-50/80 border-b border-slate-100 pb-4\"><CardTitle className=\"text-xs font-semibold tracking-[0.2em] uppercase text-slate-600\">Recent Document Seals</CardTitle></CardHeader>",
+      "empty_state_jsx": "<CardContent className=\"p-0\"><div className=\"flex items-center justify-between p-6 bg-white\"><div className=\"flex items-center gap-4\"><div className=\"w-10 h-10 bg-cream-100 rounded-full flex items-center justify-center\"><FileText className=\"w-5 h-5 text-slate-400\" /></div><div><h4 className=\"text-sm font-medium text-navy-900\">No documents sealed yet</h4><p className=\"text-xs text-slate-500\">Secure your first document on the blockchain.</p></div></div><Button onClick={() => navigate('/demo')} size=\"sm\" className=\"bg-coral-500 hover:bg-coral-600 text-white\">Seal Document</Button></div></CardContent>"
     }
   },
-  "components": {
-    "hero_section": "Cream background or subtle abstract paper texture. H1 in Playfair Display (Navy). Left-aligned text for readability. Solid Coral primary CTA and outlined Navy secondary CTA. Professional legal imagery on the right.",
-    "kpi_stat_card": "Flat white card, 1px border-slate-200, shadow-sm, p-6. Small-caps label in slate-500, large serif number in Navy. Optional subtle success-green trend indicator.",
-    "pricing_card": "White background, distinct from page background. Navy header or border-top for the 'Pro' tier. Clear list of features with checkmarks. Solid buttons.",
-    "navigation_bar": "Sticky white or cream background (no dark glass). Navy text links. Coral button for 'Start Notarization'. Bottom border of slate-200.",
-    "trust_badge_svg": "Circular official seal design. Deep navy outer ring with 'VERIFIED NOTARY - FLORIDA RON COMPLIANT' wrapping around. Inner circle cream/gold with a classic fountain pen, notary stamp, or scales of justice icon. 1px gold serrated or double-line border.",
-    "admin_pages": "Keep utilitarian but map to new palette. White background, simple borders. Keep IBM Plex Sans for data density. No dark mode by default."
+  "implementation_plan": {
+    "files_to_edit": [
+      "/app/frontend/src/pages/Dashboard.jsx"
+    ],
+    "high_level_jsx_structure": "1. Add CardHeader, CardTitle to the imports from shadcn UI.\n2. Update `BentoAction` component definition to fix focus rings.\n3. Make sure to remove any accent prop on BentoAction items where it shouldn't be primary.\n4. Wrap the content after `<DashboardHero />` in `<div className=\"grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8 items-start\">`.\n5. Create left column `<div className=\"lg:col-span-8 space-y-8\">` containing the Command Center, Network & Tools, Notary Requests, and Recent Seals.\n6. Create right column `<div className=\"lg:col-span-4 space-y-8\">` containing the StatePickabilityWidget and ExpiryWidget."
   },
-  "anti_patterns_to_remove": [
-    "bg-slate-950 and dark mode everywhere",
-    "Neon accents (emerald-400, amber-400, orange-500 glows)",
-    "Gradient text effects (bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-500 bg-clip-text)",
-    "Mono-font UPPERCASE TRACKING-WIDEST for generic labels",
-    "Glassmorphism (backdrop-blur with low opacity over dark backgrounds)",
-    "Cyberpunk / Web3 aesthetic"
-  ],
-  "testing_and_attributes": "Preserve all `data-testid` attributes and route paths exactly. Only rewrite the UI/CSS.",
-  "media": {
-    "hero_bg_legal": {
-      "url": "https://static.prod-images.emergentagent.com/jobs/6c995b9a-391a-4bfd-a778-d9673d1a76c6/images/9bb5207b736006dc76b127246045f4374888bc8ecd466755c9ce0dbd493e1a74.png",
-      "description": "Close-up wide-angle photograph of a premium fountain pen resting on official legal documents, warm natural morning sunlight, soft cream and deep navy color palette.",
-      "usage": "Use as a supporting image in the hero section or 'Start Notarization' callouts."
-    },
-    "abstract_paper_bg": {
-      "url": "https://static.prod-images.emergentagent.com/jobs/6c995b9a-391a-4bfd-a778-d9673d1a76c6/images/df5f12866a106ddc01c5751098b387ab4573df6541ddffcfbb92c184197b95ce.png",
-      "description": "Abstract warm cream and textured paper background with very subtle deep navy geometric framing.",
-      "usage": "Use as background for sections needing texture, like testimonials, feature blocks, or trust-badge marketing."
-    },
-    "professional_signing_1": {
-      "url": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjBzaWduaW5nJTIwbGVnYWwlMjBkb2N1bWVudHxlbnwwfHx8fDE3NzkwNDc0NTl8MA&ixlib=rb-4.1.0&q=85",
-      "description": "Man writing on paper.",
-      "usage": "Use in Notary Directory or Profile placeholders, or 'Become a Notary' sections."
-    },
-    "professional_signing_2": {
-      "url": "https://images.unsplash.com/photo-1562564055-71e051d33c19?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjBzaWduaW5nJTIwbGVnYWwlMjBkb2N1bWVudHxlbnwwfHx8fDE3NzkwNDc0NTl8MA&ixlib=rb-4.1.0&q=85",
-      "description": "Woman signing on white printer paper.",
-      "usage": "Use in 'Field Document Scanner' contextual sections or public verifier."
-    }
+  "micro_interactions": {
+    "hover_states": "Action rows shift background subtly, fade in a chevron with a tiny X-translation, and deepen icon colors.",
+    "focus_states": "Interactive elements should rely on clean focus-visible rings rather than permanent borders."
   },
-  "files_to_edit_in_priority": [
-    "/app/frontend/src/pages/PublicLanding.jsx",
-    "/app/frontend/src/pages/FloridaLanding.jsx",
-    "/app/frontend/src/pages/FLNotaryRecruitment.jsx",
-    "/app/frontend/src/pages/TrustBadgeLanding.jsx",
-    "/app/frontend/src/pages/NotaryDirectory.jsx",
-    "/app/frontend/src/pages/NotaryProfile.jsx",
-    "/app/frontend/src/pages/PublicVerifier.jsx",
-    "/app/frontend/src/pages/Login.jsx",
-    "/app/frontend/src/pages/Signup.jsx",
-    "/app/frontend/src/pages/Scanner.jsx",
-    "/app/frontend/src/pages/Dashboard.jsx"
-  ],
-  "instructions_to_main_agent": "Refactor the UI components to align with the 'Corporate Trust Notary' aesthetic, replacing the cyberpunk look. Use Playfair Display for headings and IBM Plex Sans for body. Add generous padding and replace all dark/glassmorphic cards with flat, white, softly bordered boxes (shadow-sm). Use Deep Navy as the primary brand color, Cream as the background, and Warm Coral as the accent. Redesign the Trust Badge SVG to look like a physical stamp or seal using the new color palette. Preserve ALL data-testid attributes and existing logic/routes. Do NOT remove functional code."
+  "instructions_to_main_agent": "Ensure no test IDs are removed. Use EXACT Tailwind classes from the component_updates sections. Maintain the core logic, simply restructure the JSX to reflect the 12-column grid and modern card wrappers. All interactive elements MUST include data-testid. DO NOT propose color/typography overhauls."
 }
