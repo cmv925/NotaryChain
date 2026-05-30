@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 import logging
 import os
 import io
+import uuid
 
 from models import User
 from routes.auth_routes import get_current_user
@@ -159,7 +160,7 @@ async def export_compliance_pdf(current_user: User = Depends(get_current_user)):
 
     # Log export
     await db.audit_logs.insert_one({
-        "id": __import__("uuid").uuid4().hex,
+        "id": uuid.uuid4().hex,
         "user_id": current_user.id,
         "action": "security_compliance_export",
         "details": {"format": "pdf", "score": compliance_data.get("score_pct")},

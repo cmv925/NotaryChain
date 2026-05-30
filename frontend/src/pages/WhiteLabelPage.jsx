@@ -36,7 +36,9 @@ const WhiteLabelPage = () => {
     try {
       const res = await axios.get(`${API}/embed/configs`, { headers });
       setConfigs(res.data.configs || []);
-    } catch {}
+    } catch (e) {
+      console.error('Failed to load embed configs:', e);
+    }
     setLoading(false);
   }, [headers]);
 
@@ -77,7 +79,10 @@ const WhiteLabelPage = () => {
       toast({ title: 'Deleted' });
       setSelectedConfig(null);
       fetchConfigs();
-    } catch {}
+    } catch (e) {
+      console.error('Failed to delete embed config:', e);
+      toast({ title: 'Error', description: e.response?.data?.detail || 'Failed to delete', variant: 'destructive' });
+    }
   };
 
   const toggleActive = async (config) => {
@@ -87,7 +92,10 @@ const WhiteLabelPage = () => {
       }, { headers });
       fetchConfigs();
       toast({ title: config.active ? 'Disabled' : 'Enabled' });
-    } catch {}
+    } catch (e) {
+      console.error('Failed to toggle embed config:', e);
+      toast({ title: 'Error', description: e.response?.data?.detail || 'Failed to update', variant: 'destructive' });
+    }
   };
 
   return (

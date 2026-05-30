@@ -48,7 +48,9 @@ const VideoWitness = () => {
       setInstructions(instrRes.data.instructions || []);
       setRequests((reqRes.data || []).filter(r => r.status !== 'cancelled'));
       setRecordings(recRes.data.recordings || []);
-    } catch {}
+    } catch (e) {
+      console.error('Failed to load video witness data:', e);
+    }
   }, [headers]);
 
   useEffect(() => { fetchData(); }, [fetchData]);

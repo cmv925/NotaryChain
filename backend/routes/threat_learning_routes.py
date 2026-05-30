@@ -4,6 +4,7 @@ Endpoints for threat analytics, learning status, and pattern management.
 """
 from fastapi import APIRouter, HTTPException, Request
 from middleware.feature_gate import enforce_feature_gate
+from datetime import datetime, timezone
 
 router = APIRouter(prefix="/api/threat-learning", tags=["threat-learning"])
 db = None
@@ -96,6 +97,6 @@ async def toggle_auto_pattern(pattern_id: str, request: Request):
     new_active = not pattern.get("active", True)
     await db.fraud_patterns.update_one(
         {"pattern_id": pattern_id},
-        {"$set": {"active": new_active, "updated_at": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()}}
+        {"$set": {"active": new_active, "updated_at": datetime.now(timezone.utc).isoformat()}}
     )
     return {"pattern_id": pattern_id, "active": new_active}

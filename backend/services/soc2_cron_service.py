@@ -23,6 +23,7 @@ import asyncio
 import csv
 import hashlib
 import io
+import base64
 import json
 import logging
 import os
@@ -201,7 +202,7 @@ async def run_weekly_export() -> Optional[dict]:
         "email_sent_to": officer,
         # Keep the ZIP bytes so the email link can resolve it without
         # re-walking the audit_logs.
-        "zip_b64": __import__("base64").b64encode(zip_bytes).decode(),
+        "zip_b64": base64.b64encode(zip_bytes).decode(),
     })
 
     # Send email (Resend) with the export attached + a link
@@ -402,7 +403,7 @@ async def run_for_config(cfg: dict) -> Optional[dict]:
         "scheduled": True,
         "config_id": cfg.get("id"),
         "email_sent_to": ", ".join(cfg.get("recipients", [])),
-        "zip_b64": __import__("base64").b64encode(zip_bytes).decode(),
+        "zip_b64": base64.b64encode(zip_bytes).decode(),
     })
 
     # Email every recipient

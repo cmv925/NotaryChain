@@ -201,7 +201,7 @@ def _build_alert_email(level, balance, threshold, label, account_id, network, ad
                 <p style="color: #666; font-size: 13px; margin-top: 20px;">This alert won't repeat for the same threshold within 24 hours.</p>
             </div>
             <div style="text-align: center; margin-top: 30px; color: #555; font-size: 12px;">
-                <p>&copy; {__import__('datetime').datetime.now().year} NotaryChain. Automated balance monitoring.</p>
+                <p>&copy; {datetime.now().year} NotaryChain. Automated balance monitoring.</p>
             </div>
         </div>
     </body>

@@ -667,7 +667,7 @@ async def execute_ceremony(ceremony_id: str, request: Request = None):
                                "deed": "acknowledgment", "poa": "acknowledgment",
                                "affidavit": "jurat"}
                     journal = {
-                        "entry_id": __import__("uuid").uuid4().hex[:16],
+                        "entry_id": uuid.uuid4().hex[:16],
                         "notary_user_id": ceremony.get("notary_user_id") or ceremony.get("initiated_by", ""),
                         "notary_email": ceremony.get("notary_email") or ceremony.get("initiated_by", ""),
                         "notary_name": ceremony.get("notary_name") or ceremony.get("initiated_by", ""),
