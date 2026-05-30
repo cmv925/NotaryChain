@@ -1,0 +1,4 @@
+report/
+test-results/
+playwright-report/
+.last-run.json

@@ -54,7 +54,7 @@ export default function ApprovalsPage() {
     if (!docName.trim() || chain.every((c) => !c.approver_email.trim())) return;
     setCreating(true);
     try {
-      await fetch(`${API}/api/approvals`, {
+      await fetch(`${API}/api/approvals/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
