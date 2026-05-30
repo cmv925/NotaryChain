@@ -14,6 +14,7 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 
 | Feature | Testing | Date |
 |---------|---------|------|
+| Enhanced In-House KBA — REAL OCR + face-match + notarization gate (mounted EnhancedKBAFlow modal: details→document→selfie→quiz→result on both `/kba-test` (enhanced-kba-card) and client Dashboard (identity-verify-banner); `services/enhanced_kba_service.py` does REAL document OCR + 1:1 face-match via GPT-5.2 Vision/Emergent LLM key with deterministic fallback; weighted decision 30% doc + 30% face + 40% quiz; on PASS persists `users.identity_verified` + provider/score/timestamp and mirrors to linked notarization_request; `notary_routes.create_notarization_request` now gates role==user clients with HTTP 403 `identity_verification_required`; RequestNotarization.jsx catches 403 and opens the KBA modal) | Iteration 119 (8/8 backend pytest pass + frontend banner/card/modal step-transition + gate 403→200 verified; test at /app/backend/tests/test_enhanced_kba_flow.py) | May 30, 2026 |
 | Core Platform (26 phases) | Iterations 1-78 | Mar 2026 |
 | ANAN Agent Network | Iteration 79 | Apr 2, 2026 |
 | Platform Features Suite | Iteration 80 | Apr 2, 2026 |
