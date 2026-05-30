@@ -1,19 +1,17 @@
 // Critical path 5/5 — Admin approve (Command Authority Suite + approval workflow).
 const { test, expect } = require('@playwright/test');
-const { apiLogin, seedAuthAndGoto } = require('../helpers/auth');
+const { loginAndGoto } = require('../helpers/auth');
 
 test.describe('Critical Path: Admin Approve', () => {
-  test('admin reaches the Command Authority Suite dashboard', async ({ page, request, baseURL }) => {
-    const token = await apiLogin(request, baseURL, 'admin');
-    await seedAuthAndGoto(page, token, '/admin');
+  test('admin reaches the Command Authority Suite dashboard', async ({ page, baseURL }) => {
+    await loginAndGoto(page, baseURL, 'admin', '/admin');
 
     await expect(page.getByTestId('admin-stats-grid')).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId('admin-tabs-nav').first()).toBeVisible();
   });
 
-  test('admin can create an approval-chain request end-to-end', async ({ page, request, baseURL }) => {
-    const token = await apiLogin(request, baseURL, 'admin');
-    await seedAuthAndGoto(page, token, '/approvals');
+  test('admin can create an approval-chain request end-to-end', async ({ page, baseURL }) => {
+    await loginAndGoto(page, baseURL, 'admin', '/approvals');
 
     await page.getByTestId('create-approval-btn').click();
     await expect(page.getByTestId('create-form')).toBeVisible();

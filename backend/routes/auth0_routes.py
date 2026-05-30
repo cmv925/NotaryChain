@@ -3,13 +3,13 @@ Auth0 OIDC Routes
 Handles Auth0 login, callback, and status.
 """
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Response
 import secrets
 import logging
 import os
 import httpx
 
-from auth import create_access_token
+from auth import create_access_token, set_auth_cookie
 from routes.sso_common import (
     get_callback_base, sync_sso_user, log_sso_audit,
     create_sso_session, validate_sso_session, complete_sso_session, fail_sso_session,
@@ -49,7 +49,7 @@ async def auth0_login(request: Request):
 
 
 @router.post("/callback")
-async def auth0_callback(request: Request):
+async def auth0_callback(request: Request, response: Response):
     """Exchange Auth0 authorization code for tokens, sync user, issue JWT."""
     body = await request.json()
     code = body.get("code")
@@ -113,6 +113,7 @@ async def auth0_callback(request: Request):
     await log_sso_audit(user_id, "auth0_login", {"email": email, "auth0_sub": auth0_sub, "provisioned": provisioned})
 
     jwt_token = create_access_token(data={"sub": email})
+    set_auth_cookie(response, jwt_token)
 
     return {
         "access_token": jwt_token,

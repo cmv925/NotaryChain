@@ -40,3 +40,22 @@ def decode_access_token(token: str):
         return payload
     except JWTError:
         return None
+
+
+# ── httpOnly cookie helpers (cookie-based auth migration) ─────────────
+AUTH_COOKIE_NAME = "access_token"
+
+def set_auth_cookie(response, token: str):
+    """Set the JWT as an httpOnly, Secure, SameSite=Lax cookie (same-origin app)."""
+    response.set_cookie(
+        key=AUTH_COOKIE_NAME,
+        value=token,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        path="/",
+    )
+
+def clear_auth_cookie(response):
+    response.delete_cookie(key=AUTH_COOKIE_NAME, path="/")

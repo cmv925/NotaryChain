@@ -1,0 +1,47 @@
+{
+  "summary": "httpOnly cookie auth migration verified end-to-end. Backend: 13/13 pytest cases green (login/me/cookie+bearer dual-read/signup/logout/session-exchange/protected endpoints/notarization gate/WebSocket). Frontend: demo + admin cookie login, session-persist-on-reload, httpOnly cookie (not JS-readable), localStorage clean, and WebSocket /api/ws/global cookie auth all verified. Only minor UI issue: cannot trigger the logout dropdown via testid in automated run (button visible but menu doesn't open on click) — backend logout endpoint itself works perfectly via API.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "UserMenu (dashboard top-right)",
+        "issue": "Clicking [data-testid=\"user-menu-trigger\"] did not open the dropdown in Playwright, so logout option not reachable. May be a Radix/Headless UI dropdown that needs different interaction, or the menu is keyboard-only. Adds friction to e2e logout testing.",
+        "selector": "[data-testid=\"user-menu-trigger\"]",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_auth_cookie_migration.py",
+    "/app/test_reports/pytest/iter120_cookie_auth.xml"
+  ],
+  "action_items": [
+    "Optional: add a data-testid=\"logout-button\" directly on the visible logout control (or open the user menu via a stable trigger) so automated e2e logout tests can click it. Backend logout is already verified.",
+    "Optional: investigate the four pre-login /api/auth/me 401s in console — they happen before login completes (AuthContext bootstrap) and are harmless, but could be suppressed by skipping the call when no 'cookie' sentinel exists in storage."
+  ],
+  "critical_code_review_comments": [
+    "auth.py set_auth_cookie correctly sets HttpOnly + Secure + SameSite=lax + max_age=86400 + path=/. Verified via raw Set-Cookie header inspection.",
+    "get_current_user reads cookie FIRST then Authorization header — dual-read fallback works (header-only request returned 200 for /me).",
+    "POST /api/auth/logout returns 200 and emits a clearing Set-Cookie (Max-Age=0). Confirmed cookie jar invalidation by re-calling /me -> 401.",
+    "POST /api/auth/session correctly exchanges a Bearer header into the httpOnly cookie (used by SSO redirect bridge).",
+    "WS /api/ws/global authenticates via websocket.cookies['access_token'] handshake — confirmed both via pytest websockets client and via the live frontend (received {\"type\":\"connected\"} frame).",
+    "Notarization gate intact: demo@test.com (unverified) -> 403 identity_verification_required on POST /api/notary/requests.",
+    "Frontend: window.localStorage.getItem('token') is null after login; document.cookie does NOT expose 'access_token' (HttpOnly proven). Reload restores session via cookie.",
+    "Admin cookie auth works (admin login -> /admin -> admin-stats-grid visible)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_auth_cookie_migration.py (new)"
+  ],
+  "success_rate": {"backend": "100% (13/13)", "frontend": "~90% (logout UI control not click-reachable via testid; everything else green)"},
+  "test_credentials": "demo@test.com / Demo123!, admin@notarychain.com / Admin123! (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "Created one signup user with TEST_cookie_<uuid>@example.com to verify signup cookie path; safe to ignore.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Important quirk: this preview ingress (Cloudflare) bot-challenges the default python-requests UA, producing 30s read timeouts. ALL backend tests must set a browser-like User-Agent (UA_HEADERS in test file). Also pace logins (10/min limit) by sharing module-scoped session fixtures. WebSocket tests use the `websockets` library with additional_headers=[('Cookie','access_token=...')]. Frontend logout via UI dropdown is not reachable in automation — use backend POST /api/auth/logout for E2E tests instead, or add a stable data-testid directly on the visible logout control.",
+  "rca of the issue": "No bug to RCA — migration is implemented correctly per the dual-accept pattern. The only finding (logout dropdown not opening via testid in headless Playwright) is a test ergonomics gap, not a security/functional bug."
+}

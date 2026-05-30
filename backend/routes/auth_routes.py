@@ -1,8 +1,8 @@
-from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks, Request
+from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks, Request, Response
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from models import UserCreate, UserLogin, User, Token
-from auth import get_password_hash, verify_password, create_access_token, decode_access_token
+from auth import get_password_hash, verify_password, create_access_token, decode_access_token, set_auth_cookie, clear_auth_cookie
 from services.email_service import email_service
 from middleware.security import limiter, validate_password, sanitize_email
 from services.notification_service import create_notification as create_notif
@@ -25,10 +25,23 @@ def set_db(database):
     global db
     db = database
 
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
+async def get_current_user(request: Request):
+    # Cookie-first (httpOnly), fall back to Authorization: Bearer header during transition.
+    token = request.cookies.get("access_token")
+    if not token:
+        auth_header = request.headers.get("Authorization", "")
+        if auth_header.startswith("Bearer "):
+            token = auth_header[7:].strip()
+
+    if not token or token in ("null", "undefined", ""):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     payload = decode_access_token(token)
-    
+
     if payload is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -67,7 +80,7 @@ class TwoFALoginRequest(BaseModel):
 
 @router.post("/signup", response_model=Token)
 @limiter.limit("5/minute")
-async def signup(request: Request, user_data: UserCreate, background_tasks: BackgroundTasks):
+async def signup(request: Request, user_data: UserCreate, background_tasks: BackgroundTasks, response: Response):
     # Sanitize email
     try:
         clean_email = sanitize_email(user_data.email)
@@ -132,12 +145,13 @@ async def signup(request: Request, user_data: UserCreate, background_tasks: Back
     
     # Create access token
     access_token = create_access_token(data={"sub": user.email})
+    set_auth_cookie(response, access_token)
     
     return Token(access_token=access_token)
 
 @router.post("/login", response_model=LoginResponse)
 @limiter.limit("10/minute")
-async def login(request: Request, user_data: UserLogin):
+async def login(request: Request, user_data: UserLogin, response: Response):
     # Sanitize email
     try:
         clean_email = sanitize_email(user_data.email)
@@ -199,12 +213,13 @@ async def login(request: Request, user_data: UserLogin):
     
     # No 2FA - issue full access token
     access_token = create_access_token(data={"sub": user["email"]})
+    set_auth_cookie(response, access_token)
     return LoginResponse(access_token=access_token)
 
 
 @router.post("/login/2fa", response_model=Token)
 @limiter.limit("10/minute")
-async def login_2fa(request: Request, data: TwoFALoginRequest):
+async def login_2fa(request: Request, data: TwoFALoginRequest, response: Response):
     """Verify 2FA code and complete login"""
     # Decode the temp token
     payload = decode_access_token(data.temp_token)
@@ -258,6 +273,7 @@ async def login_2fa(request: Request, data: TwoFALoginRequest):
     
     # Issue full access token
     access_token = create_access_token(data={"sub": email})
+    set_auth_cookie(response, access_token)
     return Token(access_token=access_token)
 
 
@@ -268,3 +284,19 @@ async def get_me(current_user: User = Depends(get_current_user)):
     if user_doc:
         return user_doc
     return current_user
+
+
+@router.post("/logout")
+async def logout(response: Response):
+    """Clear the httpOnly auth cookie. Idempotent — safe to call when not logged in."""
+    clear_auth_cookie(response)
+    return {"success": True}
+
+
+@router.post("/session")
+async def create_session(response: Response, current_user: User = Depends(get_current_user)):
+    """Exchange a valid Bearer token (e.g. from an SSO redirect) for an httpOnly
+    cookie session. The incoming token is validated by get_current_user."""
+    token = create_access_token(data={"sub": current_user.email})
+    set_auth_cookie(response, token)
+    return {"success": True}

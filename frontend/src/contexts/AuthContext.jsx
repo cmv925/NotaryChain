@@ -6,31 +6,37 @@ const AuthContext = createContext(null);
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// The auth credential now lives in an httpOnly, Secure cookie set by the backend.
+// Always send it on requests (harmless same-origin; required if ever cross-origin).
+axios.defaults.withCredentials = true;
+
+// Non-sensitive sentinel exposed as `token` for backward compatibility. Components
+// gate on `!!token` ("am I logged in") and some still send `Authorization: Bearer
+// ${token}` — the backend reads the httpOnly cookie FIRST, so this value is never a
+// real credential and the legacy header is a harmless no-op.
+const COOKIE_SENTINEL = 'cookie';
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    if (token) {
-      fetchUser();
-    } else {
-      setLoading(false);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
-  }, [token]);
+    // Restore the session from the httpOnly cookie on every load.
+    fetchUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only session restore
+  }, []);
 
   const fetchUser = async () => {
     try {
-      const response = await axios.get(`${API}/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(`${API}/auth/me`);
       setUser(response.data);
+      setToken(COOKIE_SENTINEL);
+      return response.data;
     } catch (error) {
-      console.error('Failed to fetch user:', error);
-      logout();
+      setUser(null);
+      setToken(null);
+      return null;
     } finally {
       setLoading(false);
     }
@@ -38,10 +44,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post(`${API}/auth/login`, {
-        email,
-        password,
-      });
+      const response = await axios.post(`${API}/auth/login`, { email, password });
       const data = response.data;
 
       // 2FA required - return temp token for second step
@@ -49,21 +52,8 @@ export const AuthProvider = ({ children }) => {
         return { success: false, requires_2fa: true, temp_token: data.temp_token };
       }
 
-      const { access_token } = data;
-      localStorage.setItem('token', access_token);
-      setToken(access_token);
-
-      // Fetch the user object so callers can route based on role
-      // (admins → /admin, everyone else → /dashboard).
-      let userObj = null;
-      try {
-        const me = await axios.get(`${API}/auth/me`, {
-          headers: { Authorization: `Bearer ${access_token}` },
-        });
-        userObj = me.data;
-      } catch (_e) {
-        // non-fatal — useEffect will retry via fetchUser()
-      }
+      // Backend has set the httpOnly cookie; load the user so callers can route by role.
+      const userObj = await fetchUser();
       return { success: true, user: userObj };
     } catch (error) {
       return {
@@ -75,20 +65,8 @@ export const AuthProvider = ({ children }) => {
 
   const verify2FA = async (tempToken, code) => {
     try {
-      const response = await axios.post(`${API}/auth/login/2fa`, {
-        temp_token: tempToken,
-        code,
-      });
-      const { access_token } = response.data;
-      localStorage.setItem('token', access_token);
-      setToken(access_token);
-      let userObj = null;
-      try {
-        const me = await axios.get(`${API}/auth/me`, {
-          headers: { Authorization: `Bearer ${access_token}` },
-        });
-        userObj = me.data;
-      } catch (_e) { /* non-fatal */ }
+      await axios.post(`${API}/auth/login/2fa`, { temp_token: tempToken, code });
+      const userObj = await fetchUser();
       return { success: true, user: userObj };
     } catch (error) {
       return {
@@ -100,15 +78,13 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (fullName, email, password, role = 'user') => {
     try {
-      const response = await axios.post(`${API}/auth/signup`, {
+      await axios.post(`${API}/auth/signup`, {
         full_name: fullName,
         email,
         password,
         role,
       });
-      const { access_token } = response.data;
-      localStorage.setItem('token', access_token);
-      setToken(access_token);
+      await fetchUser();
       return { success: true };
     } catch (error) {
       return {
@@ -118,15 +94,32 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
+  const logout = async () => {
+    try {
+      await axios.post(`${API}/auth/logout`);
+    } catch (_e) {
+      /* best-effort — clear local state regardless */
+    }
+    // Remove any legacy token left by older (pre-cookie) sessions.
+    try { localStorage.removeItem('token'); } catch (_e) { /* ignore */ }
     setToken(null);
     setUser(null);
   };
 
-  const loginWithToken = (accessToken) => {
-    localStorage.setItem('token', accessToken);
-    setToken(accessToken);
+  // Used by SSO callbacks (Auth0/Okta/enterprise). The backend callback sets the
+  // cookie; if a Bearer token is provided (e.g. passed via redirect URL), exchange
+  // it for a cookie session to be safe, then load the user.
+  const loginWithToken = async (accessToken) => {
+    try {
+      if (accessToken) {
+        await axios.post(`${API}/auth/session`, {}, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+      }
+    } catch (_e) {
+      /* cookie may already be set by the SSO callback */
+    }
+    return fetchUser();
   };
 
   const value = {

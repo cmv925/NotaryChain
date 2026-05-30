@@ -28,21 +28,23 @@ async def global_websocket(websocket: WebSocket):
     """
     user_id = None
     try:
-        # Accept and wait for auth message
+        # Accept the connection
         await websocket.accept()
 
-        # Wait for auth token
-        raw = await websocket.receive_text()
-        data = json.loads(raw)
-
-        if data.get("type") != "auth" or not data.get("token"):
-            await websocket.send_json({"type": "error", "message": "Send auth message first"})
-            await websocket.close(code=4001)
-            return
+        # Cookie-first auth: the same-origin httpOnly cookie is sent on the WS
+        # handshake. Fall back to the legacy { type: 'auth', token } first message.
+        from auth import decode_access_token
+        token = websocket.cookies.get("access_token")
+        if not token:
+            raw = await websocket.receive_text()
+            data = json.loads(raw)
+            if data.get("type") != "auth" or not data.get("token"):
+                await websocket.send_json({"type": "error", "message": "Send auth message first"})
+                await websocket.close(code=4001)
+                return
+            token = data["token"]
 
         # Validate token
-        from auth import decode_access_token
-        token = data["token"]
         try:
             payload = decode_access_token(token)
             if not payload:
@@ -103,17 +105,20 @@ async def timeline_websocket(websocket: WebSocket, transaction_id: str):
     try:
         await websocket.accept()
 
-        raw = await websocket.receive_text()
-        data = json.loads(raw)
-
-        if data.get("type") != "auth" or not data.get("token"):
-            await websocket.send_json({"type": "error", "message": "Send auth message first"})
-            await websocket.close(code=4001)
-            return
-
+        # Cookie-first auth; fall back to legacy first-message token.
         from auth import decode_access_token
+        token = websocket.cookies.get("access_token")
+        if not token:
+            raw = await websocket.receive_text()
+            data = json.loads(raw)
+            if data.get("type") != "auth" or not data.get("token"):
+                await websocket.send_json({"type": "error", "message": "Send auth message first"})
+                await websocket.close(code=4001)
+                return
+            token = data["token"]
+
         try:
-            payload = decode_access_token(data["token"])
+            payload = decode_access_token(token)
             if not payload:
                 raise ValueError("Invalid token")
             email = payload.get("sub")

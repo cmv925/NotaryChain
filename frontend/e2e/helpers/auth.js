@@ -13,6 +13,7 @@ const CREDENTIALS = {
 };
 
 // Log in via the API and return the access token. Faster + less flaky than UI login.
+// (Still works because the backend dual-reads the Authorization: Bearer header.)
 async function apiLogin(request, baseURL, role = 'client') {
   const { email, password } = CREDENTIALS[role];
   const res = await request.post(`${baseURL}/api/auth/login`, {
@@ -24,12 +25,14 @@ async function apiLogin(request, baseURL, role = 'client') {
   return body.access_token;
 }
 
-// Seed the auth token into localStorage before the SPA boots, then land on a page.
-async function seedAuthAndGoto(page, token, route = '/dashboard') {
-  // addInitScript runs before any page script on every navigation in this context.
-  await page.addInitScript((t) => {
-    try { window.localStorage.setItem('token', t); } catch (_e) { /* ignore */ }
-  }, token);
+// Log in through the PAGE's browser context so the httpOnly auth cookie is stored,
+// then navigate. `page.request` shares the cookie jar with the page context.
+async function loginAndGoto(page, baseURL, role = 'client', route = '/dashboard') {
+  const { email, password } = CREDENTIALS[role];
+  const res = await page.request.post(`${baseURL}/api/auth/login`, {
+    data: { email, password },
+  });
+  expect(res.ok(), `cookie login for ${email} should succeed`).toBeTruthy();
   await page.goto(route, { waitUntil: 'domcontentloaded' });
 }
 
@@ -43,4 +46,4 @@ async function dismissTourIfPresent(page) {
   } catch (_e) { /* no tour shown — fine */ }
 }
 
-module.exports = { CREDENTIALS, apiLogin, seedAuthAndGoto, dismissTourIfPresent };
+module.exports = { CREDENTIALS, apiLogin, loginAndGoto, dismissTourIfPresent };

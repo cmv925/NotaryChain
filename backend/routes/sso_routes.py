@@ -4,12 +4,12 @@ Handles org-based SSO discovery, initiation, and simulated SAML/OIDC callback fl
 Provider-specific routes (Auth0, Okta) are in auth0_routes.py and okta_routes.py.
 """
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Response
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timezone, timedelta
-from auth import create_access_token, get_password_hash
+from auth import create_access_token, get_password_hash, set_auth_cookie
 import uuid
 import secrets
 import logging
@@ -135,7 +135,7 @@ async def get_sso_session(session_id: str):
 
 
 @router.post("/callback")
-async def sso_callback(body: SSOCallbackRequest):
+async def sso_callback(body: SSOCallbackRequest, response: Response):
     """Handle SSO callback (simulated IdP response) for enterprise org SSO."""
     session = await db.sso_sessions.find_one({"session_id": body.session_id}, {"_id": 0})
     if not session:
@@ -219,6 +219,7 @@ async def sso_callback(body: SSOCallbackRequest):
 
     await db.sso_sessions.update_one({"session_id": body.session_id}, {"$set": {"status": "completed"}})
     access_token = create_access_token(data={"sub": email})
+    set_auth_cookie(response, access_token)
 
     await db.audit_logs.insert_one({
         "id": str(uuid.uuid4()),

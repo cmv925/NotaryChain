@@ -1,11 +1,10 @@
 // Critical path 4/5 — Notarize (request creation + identity-verification gate).
 const { test, expect } = require('@playwright/test');
-const { apiLogin, seedAuthAndGoto, dismissTourIfPresent } = require('../helpers/auth');
+const { apiLogin, loginAndGoto, dismissTourIfPresent } = require('../helpers/auth');
 
 test.describe('Critical Path: Notarize', () => {
-  test('request-notarization wizard renders the document step for a logged-in client', async ({ page, request, baseURL }) => {
-    const token = await apiLogin(request, baseURL, 'client');
-    await seedAuthAndGoto(page, token, '/request-notarization');
+  test('request-notarization wizard renders the document step for a logged-in client', async ({ page, baseURL }) => {
+    await loginAndGoto(page, baseURL, 'client', '/request-notarization');
     await dismissTourIfPresent(page);
 
     await expect(page.getByTestId('step-1-card')).toBeVisible({ timeout: 30_000 });
