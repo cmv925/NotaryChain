@@ -9,15 +9,19 @@ import { Button } from '../components/ui/button';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
 import { Breadcrumbs } from '../components/Breadcrumbs';
+import EnhancedKBAFlow from '../components/EnhancedKBAFlow';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const RequestNotarization = () => {
-  const { token } = useAuth();
+  const { token, refreshUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const templateData = location.state;
+
+  // Identity verification gate modal
+  const [showKBA, setShowKBA] = useState(false);
 
   // Step management: 1=upload & analyze, 2=biometric verification, 3=form submission
   const [currentStep, setCurrentStep] = useState(1);
@@ -192,7 +196,12 @@ const RequestNotarization = () => {
       toast({ title: 'Request Submitted!', description: 'A notary will be assigned to your request soon.' });
       setTimeout(() => navigate('/dashboard'), 1500);
     } catch (error) {
-      toast({ title: 'Error', description: error.response?.data?.detail || 'Failed to submit request', variant: 'destructive' });
+      if (error.response?.status === 403 && error.response?.data?.detail === 'identity_verification_required') {
+        toast({ title: 'Identity verification required', description: 'Complete a quick ID check to submit your request.' });
+        setShowKBA(true);
+      } else {
+        toast({ title: 'Error', description: error.response?.data?.detail || 'Failed to submit request', variant: 'destructive' });
+      }
     } finally {
       setLoading(false);
     }
@@ -271,6 +280,17 @@ const RequestNotarization = () => {
           onClose={() => setShowPdfPreview(false)}
         />
       )}
+      <EnhancedKBAFlow
+        open={showKBA}
+        token={token}
+        onClose={() => setShowKBA(false)}
+        onComplete={async (envelope) => {
+          if (envelope?.decision === 'passed') {
+            await refreshUser?.();
+            toast({ title: 'Identity verified', description: 'You can now submit your notarization request.' });
+          }
+        }}
+      />
     </div>
   );
 };

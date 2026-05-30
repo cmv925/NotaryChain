@@ -250,6 +250,18 @@ async def create_notarization_request(
     request_data: NotarizationRequestCreate,
     current_user: User = Depends(get_current_user)
 ):
+    # Identity gate: clients must complete identity verification before requesting notarization.
+    user_doc = await db.users.find_one(
+        {"id": current_user.id},
+        {"role": 1, "identity_verified": 1},
+    )
+    role = (user_doc or {}).get("role", "user")
+    if role == "user" and not (user_doc or {}).get("identity_verified"):
+        raise HTTPException(
+            status_code=403,
+            detail="identity_verification_required",
+        )
+
     # Normalize + validate state_code against the multi-state evaluator
     from services.multistate_evaluator import supported_state_codes
     state_code = (request_data.state_code or "").strip().upper() or None

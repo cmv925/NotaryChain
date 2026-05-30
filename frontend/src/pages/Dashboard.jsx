@@ -14,6 +14,7 @@ import StatePickabilityWidget from '../components/StatePickabilityWidget';
 import DashboardHero from '../components/DashboardHero';
 import NextActionCard from '../components/NextActionCard';
 import { OnboardingTour } from '../components/OnboardingTour';
+import EnhancedKBAFlow from '../components/EnhancedKBAFlow';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -50,7 +51,7 @@ function BentoAction({ icon: Icon, label, desc, onClick, accent, ...props }) {
 }
 
 const Dashboard = () => {
-  const { user, logout, token } = useAuth();
+  const { user, logout, token, refreshUser } = useAuth();
   const { subscribe } = useWS();
   const navigate = useNavigate();
   const { theme, toggle: toggleTheme } = useTheme();
@@ -60,6 +61,8 @@ const Dashboard = () => {
   const isAdmin = role === 'admin';
   const isNotary = role === 'notary';
   const isUser = !isAdmin && !isNotary;
+  const identityVerified = !!user?.identity_verified;
+  const [showKBA, setShowKBA] = useState(false);
   const [stats, setStats] = useState({ total_seals: 0, recent_seals: 0 });
   const [documents, setDocuments] = useState([]);
   const [notaryRequests, setNotaryRequests] = useState([]);
@@ -189,6 +192,38 @@ const Dashboard = () => {
         <div className="pt-6">
           <NextActionCard token={token} />
         </div>
+
+        {/* Identity verification gate — clients must verify before requesting notarization */}
+        {isUser && !identityVerified && (
+          <Card className="border-coral-200 bg-coral-50/40 shadow-sm" data-testid="identity-verify-banner">
+            <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="flex items-start gap-3 flex-1">
+                <div className="w-10 h-10 rounded-full bg-coral-500/15 flex items-center justify-center flex-shrink-0">
+                  <Fingerprint className="w-5 h-5 text-coral-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-navy-900">Verify your identity</h3>
+                  <p className="text-sm text-slate-600 mt-0.5">
+                    Complete a quick ID check (document + selfie + quiz) to unlock notarization requests.
+                  </p>
+                </div>
+              </div>
+              <Button
+                onClick={() => setShowKBA(true)}
+                className="bg-coral-500 hover:bg-coral-600 text-white whitespace-nowrap"
+                data-testid="dashboard-verify-identity-btn"
+              >
+                <ShieldCheck className="w-4 h-4 mr-2" /> Verify now
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {isUser && identityVerified && (
+          <div className="flex items-center gap-2 text-sm text-emerald-700" data-testid="identity-verified-badge">
+            <ShieldCheck className="w-4 h-4" /> Identity verified
+          </div>
+        )}
 
         {/* Personalized Hero (role-aware welcome + KPIs + suggestion) */}
         <DashboardHero token={token} user={user} role={role} />
@@ -449,6 +484,17 @@ const Dashboard = () => {
         </Card>
       </div>
       <OnboardingTour portal="client_sovereign" />
+      <EnhancedKBAFlow
+        open={showKBA}
+        token={token}
+        onClose={() => setShowKBA(false)}
+        onComplete={async (envelope) => {
+          if (envelope?.decision === 'passed') {
+            await refreshUser?.();
+            toast({ title: 'Identity verified', description: 'You can now request notarization.' });
+          }
+        }}
+      />
     </div>
   );
 };

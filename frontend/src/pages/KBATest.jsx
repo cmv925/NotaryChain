@@ -4,15 +4,17 @@ import { Shield, ChevronLeft, AlertTriangle, CheckCircle, Loader2, Sun } from 'l
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import KBAQuizModal from '../components/KBAQuizModal';
+import EnhancedKBAFlow from '../components/EnhancedKBAFlow';
 import { useAuth } from '../contexts/AuthContext';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function KBATest() {
-  const { token, isAuthenticated } = useAuth();
+  const { token, isAuthenticated, refreshUser } = useAuth();
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
+  const [enhancedOpen, setEnhancedOpen] = useState(false);
   const [lastResult, setLastResult] = useState(null);
 
   const load = async () => {
@@ -108,6 +110,26 @@ export default function KBATest() {
         >
           <Shield className="w-4 h-4 mr-2" /> Launch KBA quiz
         </Button>
+
+        <Card className="bg-white border-slate-200 mt-6" data-testid="enhanced-kba-card">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-1">
+              <Shield className="w-4 h-4 text-coral-600" />
+              <h2 className="text-sm font-bold text-navy-900">Enhanced verification (document + selfie + quiz)</h2>
+            </div>
+            <p className="text-slate-600 text-sm mb-4">
+              Full in-house identity check: upload a government ID, capture a live selfie for AI face-match,
+              then answer knowledge-based questions. Passing marks your account identity-verified.
+            </p>
+            <Button
+              onClick={() => setEnhancedOpen(true)}
+              className="bg-navy-900 hover:bg-navy-800 text-white"
+              data-testid="enhanced-kba-launch-btn"
+            >
+              <Shield className="w-4 h-4 mr-2" /> Start enhanced verification
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
       <KBAQuizModal
@@ -116,6 +138,16 @@ export default function KBATest() {
         onPass={(r) => { setLastResult(r); load(); }}
         onFail={(r) => { setLastResult(r); load(); }}
         onClose={() => setOpen(false)}
+      />
+
+      <EnhancedKBAFlow
+        open={enhancedOpen}
+        token={token}
+        onClose={() => setEnhancedOpen(false)}
+        onComplete={async (envelope) => {
+          if (envelope?.decision === 'passed') { await refreshUser?.(); }
+          load();
+        }}
       />
     </Shell>
   );

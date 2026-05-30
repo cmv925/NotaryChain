@@ -19,12 +19,12 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 from datetime import datetime, timezone
 from typing import Optional, List
-import hashlib
 import uuid
 import base64
 
 from routes.auth_routes import get_current_user
 from models import User
+from services.enhanced_kba_service import ocr_document as ai_ocr_document, face_match as ai_face_match
 
 router = APIRouter(prefix="/api/kba/enhanced", tags=["kba-enhanced"])
 
@@ -45,38 +45,6 @@ class EnhancedSessionStart(BaseModel):
 class QuizAnswers(BaseModel):
     session_id: str
     answers: List[str]  # one answer per question
-
-# ─── Simulated verifier helpers (swap with Tesseract / face-api later) ──
-def _hash_score(data: bytes, salt: str) -> int:
-    """Deterministic 0-100 score from file content + salt. Looks random, is reproducible."""
-    h = hashlib.sha256(salt.encode() + data).hexdigest()
-    return int(h[:4], 16) % 101  # 0..100
-
-def _ocr_document(file_bytes: bytes, claimed_name: str) -> dict:
-    """Simulated OCR. Returns extracted fields + a confidence score."""
-    score = _hash_score(file_bytes, f"ocr:{claimed_name}")
-    # Bias upward: real documents pass ~85% of the time
-    confidence = min(100, score + 30)
-    name_match = confidence > 50  # cheap heuristic
-    return {
-        "extracted_name": claimed_name if name_match else f"{claimed_name[:3]}*** (partial)",
-        "extracted_dob_visible": confidence > 40,
-        "document_type": "DRIVERS_LICENSE" if len(file_bytes) % 2 == 0 else "PASSPORT",
-        "confidence": confidence,
-        "name_match": name_match,
-    }
-
-def _face_match(selfie_bytes: bytes, doc_bytes: bytes) -> dict:
-    """Simulated face-match. Returns similarity + liveness flags."""
-    similarity = _hash_score(selfie_bytes + doc_bytes, "face")
-    # Bias upward: 80% pass rate for genuine submissions
-    similarity = min(100, similarity + 25)
-    return {
-        "similarity": similarity,
-        "liveness_passed": similarity > 35,
-        "passed": similarity >= 65,
-    }
-
 
 QUIZ_POOL = [
     {"q": "In which state did you previously hold an address?", "choices": ["TX", "CA", "FL", "NY"], "correct": 2},
@@ -121,12 +89,12 @@ async def upload_document(session_id: str, file: UploadFile = File(...), current
     content = await file.read()
     if len(content) > 8 * 1024 * 1024:
         raise HTTPException(400, "Document exceeds 8 MB limit")
-    ocr = _ocr_document(content, sess["full_name"])
+    ocr = await ai_ocr_document(content, sess["full_name"])
     doc_b64 = base64.b64encode(content).decode()
     await db.kba_enhanced_sessions.update_one(
         {"id": session_id},
         {"$set": {
-            "document_blob": doc_b64[:200000],  # cap stored bytes
+            "document_blob": doc_b64,
             "document_filename": file.filename,
             "document_ocr": ocr,
             "status": "pending_selfie" if ocr["name_match"] else "document_review",
@@ -146,7 +114,7 @@ async def upload_selfie(session_id: str, file: UploadFile = File(...), current_u
     selfie_bytes = await file.read()
     if len(selfie_bytes) > 4 * 1024 * 1024:
         raise HTTPException(400, "Selfie exceeds 4 MB limit")
-    face = _face_match(selfie_bytes, base64.b64decode(doc_blob))
+    face = await ai_face_match(selfie_bytes, base64.b64decode(doc_blob))
     await db.kba_enhanced_sessions.update_one(
         {"id": session_id},
         {"$set": {
@@ -203,8 +171,31 @@ async def answer_quiz(payload: QuizAnswers, current_user: User = Depends(get_cur
             "decision": decision,
             "status": "completed",
             "audit_envelope": audit_envelope,
-        }},
+        }, "$unset": {"document_blob": ""}},
     )
+
+    # On a passing decision, persist the verified status so it gates notarization.
+    if decision == "passed":
+        verified_at = datetime.now(timezone.utc).isoformat()
+        await db.users.update_one(
+            {"id": current_user.id},
+            {"$set": {
+                "identity_verified": True,
+                "identity_verification_provider": "nc_enhanced_v1",
+                "identity_verification_score": final,
+                "identity_verified_at": verified_at,
+            }},
+        )
+        if sess.get("request_id"):
+            await db.notarization_requests.update_one(
+                {"id": sess["request_id"], "user_id": current_user.id},
+                {"$set": {
+                    "identity_verified": True,
+                    "verification_provider": "nc_enhanced_v1",
+                    "verification_score": final,
+                }},
+            )
+
     return {
         "decision": decision,
         "weighted_score": final,
