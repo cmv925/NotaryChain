@@ -9,9 +9,8 @@ import time
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
-# Test credentials
-TEST_USER_EMAIL = "demo@test.com"
-TEST_USER_PASSWORD = "Demo123!"
+# Test credentials — centralized (no hardcoded secrets); see tests/credentials.py
+from credentials import DEMO_EMAIL as TEST_USER_EMAIL, DEMO_PASSWORD as TEST_USER_PASSWORD
 
 
 class TestCeremonyAPI:

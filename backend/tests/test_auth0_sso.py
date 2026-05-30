@@ -15,13 +15,12 @@ from urllib.parse import urlparse, parse_qs
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
-# Auth0 credentials from request
+# Auth0 public client config (not secrets)
 AUTH0_DOMAIN = "dev-ec3s8jabv4ei2wjs.us.auth0.com"
 AUTH0_CLIENT_ID = "sKYa79zs74ABycb6gUdEEMI3JyS56kQh"
 
-# Test credentials
-ADMIN_EMAIL = "admin@notarychain.com"
-ADMIN_PASSWORD = "Admin123!"
+# Test credentials — centralized (no hardcoded secrets); see tests/credentials.py
+from credentials import ADMIN_EMAIL, ADMIN_PASSWORD
 
 
 class TestAuth0Status:

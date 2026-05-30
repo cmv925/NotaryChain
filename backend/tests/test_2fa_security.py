@@ -10,21 +10,12 @@ import time
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL')
 
-# Test credentials from problem statement
-ADMIN_EMAIL = "admin@notarychain.com"
-ADMIN_PASSWORD = "Admin123!"
-DEMO_EMAIL = "demo@test.com"
-DEMO_PASSWORD = "Demo123!"
-NOTARY_EMAIL = "notarytest@test.com"
-NOTARY_PASSWORD = "Test123!"
-
-
-@pytest.fixture
-def api_client():
-    """Shared requests session"""
-    session = requests.Session()
-    session.headers.update({"Content-Type": "application/json"})
-    return session
+# Test credentials — centralized (no hardcoded secrets); see tests/credentials.py
+from credentials import (
+    ADMIN_EMAIL, ADMIN_PASSWORD,
+    DEMO_EMAIL, DEMO_PASSWORD,
+    NOTARY_EMAIL, NOTARY_PASSWORD,
+)
 
 
 class TestHealthCheck:
