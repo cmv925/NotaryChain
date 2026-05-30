@@ -309,6 +309,11 @@ from routes import next_action_routes
 next_action_routes.set_db(db)
 app.include_router(next_action_routes.router)
 
+# Enhanced In-House KBA — interim identity verification (doc + selfie + quiz)
+from routes import enhanced_kba_routes
+enhanced_kba_routes.set_db(db)
+app.include_router(enhanced_kba_routes.router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
