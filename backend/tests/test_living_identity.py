@@ -7,7 +7,7 @@ import pytest
 import requests
 from PIL import Image
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://notary-chain-preview-2.preview.emergentagent.com").rstrip("/")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://notary-chain-preview-3.preview.emergentagent.com").rstrip("/")
 ADMIN = {"email": "admin@notarychain.com", "password": "Admin123!"}
 DEMO = {"email": "demo@test.com", "password": "Demo123!"}
 NOTARY = {"email": "notarytest@test.com", "password": "Test123!"}

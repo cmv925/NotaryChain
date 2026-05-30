@@ -223,7 +223,7 @@ A **Compliance Snapshot** is a public, read-only, **scrubbed** version of your S
 ### 7.1 Generate the link
 1. Dashboard → State Pickability Index widget → click **Share snapshot** (top-right of the widget).
 2. A green banner appears with the full public URL, e.g.
-   `https://notary-chain-preview-2.preview.emergentagent.com/compliance/snapshot/OCPTr3gnxtXZiVfRY7IJvw`
+   `https://notary-chain-preview-3.preview.emergentagent.com/compliance/snapshot/OCPTr3gnxtXZiVfRY7IJvw`
 3. The URL is **auto-copied to your clipboard** + you see a "Snapshot created" toast.
 
 ### 7.2 What's in the snapshot
@@ -294,7 +294,7 @@ The platform signs the attestation with your Ed25519 keypair (canonical-JSON ser
 ### 9.3 Embed the auto-verify badge
 Drop the `<trust-badge>` web component on any page:
 ```html
-<script src="https://notary-chain-preview-2.preview.emergentagent.com/api/trustlayer/badge-v2.js"></script>
+<script src="https://notary-chain-preview-3.preview.emergentagent.com/api/trustlayer/badge-v2.js"></script>
 <trust-badge attestation-id="ATT-12345"></trust-badge>
 ```
 The badge verifies the Ed25519 signature in-browser using WebCrypto + pulls the Hedera Mirror Node payload, then emits a `verified` or `failed` CustomEvent. Verification is shadow-DOM isolated so it can't be tampered with by host-page CSS/JS.
@@ -333,7 +333,7 @@ Embed NotaryChain ceremonies into your own app with the Embeddable Notarize SDK.
 
 ### 11.2 Load the SDK
 ```html
-<script src="https://notary-chain-preview-2.preview.emergentagent.com/api/sdk/v1/notarychain.js"></script>
+<script src="https://notary-chain-preview-3.preview.emergentagent.com/api/sdk/v1/notarychain.js"></script>
 <script>
   NotaryChain.init({ publishable_key: 'pk_live_…' });
 
@@ -349,7 +349,7 @@ Embed NotaryChain ceremonies into your own app with the Embeddable Notarize SDK.
 ### 11.3 Listen for events
 ```js
 window.addEventListener('message', (ev) => {
-  if (ev.origin !== 'https://notary-chain-preview-2.preview.emergentagent.com') return;
+  if (ev.origin !== 'https://notary-chain-preview-3.preview.emergentagent.com') return;
   // Verify ev.data.event_secret against your server-side stored secret
   if (ev.data.type === 'ceremony.sealed') {
     console.log('Sealed!', ev.data.payload);

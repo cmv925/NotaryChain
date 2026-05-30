@@ -13,7 +13,7 @@ from datetime import datetime
 # Get the base URL from environment
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 if not BASE_URL:
-    BASE_URL = "https://notary-chain-preview-2.preview.emergentagent.com"
+    BASE_URL = "https://notary-chain-preview-3.preview.emergentagent.com"
 
 # Test credentials
 ADMIN_EMAIL = "admin@notarychain.com"
