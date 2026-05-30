@@ -1,6 +1,7 @@
 import React from 'react';
 import { Shield, RefreshCw } from 'lucide-react';
 import { Button } from './ui/button';
+import { captureError } from '../sentry';
 
 /**
  * ErrorBoundary — top-level catch for uncaught render-time exceptions.
@@ -23,6 +24,9 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, info) {
     console.error('ErrorBoundary caught:', error, info);
     this.setState({ info });
+
+    // Forward to Sentry (no-op when DSN not configured).
+    captureError(error, info?.componentStack);
 
     const msg = (error?.message || '').toLowerCase();
     const isStaleBundle =

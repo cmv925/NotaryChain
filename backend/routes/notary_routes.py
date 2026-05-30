@@ -28,6 +28,43 @@ def set_db(database):
     global db
     db = database
 
+
+async def _provision_hcs_topic(request_id: str, user_id: str, document_type: str):
+    """Background task: create the HCS topic + submit the creation event, then
+    update the notarization request. Runs after the API response is returned so
+    slow/cold Hedera calls never block (or 502) the request-creation path."""
+    try:
+        topic_memo = f"Notarization: {document_type}"
+        hcs_topic_result = await hedera_service.create_topic(memo=topic_memo)
+        if hcs_topic_result.get("success"):
+            hcs_topic_id = hcs_topic_result["topic_id"]
+            logger.info(f"Created HCS topic {hcs_topic_id} for notarization {request_id}")
+            await hedera_service.submit_message(hcs_topic_id, {
+                "type": "REQUEST_CREATED",
+                "request_id": request_id,
+                "user_id": user_id,
+                "document_type": document_type,
+            })
+            await db.notarization_requests.update_one(
+                {"id": request_id},
+                {"$set": {
+                    "hcs_topic_id": hcs_topic_id,
+                    "hcs_topic_explorer": hcs_topic_result.get("explorer_url"),
+                    "hcs_status": "provisioned",
+                }},
+            )
+        else:
+            await db.notarization_requests.update_one(
+                {"id": request_id},
+                {"$set": {"hcs_status": "failed"}},
+            )
+    except Exception as e:
+        logger.error(f"Failed to provision HCS topic for notarization {request_id}: {e}")
+        await db.notarization_requests.update_one(
+            {"id": request_id},
+            {"$set": {"hcs_status": "failed"}},
+        )
+
 # Notary Profile Management
 @router.post("/profile", response_model=NotaryProfile)
 async def create_notary_profile(
@@ -248,6 +285,7 @@ async def get_available_notaries(
 @router.post("/requests", response_model=NotarizationRequest)
 async def create_notarization_request(
     request_data: NotarizationRequestCreate,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user)
 ):
     # Identity gate: clients must complete identity verification before requesting notarization.
@@ -277,33 +315,20 @@ async def create_notarization_request(
         **payload,
     )
     
-    # Create HCS topic for this notarization session
-    hcs_topic_id = None
-    hcs_topic_result = None
-    try:
-        topic_memo = f"Notarization: {request_data.document_type}"
-        hcs_topic_result = await hedera_service.create_topic(memo=topic_memo)
-        if hcs_topic_result.get("success"):
-            hcs_topic_id = hcs_topic_result["topic_id"]
-            logger.info(f"Created HCS topic {hcs_topic_id} for notarization {request.id}")
-            
-            # Submit initial event to topic
-            await hedera_service.submit_message(hcs_topic_id, {
-                "type": "REQUEST_CREATED",
-                "request_id": request.id,
-                "user_id": current_user.id,
-                "document_type": request_data.document_type
-            })
-    except Exception as e:
-        logger.error(f"Failed to create HCS topic for notarization: {e}")
-    
-    # Add HCS topic to request
+    # HCS topic is provisioned asynchronously (see _provision_hcs_topic) so the
+    # cold-path Hedera latency never blocks request creation. Stored as null until ready.
     request_dict = request.dict()
-    request_dict["hcs_topic_id"] = hcs_topic_id
-    request_dict["hcs_topic_explorer"] = hcs_topic_result.get("explorer_url") if hcs_topic_result else None
-    
+    request_dict["hcs_topic_id"] = None
+    request_dict["hcs_topic_explorer"] = None
+    request_dict["hcs_status"] = "provisioning"
+
     await db.notarization_requests.insert_one(request_dict)
-    
+
+    # Kick off the Hedera topic provisioning in the background.
+    background_tasks.add_task(
+        _provision_hcs_topic, request.id, current_user.id, request_data.document_type
+    )
+
     # Broadcast to notaries that a new request is available
     try:
         notary_ids = await get_notary_user_ids()
@@ -314,9 +339,9 @@ async def create_notarization_request(
         }, target_user_ids=notary_ids)
     except Exception as e:
         logger.debug(f"Broadcast failed: {e}")
-    
-    # Return augmented response
-    return NotarizationRequest(**{**request.dict(), "hcs_topic_id": hcs_topic_id})
+
+    # Return augmented response (hcs_topic_id resolves shortly via background task)
+    return NotarizationRequest(**request.dict())
 
 
 @router.get("/requests/my", response_model=List[NotarizationRequest])
