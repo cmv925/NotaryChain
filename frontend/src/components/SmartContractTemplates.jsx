@@ -34,6 +34,7 @@ export default function SmartContractTemplates({ embedded = false }) {
   const [aiTailor, setAiTailor] = useState(false);
   const [instructions, setInstructions] = useState('');
   const [rendering, setRendering] = useState(false);
+  const [tailoring, setTailoring] = useState(false);
   const [draft, setDraft] = useState(null); // { title, content }
   const [showAnchor, setShowAnchor] = useState(false);
 
@@ -62,33 +63,51 @@ export default function SmartContractTemplates({ embedded = false }) {
     }
   };
 
+  const pollTailor = useCallback(async (jobId, baseDraft, attempts = 0) => {
+    if (attempts > 45) { // ~90s safety cap
+      setTailoring(false);
+      toast({ title: 'AI tailoring timed out', description: 'Showing the standard version — you can try AI again.' });
+      return;
+    }
+    try {
+      const res = await axios.get(`${API}/contract-templates/tailor-status/${jobId}`);
+      if (res.data.status === 'pending') {
+        setTimeout(() => pollTailor(jobId, baseDraft, attempts + 1), 2000);
+        return;
+      }
+      if (res.data.ai_tailored && res.data.content) {
+        setDraft({ ...baseDraft, content: res.data.content, aiTailored: true });
+        toast({ title: 'AI tailoring complete', description: 'Your agreement has been refined.' });
+      } else {
+        toast({ title: 'AI tailoring unavailable', description: 'Showing the standard version.' });
+      }
+      setTailoring(false);
+    } catch (e) {
+      setTailoring(false);
+      console.error('Tailor poll failed:', e);
+    }
+  }, []);
+
   const generate = async () => {
     setRendering(true);
+    setTailoring(false);
     try {
       const res = await axios.post(`${API}/contract-templates/render/${selected.id}`, {
         values,
         ai_tailor: aiTailor,
         instructions,
       });
-      setDraft({ title: res.data.title, content: res.data.content, aiTailored: res.data.ai_tailored });
+      const base = { title: res.data.title, content: res.data.content, aiTailored: false };
+      setDraft(base);
       if (res.data.missing_fields?.length) {
         toast({ title: 'Some fields are blank', description: `Left blank: ${res.data.missing_fields.join(', ')}` });
       }
-    } catch (e) {
-      // AI tailoring can be slow on a cold start and 502 at the proxy — fall back
-      // to the deterministic (non-AI) render so the user is never blocked.
-      if (aiTailor) {
-        try {
-          const res2 = await axios.post(`${API}/contract-templates/render/${selected.id}`, {
-            values, ai_tailor: false,
-          });
-          setDraft({ title: res2.data.title, content: res2.data.content, aiTailored: false });
-          toast({ title: 'AI tailoring timed out', description: 'Showing the standard version — you can try AI again.' });
-          return;
-        } catch (e2) {
-          console.error('Fallback render failed:', e2);
-        }
+      // AI tailoring runs in the background to avoid cold-start proxy 502s — poll for it.
+      if (res.data.tailor_job_id) {
+        setTailoring(true);
+        pollTailor(res.data.tailor_job_id, base, 0);
       }
+    } catch (e) {
       toast({ title: 'Error', description: e.response?.data?.detail || 'Failed to generate', variant: 'destructive' });
     } finally {
       setRendering(false);
@@ -184,6 +203,11 @@ export default function SmartContractTemplates({ embedded = false }) {
                     <Sparkles className="w-3 h-3" /> AI-tailored
                   </span>
                 )}
+                {tailoring && (
+                  <span className="text-[11px] text-navy-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full flex items-center gap-1" data-testid="tailoring-badge">
+                    <Loader2 className="w-3 h-3 animate-spin" /> Tailoring with AI…
+                  </span>
+                )}
               </div>
 
               {!draft ? (
@@ -198,8 +222,8 @@ export default function SmartContractTemplates({ embedded = false }) {
                     onChange={(e) => setDraft({ ...draft, content: e.target.value })}
                     data-testid="draft-content"
                   />
-                  <Button onClick={() => setShowAnchor(true)} className="w-full bg-navy-900 hover:bg-navy-800 text-white" data-testid="open-anchor-btn">
-                    <Anchor className="w-4 h-4 mr-2" /> Anchor on Blockchain
+                  <Button onClick={() => setShowAnchor(true)} disabled={tailoring} className="w-full bg-navy-900 hover:bg-navy-800 text-white" data-testid="open-anchor-btn">
+                    <Anchor className="w-4 h-4 mr-2" /> {tailoring ? 'Finishing AI draft…' : 'Anchor on Blockchain'}
                   </Button>
                 </>
               )}
