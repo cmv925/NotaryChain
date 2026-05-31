@@ -46,7 +46,7 @@ class TestAuth0Login:
         """GET /api/sso/auth0/login returns auth_url with correct Auth0 domain"""
         response = requests.get(
             f"{BASE_URL}/api/sso/auth0/login",
-            headers={"origin": "https://notary-chain-preview-3.preview.emergentagent.com"}
+            headers={"origin": "https://trust-network-dev.preview.emergentagent.com"}
         )
         assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
         
@@ -66,7 +66,7 @@ class TestAuth0Login:
         """Auth URL should contain correct client_id"""
         response = requests.get(
             f"{BASE_URL}/api/sso/auth0/login",
-            headers={"origin": "https://notary-chain-preview-3.preview.emergentagent.com"}
+            headers={"origin": "https://trust-network-dev.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         
@@ -78,7 +78,7 @@ class TestAuth0Login:
         """Auth URL should have response_type=code"""
         response = requests.get(
             f"{BASE_URL}/api/sso/auth0/login",
-            headers={"origin": "https://notary-chain-preview-3.preview.emergentagent.com"}
+            headers={"origin": "https://trust-network-dev.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         
@@ -90,7 +90,7 @@ class TestAuth0Login:
         """Auth URL should have scope=openid profile email"""
         response = requests.get(
             f"{BASE_URL}/api/sso/auth0/login",
-            headers={"origin": "https://notary-chain-preview-3.preview.emergentagent.com"}
+            headers={"origin": "https://trust-network-dev.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         
@@ -105,7 +105,7 @@ class TestAuth0Login:
         """Auth URL should contain state parameter for CSRF protection"""
         response = requests.get(
             f"{BASE_URL}/api/sso/auth0/login",
-            headers={"origin": "https://notary-chain-preview-3.preview.emergentagent.com"}
+            headers={"origin": "https://trust-network-dev.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         
@@ -217,7 +217,7 @@ class TestSSOSessionCreation:
         # Get auth URL (this creates the session)
         response = requests.get(
             f"{BASE_URL}/api/sso/auth0/login",
-            headers={"origin": "https://notary-chain-preview-3.preview.emergentagent.com"}
+            headers={"origin": "https://trust-network-dev.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         
@@ -259,7 +259,7 @@ class TestAuth0URLParsing:
         """Verify complete Auth0 URL structure"""
         response = requests.get(
             f"{BASE_URL}/api/sso/auth0/login",
-            headers={"origin": "https://notary-chain-preview-3.preview.emergentagent.com"}
+            headers={"origin": "https://trust-network-dev.preview.emergentagent.com"}
         )
         assert response.status_code == 200
         

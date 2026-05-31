@@ -10,12 +10,12 @@
 
 ### Pre-flight checklist
 - [ ] Open these tabs in order, in a fresh Chrome window:
-  1. `https://notary-chain-preview-3.preview.emergentagent.com/` (homepage)
-  2. `https://notary-chain-preview-3.preview.emergentagent.com/verify` (public verifier)
-  3. `https://notary-chain-preview-3.preview.emergentagent.com/marketplace` (notary marketplace)
-  4. `https://notary-chain-preview-3.preview.emergentagent.com/trust-graph/demo` (trust graph demo)
+  1. `https://trust-network-dev.preview.emergentagent.com/` (homepage)
+  2. `https://trust-network-dev.preview.emergentagent.com/verify` (public verifier)
+  3. `https://trust-network-dev.preview.emergentagent.com/marketplace` (notary marketplace)
+  4. `https://trust-network-dev.preview.emergentagent.com/trust-graph/demo` (trust graph demo)
   5. `https://hashscan.io/mainnet/topic/0.0.10373605` (Hedera mainnet — open in background)
-  6. `https://notary-chain-preview-3.preview.emergentagent.com/login` (login page, pre-fill admin creds)
+  6. `https://trust-network-dev.preview.emergentagent.com/login` (login page, pre-fill admin creds)
 
 - [ ] Confirm credentials work:
   - Admin: `admin@notarychain.com` / `Admin123!`
