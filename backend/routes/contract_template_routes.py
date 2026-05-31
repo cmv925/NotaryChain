@@ -6,13 +6,14 @@ substitution + optional GPT-5.2 clause tailoring), and ANCHOR the finalized
 agreement on Hedera HCS for an immutable, timestamped proof. Anchoring is gated
 behind identity verification (consistent with the notarization flow).
 """
-from fastapi import APIRouter, HTTPException, Depends, Request, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Depends, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 from typing import Optional, Dict
 from datetime import datetime, timezone
 import os
 import uuid
+import asyncio
 import hashlib
 import logging
 
@@ -70,6 +71,34 @@ async def get_contract_template(template_id: str):
     }
 
 
+def _blocking_tailor(base_content: str, instructions: Optional[str], user_id: str) -> str:
+    """Synchronous LLM call, run inside a worker thread (its own event loop).
+
+    The emergentintegrations LLM client blocks the loop during the request, so we
+    isolate it in a thread via asyncio.to_thread — keeping the main event loop (and
+    therefore /render's response and /tailor-status polling) fully responsive.
+    """
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+    extra = f"\n\nAdditional instructions from the user: {instructions}" if instructions else ""
+    prompt = (
+        "You are a legal drafting assistant. Improve and tailor the following agreement: "
+        "tighten the language, add any standard protective clauses that are clearly missing "
+        "(e.g. severability, entire-agreement, notices), and keep all party names, dates, and "
+        "figures EXACTLY as given. Do NOT invent facts or fill blanks shown as [__________]. "
+        "Return ONLY the full revised agreement as plain text — no preamble, no markdown fences."
+        f"{extra}\n\n--- AGREEMENT ---\n{base_content}"
+    )
+    chat = LlmChat(
+        api_key=EMERGENT_KEY,
+        session_id=f"contract_tailor_{user_id}_{datetime.now().timestamp()}",
+        system_message="You are a meticulous legal document editor.",
+    ).with_model("openai", "gpt-5.2")
+    text = asyncio.run(chat.send_message(UserMessage(text=prompt))).strip()
+    if text.startswith("```"):
+        text = "\n".join(ln for ln in text.split("\n") if not ln.strip().startswith("```")).strip()
+    return text
+
+
 async def _run_tailor_job(job_id: str, base_content: str, instructions: Optional[str], user_id: str):
     """Background worker: tailor an agreement with GPT-5.2 and persist the result.
 
@@ -78,25 +107,8 @@ async def _run_tailor_job(job_id: str, base_content: str, instructions: Optional
     """
     final_content, ai_used, error = base_content, False, None
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
-        extra = f"\n\nAdditional instructions from the user: {instructions}" if instructions else ""
-        prompt = (
-            "You are a legal drafting assistant. Improve and tailor the following agreement: "
-            "tighten the language, add any standard protective clauses that are clearly missing "
-            "(e.g. severability, entire-agreement, notices), and keep all party names, dates, and "
-            "figures EXACTLY as given. Do NOT invent facts or fill blanks shown as [__________]. "
-            "Return ONLY the full revised agreement as plain text — no preamble, no markdown fences."
-            f"{extra}\n\n--- AGREEMENT ---\n{base_content}"
-        )
-        chat = LlmChat(
-            api_key=EMERGENT_KEY,
-            session_id=f"contract_tailor_{user_id}_{datetime.now().timestamp()}",
-            system_message="You are a meticulous legal document editor.",
-        ).with_model("openai", "gpt-5.2")
-        text = (await chat.send_message(UserMessage(text=prompt))).strip()
-        if text.startswith("```"):
-            text = "\n".join(ln for ln in text.split("\n") if not ln.strip().startswith("```")).strip()
-        if len(text) > 100:
+        text = await asyncio.to_thread(_blocking_tailor, base_content, instructions, user_id)
+        if text and len(text) > 100:
             final_content, ai_used = text, True
     except Exception as e:
         error = str(e)
@@ -120,11 +132,11 @@ async def render_contract_template(
     request: Request,
     template_id: str,
     body: RenderRequest,
-    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
 ):
-    """Render a template instantly. If AI tailoring is requested, kick it off in the
-    background and return a `tailor_job_id` the client can poll — keeping this request fast.
+    """Render a template instantly. If AI tailoring is requested, kick it off in a
+    truly-detached asyncio task and return a `tailor_job_id` the client can poll —
+    keeping this request sub-second so a slow LLM cold-start can never cause a 502.
     """
     rendered = legal_templates.render_template(template_id, body.values)
     if rendered.get("error"):
@@ -141,8 +153,10 @@ async def render_contract_template(
             "ai_tailored": False,
             "created_at": datetime.now(timezone.utc).isoformat(),
         })
-        background_tasks.add_task(
-            _run_tailor_job, job_id, rendered["content"], body.instructions, current_user.id,
+        # asyncio.create_task → fire-and-forget, detached from the request lifecycle
+        # (unlike Starlette BackgroundTasks, which hold the worker until completion).
+        asyncio.create_task(
+            _run_tailor_job(job_id, rendered["content"], body.instructions, current_user.id)
         )
         rendered["tailor_job_id"] = job_id
 
@@ -161,6 +175,7 @@ async def tailor_status(job_id: str, current_user: User = Depends(get_current_us
         "status": doc.get("status", "pending"),
         "content": doc.get("content"),
         "ai_tailored": doc.get("ai_tailored", False),
+        "error": doc.get("error"),
     }
 
 
