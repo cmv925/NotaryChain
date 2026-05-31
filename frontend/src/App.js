@@ -33,7 +33,7 @@ import {
   UserGuide, Marketplace, AdminCeremonyAnalytics, TrustBadges, TrustBadgeLanding,
   TransactionsPage, TransactionRoom, NotarizationCertificate, BlueprintCreator, SecuritySettings,
   SubscriptionPage, SubscriptionSuccess, NotaryJournal, DigitalSeal, CompliancePage,
-  DeveloperPage, RONComplianceDashboard, TemplateLibrary, TemplateWizard, OrganizationPage,
+  DeveloperPage, RONComplianceDashboard, TemplateLibrary, TemplateWizard, SmartContractsPage, OrganizationPage,
   MyDrafts, SharedDraftViewer, BulkNotarization, NotaryMarketplace, WhiteLabelPage,
   BookingCalendar, MyBookings, AIDocumentGenerator, AIDocumentSummarizer, VideoWitness,
   DocumentRemediation, BiometricPassportPage, AIConductorPage, EvidencePackagePage, TransactionTimeline,
@@ -480,6 +480,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <TemplateWizard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/smart-contracts"
+              element={
+                <ProtectedRoute>
+                  <SmartContractsPage />
                 </ProtectedRoute>
               }
             />

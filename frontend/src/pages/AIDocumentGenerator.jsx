@@ -13,6 +13,8 @@ import {
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
 import { Breadcrumbs } from '../components/Breadcrumbs';
+import SmartContractTemplates from '../components/SmartContractTemplates';
+import { Anchor } from 'lucide-react';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -109,13 +111,35 @@ const AIDocumentGenerator = () => {
               <p className="text-slate-500 text-sm mt-1">Create legal documents by describing what you need</p>
             </div>
             <div className="flex gap-2">
-              {view !== 'create' && (
+              {view === 'result' && (
                 <Button onClick={() => { setView('create'); setResult(null); }} variant="outline" className="border-navy-300/50 text-navy-500" data-testid="new-document-btn">
                   <Sparkles className="w-4 h-4 mr-1" /> New Document
                 </Button>
               )}
             </div>
           </div>
+
+          {/* Mode tabs: AI free-form generation vs. curated on-chain templates */}
+          {(view === 'create' || view === 'templates') && (
+            <div className="flex gap-2 mb-6 border-b border-slate-200" data-testid="generator-tabs">
+              <button
+                onClick={() => setView('create')}
+                className={`px-4 py-2 text-sm font-semibold -mb-px border-b-2 transition-colors ${view === 'create' ? 'border-coral-500 text-navy-900' : 'border-transparent text-slate-500 hover:text-navy-700'}`}
+                data-testid="tab-ai-generate"
+              >
+                <Sparkles className="w-4 h-4 inline mr-1.5 -mt-0.5" /> Generate with AI
+              </button>
+              <button
+                onClick={() => setView('templates')}
+                className={`px-4 py-2 text-sm font-semibold -mb-px border-b-2 transition-colors ${view === 'templates' ? 'border-coral-500 text-navy-900' : 'border-transparent text-slate-500 hover:text-navy-700'}`}
+                data-testid="tab-smart-contracts"
+              >
+                <Anchor className="w-4 h-4 inline mr-1.5 -mt-0.5" /> Smart Contract Templates
+              </button>
+            </div>
+          )}
+
+          {view === 'templates' && <SmartContractTemplates embedded />}
 
           {view === 'create' && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

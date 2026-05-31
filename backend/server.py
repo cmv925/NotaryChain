@@ -314,6 +314,10 @@ from routes import enhanced_kba_routes
 enhanced_kba_routes.set_db(db)
 app.include_router(enhanced_kba_routes.router)
 
+from routes import contract_template_routes
+contract_template_routes.set_db(db)
+app.include_router(contract_template_routes.router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

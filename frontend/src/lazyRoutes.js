@@ -67,6 +67,7 @@ export const DeveloperPage = lazy(() => import('./pages/DeveloperPage'));
 export const RONComplianceDashboard = lazy(() => import('./pages/RONComplianceDashboard'));
 export const TemplateLibrary = lazy(() => import('./pages/TemplateLibrary'));
 export const TemplateWizard = lazy(() => import('./pages/TemplateWizard'));
+export const SmartContractsPage = lazy(() => import('./pages/SmartContractsPage'));
 export const OrganizationPage = lazy(() => import('./pages/OrganizationPage'));
 export const MyDrafts = lazy(() => import('./pages/MyDrafts'));
 export const SharedDraftViewer = lazy(() => import('./pages/SharedDraftViewer'));

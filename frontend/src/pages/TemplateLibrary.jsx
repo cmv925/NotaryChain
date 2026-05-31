@@ -9,7 +9,7 @@ import { Card, CardContent } from '../components/ui/card';
 import {
   FileText, Search, Clock, Users, Shield, ArrowRight,
   Scale, Home, Lock, Scroll, Building, Landmark, Handshake,
-  FileCheck, X, ChevronRight, Star,
+  FileCheck, X, ChevronRight, Star, Anchor,
 } from 'lucide-react';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { toast } from '../hooks/use-toast';
@@ -227,6 +227,24 @@ const TemplateLibrary = () => {
               Start from a pre-built legal template instead of uploading from scratch. Choose a template, fill in your details, and submit for notarization.
             </p>
           </div>
+
+          {/* Smart Contract Templates — anchor agreements on-chain */}
+          <button
+            onClick={() => navigate('/smart-contracts')}
+            className="w-full mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-coral-200 bg-gradient-to-r from-coral-50 to-cream-100 px-5 py-4 text-left hover:border-coral-400 transition-colors group"
+            data-testid="anchor-blockchain-cta"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-navy-900 flex items-center justify-center flex-shrink-0">
+                <Anchor className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="font-bold text-navy-900 text-sm">Smart Contract Templates — anchor on the blockchain</p>
+                <p className="text-slate-600 text-xs mt-0.5">Generate a standard agreement and seal an immutable, timestamped proof on Hedera.</p>
+              </div>
+            </div>
+            <span className="text-coral-600 text-sm font-semibold whitespace-nowrap group-hover:translate-x-0.5 transition-transform">Open library →</span>
+          </button>
 
           {/* Search & Filters */}
           <div className="flex flex-col sm:flex-row gap-3 mb-6 sm:mb-8">

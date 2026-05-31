@@ -1,0 +1,40 @@
+{
+  "summary": "Smart Contract Template Library — end-to-end verified. Backend pytest suite (11 tests) and Playwright UI flow both pass. Library renders 17 templates across 6 categories sorted by popularity, search + category chips filter correctly, deterministic render substitutes fields and surfaces missing required ones, AI tailoring works (and falls back gracefully), anchor endpoint enforces identity gate (403 'identity_verification_required') and on success returns content_hash/transaction_id/topic_id/explorer_url, persisted and retrievable via /anchors/my and /anchors/{id}. Generator tab + Template Library CTA both wired correctly. Demo user state reset to identity_verified=false and temp subscription removed.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/contract-templates/render/{id} (ai_tailor:true)", "issue": "First AI call observed ~140s and the ingress returned a transient 502; retry succeeded in ~19s. Consider tightening the upstream timeout / streaming so the proxy doesn't 502 on cold-start LLM calls."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "EnhancedKBAFlow modal & AIDocumentGenerator doc-type select", "issues": ["React hydration warnings: <span> rendered as child of <select>/<option> (likely from a dev-tool wrapper). Cosmetic only, no functional impact."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_smart_contract_templates.py",
+    "/app/test_reports/pytest/iter121_contract_templates.xml"
+  ],
+  "action_items": [
+    "Optional: investigate the React '<span> cannot be a child of <select>/<option>' hydration warnings emitted by EnhancedKBAFlow and AIDocumentGenerator selects.",
+    "Optional: harden the AI render path against cold-start ingress 502s (timeout/streaming or early-return + async tailoring)."
+  ],
+  "critical_code_review_comments": [
+    "contract_template_routes.py correctly enforces auth on render + anchor and returns 403 identity_verification_required when current_user.identity_verified is False — matches the notarization gate model.",
+    "Anchor flow uses sha256(content) and persists {anchor_id, content_hash, transaction_id, topic_id, explorer_url, anchored_at, user_id} — good. content is stored separately so it isn't leaked in list endpoint.",
+    "render_template falls back to base render on AI failure (ai_tailored:false) — verified, no 500s observed.",
+    "AIDocumentGenerator is wrapped in GatedRoute (ai_generator => 'pro'). Free-tier demo cannot reach generator-tabs without an active pro subscription; tested by temporarily upserting a subscription, then cleaned up. Worth documenting this gating in test_credentials.md so future agents don't think the tab is broken."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_smart_contract_templates.py"
+  ],
+  "success_rate": {"backend": "100% (11/11)", "frontend": "100% (library, search, category, editor, render, anchor gate, KBA trigger, Template Library CTA, generator tabs all OK)"},
+  "test_credentials": "demo@test.com / Demo123! (Free + UNVERIFIED — restored). Admin: admin@notarychain.com / Admin123!.",
+  "seed_data_creation": "Temporarily upserted a pro subscription for demo@test.com to validate generator-tabs visibility, then DELETED. demo's identity_verified left FALSE per request.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All Smart Contract Template flows verified. If retesting: demo@test.com is FREE tier so /ai-generator is gated; to test the generator-tabs UI inside AIDocumentGenerator, either upgrade the user (db.subscriptions upsert plan_id:'pro' active) or use an account already on pro. The Hedera preview seal is local (hcs_submitted:false) — expected. Anchor still returns transaction_id + explorer_url. KBA selfie step uses real camera; full pass must be validated via backend, not Playwright.",
+  "rca of the issue": "No new defects. Only minor cosmetic React hydration warnings and a transient cold-start 502 on the AI tailor route which self-recovered on retry."
+}
