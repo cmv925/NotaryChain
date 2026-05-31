@@ -75,6 +75,20 @@ export default function SmartContractTemplates({ embedded = false }) {
         toast({ title: 'Some fields are blank', description: `Left blank: ${res.data.missing_fields.join(', ')}` });
       }
     } catch (e) {
+      // AI tailoring can be slow on a cold start and 502 at the proxy — fall back
+      // to the deterministic (non-AI) render so the user is never blocked.
+      if (aiTailor) {
+        try {
+          const res2 = await axios.post(`${API}/contract-templates/render/${selected.id}`, {
+            values, ai_tailor: false,
+          });
+          setDraft({ title: res2.data.title, content: res2.data.content, aiTailored: false });
+          toast({ title: 'AI tailoring timed out', description: 'Showing the standard version — you can try AI again.' });
+          return;
+        } catch (e2) {
+          console.error('Fallback render failed:', e2);
+        }
+      }
       toast({ title: 'Error', description: e.response?.data?.detail || 'Failed to generate', variant: 'destructive' });
     } finally {
       setRendering(false);
