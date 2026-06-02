@@ -398,7 +398,14 @@ async def by_references(body: RefsRequest, current_user: User = Depends(get_curr
 @router.post("/daily-webhook")
 async def daily_webhook(request: Request):
     """PUBLIC: Daily.co webhook receiver. On a recording-ready event, auto-ingest the
-    cloud recording for the matching RON session. Idempotent (dedups by recording id)."""
+    cloud recording for the matching RON session. Idempotent (dedups by recording id).
+
+    Optional hardening: if DAILY_WEBHOOK_SECRET is set, the request must carry a matching
+    `?key=` so the public endpoint can't be spammed once Daily is configured in production.
+    """
+    secret = os.environ.get("DAILY_WEBHOOK_SECRET")
+    if secret and request.query_params.get("key") != secret:
+        raise HTTPException(status_code=401, detail="Invalid webhook key")
     try:
         body = await request.json()
     except Exception:
