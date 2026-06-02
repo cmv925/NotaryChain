@@ -33,7 +33,7 @@ import {
   UserGuide, Marketplace, AdminCeremonyAnalytics, TrustBadges, TrustBadgeLanding,
   TransactionsPage, TransactionRoom, NotarizationCertificate, BlueprintCreator, SecuritySettings,
   SubscriptionPage, SubscriptionSuccess, NotaryJournal, DigitalSeal, CompliancePage,
-  DeveloperPage, RONComplianceDashboard, TemplateLibrary, TemplateWizard, SmartContractsPage, MyAnchors, VerifyAnchor, OrganizationPage,
+  DeveloperPage, RONComplianceDashboard, TemplateLibrary, TemplateWizard, SmartContractsPage, MyAnchors, VerifyAnchor, CeremonyVaultPage, VerifyCeremonyVideo, OrganizationPage,
   MyDrafts, SharedDraftViewer, BulkNotarization, NotaryMarketplace, WhiteLabelPage,
   BookingCalendar, MyBookings, AIDocumentGenerator, AIDocumentSummarizer, VideoWitness,
   DocumentRemediation, BiometricPassportPage, AIConductorPage, EvidencePackagePage, TransactionTimeline,
@@ -79,6 +79,8 @@ function App() {
             <Route path="/verify" element={<PublicVerify />} />
             <Route path="/verify/contract" element={<VerifyAnchor />} />
             <Route path="/verify/contract/:hash" element={<VerifyAnchor />} />
+            <Route path="/verify/recording" element={<VerifyCeremonyVideo />} />
+            <Route path="/verify/recording/:hash" element={<VerifyCeremonyVideo />} />
             <Route path="/notaries" element={<NotaryDirectory />} />
             <Route path="/notary/:notaryId" element={<NotaryProfile />} />
             <Route path="/trustlayer" element={<TrustLayerLanding />} />
@@ -498,6 +500,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <MyAnchors />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ceremony-vault"
+              element={
+                <ProtectedRoute>
+                  <CeremonyVaultPage />
                 </ProtectedRoute>
               }
             />

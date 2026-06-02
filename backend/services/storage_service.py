@@ -23,6 +23,7 @@ class StorageService:
         self._s3_client = None
         self._bucket = None
         self._use_s3 = False
+        self._kms_key_id = os.environ.get("AWS_KMS_KEY_ID")
         self._init_s3()
 
     def _init_s3(self):
@@ -158,6 +159,105 @@ class StorageService:
             "bucket": self._bucket if self._use_s3 else None,
             "local_dir": LOCAL_UPLOAD_DIR,
         }
+
+    # ──────────────────────────────────────────────────────────────────────
+    #  Multipart upload + integrity primitives (large video files).
+    #  These are SYNCHRONOUS (blocking boto3) and MUST be invoked from async
+    #  routes via `asyncio.to_thread(...)` so they never block the event loop.
+    # ──────────────────────────────────────────────────────────────────────
+
+    @property
+    def s3_ready(self) -> bool:
+        return self._use_s3
+
+    def _sse_args(self) -> dict:
+        if self._kms_key_id:
+            return {"ServerSideEncryption": "aws:kms", "SSEKMSKeyId": self._kms_key_id}
+        return {"ServerSideEncryption": "AES256"}
+
+    def create_multipart_upload(self, key: str, content_type: str = "video/mp4") -> str:
+        """Initiate an S3 multipart upload (SSE enforced). Returns the UploadId."""
+        resp = self._s3_client.create_multipart_upload(
+            Bucket=self._bucket,
+            Key=key,
+            ContentType=content_type,
+            **self._sse_args(),
+        )
+        return resp["UploadId"]
+
+    def upload_part(self, key: str, upload_id: str, part_number: int, fileobj) -> str:
+        """Upload one part from a file-like object. Returns the part ETag."""
+        resp = self._s3_client.upload_part(
+            Bucket=self._bucket,
+            Key=key,
+            UploadId=upload_id,
+            PartNumber=part_number,
+            Body=fileobj,
+        )
+        return resp["ETag"]
+
+    def complete_multipart_upload(self, key: str, upload_id: str, parts: list) -> dict:
+        """Complete a multipart upload. `parts` = [{part_number, etag}, ...]."""
+        payload = {
+            "Parts": [
+                {"PartNumber": p["part_number"], "ETag": p["etag"]}
+                for p in sorted(parts, key=lambda x: x["part_number"])
+            ]
+        }
+        return self._s3_client.complete_multipart_upload(
+            Bucket=self._bucket,
+            Key=key,
+            UploadId=upload_id,
+            MultipartUpload=payload,
+        )
+
+    def abort_multipart_upload(self, key: str, upload_id: str) -> bool:
+        try:
+            self._s3_client.abort_multipart_upload(Bucket=self._bucket, Key=key, UploadId=upload_id)
+            return True
+        except Exception as e:
+            logger.warning(f"abort_multipart_upload failed for {key}: {e}")
+            return False
+
+    def compute_sha256(self, key: str, chunk_size: int = 8 * 1024 * 1024) -> str:
+        """Stream the assembled object from S3 and compute its full SHA-256 (low memory)."""
+        import hashlib
+        obj = self._s3_client.get_object(Bucket=self._bucket, Key=key)
+        body = obj["Body"]
+        sha = hashlib.sha256()
+        try:
+            while True:
+                data = body.read(chunk_size)
+                if not data:
+                    break
+                sha.update(data)
+        finally:
+            body.close()
+        return sha.hexdigest()
+
+    def apply_object_lock(self, key: str, retain_until, mode: str = "COMPLIANCE", version_id: str = None) -> bool:
+        """Apply S3 Object Lock (WORM) retention. Graceful: returns False if the bucket
+        isn't Object-Lock-enabled rather than raising."""
+        try:
+            params = {
+                "Bucket": self._bucket,
+                "Key": key,
+                "Retention": {"Mode": mode, "RetainUntilDate": retain_until},
+            }
+            if version_id:
+                params["VersionId"] = version_id
+            self._s3_client.put_object_retention(**params)
+            return True
+        except Exception as e:
+            logger.warning(f"apply_object_lock not applied for {key} (bucket may lack Object Lock): {e}")
+            return False
+
+    def head_size(self, key: str) -> int:
+        try:
+            resp = self._s3_client.head_object(Bucket=self._bucket, Key=key)
+            return resp.get("ContentLength", 0)
+        except Exception:
+            return 0
 
 
 async def apply_fl_retention_lock(object_ref: str, retain_until) -> bool:

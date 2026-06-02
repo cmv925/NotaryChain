@@ -318,6 +318,10 @@ from routes import contract_template_routes
 contract_template_routes.set_db(db)
 app.include_router(contract_template_routes.router)
 
+from routes import ceremony_video_routes
+ceremony_video_routes.set_db(db)
+app.include_router(ceremony_video_routes.router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

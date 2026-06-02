@@ -70,6 +70,8 @@ export const TemplateWizard = lazy(() => import('./pages/TemplateWizard'));
 export const SmartContractsPage = lazy(() => import('./pages/SmartContractsPage'));
 export const MyAnchors = lazy(() => import('./pages/MyAnchors'));
 export const VerifyAnchor = lazy(() => import('./pages/VerifyAnchor'));
+export const CeremonyVaultPage = lazy(() => import('./pages/CeremonyVaultPage'));
+export const VerifyCeremonyVideo = lazy(() => import('./pages/VerifyCeremonyVideo'));
 export const OrganizationPage = lazy(() => import('./pages/OrganizationPage'));
 export const MyDrafts = lazy(() => import('./pages/MyDrafts'));
 export const SharedDraftViewer = lazy(() => import('./pages/SharedDraftViewer'));
