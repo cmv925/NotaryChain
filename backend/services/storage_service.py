@@ -259,6 +259,12 @@ class StorageService:
         except Exception:
             return 0
 
+    def upload_file_to_s3(self, local_path: str, key: str, content_type: str = "video/mp4") -> bool:
+        """Upload a local file to S3 (boto3 handles multipart + streaming internally)."""
+        extra = {"ContentType": content_type, **self._sse_args()}
+        self._s3_client.upload_file(local_path, self._bucket, key, ExtraArgs=extra)
+        return True
+
 
 async def apply_fl_retention_lock(object_ref: str, retain_until) -> bool:
     """

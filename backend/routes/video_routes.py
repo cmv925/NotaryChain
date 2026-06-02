@@ -12,6 +12,10 @@ import uuid
 from models import User
 from routes.auth_routes import get_current_user
 from services.daily_service import daily_service
+import asyncio
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/video", tags=["video-conferencing"])
 
@@ -244,7 +248,20 @@ async def end_video_room(
             }
         }
     )
-    
+
+    # Best-effort: auto-ingest the Daily.co cloud recording into the Ceremony Video
+    # Vault (S3 + Hedera anchor). No-ops gracefully if Daily/S3 isn't configured.
+    try:
+        from routes.ceremony_video_routes import ingest_daily_recording
+        asyncio.create_task(ingest_daily_recording(
+            room_name=video_session["room_name"],
+            notary_request_id=video_session["notary_request_id"],
+            uploaded_by=notary_request.get("notary_id") or current_user.id,
+            uploaded_by_email=current_user.email,
+        ))
+    except Exception as e:
+        logger.warning(f"Auto-ingest trigger failed (non-blocking): {e}")
+
     return {
         "success": True,
         "message": "Video session ended"

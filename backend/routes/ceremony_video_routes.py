@@ -20,6 +20,9 @@ from models import User
 from routes.auth_routes import get_current_user
 from services.storage_service import storage_service
 from services.hedera_service import hedera_service
+from services.daily_service import daily_service
+import aiohttp
+import tempfile
 
 logger = logging.getLogger(__name__)
 
@@ -148,14 +151,106 @@ async def _finalize_video(video_id: str):
         await db.ceremony_videos.update_one({"id": video_id}, {"$set": {"status": "failed", "error": str(e)}})
 
 
+# ─── Daily.co auto-ingest (P4): pull a cloud recording → same S3 + anchor pipeline ───
+
+async def _download_to_temp(url: str) -> Optional[str]:
+    fd, path = tempfile.mkstemp(suffix=".mp4", dir="/tmp")
+    os.close(fd)
+    try:
+        timeout = aiohttp.ClientTimeout(total=3600)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.get(url) as resp:
+                if resp.status != 200:
+                    return None
+                with open(path, "wb") as f:
+                    async for chunk in resp.content.iter_chunked(1024 * 1024):
+                        f.write(chunk)
+        return path
+    except Exception as e:
+        logger.error(f"_download_to_temp failed: {e}")
+        return None
+
+
+async def ingest_daily_recording(*, room_name: str, notary_request_id: Optional[str], uploaded_by: str,
+                                 uploaded_by_email: Optional[str] = None, max_wait_attempts: int = 9,
+                                 wait_seconds: int = 20) -> Optional[str]:
+    """Wait for a finished Daily.co cloud recording, download it, and run it through the
+    same S3-store + Hedera-anchor pipeline. No-ops gracefully if S3/Daily isn't configured."""
+    if not storage_service.s3_ready or not daily_service.is_configured:
+        logger.info("ingest_daily_recording: S3 or Daily not configured — skipping")
+        return None
+
+    rec = None
+    for _ in range(max_wait_attempts):
+        res = await daily_service.get_recordings(room_name)
+        recs = res.get("recordings", []) if res.get("success") else []
+        finished = [r for r in recs if r.get("status") in ("finished", "ready") or r.get("duration")]
+        if finished:
+            rec = sorted(finished, key=lambda r: r.get("start_ts", 0))[-1]
+            break
+        await asyncio.sleep(wait_seconds)
+    if not rec:
+        logger.warning(f"ingest_daily_recording: no finished recording for room {room_name}")
+        return None
+
+    rec_id = rec.get("id")
+    if await db.ceremony_videos.find_one({"daily_recording_id": rec_id}):
+        logger.info(f"ingest_daily_recording: recording {rec_id} already ingested")
+        return None
+
+    link = await daily_service.get_recording_access_link(rec_id)
+    if not link.get("success") or not link.get("download_link"):
+        logger.warning(f"ingest_daily_recording: no access link for {rec_id}")
+        return None
+
+    temp = await _download_to_temp(link["download_link"])
+    if not temp:
+        return None
+
+    key = f"ceremony-videos/{notary_request_id or 'daily'}/{uuid.uuid4().hex}.mp4"
+    try:
+        await asyncio.to_thread(storage_service.upload_file_to_s3, temp, key, "video/mp4")
+    except Exception as e:
+        logger.error(f"ingest_daily_recording: S3 upload failed: {e}")
+        return None
+    finally:
+        try:
+            os.remove(temp)
+        except OSError:
+            pass
+
+    video_id = str(uuid.uuid4())
+    await db.ceremony_videos.insert_one({
+        "id": video_id,
+        "s3_key": key,
+        "upload_id": None,
+        "status": "assembling",
+        "parts": [],
+        "file_name": f"ron_recording_{rec_id}.mp4",
+        "content_type": "video/mp4",
+        "duration_sec": rec.get("duration"),
+        "client_sha256": None,
+        "notary_request_id": notary_request_id,
+        "uploaded_by": uploaded_by,
+        "uploaded_by_email": uploaded_by_email,
+        "source": "daily_auto",
+        "daily_recording_id": rec_id,
+        "daily_room_name": room_name,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    await _finalize_video(video_id)
+    logger.info(f"ingest_daily_recording: ingested {rec_id} as video {video_id}")
+    return video_id
+
+
 # ─── Endpoints ───
 
 @router.post("/init")
 async def init_upload(body: InitRequest, current_user: User = Depends(get_current_user)):
     _require_s3()
-    linked = await _linked_request(body.notary_request_id)
-    if body.notary_request_id and not linked:
-        raise HTTPException(status_code=404, detail="Linked notarization request not found")
+    # The reference is a free-form tag (a ceremony_id, notarization-request id, etc.).
+    # We don't require it to resolve to an existing request — it's used for linking/RBAC
+    # only when it happens to match one.
 
     ext = os.path.splitext(body.file_name)[1].lower() or ".mp4"
     folder = body.notary_request_id or "unlinked"
@@ -268,6 +363,84 @@ async def my_videos(current_user: User = Depends(get_current_user)):
         {"uploaded_by": current_user.id}, {"_id": 0, "upload_id": 0, "parts": 0}
     ).sort("created_at", -1).to_list(200)
     return {"count": len(docs), "videos": docs}
+
+
+class RefsRequest(BaseModel):
+    reference_ids: List[str]
+
+
+@router.post("/by-references")
+async def by_references(body: RefsRequest, current_user: User = Depends(get_current_user)):
+    """Bulk lookup: for a set of reference IDs (e.g. journal ceremony_ids), return the
+    latest anchored recording per reference. Used to surface badges in the FL journal."""
+    refs = [r for r in (body.reference_ids or []) if r][:200]
+    if not refs:
+        return {"recordings": {}}
+    q = {"notary_request_id": {"$in": refs}, "status": "anchored"}
+    if getattr(current_user, "role", "user") != "admin":
+        q["uploaded_by"] = current_user.id
+    docs = await db.ceremony_videos.find(q, {"_id": 0}).sort("anchored_at", -1).to_list(500)
+    out = {}
+    for d in docs:
+        ref = d.get("notary_request_id")
+        if ref and ref not in out:
+            out[ref] = {
+                "content_hash": d.get("sha256"),
+                "status": d.get("status"),
+                "file_name": d.get("file_name"),
+                "transaction_id": d.get("transaction_id"),
+                "explorer_url": d.get("explorer_url"),
+                "hcs_submitted": d.get("hcs_submitted", False),
+            }
+    return {"recordings": out}
+
+
+@router.post("/daily-webhook")
+async def daily_webhook(request: Request):
+    """PUBLIC: Daily.co webhook receiver. On a recording-ready event, auto-ingest the
+    cloud recording for the matching RON session. Idempotent (dedups by recording id)."""
+    try:
+        body = await request.json()
+    except Exception:
+        return {"received": True}
+    etype = body.get("type", "")
+    payload = body.get("payload", body) or {}
+    if "recording" not in etype:
+        return {"received": True}
+    room_name = payload.get("room_name") or payload.get("room")
+    if not room_name:
+        return {"received": True}
+    session = await db.video_sessions.find_one({"room_name": room_name})
+    notary_request_id = session.get("notary_request_id") if session else None
+    uploaded_by = (session.get("created_by") if session else None) or "system"
+    asyncio.create_task(ingest_daily_recording(
+        room_name=room_name, notary_request_id=notary_request_id,
+        uploaded_by=uploaded_by, max_wait_attempts=3, wait_seconds=10,
+    ))
+    return {"received": True}
+
+
+@router.post("/ingest-daily/{room_id}")
+async def ingest_daily_manual(room_id: str, current_user: User = Depends(get_current_user)):
+    """Manually trigger auto-ingest of a RON session's Daily.co cloud recording."""
+    session = await db.video_sessions.find_one({"id": room_id})
+    if not session:
+        raise HTTPException(status_code=404, detail="Video session not found")
+    linked = await _linked_request(session.get("notary_request_id"))
+    authorized = (
+        session.get("created_by") == current_user.id
+        or getattr(current_user, "role", "user") == "admin"
+        or (linked and current_user.id in (linked.get("notary_id"), linked.get("user_id")))
+    )
+    if not authorized:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    if not daily_service.is_configured:
+        raise HTTPException(status_code=503, detail="Daily.co recording is not configured in this environment")
+    asyncio.create_task(ingest_daily_recording(
+        room_name=session["room_name"], notary_request_id=session.get("notary_request_id"),
+        uploaded_by=session.get("created_by") or current_user.id, uploaded_by_email=current_user.email,
+    ))
+    return {"status": "ingesting", "room_name": session["room_name"]}
 
 
 @router.get("/verify/{content_hash}")

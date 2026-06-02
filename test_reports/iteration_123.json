@@ -1,0 +1,61 @@
+{
+  "summary": "Tested NotaryChain Ceremony Video Vault P4 additions (Dashboard link, Daily.co auto-ingest endpoints, anchored REC badge on FL Journal entries) and the FL Journal HttpOnly-cookie auth regression fix. 17/17 backend tests pass (1 transient 502 cold-start on first run, all pass on rerun). Frontend cookie-auth fix verified — FL Journal now loads under cookie auth and the REC badge renders correctly with /verify/recording/{hash} links. Dashboard ceremony-vault-btn is present but click navigation did not change URL in the smoke test (minor — may be timing or onClick navigate latency, worth main agent verifying interactively).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "POST /api/auth/login",
+        "issue": "Intermittent 502 cold-start observed once on first test run after idle period; all endpoints respond normally on rerun (Cloudflare/uvicorn cold-start)."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Dashboard.jsx — ceremony-vault-btn",
+        "issue": "Button is present with correct data-testid and text 'Ceremony Vault — Anchor RON recordings on-chain', but a programmatic force-click in 2.5s window did NOT navigate to /ceremony-vault (URL stayed on /dashboard). Could be onClick using react-router navigate with deferred render, or click intercepted. Worth verifying interactively that a real user click navigates.",
+        "selector": "[data-testid=\"ceremony-vault-btn\"]",
+        "priority": "MEDIUM"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "/notary/fl-journal",
+        "issues": [
+          "Filter dates use browser-default `<input type=date>` (mm/dd/yyyy native picker) instead of the shadcn Calendar component — inconsistent with rest of app polish.",
+          "Console hydration warnings (`<span> cannot be a child of <select>/<option>`) caused by a visual-editor overlay injecting <span x-excluded='true'> into <select>/<option>. Likely benign in production builds but should be silenced or the wrapper excluded from `<select>` children to avoid noise."
+        ]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_ceremony_vault_p4_journal_cookie.py",
+    "/app/test_reports/pytest/iter123_vault_p4_journal_cookie.xml"
+  ],
+  "action_items": [
+    "Verify Dashboard ceremony-vault-btn click navigates to /ceremony-vault in a live browser (possible onClick/navigate issue or transient render delay).",
+    "Optional: replace native `<input type=date>` on FL Journal filters with the shadcn Calendar picker for visual consistency.",
+    "Optional: prevent the visual-editor `<span x-excluded>` wrapper from being injected as a child of `<select>`/`<option>` to avoid React hydration warnings on NotaryFLJournal."
+  ],
+  "critical_code_review_comments": [
+    "ceremony_video_routes.py L267: hasattr(db, 'fl_notary_credentials') is always True on Motor DB objects (attribute access returns a collection proxy), so the guard is a no-op. The subsequent try/except already handles it cleanly — drop the dead hasattr line to avoid confusion.",
+    "ceremony_video_routes.py /daily-webhook is PUBLIC and triggers asyncio.create_task() with attacker-controlled room_name. Acceptable because ingest_daily_recording aborts when daily_service.is_configured is False, but once Daily is configured in production this becomes a low-cost DoS vector (anyone can spam recording.ready events). Suggest validating webhook signature (Daily's HMAC header) before scheduling work.",
+    "fl_journal_routes.py L50-69 cookie-first auth correctly mirrors auth_routes.get_current_user. Good. Same pattern should be audited across other route modules that use Request directly (search for `Authorization` header reads to ensure none are still header-only).",
+    "ceremony_video_routes.py _finalize_video does not delete the partial S3 object on failure — orphaned uploads will accrue cost over time. Consider cleanup on status=failed.",
+    "ingest_daily_recording downloads via tempfile and uploads via boto3 — for multi-GB recordings this puts the file fully on local disk (/tmp). Consider streaming with multipart upload to keep memory/disk usage bounded."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_ceremony_vault_p4_journal_cookie.py"
+  ],
+  "success_rate": {
+    "backend": "100% (17/17 after rerun; 16/17 first run with one transient 502)",
+    "frontend": "85% (cookie-auth fix and REC badge verified end-to-end; Dashboard button presence verified, navigation needs interactive recheck)"
+  },
+  "test_credentials": "notarytest@test.com / Test123! (notary), demo@test.com / Demo123! (user), admin@notarychain.com / Admin123! (admin) — all worked.",
+  "seed_data_creation": "Created one TEST cookie-auth journal entry (ceremony_id=TEST_cer_<random>) and one TEST freeform ceremony-video upload init (immediately aborted). Both via API as notarytest. No persistent test data left in S3.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend P4 endpoints (/by-references, /daily-webhook PUBLIC, /ingest-daily/{room_id}, relaxed /init, public /verify/{hash}) and FL Journal cookie-auth (GET/POST /api/fl/journal/entries via HttpOnly cookie only) are all verified. The single remaining UI concern is whether a real user click on Dashboard's ceremony-vault-btn actually navigates — automated force-click did not within 2.5s. Daily.co is intentionally NOT configured in preview, so ingest-daily can only be tested up to the 503 'not configured' boundary. Test file /app/backend/tests/test_ceremony_vault_p4_journal_cookie.py covers all routes and can be re-run via `REACT_APP_BACKEND_URL=https://trust-network-dev.preview.emergentagent.com python -m pytest`.",
+  "rca of the issue": "FL Journal cookie-auth regression — RCA confirmed: routes/fl_journal_routes.py::_get_user (lines 50-69) now reads request.cookies['access_token'] first, then falls back to Authorization header. Reproduction (before fix): login → cookie set → call GET /api/fl/journal/entries WITHOUT Authorization header → 401 'Not authenticated'. Mitigation (applied): cookie-first lookup mirrors routes.auth_routes.get_current_user. Verified by automated tests test_login_sets_access_token_cookie, test_list_entries_with_cookie_only, test_create_entry_with_cookie_only, test_no_cookie_no_bearer_rejected, test_bearer_fallback_still_works — all pass. Recommendation: extract a shared `resolve_user(request)` helper in auth.py used by both auth_routes and any other Request-based route to avoid this regression class."
+}

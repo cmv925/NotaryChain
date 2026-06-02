@@ -195,6 +195,20 @@ class DailyVideoService:
             return {"success": True, "recordings": result.get("data", [])}
         except Exception as e:
             return {"success": False, "error": str(e)}
+
+    async def get_recording_access_link(self, recording_id: str) -> Dict[str, Any]:
+        """Get a short-lived download link for a finished cloud recording."""
+        if not self.is_configured:
+            return {"success": False, "error": "Daily.co not configured"}
+        try:
+            result = await self._request("GET", f"/recordings/{recording_id}/access-link")
+            return {
+                "success": True,
+                "download_link": result.get("download_link"),
+                "expires": result.get("expires"),
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e)}
     
     def _mock_room(self, session_id: str) -> Dict[str, Any]:
         """Return mock room data for development without API key"""

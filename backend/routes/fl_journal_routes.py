@@ -49,10 +49,18 @@ def set_db(database):
 # ─── helpers ───
 async def _get_user(request: Request):
     from auth import decode_access_token
-    auth = request.headers.get("Authorization", "")
-    if not auth.startswith("Bearer "):
+    # Cookie-first (httpOnly), fall back to Authorization: Bearer header — mirrors
+    # routes.auth_routes.get_current_user so the journal works under cookie auth.
+    token = request.cookies.get("access_token")
+    if not token:
+        auth = request.headers.get("Authorization", "")
+        if auth.startswith("Bearer "):
+            candidate = auth.split(" ", 1)[1]
+            if candidate and candidate != "cookie":
+                token = candidate
+    if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    payload = decode_access_token(auth.split(" ", 1)[1])
+    payload = decode_access_token(token)
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid token")
     user = await db.users.find_one({"email": payload["sub"]}, {"_id": 0})

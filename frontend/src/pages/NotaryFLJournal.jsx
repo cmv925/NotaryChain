@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Sun, Download, BookOpen, ChevronLeft, Loader2, Search, Plus, FileText } from 'lucide-react';
+import { Sun, Download, BookOpen, ChevronLeft, Loader2, Search, Plus, FileText, ShieldCheck, Video } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -29,6 +29,22 @@ export default function NotaryFLJournal() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [showCreate, setShowCreate] = useState(false);
+  const [recordings, setRecordings] = useState({});
+
+  const fetchRecordings = useCallback(async (ents) => {
+    const refs = [...new Set((ents || []).map(e => e.ceremony_id).filter(Boolean))];
+    if (refs.length === 0) { setRecordings({}); return; }
+    try {
+      const r = await fetch(`${API}/api/ceremony-videos/by-references`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reference_ids: refs }),
+      });
+      const d = await r.json();
+      setRecordings(d.recordings || {});
+    } catch { /* ignore */ }
+  }, [token]);
 
   const load = useCallback(async () => {
     if (!token) return;
@@ -39,6 +55,7 @@ export default function NotaryFLJournal() {
       if (startDate) params.set('start_date', startDate);
       if (endDate) params.set('end_date', endDate);
       const r = await fetch(`${API}/api/fl/journal/entries?${params}`, {
+        credentials: 'include',
         headers: { Authorization: `Bearer ${token}` },
       });
       const d = await r.json();
@@ -49,6 +66,7 @@ export default function NotaryFLJournal() {
   }, [token, actType, startDate, endDate]);
 
   useEffect(() => { if (isAuthenticated) load(); }, [isAuthenticated, load]);
+  useEffect(() => { fetchRecordings(entries); }, [entries, fetchRecordings]);
 
   const exportCSV = async () => {
     try {
@@ -56,6 +74,7 @@ export default function NotaryFLJournal() {
       if (startDate) params.set('start_date', startDate);
       if (endDate) params.set('end_date', endDate);
       const r = await fetch(`${API}/api/fl/journal/export.csv?${params}`, {
+        credentials: 'include',
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!r.ok) throw new Error('Export failed');
@@ -126,18 +145,33 @@ export default function NotaryFLJournal() {
                 No journal entries yet. Sealed FL ceremonies are auto-logged here.
               </div>
             )}
-            {entries.map(e => (
+            {entries.map(e => {
+              const rec = recordings[e.ceremony_id];
+              return (
               <div key={e.entry_id} className="px-5 py-3 border-b border-slate-200/60 hover:bg-cream-200 grid grid-cols-12 gap-3 text-xs items-center" data-testid={`entry-${e.entry_id}`}>
                 <span className="text-slate-500 col-span-2 font-mono">{(e.recorded_at || '').slice(0, 16).replace('T', ' ')}</span>
                 <span className="col-span-2"><span className="px-2 py-0.5 rounded bg-coral-500/15 text-coral-700 text-[10px] uppercase tracking-wider font-bold">{(e.notarial_act_type || '').replace(/_/g, ' ')}</span></span>
-                <span className="col-span-3 text-navy-900 truncate">{e.signer_name}</span>
+                <span className="col-span-2 text-navy-900 truncate">{e.signer_name}</span>
                 <span className="col-span-3 text-slate-600 truncate">{e.document_description}</span>
                 <span className="col-span-1 text-coral-700 font-mono text-right">${(e.fee_charged_usd || 0).toFixed(2)}</span>
-                <span className="col-span-1 text-right">
-                  {e.hedera_seal_hash && <span className="text-[10px] text-coral-600">SEALED</span>}
+                <span className="col-span-2 flex items-center justify-end gap-2">
+                  {e.hedera_seal_hash && <span className="text-[10px] text-coral-600 font-bold">SEALED</span>}
+                  {rec?.content_hash ? (
+                    <a
+                      href={`/verify/recording/${rec.content_hash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Recording anchored on-chain — click to verify"
+                      className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full hover:bg-emerald-100 transition-colors"
+                      data-testid={`entry-recording-${e.entry_id}`}
+                    >
+                      <Video className="w-3 h-3" /> REC <ShieldCheck className="w-3 h-3" />
+                    </a>
+                  ) : null}
                 </span>
               </div>
-            ))}
+              );
+            })}
           </CardContent>
         </Card>
 
@@ -166,6 +200,7 @@ function NewEntryModal({ token, onClose, onCreated }) {
     try {
       const r = await fetch(`${API}/api/fl/journal/entries`, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, fee_charged_usd: parseFloat(form.fee_charged_usd) || 0 }),
       });
