@@ -77,9 +77,9 @@ const TemplateMarketplace = () => {
     setBuying(true);
     try {
       const res = await axios.post(`${API}/template-marketplace/${selected.id}/purchase`, {}, { headers });
-      toast({ title: 'Purchased!', description: 'An editable copy is now in your Studio.' });
+      toast({ title: 'Purchased!', description: 'View it any time under My Purchases.' });
       setSelected(null);
-      navigate('/ai-generator');
+      setTab('purchases'); // marketplace is ungated; the buyer can read their copy here
       return res;
     } catch (e) {
       toast({ title: 'Error', description: e.response?.data?.detail || 'Purchase failed', variant: 'destructive' });
@@ -193,8 +193,8 @@ const TemplateMarketplace = () => {
                       <p className="text-navy-900 font-semibold text-sm">{s.template_title}</p>
                       <p className="text-slate-400 text-xs">Purchased {new Date(s.purchased_at).toLocaleDateString()} · receipt anchored</p>
                     </div>
-                    <Button size="sm" variant="outline" className="border-navy-300 text-navy-600 h-8 text-xs" onClick={() => navigate('/ai-generator')} data-testid={`market-open-purchase-${s.id}`}>
-                      Open in Studio
+                    <Button size="sm" variant="outline" className="border-navy-300 text-navy-600 h-8 text-xs" onClick={() => openDetail(s.template_id)} data-testid={`market-open-purchase-${s.id}`}>
+                      View Document
                     </Button>
                   </CardContent></Card>
                 ))}
