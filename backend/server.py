@@ -322,6 +322,10 @@ from routes import ceremony_video_routes
 ceremony_video_routes.set_db(db)
 app.include_router(ceremony_video_routes.router)
 
+from routes import template_marketplace_routes
+template_marketplace_routes.set_db(db)
+app.include_router(template_marketplace_routes.router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

@@ -7,7 +7,7 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import {
   Wand2, FileText, Loader2, Clock, Sparkles,
-  Anchor, Zap, UserCheck, ShieldCheck, ExternalLink, CheckCircle2,
+  Anchor, Zap, UserCheck, ShieldCheck, ExternalLink, CheckCircle2, Library, Store,
 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
@@ -17,11 +17,14 @@ import { DocumentEditor } from '../components/studio/DocumentEditor';
 import { ConditionsPanel } from '../components/studio/ConditionsPanel';
 import { SignersPanel } from '../components/studio/SignersPanel';
 import { CompliancePanel } from '../components/studio/CompliancePanel';
+import { ClauseLibrary } from '../components/studio/ClauseLibrary';
+import { PublishTemplateModal } from '../components/studio/PublishTemplateModal';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const STUDIO_TABS = [
   { id: 'document', label: 'Document', icon: FileText },
+  { id: 'clauses', label: 'Clauses', icon: Library },
   { id: 'conditions', label: 'Conditions', icon: Zap },
   { id: 'signers', label: 'Signers', icon: UserCheck },
   { id: 'compliance', label: 'Compliance', icon: ShieldCheck },
@@ -48,6 +51,16 @@ const AIDocumentGenerator = () => {
   const [studioTab, setStudioTab] = useState('document');
   const [notarizing, setNotarizing] = useState(false);
   const [anchorResult, setAnchorResult] = useState(null);
+  const [publishOpen, setPublishOpen] = useState(false);
+
+  const insertClause = (clause) => {
+    setResult((r) => ({
+      ...r,
+      sections: [...(r.sections || []), { heading: clause.title, content: clause.body }],
+    }));
+    setStudioTab('document');
+    toast({ title: 'Clause inserted', description: `"${clause.title}" added to the document.` });
+  };
 
   const fetchTypes = useCallback(async () => {
     try {
@@ -285,6 +298,9 @@ const AIDocumentGenerator = () => {
                     {studioTab === 'document' && (
                       <DocumentEditor result={result} onChangeTitle={changeTitle} onChangeSection={changeSection} onAiEdit={aiEditSection} />
                     )}
+                    {studioTab === 'clauses' && (
+                      <ClauseLibrary headers={headers} onInsert={insertClause} />
+                    )}
                     {studioTab === 'conditions' && (
                       <ConditionsPanel conditions={conditions} onSuggest={suggestConditions} onToggle={toggleCondition} onAdd={addCondition} onRemove={removeCondition} />
                     )}
@@ -324,6 +340,17 @@ const AIDocumentGenerator = () => {
                           <CheckCircle2 className="w-4 h-4" /> Sealed on Hedera
                         </p>
                         <p className="text-slate-500 text-[11px] break-all mb-2">Hash: {anchorResult.content_hash?.slice(0, 24)}…</p>
+                        {anchorResult.trust_anchor && (
+                          <div className="mb-2 p-2 rounded bg-white border border-coral-200" data-testid="studio-trust-anchor-result">
+                            <p className="text-coral-700 text-xs font-semibold flex items-center gap-1.5">
+                              <Zap className="w-3.5 h-3.5" /> Trust Anchor created
+                            </p>
+                            <p className="text-slate-500 text-[11px] mb-1">{anchorResult.trust_anchor.conditions_total} active condition(s) now self-executing.</p>
+                            <button onClick={() => navigate(`/escrow/${anchorResult.trust_anchor.escrow_id}`)} className="text-navy-600 text-xs hover:underline" data-testid="studio-view-trust-anchor-btn">
+                              Open Trust Anchor →
+                            </button>
+                          </div>
+                        )}
                         {anchorResult.explorer_url && (
                           <a href={anchorResult.explorer_url} target="_blank" rel="noreferrer" className="text-navy-600 text-xs inline-flex items-center gap-1 hover:underline" data-testid="studio-explorer-link">
                             View on HashScan <ExternalLink className="w-3 h-3" />
@@ -342,6 +369,9 @@ const AIDocumentGenerator = () => {
                     <Button onClick={persist} variant="ghost" className="w-full mt-2 text-slate-500 h-8 text-xs" data-testid="studio-save-btn">
                       Save Draft
                     </Button>
+                    <Button onClick={() => setPublishOpen(true)} variant="outline" className="w-full mt-2 border-slate-300 text-navy-600 h-8 text-xs" data-testid="studio-publish-btn">
+                      <Store className="w-3.5 h-3.5 mr-1.5" /> Publish to Marketplace
+                    </Button>
                   </CardContent>
                 </Card>
 
@@ -356,6 +386,14 @@ const AIDocumentGenerator = () => {
           )}
         </div>
       </div>
+      <PublishTemplateModal
+        open={publishOpen}
+        onOpenChange={setPublishOpen}
+        genId={genId}
+        defaultTitle={result?.title}
+        headers={headers}
+        onPublished={() => navigate('/template-marketplace')}
+      />
       <Footer />
     </div>
   );

@@ -36,6 +36,7 @@ import {
   DeveloperPage, RONComplianceDashboard, TemplateLibrary, TemplateWizard, SmartContractsPage, MyAnchors, VerifyAnchor, CeremonyVaultPage, VerifyCeremonyVideo, OrganizationPage,
   MyDrafts, SharedDraftViewer, BulkNotarization, NotaryMarketplace, WhiteLabelPage,
   BookingCalendar, MyBookings, AIDocumentGenerator, AIDocumentSummarizer, VideoWitness,
+  TemplateMarketplace,
   DocumentRemediation, BiometricPassportPage, AIConductorPage, EvidencePackagePage, TransactionTimeline,
   RemindersPage, ApprovalsPage, DocComparePage, BrandingPage, SSOLoginPage,
   Auth0Callback, OktaCallback, OnboardingPage, InvestorDeck, CeremonyDashboard,
@@ -588,6 +589,14 @@ function App() {
                   <GatedRoute feature="ai_generator" title="AI Document Generator" description="AI-powered legal document generation. Requires Professional plan.">
                     <AIDocumentGenerator />
                   </GatedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/template-marketplace"
+              element={
+                <ProtectedRoute>
+                  <TemplateMarketplace />
                 </ProtectedRoute>
               }
             />

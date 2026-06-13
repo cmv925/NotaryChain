@@ -95,3 +95,75 @@ def test_notarize_requires_auth():
     anon.headers.update({"Content-Type": "application/json", **UA_HEADERS})
     r = anon.post(f"{BASE_URL}/api/ai-generator/notarize", json={"generation_id": "x"})
     assert r.status_code == 401
+
+
+def test_clause_library_state_specific(studio_session):
+    r = studio_session.get(f"{BASE_URL}/api/ai-generator/clauses", params={"state": "FL", "category": "governing_law"})
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert len(body["clauses"]) >= 1
+    assert body["clauses"][0]["state_specific"] is True
+    assert "Florida" in body["clauses"][0]["body"]
+    assert len(body["categories"]) >= 5 and len(body["states"]) >= 1
+
+
+def test_notarize_creates_trust_anchor(studio_session):
+    # Generate, attach enabled conditions + signers, then notarize → expect a Trust Anchor escrow.
+    g = studio_session.post(f"{BASE_URL}/api/ai-generator/generate", json={
+        "description": "Consulting agreement, $2000 monthly retainer.", "document_type": "independent_contractor",
+    })
+    gid = g.json()["generation_id"]
+    studio_session.put(f"{BASE_URL}/api/ai-generator/documents/{gid}", json={
+        "generation_id": gid,
+        "signers": [{"role": "Client", "name": "Acme", "email": "a@x.com"}],
+        "conditions": [{"id": "c1", "label": "Retainer payment", "type": "payment", "enabled": True}],
+    })
+    r = studio_session.post(f"{BASE_URL}/api/ai-generator/notarize", json={"generation_id": gid})
+    assert r.status_code == 200, r.text
+    ta = r.json().get("trust_anchor")
+    assert ta and ta.get("escrow_id") and ta.get("conditions_total") == 1
+    e = studio_session.get(f"{BASE_URL}/api/escrow/{ta['escrow_id']}")
+    assert e.status_code == 200
+    esc = e.json()
+    assert esc["status"] == "active" and esc["conditions_total"] == 1 and esc["escrow_type"] == "studio"
+
+
+def test_marketplace_publish_browse_purchase():
+    ua = {"Content-Type": "application/json", **UA_HEADERS}
+    creator = requests.Session(); creator.headers.update(ua)
+    creator.post(f"{BASE_URL}/api/auth/login", json={"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD}).raise_for_status()
+    g = creator.post(f"{BASE_URL}/api/ai-generator/generate", json={
+        "description": "NDA between two startups.", "document_type": "nda",
+    })
+    gid = g.json()["generation_id"]
+    pub = creator.post(f"{BASE_URL}/api/template-marketplace/publish", json={
+        "generation_id": gid, "title": "Startup NDA (test)", "description": "Mutual NDA.",
+        "category": "Business", "price_usd": 20, "royalty_pct": 10,
+    })
+    assert pub.status_code == 200, pub.text
+    tid = pub.json()["id"]
+
+    # Public browse should list it.
+    anon = requests.Session(); anon.headers.update(ua)
+    lst = anon.get(f"{BASE_URL}/api/template-marketplace", params={"q": "Startup NDA (test)"})
+    assert lst.status_code == 200 and any(t["id"] == tid for t in lst.json()["templates"])
+
+    # Buyer purchases.
+    buyer = requests.Session(); buyer.headers.update(ua)
+    from credentials import DEMO_EMAIL, DEMO_PASSWORD
+    buyer.post(f"{BASE_URL}/api/auth/login", json={"email": DEMO_EMAIL, "password": DEMO_PASSWORD}).raise_for_status()
+    # Pre-purchase: body hidden.
+    d = buyer.get(f"{BASE_URL}/api/template-marketplace/{tid}").json()
+    assert d["purchased"] is False and "document" not in d
+    buy = buyer.post(f"{BASE_URL}/api/template-marketplace/{tid}/purchase", json={})
+    # Allow already-purchased from a prior run.
+    if buy.status_code == 400 and "already" in buy.text:
+        return
+    assert buy.status_code == 200, buy.text
+    assert buy.json()["creator_earnings"] == 2.0  # 10% of 20
+    # Post-purchase: body visible + double-purchase blocked.
+    d2 = buyer.get(f"{BASE_URL}/api/template-marketplace/{tid}").json()
+    assert d2["purchased"] is True and "document" in d2
+    again = buyer.post(f"{BASE_URL}/api/template-marketplace/{tid}/purchase", json={})
+    assert again.status_code == 400
+

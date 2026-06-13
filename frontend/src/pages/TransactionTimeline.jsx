@@ -308,7 +308,7 @@ export default function TransactionTimeline() {
                 {/* Vertical line */}
                 <div className="absolute left-[23px] top-0 bottom-0 w-px bg-cream-100" />
 
-                {dateGroups.map(([dateLabel, events], gi) => (
+                {dateGroups.map(([dateLabel, events]) => (
                   <div key={dateLabel} className="mb-8">
                     {/* Date Header */}
                     <div className="flex items-center gap-3 mb-4 relative z-10">
@@ -319,13 +319,14 @@ export default function TransactionTimeline() {
                     </div>
 
                     {events.map((ev, ei) => {
+                      const evKey = ev.id || ev.sequence || `${ev.timestamp}-${ev.event}-${ei}`;
                       const IconComp = ICON_MAP[ev.icon] || Clock;
                       const catCfg = CATEGORY_CONFIG[ev.category] || CATEGORY_CONFIG.lifecycle;
-                      const isExpanded = expandedEvent === `${gi}-${ei}`;
+                      const isExpanded = expandedEvent === evKey;
 
                       return (
                         <div
-                          key={`${gi}-${ei}`}
+                          key={evKey}
                           className="relative flex gap-4 mb-1 group"
                           data-testid={`timeline-event-${ev.sequence}`}
                         >
@@ -343,7 +344,7 @@ export default function TransactionTimeline() {
                             } ${ev._live ? 'ring-1 ring-green-500/30 animate-[fadeIn_0.5s_ease-in]' : ''} ${
                               newEventFlash === ev.sequence ? 'bg-green-500/5' : ''
                             }`}
-                            onClick={() => setExpandedEvent(isExpanded ? null : `${gi}-${ei}`)}
+                            onClick={() => setExpandedEvent(isExpanded ? null : evKey)}
                           >
                             <div className="flex items-start justify-between mb-1">
                               <div className="flex items-center gap-2 flex-1 min-w-0">

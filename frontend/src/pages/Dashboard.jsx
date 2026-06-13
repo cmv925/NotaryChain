@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useWS } from '../contexts/WebSocketContext';
-import { Shield, ShieldCheck, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp, Settings, CreditCard, Lock, Code, BookOpen, Building2, Save, CalendarClock, Layers, Users, Wand2, FileSearch, Fingerprint, Sparkles, Bell, GitCompareArrows, Palette, UserCheck, Sun, Moon, Brain, Scale, ShieldAlert, ChevronRight, FileCheck, Search, Hammer, RotateCcw, Timer, Globe, Coins, Activity, Vault, Network, HelpCircle } from 'lucide-react';
+import { Shield, ShieldCheck, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp, Settings, CreditCard, Lock, Code, BookOpen, Building2, Save, CalendarClock, Layers, Users, Wand2, FileSearch, Fingerprint, Sparkles, Bell, GitCompareArrows, Palette, UserCheck, Sun, Moon, Brain, Scale, ShieldAlert, ChevronRight, FileCheck, Search, Hammer, RotateCcw, Timer, Globe, Coins, Activity, Vault, Network, HelpCircle, Store } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../components/ui/dropdown-menu';
@@ -253,7 +253,8 @@ const Dashboard = () => {
                 {!isUser && (
                   <BentoAction icon={Brain} label="AI Intelligence Hub" desc="Risk, Match, Voice" onClick={() => navigate('/ai-intelligence')} data-testid="ai-hub-btn" />
                 )}
-                <BentoAction icon={Wand2} label="AI Doc Generator" onClick={() => navigate('/ai-generator')} data-testid="ai-gen-btn" />
+                <BentoAction icon={Wand2} label="Smart Document Studio" desc="Draft → Notarize → Execute" onClick={() => navigate('/ai-generator')} data-testid="ai-gen-btn" />
+                <BentoAction icon={Store} label="Template Marketplace" desc="Buy & sell templates" onClick={() => navigate('/template-marketplace')} data-testid="marketplace-btn" />
                 <BentoAction icon={FileSearch} label="AI Summarizer" onClick={() => navigate('/ai-summarizer')} data-testid="ai-summarizer-btn" />
                 <BentoAction icon={GitCompareArrows} label="Doc Compare" onClick={() => navigate('/doc-compare')} data-testid="doc-compare-btn" />
                 {!isUser && (

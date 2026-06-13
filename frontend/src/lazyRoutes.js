@@ -81,6 +81,7 @@ export const WhiteLabelPage = lazy(() => import('./pages/WhiteLabelPage'));
 export const BookingCalendar = lazy(() => import('./pages/BookingCalendar'));
 export const MyBookings = lazy(() => import('./pages/MyBookings'));
 export const AIDocumentGenerator = lazy(() => import('./pages/AIDocumentGenerator'));
+export const TemplateMarketplace = lazy(() => import('./pages/TemplateMarketplace'));
 export const AIDocumentSummarizer = lazy(() => import('./pages/AIDocumentSummarizer'));
 export const VideoWitness = lazy(() => import('./pages/VideoWitness'));
 export const DocumentRemediation = lazy(() => import('./pages/DocumentRemediation'));

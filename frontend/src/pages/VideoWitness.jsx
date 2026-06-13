@@ -37,6 +37,7 @@ const VideoWitness = () => {
   const [recordedUrl, setRecordedUrl] = useState(null);
   const [hasCamera, setHasCamera] = useState(false);
   const [stream, setStream] = useState(null);
+  const streamRef = useRef(null); // mirrors `stream` so unmount cleanup sees the latest tracks
 
   const fetchData = useCallback(async () => {
     try {
@@ -58,6 +59,7 @@ const VideoWitness = () => {
   const startCamera = async () => {
     try {
       const s = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      streamRef.current = s;
       setStream(s);
       setHasCamera(true);
       if (videoRef.current) videoRef.current.srcObject = s;
@@ -67,10 +69,11 @@ const VideoWitness = () => {
   };
 
   const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach(t => t.stop());
-      setStream(null);
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop());
+      streamRef.current = null;
     }
+    setStream(null);
     setHasCamera(false);
   };
 
@@ -123,8 +126,13 @@ const VideoWitness = () => {
     setUploading(false);
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
-  useEffect(() => { return () => { stopCamera(); }; }, []);
+  // Stop camera tracks on unmount via the ref (no stale `stream` closure).
+  useEffect(() => () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop());
+      streamRef.current = null;
+    }
+  }, []);
 
   const currentInstr = instructions.find(i => i.id === selectedType);
 
@@ -252,7 +260,7 @@ const VideoWitness = () => {
                     </h3>
                     <ol className="space-y-1">
                       {currentInstr.steps.map((step, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-slate-500">
+                        <li key={step} className="flex items-start gap-2 text-sm text-slate-500">
                           <span className="text-rose-400 font-bold text-xs mt-0.5">{i + 1}.</span>
                           {step}
                         </li>

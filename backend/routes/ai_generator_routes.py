@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, Depends, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import os
 import json
 import uuid
@@ -95,6 +95,18 @@ class RefineRequest(BaseModel):
 async def get_document_types():
     """Get available document types for generation."""
     return {"types": [{"id": k, "name": v} for k, v in DOCUMENT_TEMPLATES.items()]}
+
+
+@router.get("/clauses")
+async def get_clauses(state: Optional[str] = None, category: Optional[str] = None,
+                      current_user: User = Depends(get_current_user)):
+    """Smart Clause Library — curated (optionally state-specific) insertable clauses."""
+    from legal_clauses import list_clauses, CLAUSE_CATEGORIES, SUPPORTED_STATES
+    return {
+        "clauses": list_clauses(state=state, category=category),
+        "categories": [{"id": k, "label": v} for k, v in CLAUSE_CATEGORIES.items()],
+        "states": [{"code": k, "name": v} for k, v in SUPPORTED_STATES.items()],
+    }
 
 
 @router.post("/generate")
@@ -278,6 +290,104 @@ async def _load_gen(gen_id: str, user_id: str) -> Dict[str, Any]:
     if not gen:
         raise HTTPException(status_code=404, detail="Document not found")
     return gen
+
+
+_VERIFY_METHOD = {
+    "payment": "party_confirmation",
+    "delivery": "oracle",
+    "date": "party_confirmation",
+    "renewal": "party_confirmation",
+    "condition": "party_confirmation",
+}
+
+
+def _slug(text: str) -> str:
+    return "".join(ch if ch.isalnum() else "_" for ch in (text or "").lower()).strip("_")[:40] or "condition"
+
+
+def _map_studio_condition(c: Dict[str, Any], idx: int, now: str) -> Dict[str, Any]:
+    ctype = c.get("type", "condition")
+    return {
+        "type": "date" if ctype == "date" else "milestone",
+        "category": ctype,
+        "title": c.get("label", f"Condition {idx + 1}"),
+        "description": c.get("trigger") or c.get("term") or c.get("label", ""),
+        "trigger": _slug(c.get("label", f"condition_{idx + 1}")),
+        "verification_method": _VERIFY_METHOD.get(ctype, "party_confirmation"),
+        "required_party": None,
+        "deadline_days": 30,
+        "confidence": 0.9,
+        "oracle_type": "shipping_tracker" if ctype == "delivery" else None,
+        "payment_pct": 0,
+        "condition_id": str(uuid.uuid4())[:8],
+        "status": "pending",
+        "created_at": now,
+        "deadline": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
+        "verified_at": None,
+        "verified_by": None,
+        "evidence": None,
+        "oracle_result": None,
+        "photo_verification": None,
+        "source": "studio",
+    }
+
+
+async def _create_trust_anchor(gen: Dict[str, Any], user, active_conditions: List[Dict[str, Any]],
+                               signers: List[Dict[str, Any]], content_hash: str, anchor_id: str) -> Dict[str, Any]:
+    """Materialize enabled Studio trigger conditions into a Self-Executing Trust
+    Anchor (escrow agreement) so they can be verified/settled in the Escrow engine."""
+    from routes.escrow_routes import _mint_mock_contract
+
+    now = datetime.now(timezone.utc).isoformat()
+    escrow_id = str(uuid.uuid4())
+    title = gen["result"].get("title") or "Smart Document"
+    buyer = signers[0] if len(signers) > 0 else {}
+    seller = signers[1] if len(signers) > 1 else {}
+    conditions = [_map_studio_condition(c, i, now) for i, c in enumerate(active_conditions)]
+
+    escrow = {
+        "escrow_id": escrow_id,
+        "title": f"{title} — Trust Anchor",
+        "description": f"Self-executing trust anchor generated from Smart Document Studio for '{title}'.",
+        "escrow_type": "studio",
+        "status": "active",
+        "created_by": user.email,
+        "created_at": now,
+        "updated_at": now,
+        "parties": {
+            "buyer": {"name": buyer.get("name", ""), "email": buyer.get("email", user.email),
+                      "role": buyer.get("role", "buyer"), "verified": False,
+                      "biometric_verified": False, "biometric_at": None},
+            "seller": {"name": seller.get("name", ""), "email": seller.get("email", ""),
+                       "role": seller.get("role", "seller"), "verified": False,
+                       "biometric_verified": False, "biometric_at": None},
+            "escrow_agent": {"name": "NotaryChain AI Orchestrator", "role": "escrow_agent", "type": "automated"},
+        },
+        "financial": {"escrow_amount": 0, "currency": "USD", "deposit_status": "pending",
+                      "amount_released": 0, "amount_held": 0, "release_schedule": [],
+                      "stripe_payment_intent": None, "hts_token_id": None, "hts_escrow_account": None},
+        "document": {"name": title, "uploaded": True, "analysis_complete": True,
+                     "generation_id": gen["id"], "anchor_id": anchor_id, "content_hash": content_hash},
+        "conditions": conditions,
+        "conditions_met_count": 0,
+        "conditions_total": len(conditions),
+        "oracle_events": [],
+        "biometric_proofs": [],
+        "blockchain": {"creation_hash": content_hash, "settlement_hash": None,
+                       "hcs_topic_id": None, "audit_trail": []},
+        "settlement": {"biometric_gate_passed": False, "biometric_gate_at": None, "biometric_gate_by": None},
+        "smart_contract": _mint_mock_contract(escrow_id),
+        "timeline": [{
+            "event": "escrow_created",
+            "timestamp": now,
+            "actor": user.email,
+            "details": f"Trust Anchor created from notarized document with {len(conditions)} trigger condition(s)",
+            "category": "lifecycle",
+        }],
+        "source": "smart_document_studio",
+    }
+    await db.escrow_agreements.insert_one(escrow)
+    return {"escrow_id": escrow_id, "conditions_total": len(conditions), "title": escrow["title"]}
 
 
 @router.post("/edit-section")
@@ -510,6 +620,21 @@ async def notarize_document(request: Request, body: NotarizeRequest, current_use
         {"$set": {"status": "anchored", "anchor_id": anchor_id, "content_hash": content_hash,
                   "transaction_id": record["transaction_id"], "explorer_url": record["explorer_url"]}},
     )
+
+    # Self-Executing Trust Anchor: materialize enabled trigger conditions into an escrow.
+    trust_anchor = None
+    active_conditions = [c for c in (gen.get("conditions", []) or []) if c.get("enabled")]
+    if active_conditions:
+        try:
+            trust_anchor = await _create_trust_anchor(
+                gen, current_user, active_conditions, gen.get("signers", []) or [], content_hash, anchor_id,
+            )
+            await db.ai_generated_docs.update_one(
+                {"id": body.generation_id}, {"$set": {"trust_anchor_escrow_id": trust_anchor["escrow_id"]}}
+            )
+        except Exception as e:
+            logger.error(f"Trust Anchor creation failed (document still anchored): {e}")
+
     return {
         "anchor_id": anchor_id,
         "content_hash": content_hash,
@@ -519,4 +644,5 @@ async def notarize_document(request: Request, body: NotarizeRequest, current_use
         "network": record["network"],
         "anchored_at": record["anchored_at"],
         "title": title,
+        "trust_anchor": trust_anchor,
     }

@@ -1,0 +1,65 @@
+{
+  "summary": "Frontend testing of Smart Document Studio (/ai-generator), Smart Clause Library, Conditions, Compliance, Publish flow, and Template Marketplace (/template-marketplace) including admin browse/My Listings and demo-user purchase. 10/12 acceptance items PASS. Dashboard cards (ai-gen-btn, marketplace-btn) present. Studio tabs all wire up correctly with admin existing-doc workflow. Clause library renders with 14 default clauses; Insert successfully adds a new doc section (sections 20 -> 22). Custom condition add wires through to 'N active' counter (1 active observed). Publish modal opens. Marketplace browse/grid/detail modal/My Listings (earnings $5.75) all work. Demo user buy-btn works and POST purchase navigates to /ai-generator. TWO MEDIUM/HIGH issues found: (1) After demo buyer (Free plan) buys a template, they are redirected to /ai-generator which is gated to Pro -> they see the 'Upgrade Now $49/mo' upsell page and CANNOT view their purchased template. (2) FL state dropdown did not enumerate state options via [role=option] selector (possibly native <select>); clauses count stayed identical so state-specific refetch is unverified.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "TemplateMarketplace.jsx / AIDocumentGenerator route gating",
+        "issue": "Critical post-purchase UX: Demo (free-plan) buyer clicks Buy on a marketplace template, purchase succeeds and navigates to /ai-generator. But /ai-generator is wrapped in GatedRoute('ai_generator' => 'pro'), so the buyer hits the 'Professional / $49/mo / Upgrade Now / Currently on: Free plan' upsell screen and cannot view or use the template they just paid for. Their 'Recent Documents' is also empty for the same reason (gate page replaces the studio). Either (a) bypass the pro gate for users who have at least one marketplace purchase, (b) provide a separate /my-templates landing post-purchase, or (c) auto-upgrade trial on first purchase. Reproduced reliably: market-template-ec1d91df-... -> market-buy-btn -> /ai-generator -> upsell page.",
+        "selector": "[data-testid=\"market-buy-btn\"] -> route /ai-generator",
+        "priority": "HIGH"
+      },
+      {
+        "component": "TemplateMarketplace.jsx 'My Purchases' tab",
+        "issue": "After successful purchase by demo@test.com (verified by navigation to /ai-generator), the 'My Purchases' tab showed 0 items when searched for [data-testid^='purchase-item-'] or [data-testid^='market-purchase-']. Could be (a) the actual testid uses a different pattern, (b) list not refreshed, or (c) purchase not actually persisted to /api/template-marketplace/my/purchases. Main agent should verify the testid naming and the underlying GET returns the row.",
+        "selector": "[data-testid=\"market-tab-purchases\"] children",
+        "priority": "MEDIUM"
+      },
+      {
+        "component": "ClauseLibrary.jsx clause-state-select",
+        "issue": "Clicking clause-state-select did open a dropdown UI (no JS errors), but page.query_selector_all('[role=\"option\"]') returned 0 options — suggests the state picker uses a native <select> (not a shadcn Select with role=option). Could not programmatically select FL/Florida; clause list remained at 14 items (the default 'All states / All categories'). Cannot confirm the 'state-specific refetch' behavior described in the task. Adding [role=listbox]/[role=option] semantics via shadcn Select, or a data-testid='clause-state-option-FL', would make this driveable.",
+        "selector": "[data-testid=\"clause-state-select\"]",
+        "priority": "MEDIUM"
+      },
+      {
+        "component": "TemplateMarketplace.jsx 'My Listings' list items",
+        "issue": "Admin 'My Listings' tab shows market-earnings = $5.75 correctly, but my generic search for [data-testid^='listing-item-'] / [data-testid^='market-listing-'] returned 0. Likely a testid-naming mismatch in this report — earnings is the canonical assertion required by the task and that passed. Worth confirming the listing-row testid for future automation.",
+        "selector": "[data-testid=\"market-tab-listings\"] children",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Dashboard",
+        "issues": [
+          "OnboardingTour overlay (data-testid=onboarding-overlay, z-[10000]) intercepts pointer events for several seconds after login and blocked automated clicks on ai-gen-btn / marketplace-btn the first time. Likely benign for human users (they can Skip tour or click Next), but high-z modal with no auto-dismiss-on-outside-click can confuse new users."
+        ]
+      }
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "HIGH: Decide post-purchase routing for free-plan buyers — currently /ai-generator gate blocks them from seeing the template they just bought. Either bypass the gate when the user has marketplace purchases, route to /template-marketplace?tab=purchases, or grant a temporary trial.",
+    "MEDIUM: Verify 'My Purchases' tab actually lists items after a successful purchase (was empty in my run). If items render under a different data-testid, document it; if list truly is empty, debug /api/template-marketplace/my/purchases.",
+    "MEDIUM: Make the clause-state-select drivable — either use shadcn Select with role=option semantics, or expose per-option data-testid='clause-state-option-FL' etc. Also confirm that changing the state actually re-fetches clauses (clause count did not change from 14 in my run).",
+    "LOW: Confirm/add data-testid for individual listing rows under market-tab-listings."
+  ],
+  "critical_code_review_comments": [
+    "AIDocumentGenerator is behind GatedRoute('ai_generator' => 'pro'). The marketplace buy flow blindly navigates(to='/ai-generator') on purchase success without checking the buyer's plan — this is the root cause of the broken post-purchase UX for free-plan buyers. Suggest checking user.subscription_plan before redirect, or always landing on the marketplace 'My Purchases' tab and letting the user click into the doc from there.",
+    "Onboarding tour overlay is rendered at z-[10000] with no auto-timeout. Consider adding data-testid='onboarding-skip-btn' and ensuring outside-click dismisses it, to avoid blocking interactions for both real users and automated tests.",
+    "Persistent React hydration warnings observed: '<span> cannot be a child of <select>/<option>' caused by visual-editor wrapping <span x-excluded='true'> inside <select>/<option> children — same as iteration 123. Benign in prod build but very noisy in dev console.",
+    "Marketplace card list in admin view showed 3 cards while admin's own listings (My Listings) returned 0 row testids — confirm the listings endpoint is filtering correctly by creator_id (and that the admin's $5.75 earnings is being computed from real listings, not an in-memory tally)."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only per request; backend was already verified by previous iteration)",
+    "frontend": "83% (10/12 task items pass; 1 HIGH UX issue post-purchase gate, 1 MEDIUM My-Purchases empty, 1 MEDIUM FL-state-select undrivable)"
+  },
+  "test_credentials": "admin@notarychain.com / Admin123! (admin/creator) and demo@test.com / Demo123! (buyer/free-tier). Both logged in successfully via /api/auth/login (httpOnly cookie + Bearer body).",
+  "seed_data_creation": "Demo user purchased market-template-ec1d91df-c3e5-439e-85aa-10a0d7d3686f (one real marketplace purchase recorded). Admin doc had two new clause-inserted sections appended during testing (TEST_review_in_7_days condition + at least one Insert from clause library).",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Smart Document Studio surfaces are wired up correctly end-to-end (tabs, clause insert, custom condition add, publish modal, notarize button). The slow AI flows (suggest-conditions ~10-20s, compliance scan ~10-20s, notarize+anchor) were NOT exercised in this run to keep the script under timeout — only their entry buttons were verified present. After main agent fixes the post-purchase routing gate, re-test: (1) demo buyer ends up somewhere they can actually see the purchased template, (2) 'My Purchases' tab lists the purchased row, (3) FL clause filter actually re-fetches a different clause set. Existing valid purchase row already exists for demo for further test runs.",
+  "rca of the issue": "RCA — broken post-purchase navigation for free-plan buyers: in TemplateMarketplace.jsx the onPurchaseSuccess handler calls navigate('/ai-generator') unconditionally. AIDocumentGenerator is wrapped in <GatedRoute feature='ai_generator' subscription='pro'> in App.js, which intercepts free-plan users and renders the upsell card ('Professional / $49/mo / Upgrade Now'). Therefore the buyer never sees their purchased template after paying. Reproduction: login demo@test.com -> /template-marketplace -> click market-template-ec1d91df... -> click market-buy-btn -> URL becomes /ai-generator -> upsell page with 'Currently on: Free plan'. Mitigation options: (a) in the buy handler, navigate to '/template-marketplace?tab=purchases' instead; (b) detect plan in the buy handler and only navigate to /ai-generator when subscription is pro/admin; (c) auto-upgrade buyers to a 7-day pro trial on first purchase. The backend purchase itself appears to succeed (no error toast was observed and navigation happened, consistent with the simulated payment described in the task)."
+}
