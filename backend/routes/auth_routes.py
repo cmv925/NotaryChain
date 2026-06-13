@@ -2,7 +2,11 @@ from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks, 
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from models import UserCreate, UserLogin, User, Token
-from auth import get_password_hash, verify_password, create_access_token, decode_access_token, set_auth_cookie, clear_auth_cookie
+from auth import (
+    get_password_hash, verify_password, create_access_token, decode_access_token,
+    set_auth_cookie, clear_auth_cookie, create_refresh_token, set_refresh_cookie,
+    clear_refresh_cookie, REFRESH_COOKIE_NAME, IDLE_TIMEOUT_MINUTES, ABSOLUTE_SESSION_HOURS,
+)
 from services.email_service import email_service
 from middleware.security import limiter, validate_password, sanitize_email
 from services.notification_service import create_notification as create_notif
@@ -11,6 +15,7 @@ from typing import Optional
 from datetime import timedelta, datetime, timezone
 import pyotp
 import os
+import uuid
 import logging
 
 logger = logging.getLogger(__name__)
@@ -24,6 +29,34 @@ db: AsyncIOMotorDatabase = None
 def set_db(database):
     global db
     db = database
+
+
+async def _start_session(response: Response, email: str) -> str:
+    """Create a server-side session (for revocation) and set access + refresh cookies.
+    Access token = 25 min; refresh token = 30 min sliding idle; 12 h absolute cap."""
+    sid = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+    abs_exp = now + timedelta(hours=ABSOLUTE_SESSION_HOURS)
+    await db.auth_sessions.insert_one({
+        "sid": sid,
+        "email": email,
+        "created_at": now.isoformat(),
+        "abs_exp": abs_exp.isoformat(),
+        "revoked": False,
+    })
+    access = create_access_token(data={"sub": email, "sid": sid})
+    refresh = create_refresh_token(
+        {"sub": email, "sid": sid, "type": "refresh", "abs_exp": abs_exp.isoformat()},
+        timedelta(minutes=IDLE_TIMEOUT_MINUTES),
+    )
+    set_auth_cookie(response, access)
+    set_refresh_cookie(response, refresh, IDLE_TIMEOUT_MINUTES * 60)
+    return access
+
+
+def _clear_session_cookies(response: Response):
+    clear_auth_cookie(response)
+    clear_refresh_cookie(response)
 
 async def get_current_user(request: Request):
     # Cookie-first (httpOnly), fall back to Authorization: Bearer header during transition.
@@ -143,10 +176,9 @@ async def signup(request: Request, user_data: UserCreate, background_tasks: Back
         subscription_tier="starter",
     )
     
-    # Create access token
-    access_token = create_access_token(data={"sub": user.email})
-    set_auth_cookie(response, access_token)
-    
+    # Create session + access/refresh cookies
+    access_token = await _start_session(response, user.email)
+
     return Token(access_token=access_token)
 
 @router.post("/login", response_model=LoginResponse)
@@ -211,9 +243,8 @@ async def login(request: Request, user_data: UserLogin, response: Response):
         )
         return LoginResponse(requires_2fa=True, temp_token=temp_token)
     
-    # No 2FA - issue full access token
-    access_token = create_access_token(data={"sub": user["email"]})
-    set_auth_cookie(response, access_token)
+    # No 2FA - issue full session (access + refresh)
+    access_token = await _start_session(response, user["email"])
     return LoginResponse(access_token=access_token)
 
 
@@ -271,9 +302,8 @@ async def login_2fa(request: Request, data: TwoFALoginRequest, response: Respons
             detail="Invalid verification code"
         )
     
-    # Issue full access token
-    access_token = create_access_token(data={"sub": email})
-    set_auth_cookie(response, access_token)
+    # Issue full session (access + refresh)
+    access_token = await _start_session(response, email)
     return Token(access_token=access_token)
 
 
@@ -287,16 +317,71 @@ async def get_me(current_user: User = Depends(get_current_user)):
 
 
 @router.post("/logout")
-async def logout(response: Response):
-    """Clear the httpOnly auth cookie. Idempotent — safe to call when not logged in."""
-    clear_auth_cookie(response)
+async def logout(request: Request, response: Response):
+    """Revoke the session and clear both auth cookies. Idempotent."""
+    rtoken = request.cookies.get(REFRESH_COOKIE_NAME)
+    if rtoken:
+        payload = decode_access_token(rtoken)
+        if payload and payload.get("sid"):
+            await db.auth_sessions.update_one({"sid": payload["sid"]}, {"$set": {"revoked": True}})
+    _clear_session_cookies(response)
+    return {"success": True}
+
+
+@router.post("/refresh")
+@limiter.limit("60/minute")
+async def refresh_session(request: Request, response: Response):
+    """Rotate the short-lived access token using the refresh cookie.
+
+    Enforces sliding idle (refresh-token exp) + absolute cap (abs_exp claim) +
+    server-side revocation. Clears cookies and 401s when the session is over."""
+    rtoken = request.cookies.get(REFRESH_COOKIE_NAME)
+    if not rtoken:
+        raise HTTPException(status_code=401, detail="No refresh token")
+    payload = decode_access_token(rtoken)  # also enforces idle (token exp)
+    if not payload or payload.get("type") != "refresh":
+        _clear_session_cookies(response)
+        raise HTTPException(status_code=401, detail="Session expired")
+
+    sid = payload.get("sid")
+    email = payload.get("sub")
+    now = datetime.now(timezone.utc)
+    try:
+        abs_exp = datetime.fromisoformat(payload.get("abs_exp"))
+    except (TypeError, ValueError):
+        abs_exp = now
+    if now >= abs_exp:
+        _clear_session_cookies(response)
+        if sid:
+            await db.auth_sessions.update_one({"sid": sid}, {"$set": {"revoked": True}})
+        raise HTTPException(status_code=401, detail="Session expired")
+
+    session = await db.auth_sessions.find_one({"sid": sid})
+    if not session or session.get("revoked"):
+        _clear_session_cookies(response)
+        raise HTTPException(status_code=401, detail="Session revoked")
+    user = await db.users.find_one({"email": email})
+    if not user:
+        _clear_session_cookies(response)
+        raise HTTPException(status_code=401, detail="User not found")
+
+    # Rotate: new refresh idle window, capped at the absolute expiry.
+    refresh_delta = min(now + timedelta(minutes=IDLE_TIMEOUT_MINUTES), abs_exp) - now
+    set_auth_cookie(response, create_access_token(data={"sub": email, "sid": sid}))
+    set_refresh_cookie(
+        response,
+        create_refresh_token(
+            {"sub": email, "sid": sid, "type": "refresh", "abs_exp": payload.get("abs_exp")},
+            refresh_delta,
+        ),
+        int(refresh_delta.total_seconds()),
+    )
     return {"success": True}
 
 
 @router.post("/session")
 async def create_session(response: Response, current_user: User = Depends(get_current_user)):
     """Exchange a valid Bearer token (e.g. from an SSO redirect) for an httpOnly
-    cookie session. The incoming token is validated by get_current_user."""
-    token = create_access_token(data={"sub": current_user.email})
-    set_auth_cookie(response, token)
-    return {"success": True}
+    cookie session (access + refresh). The incoming token is validated by get_current_user."""
+    access_token = await _start_session(response, current_user.email)
+    return {"success": True, "access_token": access_token}

@@ -30,11 +30,11 @@ def set_db(database):
 
 async def _get_user(request: Request):
     """Extract user from Bearer token."""
-    from auth import decode_access_token
-    auth = request.headers.get("Authorization", "")
-    if not auth.startswith("Bearer "):
+    from auth import decode_access_token, extract_request_token
+    token = extract_request_token(request)
+    if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    payload = decode_access_token(auth.split(" ", 1)[1])
+    payload = decode_access_token(token)
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid token")
     user = await db.users.find_one({"email": payload["sub"]}, {"_id": 0})

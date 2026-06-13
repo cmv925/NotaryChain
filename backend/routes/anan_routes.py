@@ -41,11 +41,11 @@ class EscalationResolveRequest(BaseModel):
 # ─── Auth helper ───
 
 async def _get_user(request: Request):
-    from auth import decode_access_token
-    auth = request.headers.get("Authorization", "")
-    if not auth.startswith("Bearer "):
+    from auth import decode_access_token, extract_request_token
+    token = extract_request_token(request)
+    if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    payload = decode_access_token(auth.split(" ", 1)[1])
+    payload = decode_access_token(token)
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid token")
     user = await db.users.find_one({"email": payload["sub"]}, {"_id": 0})
@@ -405,15 +405,17 @@ async def _stream_anan_pipeline(ceremony_id: str):
 @router.get("/ceremony/{ceremony_id}/stream")
 async def stream_anan_ceremony(ceremony_id: str, request: Request):
     """SSE endpoint — streams real-time ANAN blind scoring with phased reveals."""
-    # SSE auth via query param (EventSource can't set headers)
+    # SSE auth: EventSource can't set headers, but it DOES send the httpOnly cookie
+    # same-origin. Prefer a real ?token= (legacy), else fall back to the cookie.
+    from auth import decode_access_token, extract_request_token
     token = request.query_params.get("token")
-    if token:
-        from auth import decode_access_token
-        payload = decode_access_token(token)
-        if not payload:
-            raise HTTPException(status_code=401, detail="Invalid token")
-    else:
-        await _get_user(request)
+    if not token or token == "cookie":
+        token = extract_request_token(request)
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    payload = decode_access_token(token)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
     ceremony = await db.anan_ceremonies.find_one({"ceremony_id": ceremony_id}, {"_id": 0})
     if not ceremony:

@@ -16,6 +16,36 @@ axios.defaults.withCredentials = true;
 // real credential and the legacy header is a harmless no-op.
 const COOKIE_SENTINEL = 'cookie';
 
+// ── Transparent token refresh ──────────────────────────────────────────────
+// On a 401, try POST /auth/refresh ONCE (single in-flight promise shared across
+// concurrent requests), then replay the original request. If refresh fails, the
+// session is over → broadcast so the app can drop to the login screen.
+let refreshPromise = null;
+const NO_REFRESH_PATHS = ['/auth/refresh', '/auth/login', '/auth/logout', '/auth/signup', '/auth/login/2fa', '/auth/session'];
+
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const original = error.config;
+    const status = error.response?.status;
+    const url = original?.url || '';
+    if (status === 401 && original && !original._retry && !NO_REFRESH_PATHS.some((p) => url.includes(p))) {
+      original._retry = true;
+      try {
+        if (!refreshPromise) {
+          refreshPromise = axios.post(`${API}/auth/refresh`).finally(() => { refreshPromise = null; });
+        }
+        await refreshPromise;
+        return axios(original);
+      } catch (refreshErr) {
+        window.dispatchEvent(new CustomEvent('auth:session-expired'));
+        return Promise.reject(refreshErr);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,6 +55,13 @@ export const AuthProvider = ({ children }) => {
     // Restore the session from the httpOnly cookie on every load.
     fetchUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only session restore
+  }, []);
+
+  useEffect(() => {
+    // When transparent refresh fails (idle/absolute expiry or revocation), drop state.
+    const onExpired = () => { setUser(null); setToken(null); };
+    window.addEventListener('auth:session-expired', onExpired);
+    return () => window.removeEventListener('auth:session-expired', onExpired);
   }, []);
 
   const fetchUser = async () => {

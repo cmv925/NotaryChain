@@ -22,6 +22,7 @@ class StorageService:
     def __init__(self):
         self._s3_client = None
         self._bucket = None
+        self._recordings_bucket = None
         self._use_s3 = False
         self._kms_key_id = os.environ.get("AWS_KMS_KEY_ID")
         self._init_s3()

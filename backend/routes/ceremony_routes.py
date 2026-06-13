@@ -88,11 +88,10 @@ class CeremonyResponse(BaseModel):
 # --- Auth helper ---
 
 async def get_current_user(request):
-    from auth import decode_access_token
-    auth_header = request.headers.get("Authorization", "")
-    if not auth_header.startswith("Bearer "):
+    from auth import decode_access_token, extract_request_token
+    token = extract_request_token(request)
+    if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    token = auth_header.split(" ", 1)[1]
     payload = decode_access_token(token)
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid token")
@@ -389,13 +388,10 @@ def _evaluate_consensus(agents: dict) -> dict:
 async def start_ceremony(req: CeremonyStartRequest, request: Request = None):
     raw_request = request
     # Manual auth extraction
-    auth_header = ""
-    if hasattr(raw_request, 'headers'):
-        auth_header = raw_request.headers.get("Authorization", "")
     user = None
-    if auth_header.startswith("Bearer "):
-        from auth import decode_access_token
-        token = auth_header.split(" ", 1)[1]
+    from auth import decode_access_token, extract_request_token
+    token = extract_request_token(raw_request) if hasattr(raw_request, 'headers') else None
+    if token:
         payload = decode_access_token(token)
         if payload:
             user = await db.users.find_one({"email": payload.get("sub")}, {"_id": 0})
@@ -1093,13 +1089,12 @@ async def verify_certificate(cert_hash: str):
 async def get_ceremony_analytics(request: Request = None):
     """Admin-only: Get ceremony analytics for dashboard."""
     from fastapi import Request as _R
-    from auth import decode_access_token
+    from auth import decode_access_token, extract_request_token
 
     # Auth check
-    auth_header = request.headers.get("Authorization", "") if request else ""
-    if not auth_header.startswith("Bearer "):
+    token = extract_request_token(request) if request else None
+    if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    token = auth_header.split(" ", 1)[1]
     payload = decode_access_token(token)
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid token")
