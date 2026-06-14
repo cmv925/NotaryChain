@@ -6,6 +6,8 @@ import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Shield, ExternalLink, CheckCircle2, Clock, AlertCircle, ArrowLeft, Calendar, FileText, Loader2, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
+import { Seo } from '../components/Seo';
+import { graph, serviceSchema, breadcrumbSchema } from '../lib/seo';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -51,6 +53,25 @@ export default function StateDetail() {
 
   return (
     <div className="min-h-screen bg-cream-100" data-testid={`state-detail-${state.code}`}>
+      <Seo
+        path={`/compliance/states/${state.code}`}
+        title={`${state.name} Remote Online Notarization (RON) Compliance`}
+        description={`How Remote Online Notarization works in ${state.name}: statute ${state.statute}, identity proofing, A/V and journal requirements, and what documents you can notarize online. NotaryChain is built to meet ${state.name} RON standards.`}
+        keywords={`${state.name} online notarization, ${state.name} RON, ${state.name} remote notary, ${state.statute}`}
+        jsonLd={graph(
+          serviceSchema({
+            name: `Online Notarization in ${state.name}`,
+            description: `Remote Online Notarization compliant with ${state.name} law (${state.statute}).`,
+            serviceType: 'Remote Online Notarization',
+            areaServed: { '@type': 'State', name: state.name },
+          }),
+          breadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'State Compliance', path: '/compliance/states' },
+            { name: state.name },
+          ]),
+        )}
+      />
       <header className="border-b border-slate-200 bg-white">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">

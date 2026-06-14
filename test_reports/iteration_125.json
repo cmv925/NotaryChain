@@ -1,0 +1,51 @@
+{
+  "summary": "Verified SEO/AEO Helmet integration on /, /pricing, /compliance/states/FL plus dynamic sitemap. SITEMAP PASSES (valid XML, all https loc URLs, includes /, /pricing, /compliance/states/FL, 8 notary profiles). ALL THREE PUBLIC PAGES CRASH at runtime — react-helmet-async throws 'Invariant Violation: Helmet expects a string as a child of <script>' originating in Seo.jsx, caught by the global ErrorBoundary which shows the 'Something went wrong' screen instead of the page content. Per-page JSON-LD (Service/FAQPage/Product/BreadcrumbList) never reaches the DOM. This regresses the public landing experience and is P0.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Seo.jsx (used by NotaryLanding, PricingPage, StateDetail)",
+        "issue": "Runtime crash on every page that renders <Seo jsonLd={...} />. react-helmet-async invariant: 'Helmet expects a string as a child of <script>. Did you forget to wrap your children in braces? ( <script>{``}</script> )'. ErrorBoundary catches it and the public landing, pricing, and state-compliance pages all show the 'Something went wrong' fallback. Reproduced on / , /pricing, /compliance/states/FL.",
+        "selector": "div.text-center:has-text('Something went wrong')",
+        "priority": "CRITICAL"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "Public landing → CTA / Pricing browse / State compliance browse",
+        "issue": "All three public, SEO-targeted entry points are broken — visitors and crawlers receive an ErrorBoundary fallback, not the marketing page. Page-specific JSON-LD (Service+FAQPage on /, Product+FAQPage+BreadcrumbList on /pricing, Service+BreadcrumbList on /compliance/states/FL) is never injected; only the global Organization+WebSite+SoftwareApplication graph (from a higher-level provider) survives.",
+        "affected_selectors": ["[data-testid='hero']", "[data-testid='public-nav']", "[data-testid='state-detail-FL']", "h1:has-text('Pricing')"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_125.json"
+  ],
+  "action_items": [
+    "FIX (P0): In /app/frontend/src/components/Seo.jsx line 61, replace the JSX text-child pattern `<script type=\"application/ld+json\">{jsonLd}</script>` with the dangerouslySetInnerHTML form that react-helmet-async accepts reliably: `<script type=\"application/ld+json\" dangerouslySetInnerHTML={{ __html: jsonLd }} />`. This is the documented/idiomatic way to inject JSON-LD via react-helmet-async and avoids the warnOnInvalidChildren invariant. Defensive: also coerce with String(jsonLd) before rendering in case a builder ever returns a non-string.",
+    "After fix, re-verify on all three URLs: (1) page actually renders (hero/nav visible on /, plan cards visible on /pricing, state-detail-FL block visible on /compliance/states/FL), (2) document.head contains a per-page <title> (NOT the global fallback), correct canonical, and a JSON-LD <script> whose parsed @graph includes the expected schema types (Service+FAQPage on /, Product+FAQPage+BreadcrumbList on /pricing, Service+BreadcrumbList on /compliance/states/FL), (3) no Helmet errors in console.",
+    "Sitemap endpoint is OK — no action needed there."
+  ],
+  "critical_code_review_comments": [
+    "Seo.jsx: JSON-LD inserted as a JSX text child of <script> inside <Helmet>. react-helmet-async's warnOnInvalidChildren throws for this in v2.x even when the child IS a string (observed at runtime). Use dangerouslySetInnerHTML — also avoids any future risk if a builder ever returns an array/number.",
+    "Seo.jsx canonical: relies on `typeof window !== 'undefined' ? window.location.pathname : '/'` when `path` not supplied. Fine for CSR but means the SSR/snapshot canonical would always be `/`. Acceptable for now since this app is CSR, but call sites should always pass `path` explicitly (they do on the three pages tested).",
+    "seo.js graph(): returns a JSON.stringify of {@context, @graph}. Good. Consider exposing a non-stringified variant too so callers/tests can introspect more easily.",
+    "seo_routes.py dynamic_sitemap: works correctly and forces https. Minor: uses request.base_url which on this preview returns the *internal* cluster host (https://trust-network-dev.cluster-12.preview.emergentcf.cloud) rather than the public REACT_APP_BACKEND_URL (https://trust-network-dev.preview.emergentagent.com). The XML is still valid and all loc URLs are https, but search engines crawling the public domain will see a different domain in the sitemap than in the page URLs. Consider honoring an explicit SITE_URL env var as the canonical base, falling back to request.base_url. Not blocking.",
+    "ErrorBoundary swallowing the Helmet crash is the only reason users see *anything* — without it the whole page would be blank. Good defensive UX, but it does hide the regression from manual smoke tests; surfacing the error to Sentry should be verified."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "100% (1/1 sitemap endpoint validated: XML valid, https, includes /, /pricing, /compliance/states/FL, notary profiles)",
+    "frontend": "0% (0/3 public pages render — all crash into ErrorBoundary)"
+  },
+  "test_credentials": "None required — all three pages and the sitemap are public.",
+  "seed_data_creation": "None.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "After the Seo.jsx fix (switch JSON-LD <script> to dangerouslySetInnerHTML), retest by loading https://trust-network-dev.preview.emergentagent.com/ , /pricing , /compliance/states/FL with Playwright and assert: (a) no 'Something went wrong' text, (b) data-testid='hero', data-testid='public-nav', and data-testid='state-detail-FL' are visible, (c) document.head contains a per-page <title> different from the SITE default, (d) at least one <script type=application/ld+json> whose JSON parses and @graph includes the expected @type values per page, (e) zero console errors mentioning 'Helmet'. Sitemap test is already green: curl https://trust-network-dev.preview.emergentagent.com/api/seo/sitemap.xml → 200 application/xml with https loc URLs.",
+  "rca of the issue": "RCA — Component: /app/frontend/src/components/Seo.jsx line 61. Code: `{jsonLd && <script type=\"application/ld+json\">{jsonLd}</script>}`. When rendered inside <Helmet> from react-helmet-async, Helmet's mapChildrenToProps → warnOnInvalidChildren throws `Invariant Violation: Helmet expects a string as a child of <script>...` even though jsonLd IS a string (JSON.stringify result from lib/seo.js graph()). This is the well-known react-helmet-async behavior for JSON-LD payloads; the library expects script body to be provided via dangerouslySetInnerHTML, not as a JSX text child. Reproduction: Open /, /pricing, /compliance/states/FL → page renders ErrorBoundary 'Something went wrong' with the invariant message in a <pre>. Console shows 'ErrorBoundary caught: Invariant Violation: Helmet expects a string as a child of <script>' on every load. Mitigation: change to `<script type=\"application/ld+json\" dangerouslySetInnerHTML={{ __html: String(jsonLd) }} />`. After fix, the per-page JSON-LD will be injected and pages will mount normally."
+}

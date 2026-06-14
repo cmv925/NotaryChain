@@ -68,8 +68,25 @@ const PricingPage = () => {
     setLoading(null);
   };
 
+  const PRICING_FAQ = [
+    { q: 'How much does online notarization cost with NotaryChain?', a: 'NotaryChain offers a free tier to get started, a Professional plan for individuals and small firms, and an Enterprise plan for high-volume and white-label needs. Each notarization includes AI document forensics, biometric identity proofing, and a blockchain seal.' },
+    { q: 'Can I cancel my subscription anytime?', a: 'Yes. Plans are month-to-month and you can upgrade, downgrade, or cancel at any time from your dashboard.' },
+    { q: 'What is included in the Professional plan?', a: 'The Professional plan unlocks AI document generation, the Smart Document Studio, video witness sessions, trust badges, and higher notarization volume.' },
+  ];
+
   return (
     <div className="min-h-screen bg-cream-100">
+      <Seo
+        path="/pricing"
+        title="Pricing — AI-Powered Online Notarization Plans"
+        description="Simple, transparent pricing for NotaryChain. Free, Professional, and Enterprise plans for AI-verified, blockchain-sealed online notarization. Upgrade or cancel anytime."
+        keywords="notarization pricing, online notary cost, RON pricing, blockchain notary plans"
+        jsonLd={graph(
+          offerCatalogSchema(plans.map((p) => ({ name: p.name, price: p.price }))),
+          faqSchema(PRICING_FAQ),
+          breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Pricing' }]),
+        )}
+      />
       <Navbar />
       <div className="pt-24 sm:pt-32 pb-16 sm:pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
