@@ -151,12 +151,28 @@ const AIDocumentGenerator = () => {
     } catch {}
   }, [genId, result, signers, conditions, headers]);
 
+  // Poll an async AI job until it completes; resolves with the result or throws.
+  const pollJob = (jobId) => new Promise((resolve, reject) => {
+    let attempts = 0;
+    const tick = async () => {
+      try {
+        const r = await axios.get(`${API}/ai-generator/jobs/${jobId}`, { headers });
+        if (r.data.status === 'done') return resolve(r.data.result);
+        if (r.data.status === 'failed') return reject(new Error(r.data.error || 'AI job failed'));
+      } catch (e) { /* transient — keep polling */ }
+      if (attempts++ < 40) setTimeout(tick, 1500);
+      else reject(new Error('timeout'));
+    };
+    tick();
+  });
+
   const aiEditSection = async (i, instruction) => {
     try {
-      const res = await axios.post(`${API}/ai-generator/edit-section`, {
+      const start = await axios.post(`${API}/ai-generator/edit-section`, {
         generation_id: genId, section_index: i, instruction,
       }, { headers });
-      setResult(res.data.document);
+      const result = await pollJob(start.data.job_id);
+      setResult(result.document);
       toast({ title: 'Section updated', description: 'AI applied your edit.' });
     } catch (e) {
       toast({ title: 'Error', description: 'AI edit failed', variant: 'destructive' });
@@ -166,11 +182,12 @@ const AIDocumentGenerator = () => {
   const suggestConditions = async () => {
     try {
       await persist();
-      const res = await axios.post(`${API}/ai-generator/suggest-conditions`, { generation_id: genId }, { headers });
+      const start = await axios.post(`${API}/ai-generator/suggest-conditions`, { generation_id: genId }, { headers });
+      const result = await pollJob(start.data.job_id);
       const existing = new Set(conditions.map((c) => c.label.toLowerCase()));
-      const merged = [...conditions, ...res.data.conditions.filter((c) => !existing.has((c.label || '').toLowerCase()))];
+      const merged = [...conditions, ...result.conditions.filter((c) => !existing.has((c.label || '').toLowerCase()))];
       setConditions(merged);
-      toast({ title: 'Conditions suggested', description: `${res.data.conditions.length} trigger conditions found.` });
+      toast({ title: 'Conditions suggested', description: `${result.conditions.length} trigger conditions found.` });
     } catch (e) {
       toast({ title: 'Error', description: 'Condition suggestion failed', variant: 'destructive' });
     }
@@ -183,8 +200,9 @@ const AIDocumentGenerator = () => {
   const runCompliance = async () => {
     try {
       await persist();
-      const res = await axios.post(`${API}/ai-generator/compliance-check`, { generation_id: genId }, { headers });
-      setCompliance(res.data);
+      const start = await axios.post(`${API}/ai-generator/compliance-check`, { generation_id: genId }, { headers });
+      const result = await pollJob(start.data.job_id);
+      setCompliance(result);
     } catch (e) {
       toast({ title: 'Error', description: 'Compliance scan failed', variant: 'destructive' });
     }

@@ -302,6 +302,36 @@ async def _load_gen(gen_id: str, user_id: str) -> Dict[str, Any]:
     return gen
 
 
+# ── Async AI jobs: keep slow LLM work off the request path so it never hits the
+# proxy timeout (502). Callers POST → get {job_id} → poll GET /jobs/{job_id}. ──
+async def _create_job(user_id: str, kind: str) -> str:
+    job_id = str(uuid.uuid4())
+    await db.ai_jobs.insert_one({
+        "id": job_id, "user_id": user_id, "kind": kind, "status": "processing",
+        "result": None, "error": None, "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    return job_id
+
+
+async def _finish_job(job_id: str, result: Any):
+    await db.ai_jobs.update_one({"id": job_id}, {"$set": {
+        "status": "done", "result": result, "completed_at": datetime.now(timezone.utc).isoformat()}})
+
+
+async def _fail_job(job_id: str, error: str):
+    await db.ai_jobs.update_one({"id": job_id}, {"$set": {"status": "failed", "error": error}})
+
+
+@router.get("/jobs/{job_id}")
+async def get_ai_job(job_id: str, current_user: User = Depends(get_current_user)):
+    """Poll an async AI job (edit-section / suggest-conditions / compliance)."""
+    job = await db.ai_jobs.find_one({"id": job_id, "user_id": current_user.id}, {"_id": 0})
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return {"status": job["status"], "result": job.get("result"), "error": job.get("error"), "kind": job.get("kind")}
+
+
+
 _VERIFY_METHOD = {
     "payment": "party_confirmation",
     "delivery": "oracle",
@@ -400,46 +430,53 @@ async def _create_trust_anchor(gen: Dict[str, Any], user, active_conditions: Lis
     return {"escrow_id": escrow_id, "conditions_total": len(conditions), "title": escrow["title"]}
 
 
-@router.post("/edit-section")
-@limiter.limit("15/minute")
-async def edit_section(request: Request, body: EditSectionRequest, current_user: User = Depends(get_current_user)):
-    """AI-edit a single section in place (precise studio editing)."""
-    gen = await _load_gen(body.generation_id, current_user.id)
-    sections = gen["result"].get("sections", []) or []
-    if body.section_index < 0 or body.section_index >= len(sections):
-        raise HTTPException(status_code=400, detail="Invalid section index")
-    target = sections[body.section_index]
-
-    prompt = f"""Rewrite ONLY the following legal-document section per the instruction. Keep it legally sound and consistent with the rest of the document.
+async def _run_edit_section(job_id: str, gen_id: str, section_index: int, instruction: str, user_id: str):
+    try:
+        gen = await db.ai_generated_docs.find_one({"id": gen_id, "user_id": user_id}, {"_id": 0})
+        sections = gen["result"].get("sections", []) or []
+        target = sections[section_index]
+        prompt = f"""Rewrite ONLY the following legal-document section per the instruction. Keep it legally sound and consistent with the rest of the document.
 
 Document title: {gen['result'].get('title', '')}
 Section heading: {target.get('heading', '')}
 Current section content:
 \"\"\"{target.get('content', '')}\"\"\"
 
-Instruction: "{body.instruction}"
+Instruction: "{instruction}"
 
 Return JSON only: {{"heading": "...", "content": "..."}}"""
-    try:
         updated = await _llm_json(
             "You are a precise legal document editor. Respond with valid JSON only.",
             prompt,
-            f"editsec_{body.generation_id}_{datetime.now().timestamp()}",
+            f"editsec_{gen_id}_{datetime.now().timestamp()}",
         )
+        sections[section_index] = {
+            "heading": updated.get("heading", target.get("heading")),
+            "content": updated.get("content", target.get("content")),
+        }
+        gen["result"]["sections"] = sections
+        await db.ai_generated_docs.update_one(
+            {"id": gen_id},
+            {"$set": {"result": gen["result"], "updated_at": datetime.now(timezone.utc).isoformat()}},
+        )
+        await _finish_job(job_id, {"section": sections[section_index], "document": gen["result"]})
     except Exception as e:
         logger.error(f"edit-section error: {e}")
-        raise HTTPException(status_code=500, detail="AI edit failed")
+        await _fail_job(job_id, "AI edit failed")
 
-    sections[body.section_index] = {
-        "heading": updated.get("heading", target.get("heading")),
-        "content": updated.get("content", target.get("content")),
-    }
-    gen["result"]["sections"] = sections
-    await db.ai_generated_docs.update_one(
-        {"id": body.generation_id},
-        {"$set": {"result": gen["result"], "updated_at": datetime.now(timezone.utc).isoformat()}},
-    )
-    return {"section": sections[body.section_index], "document": gen["result"]}
+
+@router.post("/edit-section")
+@limiter.limit("15/minute")
+async def edit_section(request: Request, body: EditSectionRequest, background_tasks: BackgroundTasks,
+                       current_user: User = Depends(get_current_user)):
+    """AI-edit a single section in place (async; poll /jobs/{job_id})."""
+    gen = await _load_gen(body.generation_id, current_user.id)
+    sections = gen["result"].get("sections", []) or []
+    if body.section_index < 0 or body.section_index >= len(sections):
+        raise HTTPException(status_code=400, detail="Invalid section index")
+    job_id = await _create_job(current_user.id, "edit_section")
+    background_tasks.add_task(_run_edit_section, job_id, body.generation_id, body.section_index, body.instruction, current_user.id)
+    return {"job_id": job_id, "status": "processing"}
 
 
 @router.put("/documents/{gen_id}")
@@ -458,36 +495,41 @@ async def save_document(gen_id: str, body: SaveDocRequest, current_user: User = 
     return doc
 
 
-@router.post("/suggest-conditions")
-@limiter.limit("10/minute")
-async def suggest_conditions(request: Request, body: GenIdRequest, current_user: User = Depends(get_current_user)):
-    """AI-extract candidate Trust Anchor trigger conditions from the document.
-
-    These feed the Self-Executing Trust Network (payment due dates, delivery
-    milestones, expirations, etc.)."""
-    gen = await _load_gen(body.generation_id, current_user.id)
-    flat = _flatten_document(gen["result"])
-    prompt = f"""Read this agreement and extract key terms that could act as automated trigger conditions for a self-executing trust/escrow (e.g. payment due dates, delivery milestones, expiration, renewal, deposit release).
+async def _run_suggest_conditions(job_id: str, gen_id: str, user_id: str):
+    try:
+        gen = await db.ai_generated_docs.find_one({"id": gen_id, "user_id": user_id}, {"_id": 0})
+        flat = _flatten_document(gen["result"])
+        prompt = f"""Read this agreement and extract key terms that could act as automated trigger conditions for a self-executing trust/escrow (e.g. payment due dates, delivery milestones, expiration, renewal, deposit release).
 
 Agreement:
 \"\"\"{flat[:6000]}\"\"\"
 
 Return JSON only: {{"conditions": [{{"label": "short name", "type": "payment|delivery|date|renewal|condition", "term": "the exact clause/term text", "trigger": "plain-English description of what fires this condition"}}]}}
 Return at most 6, most important first."""
-    try:
         data = await _llm_json(
             "You extract structured trigger conditions from legal agreements. Respond with valid JSON only.",
             prompt,
-            f"cond_{body.generation_id}_{datetime.now().timestamp()}",
+            f"cond_{gen_id}_{datetime.now().timestamp()}",
         )
         suggestions = data.get("conditions", [])[:6]
+        for c in suggestions:
+            c["id"] = str(uuid.uuid4())
+            c["enabled"] = False
+        await _finish_job(job_id, {"conditions": suggestions})
     except Exception as e:
         logger.error(f"suggest-conditions error: {e}")
-        raise HTTPException(status_code=500, detail="Condition extraction failed")
-    for c in suggestions:
-        c["id"] = str(uuid.uuid4())
-        c["enabled"] = False
-    return {"conditions": suggestions}
+        await _fail_job(job_id, "Condition extraction failed")
+
+
+@router.post("/suggest-conditions")
+@limiter.limit("10/minute")
+async def suggest_conditions(request: Request, body: GenIdRequest, background_tasks: BackgroundTasks,
+                             current_user: User = Depends(get_current_user)):
+    """AI-extract candidate Trust Anchor trigger conditions (async; poll /jobs/{job_id})."""
+    await _load_gen(body.generation_id, current_user.id)
+    job_id = await _create_job(current_user.id, "suggest_conditions")
+    background_tasks.add_task(_run_suggest_conditions, job_id, body.generation_id, current_user.id)
+    return {"job_id": job_id, "status": "processing"}
 
 
 def _rule_based_checks(gen: Dict[str, Any], flat: str) -> List[Dict[str, Any]]:
@@ -515,59 +557,66 @@ def _rule_based_checks(gen: Dict[str, Any], flat: str) -> List[Dict[str, Any]]:
     return issues
 
 
-@router.post("/compliance-check")
-@limiter.limit("8/minute")
-async def compliance_check(request: Request, body: GenIdRequest, current_user: User = Depends(get_current_user)):
-    """Predictive Compliance Vault (PCV) scan — hybrid rule-based + AI review.
-
-    Returns a readiness score and a list of issues/missing clauses before sealing."""
-    gen = await _load_gen(body.generation_id, current_user.id)
-    flat = _flatten_document(gen["result"])
-    doc_type = gen.get("document_type") or gen["result"].get("document_type") or "legal document"
-
-    rule_issues = _rule_based_checks(gen, flat)
-
-    ai_issues: List[Dict[str, Any]] = []
-    missing_clauses: List[str] = []
-    ai_score = None
+async def _run_compliance(job_id: str, gen_id: str, user_id: str):
     try:
-        prompt = f"""Act as a Predictive Compliance Vault reviewing a {doc_type} before blockchain notarization. Identify enforceability/compliance risks and missing standard clauses.
+        gen = await db.ai_generated_docs.find_one({"id": gen_id, "user_id": user_id}, {"_id": 0})
+        flat = _flatten_document(gen["result"])
+        doc_type = gen.get("document_type") or gen["result"].get("document_type") or "legal document"
+
+        rule_issues = _rule_based_checks(gen, flat)
+        ai_issues: List[Dict[str, Any]] = []
+        missing_clauses: List[str] = []
+        ai_score = None
+        try:
+            prompt = f"""Act as a Predictive Compliance Vault reviewing a {doc_type} before blockchain notarization. Identify enforceability/compliance risks and missing standard clauses.
 
 Document:
 \"\"\"{flat[:7000]}\"\"\"
 
 Return JSON only:
 {{"score": 0-100 readiness, "issues": [{{"severity": "high|medium|low", "category": "...", "message": "...", "suggestion": "..."}}], "missing_clauses": ["..."]}}"""
-        data = await _llm_json(
-            "You are a meticulous legal compliance reviewer. Respond with valid JSON only.",
-            prompt,
-            f"pcv_{body.generation_id}_{datetime.now().timestamp()}",
-        )
-        ai_issues = data.get("issues", []) or []
-        missing_clauses = data.get("missing_clauses", []) or []
-        ai_score = data.get("score")
+            data = await _llm_json(
+                "You are a meticulous legal compliance reviewer. Respond with valid JSON only.",
+                prompt,
+                f"pcv_{gen_id}_{datetime.now().timestamp()}",
+            )
+            ai_issues = data.get("issues", []) or []
+            missing_clauses = data.get("missing_clauses", []) or []
+            ai_score = data.get("score")
+        except Exception as e:
+            logger.warning(f"compliance AI step failed, using rules only: {e}")
+
+        all_issues = rule_issues + ai_issues
+        high = sum(1 for i in all_issues if i.get("severity") == "high")
+        medium = sum(1 for i in all_issues if i.get("severity") == "medium")
+        low = sum(1 for i in all_issues if i.get("severity") == "low")
+        rule_score = max(0, 100 - (high * 25 + medium * 10 + low * 3))
+        score = int(round((rule_score + ai_score) / 2)) if isinstance(ai_score, (int, float)) else rule_score
+
+        compliance = {
+            "score": score,
+            "passed": high == 0,
+            "issues": all_issues,
+            "missing_clauses": missing_clauses,
+            "counts": {"high": high, "medium": medium, "low": low},
+            "checked_at": datetime.now(timezone.utc).isoformat(),
+        }
+        await db.ai_generated_docs.update_one({"id": gen_id}, {"$set": {"compliance": compliance}})
+        await _finish_job(job_id, compliance)
     except Exception as e:
-        logger.warning(f"compliance AI step failed, using rules only: {e}")
+        logger.error(f"compliance-check error: {e}")
+        await _fail_job(job_id, "Compliance scan failed")
 
-    all_issues = rule_issues + ai_issues
-    high = sum(1 for i in all_issues if i.get("severity") == "high")
-    medium = sum(1 for i in all_issues if i.get("severity") == "medium")
-    low = sum(1 for i in all_issues if i.get("severity") == "low")
-    rule_score = max(0, 100 - (high * 25 + medium * 10 + low * 3))
-    score = int(round((rule_score + ai_score) / 2)) if isinstance(ai_score, (int, float)) else rule_score
 
-    compliance = {
-        "score": score,
-        "passed": high == 0,
-        "issues": all_issues,
-        "missing_clauses": missing_clauses,
-        "counts": {"high": high, "medium": medium, "low": low},
-        "checked_at": datetime.now(timezone.utc).isoformat(),
-    }
-    await db.ai_generated_docs.update_one(
-        {"id": body.generation_id}, {"$set": {"compliance": compliance}}
-    )
-    return compliance
+@router.post("/compliance-check")
+@limiter.limit("8/minute")
+async def compliance_check(request: Request, body: GenIdRequest, background_tasks: BackgroundTasks,
+                           current_user: User = Depends(get_current_user)):
+    """Predictive Compliance Vault (PCV) scan — hybrid rule-based + AI (async; poll /jobs/{job_id})."""
+    await _load_gen(body.generation_id, current_user.id)
+    job_id = await _create_job(current_user.id, "compliance")
+    background_tasks.add_task(_run_compliance, job_id, body.generation_id, current_user.id)
+    return {"job_id": job_id, "status": "processing"}
 
 
 @router.post("/notarize")

@@ -532,6 +532,8 @@ async def create_indexes():
         # Smart Document Studio + Template Marketplace + Escrow/Anchor (recent collections)
         await db.ai_generated_docs.create_index([("user_id", 1), ("created_at", -1)])
         await db.ai_generated_docs.create_index("id", unique=True)
+        await db.ai_jobs.create_index("id", unique=True)
+        await db.ai_jobs.create_index([("user_id", 1), ("created_at", -1)])
         await db.contract_anchors.create_index("id", unique=True)
         await db.contract_anchors.create_index([("user_id", 1), ("created_at", -1)])
         await db.contract_anchors.create_index("content_hash")

@@ -55,6 +55,21 @@ def test_types(studio_session):
     assert len(r.json()["types"]) > 0
 
 
+def _wait_job(session, job_id, timeout=90):
+    """Poll an async AI job until done; returns the result dict."""
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        r = session.get(f"{BASE_URL}/api/ai-generator/jobs/{job_id}")
+        if r.status_code == 200:
+            d = r.json()
+            if d.get("status") == "done":
+                return d.get("result")
+            if d.get("status") == "failed":
+                raise AssertionError(f"AI job failed: {d.get('error')}")
+        time.sleep(2)
+    raise AssertionError("AI job timed out")
+
+
 def test_edit_section(generated_doc):
     s, gid = generated_doc
     r = s.post(f"{BASE_URL}/api/ai-generator/edit-section", json={
@@ -62,7 +77,9 @@ def test_edit_section(generated_doc):
         "instruction": "Make the parties clause more formal.",
     })
     assert r.status_code == 200, r.text
-    assert r.json()["section"].get("content")
+    assert r.json().get("status") == "processing"
+    result = _wait_job(s, r.json()["job_id"])
+    assert result["section"].get("content") and result.get("document")
 
 
 def test_save_signers_conditions(generated_doc):
@@ -81,7 +98,7 @@ def test_suggest_conditions(generated_doc):
     s, gid = generated_doc
     r = s.post(f"{BASE_URL}/api/ai-generator/suggest-conditions", json={"generation_id": gid})
     assert r.status_code == 200, r.text
-    conds = r.json()["conditions"]
+    conds = _wait_job(s, r.json()["job_id"])["conditions"]
     assert isinstance(conds, list)
     for c in conds:
         assert "id" in c and "label" in c
@@ -91,7 +108,7 @@ def test_compliance_check(generated_doc):
     s, gid = generated_doc
     r = s.post(f"{BASE_URL}/api/ai-generator/compliance-check", json={"generation_id": gid})
     assert r.status_code == 200, r.text
-    body = r.json()
+    body = _wait_job(s, r.json()["job_id"])
     assert "score" in body and "issues" in body and "counts" in body
     assert 0 <= body["score"] <= 100
 
