@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.gzip import GZipMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import asyncio
@@ -179,6 +180,9 @@ app = FastAPI(
 
 # Setup security middleware (rate limiting, headers, logging, sentry)
 setup_security(app)
+
+# Compress responses >1KB (JSON/HTML) — large payload reduction with near-zero cost
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # Create a router with the /api prefix for legacy routes
 api_router = APIRouter(prefix="/api")
@@ -524,6 +528,30 @@ async def create_indexes():
         await db.anan_agent_accuracy.create_index([("agent", 1), ("recorded_at", -1)])
         await db.fraud_patterns.create_index("pattern_id")
         await db.ron_rules.create_index("jurisdiction", unique=True)
+
+        # Smart Document Studio + Template Marketplace + Escrow/Anchor (recent collections)
+        await db.ai_generated_docs.create_index([("user_id", 1), ("created_at", -1)])
+        await db.ai_generated_docs.create_index("id", unique=True)
+        await db.contract_anchors.create_index("id", unique=True)
+        await db.contract_anchors.create_index([("user_id", 1), ("created_at", -1)])
+        await db.contract_anchors.create_index("content_hash")
+        await db.escrow_agreements.create_index("escrow_id", unique=True)
+        await db.escrow_agreements.create_index([("created_by", 1), ("status", 1)])
+        await db.marketplace_templates.create_index("id", unique=True)
+        await db.marketplace_templates.create_index([("status", 1), ("category", 1)])
+        await db.marketplace_templates.create_index([("status", 1), ("sales_count", -1)])
+        await db.marketplace_templates.create_index("creator_id")
+        await db.marketplace_sales.create_index("id", unique=True)
+        await db.marketplace_sales.create_index([("template_id", 1), ("buyer_id", 1)])
+        await db.marketplace_sales.create_index("buyer_id")
+        await db.marketplace_sales.create_index("creator_id")
+        await db.marketplace_sales.create_index("checkout_session_id", sparse=True)
+        await db.marketplace_payouts.create_index([("creator_id", 1), ("status", 1)])
+        await db.marketplace_payouts.create_index("sale_id")
+        await db.payment_transactions.create_index("session_id")
+        await db.payment_transactions.create_index([("user_id", 1), ("created_at", -1)])
+        await db.ceremony_videos.create_index([("notary_request_id", 1)])
+        await db.ceremony_videos.create_index("sha256")
 
         # Seed fraud intelligence data
         from services.fraud_intelligence_service import seed_fraud_intelligence

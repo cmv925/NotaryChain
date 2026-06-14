@@ -3,7 +3,7 @@ AI Document Generator Routes
 Generate legal documents from natural language descriptions using Gemini.
 """
 
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, BackgroundTasks
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
@@ -109,28 +109,17 @@ async def get_clauses(state: Optional[str] = None, category: Optional[str] = Non
     }
 
 
-@router.post("/generate")
-@limiter.limit("5/minute")
-async def generate_document(
-    request: Request,
-    body: GenerateRequest,
-    current_user: User = Depends(get_current_user),
-):
-    """Generate a legal document from a natural language description."""
-    if not body.description.strip():
-        raise HTTPException(status_code=400, detail="Description is required")
+def _generate_prompt(description: str, document_type: Optional[str]) -> str:
+    doc_type_name = DOCUMENT_TEMPLATES.get(document_type, "Legal Document")
+    return f"""You are an expert legal document drafting assistant. Generate a complete, professional legal document based on the user's description.
 
-    doc_type_name = DOCUMENT_TEMPLATES.get(body.document_type, "Legal Document")
-
-    prompt = f"""You are an expert legal document drafting assistant. Generate a complete, professional legal document based on the user's description.
-
-User's request: "{body.description}"
-Document type: {doc_type_name if body.document_type else "Determine the best document type from the description"}
+User's request: "{description}"
+Document type: {doc_type_name if document_type else "Determine the best document type from the description"}
 
 Generate a COMPLETE document with all necessary legal language, clauses, and formatting. Return as JSON:
 {{
   "title": "Document Title",
-  "document_type": "{body.document_type or 'auto-detected type'}",
+  "document_type": "{document_type or 'auto-detected type'}",
   "sections": [
     {{
       "heading": "Section heading",
@@ -153,38 +142,59 @@ Generate a COMPLETE document with all necessary legal language, clauses, and for
 
 Make the document thorough, legally sound, and professionally written. Use [BLANK] for any information the user needs to fill in."""
 
+
+async def _run_generation(gen_id: str, description: str, document_type: Optional[str], user_id: str):
+    """Background worker: runs the (slow) LLM call off the request path so the API
+    never hits the proxy timeout. Frontend polls GET /documents/{id} for status."""
     try:
         chat = LlmChat(
             api_key=EMERGENT_KEY,
-            session_id=f"docgen_{current_user.id}_{datetime.now().timestamp()}",
+            session_id=f"docgen_{user_id}_{datetime.now().timestamp()}",
             system_message="You are a professional legal document generator. Always respond with valid JSON only.",
         )
-        text = await chat.send_message(UserMessage(text=prompt))
-        text = text.strip()
+        text = (await chat.send_message(UserMessage(text=_generate_prompt(description, document_type)))).strip()
         if text.startswith("```"):
             text = text.split("\n", 1)[1].rsplit("```", 1)[0]
         result = json.loads(text)
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=500, detail="AI response parsing failed")
+        await db.ai_generated_docs.update_one(
+            {"id": gen_id},
+            {"$set": {"result": result, "status": "generated",
+                      "document_type": document_type or result.get("document_type"),
+                      "completed_at": datetime.now(timezone.utc).isoformat()}},
+        )
     except Exception as e:
-        logger.error(f"Document generation error: {e}")
-        raise HTTPException(status_code=500, detail="AI generation failed")
+        logger.error(f"Document generation error (gen_id={gen_id}): {e}")
+        await db.ai_generated_docs.update_one(
+            {"id": gen_id},
+            {"$set": {"status": "failed", "error": "AI generation failed"}},
+        )
 
-    # Save generation record
+
+@router.post("/generate")
+@limiter.limit("5/minute")
+async def generate_document(
+    request: Request,
+    body: GenerateRequest,
+    background_tasks: BackgroundTasks,
+    current_user: User = Depends(get_current_user),
+):
+    """Kick off a legal-document generation. Returns immediately with a processing
+    status; the LLM runs in the background and the client polls GET /documents/{id}."""
+    if not body.description.strip():
+        raise HTTPException(status_code=400, detail="Description is required")
+
     gen_id = str(uuid.uuid4())
-    record = {
+    await db.ai_generated_docs.insert_one({
         "id": gen_id,
         "user_id": current_user.id,
         "description": body.description,
-        "document_type": body.document_type or result.get("document_type"),
-        "result": result,
-        "status": "generated",
+        "document_type": body.document_type,
+        "result": None,
+        "status": "processing",
         "created_at": datetime.now(timezone.utc).isoformat(),
-    }
-    await db.ai_generated_docs.insert_one(record)
-    record.pop("_id", None)
-
-    return {"generation_id": gen_id, "document": result}
+    })
+    background_tasks.add_task(_run_generation, gen_id, body.description, body.document_type, current_user.id)
+    return {"generation_id": gen_id, "status": "processing"}
 
 
 @router.post("/refine")
@@ -239,7 +249,7 @@ async def get_my_generations(
 ):
     """List user's generated documents."""
     docs = await db.ai_generated_docs.find(
-        {"user_id": current_user.id}, {"_id": 0, "id": 1, "description": 1, "document_type": 1, "status": 1, "created_at": 1, "result.title": 1}
+        {"user_id": current_user.id, "result": {"$ne": None}}, {"_id": 0, "id": 1, "description": 1, "document_type": 1, "status": 1, "created_at": 1, "result.title": 1}
     ).sort("created_at", -1).to_list(30)
     return {"documents": docs}
 

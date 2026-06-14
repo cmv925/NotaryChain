@@ -8,6 +8,22 @@ Uses the cookie-session login (admin bypasses the identity gate for notarize).
 import pytest
 from credentials import BASE_URL, ADMIN_EMAIL, ADMIN_PASSWORD, UA_HEADERS
 import requests
+import time
+
+
+def _wait_generated(session, gid, timeout=90):
+    """Poll the async generation until the document is ready (status 'generated')."""
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        r = session.get(f"{BASE_URL}/api/ai-generator/documents/{gid}")
+        if r.status_code == 200:
+            d = r.json()
+            if d.get("status") == "generated" and d.get("result"):
+                return d
+            if d.get("status") == "failed":
+                raise AssertionError("generation failed")
+        time.sleep(2)
+    raise AssertionError("generation timed out")
 
 
 @pytest.fixture
@@ -27,9 +43,10 @@ def generated_doc(studio_session):
     })
     assert r.status_code == 200, r.text
     data = r.json()
-    assert data.get("generation_id")
-    assert data["document"].get("sections")
-    return studio_session, data["generation_id"]
+    gid = data.get("generation_id")
+    assert gid and data.get("status") == "processing"
+    _wait_generated(studio_session, gid)
+    return studio_session, gid
 
 
 def test_types(studio_session):
@@ -113,6 +130,7 @@ def test_notarize_creates_trust_anchor(studio_session):
         "description": "Consulting agreement, $2000 monthly retainer.", "document_type": "independent_contractor",
     })
     gid = g.json()["generation_id"]
+    _wait_generated(studio_session, gid)
     studio_session.put(f"{BASE_URL}/api/ai-generator/documents/{gid}", json={
         "generation_id": gid,
         "signers": [{"role": "Client", "name": "Acme", "email": "a@x.com"}],
@@ -138,6 +156,7 @@ def test_marketplace_free_purchase_and_paid_checkout():
         "description": "NDA between two startups.", "document_type": "nda",
     })
     gid = g.json()["generation_id"]
+    _wait_generated(creator, gid)
 
     # ---- FREE template: end-to-end fulfillment ----
     free = creator.post(f"{BASE_URL}/api/template-marketplace/publish", json={

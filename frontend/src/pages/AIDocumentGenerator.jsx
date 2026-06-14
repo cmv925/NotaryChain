@@ -89,6 +89,23 @@ const AIDocumentGenerator = () => {
     setView('studio');
   };
 
+  const pollGeneration = (gid) => new Promise((resolve) => {
+    let attempts = 0;
+    const tick = async () => {
+      try {
+        const r = await axios.get(`${API}/ai-generator/documents/${gid}`, { headers });
+        if (r.data.status === 'generated' && r.data.result) return resolve(r.data);
+        if (r.data.status === 'failed') {
+          toast({ title: 'Generation failed', description: 'Please try again or rephrase your request.', variant: 'destructive' });
+          return resolve(null);
+        }
+      } catch {}
+      if (attempts++ < 40) setTimeout(tick, 1500);
+      else { toast({ title: 'Still working…', description: 'This is taking longer than usual — check Recent Documents shortly.', variant: 'destructive' }); resolve(null); }
+    };
+    tick();
+  });
+
   const handleGenerate = async () => {
     if (!description.trim()) {
       toast({ title: 'Error', description: 'Describe what document you need', variant: 'destructive' });
@@ -100,8 +117,15 @@ const AIDocumentGenerator = () => {
         description,
         document_type: selectedType || undefined,
       }, { headers });
-      enterStudio({ result: res.data.document, id: res.data.generation_id });
-      fetchHistory();
+      // New async flow: poll until the background generation completes.
+      if (res.data.status === 'processing' && res.data.generation_id) {
+        const doc = await pollGeneration(res.data.generation_id);
+        if (doc) { enterStudio(doc); fetchHistory(); }
+      } else if (res.data.document) {
+        // Backward compatibility with synchronous responses.
+        enterStudio({ result: res.data.document, id: res.data.generation_id });
+        fetchHistory();
+      }
     } catch (e) {
       toast({ title: 'Error', description: e.response?.data?.detail || 'Generation failed', variant: 'destructive' });
     }

@@ -213,6 +213,24 @@ class SubscribeRequest(BaseModel):
     origin_url: str
 
 
+async def _get_usage_counts(user_id: str) -> dict:
+    """Current-month usage counts (notarizations / AI analyses / transactions),
+    cached for ~60s to avoid 3 count_documents queries on every dashboard load."""
+    cache_key = f"usage_counts:{user_id}"
+    cached = cache_service.get("stats", cache_key)
+    if cached is not None:
+        return cached
+
+    now = datetime.now(timezone.utc)
+    month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    notar = await db.notarization_requests.count_documents({"user_id": user_id, "created_at": {"$gte": month_start}})
+    ai = await db.ai_analyses.count_documents({"user_id": user_id, "created_at": {"$gte": month_start}})
+    txn = await db.transactions.count_documents({"ownerId": user_id, "created_at": {"$gte": month_start}})
+    counts = {"notarizations": notar, "ai_analyses": ai, "transactions": txn}
+    cache_service.set("stats", cache_key, counts)
+    return counts
+
+
 class SubscriptionResponse(BaseModel):
     plan: dict
     status: str
@@ -258,29 +276,11 @@ async def get_current_subscription(
 
     plan = PLANS.get(sub.get("plan_id", "free"), PLANS["free"])
 
-    # Get usage for current month
-    now = datetime.now(timezone.utc)
-    month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-
-    notarization_count = await db.notarization_requests.count_documents({
-        "user_id": current_user.id,
-        "created_at": {"$gte": month_start}
-    })
-
-    ai_analysis_count = await db.ai_analyses.count_documents({
-        "user_id": current_user.id,
-        "created_at": {"$gte": month_start}
-    })
-
-    transaction_count = await db.transactions.count_documents({
-        "ownerId": current_user.id,
-        "created_at": {"$gte": month_start}
-    })
-
+    counts = await _get_usage_counts(current_user.id)
     usage = {
-        "notarizations": {"used": notarization_count, "limit": plan["limits"]["notarizations_per_month"]},
-        "ai_analyses": {"used": ai_analysis_count, "limit": plan["limits"]["ai_analyses_per_month"]},
-        "transactions": {"used": transaction_count, "limit": plan["limits"]["transactions_per_month"]},
+        "notarizations": {"used": counts["notarizations"], "limit": plan["limits"]["notarizations_per_month"]},
+        "ai_analyses": {"used": counts["ai_analyses"], "limit": plan["limits"]["ai_analyses_per_month"]},
+        "transactions": {"used": counts["transactions"], "limit": plan["limits"]["transactions_per_month"]},
     }
 
     # Serialize datetimes
@@ -698,11 +698,21 @@ async def check_plan_limit(user_id: str, resource: str) -> dict:
 async def get_usage(
     current_user: User = Depends(get_current_user)
 ):
-    """Get detailed usage for current billing period"""
+    """Get detailed usage for current billing period (cached counts)"""
+    plan_id = await get_user_plan(current_user.id)
+    plan = PLANS.get(plan_id, PLANS["free"])
+    counts = await _get_usage_counts(current_user.id)
+    field_map = {
+        "notarizations_per_month": "notarizations",
+        "ai_analyses_per_month": "ai_analyses",
+        "transactions_per_month": "transactions",
+    }
     results = {}
-    for resource in ["notarizations_per_month", "ai_analyses_per_month", "transactions_per_month"]:
-        results[resource] = await check_plan_limit(current_user.id, resource)
-
+    for resource, count_key in field_map.items():
+        limit = plan["limits"].get(resource)
+        used = counts[count_key]
+        results[resource] = {"allowed": used < limit if isinstance(limit, (int, float)) else True,
+                             "used": used, "limit": limit, "plan": plan_id}
     return {"usage": results}
 
 

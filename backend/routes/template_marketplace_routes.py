@@ -110,8 +110,10 @@ async def publish_template(request: Request, body: PublishRequest, current_user:
     if body.royalty_pct < 0 or body.royalty_pct > 50:
         raise HTTPException(status_code=400, detail="Royalty must be between 0 and 50%")
 
-    result = gen.get("result", {})
+    result = gen.get("result") or {}
     sections = result.get("sections", []) or []
+    if not sections:
+        raise HTTPException(status_code=400, detail="Document is still generating or empty — try again in a moment")
     preview = ""
     if sections:
         preview = (sections[0].get("content", "") or "")[:280]
