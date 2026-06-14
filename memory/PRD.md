@@ -228,6 +228,11 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 
 
 ## Changelog (Recent)
+- **2026-06-14 — SEO/AEO verification + P0 fix:**
+  - **Fixed P0 regression:** `Seo.jsx` rendered JSON-LD as a JSX text child of `<script>` inside `<Helmet>` → react-helmet-async invariant crash that took down ALL public pages (/, /pricing, /compliance/states/:code) into the ErrorBoundary. Switched to `<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: String(jsonLd) }} />`. All three pages now render with per-page titles + JSON-LD (verified via Playwright + screenshots).
+  - **Completed SEO injection** the prior fork claimed but never finished: added `<Seo>` (with Product/Offer + FAQPage + BreadcrumbList JSON-LD) to `PricingPage.jsx` and `<Seo>` (Service + BreadcrumbList) to `StateDetail.jsx`.
+  - **Sitemap https fix:** `seo_routes.py` now forces https (honors `x-forwarded-proto`) so `/api/seo/sitemap.xml` emits https `<loc>` URLs. Verified valid XML incl. /, /pricing, state pages, notary profiles.
+  - Test: iteration_125 (sitemap 100%; pages went 0/3→3/3 after fix).
 - **2026-05-27 (v3, fifth pass):**
   - **Marketplace recruitment CTA** (`NotaryMarketplace.jsx`): When a search returns zero notaries, an inline coral banner now appears with "Couldn't find one in your state? Apply to join NotaryChain — earn $25 per notarization" + an *Apply to join the network* button → `/notary-professional`. testids `marketplace-recruit-cta`, `marketplace-become-notary-btn`.
   - **Unified `useDashboardTelemetry()` hook** (`/hooks/useDashboardTelemetry.js`): Single audit stream for both portals + onboarding tour. Module-level ring buffer (last 200 events), `emitTelemetry()` standalone helper (no hook needed — used by `OnboardingTour`), fire-and-forget POST to `/api/telemetry/event`, window-event bridge for cross-tree emitters.

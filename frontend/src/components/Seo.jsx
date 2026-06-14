@@ -58,7 +58,9 @@ export const Seo = ({
       <meta name="twitter:image" content={ogImage} />
       <meta name="twitter:site" content={SITE.twitter} />
 
-      {jsonLd && <script type="application/ld+json">{jsonLd}</script>}
+      {jsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: String(jsonLd) }} />
+      )}
     </Helmet>
   );
 };
