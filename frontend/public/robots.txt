@@ -1,0 +1,56 @@
+# NotaryChain robots.txt
+# Public marketing, directory, verification and compliance pages are open to all
+# crawlers and answer engines. Authenticated app, admin and API surfaces are blocked.
+
+User-agent: *
+Allow: /$
+Allow: /pricing
+Allow: /florida
+Allow: /florida/notaries
+Allow: /notaries
+Allow: /notary/
+Allow: /trustlayer
+Allow: /trust-badge
+Allow: /verify
+Allow: /verify-document
+Allow: /verify-certificate
+Allow: /compliance/states
+Allow: /developers/sdk
+Allow: /scanner/demo
+Allow: /docs
+Allow: /help
+
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /login
+Disallow: /signup
+Disallow: /sso/
+Disallow: /auth/
+Disallow: /kba-test
+Disallow: /ai-generator
+Disallow: /template-marketplace
+Disallow: /my-documents
+Disallow: /my-drafts
+Disallow: /my-anchors
+Disallow: /my-bookings
+Disallow: /reminders
+Disallow: /asset-vault
+Disallow: /escrow
+Disallow: /onboarding
+Disallow: /*?session_id=
+
+# AI answer engines are explicitly welcome to read and cite our content.
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://trust-network-dev.preview.emergentagent.com/sitemap.xml
+Sitemap: https://trust-network-dev.preview.emergentagent.com/api/seo/sitemap.xml

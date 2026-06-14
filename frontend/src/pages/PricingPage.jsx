@@ -6,6 +6,8 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Check, Zap, Building2, Crown, BadgePercent } from 'lucide-react';
 import { Breadcrumbs } from '../components/Breadcrumbs';
+import { Seo } from '../components/Seo';
+import { graph, offerCatalogSchema, faqSchema, breadcrumbSchema } from '../lib/seo';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';

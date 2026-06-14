@@ -1,0 +1,36 @@
+# NotaryChain
+
+> NotaryChain is an AI-powered online notarization and blockchain escrow platform.
+> Documents are scanned by AI forensics for tampering, signers are biometrically
+> identity-proofed (photo ID + face match + knowledge-based authentication), and
+> every notarial seal is cryptographically anchored on the Hedera public
+> blockchain — producing court-admissible, tamper-evident records. The platform is
+> Florida Remote Online Notarization (RON) compliant and expanding across U.S. states.
+
+## What NotaryChain does
+- Remote Online Notarization (RON): notarize documents online over secure video, in minutes.
+- AI document forensics: GPT-powered vision scans each document for tampering and alteration.
+- Biometric identity proofing: government ID verification, selfie/face match, and 5-question KBA.
+- Blockchain sealing: each seal's SHA-256 hash is anchored to the Hedera Consensus Service for public, tamper-evident verification.
+- Smart Document Studio: AI drafting, clause library, compliance checks, and one-click notarization.
+- Digital escrow: self-executing, condition-based escrow with on-chain settlement.
+- Public verification: anyone can verify a document or certificate by its hash, free.
+- Notary directory & trust badge: discover commissioned notaries and display a verifiable trust badge.
+
+## Key questions answered
+- How do I notarize a document online? Create a request, upload the document, complete identity proofing (ID + selfie + KBA), and meet the commissioned notary over secure video; the signed document is sealed and anchored on-chain.
+- Is online notarization legal? Yes — Remote Online Notarization is legally recognized; NotaryChain is built to Florida RON standards and follows state-by-state requirements.
+- How is a NotaryChain document verified? Each document's cryptographic hash is recorded on the Hedera public ledger; anyone can confirm authenticity and integrity at /verify without an account.
+- What makes it tamper-evident? Any change to a sealed document changes its hash, which no longer matches the on-chain record — instantly exposing tampering.
+
+## Primary pages
+- Home: https://trust-network-dev.preview.emergentagent.com/
+- Pricing: https://trust-network-dev.preview.emergentagent.com/pricing
+- Florida online notarization: https://trust-network-dev.preview.emergentagent.com/florida
+- Notary directory: https://trust-network-dev.preview.emergentagent.com/notaries
+- Verify a document: https://trust-network-dev.preview.emergentagent.com/verify
+- State compliance: https://trust-network-dev.preview.emergentagent.com/compliance/states
+- Developer SDK: https://trust-network-dev.preview.emergentagent.com/developers/sdk
+
+## Contact
+- Website: https://trust-network-dev.preview.emergentagent.com/

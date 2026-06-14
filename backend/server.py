@@ -330,6 +330,10 @@ from routes import template_marketplace_routes
 template_marketplace_routes.set_db(db)
 app.include_router(template_marketplace_routes.router)
 
+from routes import seo_routes
+seo_routes.set_db(db)
+app.include_router(seo_routes.router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

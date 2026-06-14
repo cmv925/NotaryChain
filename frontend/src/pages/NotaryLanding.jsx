@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Seo } from '../components/Seo';
+import { graph, faqSchema, serviceSchema, breadcrumbSchema } from '../lib/seo';
 import {
   ShieldCheck, Award, FileSignature, Stamp, Sparkles, ChevronRight,
   CheckCircle2, ArrowRight, Lock, Users, MapPin, Camera,
@@ -7,6 +9,14 @@ import {
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
+
+const HOME_FAQ = [
+  { q: 'Is online notarization legal?', a: 'Yes. Remote Online Notarization (RON) is legally recognized across most U.S. states. NotaryChain is built to Florida RON standards (Statute 117) and follows each state\u2019s specific requirements, producing court-admissible records.' },
+  { q: 'How do I notarize a document online with NotaryChain?', a: 'Create a notarization request, upload your document, complete identity proofing (government ID + selfie face match + knowledge-based authentication), then meet a commissioned notary over a secure live video session. The executed document is sealed and anchored on the Hedera blockchain \u2014 usually in under 15 minutes.' },
+  { q: 'How is a NotaryChain document verified?', a: 'Every sealed document\u2019s SHA-256 hash is recorded on the Hedera public ledger. Anyone can confirm a document\u2019s authenticity and integrity for free at /verify \u2014 no account required. Any tampering changes the hash and is instantly detectable.' },
+  { q: 'What documents can I notarize online?', a: 'Real estate deeds and mortgages, wills and trusts, powers of attorney, business affidavits and resolutions, custodial agreements, and specialty acts such as acknowledgments, jurats, and oaths.' },
+  { q: 'What makes NotaryChain different from a traditional notary?', a: 'Traditional notaries rely on an ink stamp and a one-time ID check. NotaryChain adds AI document forensics, continuous biometric identity trust, and a cryptographic seal anchored to a public blockchain \u2014 so the proof is tamper-evident and outlasts the notary, the paper, and even the platform.' },
+];
 
 export default function NotaryLanding() {
   const [stats, setStats] = useState(null);
@@ -20,6 +30,20 @@ export default function NotaryLanding() {
 
   return (
     <div className="min-h-screen bg-cream-100 font-sans text-navy-900">
+      <Seo
+        path="/"
+        title="Online Notarization in Minutes — AI-Verified & Blockchain-Sealed"
+        description="Notarize documents online in minutes with NotaryChain. AI forensics scan for tampering, signers are biometrically identity-proofed, and every seal is anchored on the Hedera blockchain. Florida RON-compliant and court-admissible."
+        keywords="online notarization, remote online notary, notarize document online, RON Florida, blockchain notary, digital notary"
+        jsonLd={graph(
+          serviceSchema({
+            name: 'Online Notarization',
+            description: 'AI-verified, blockchain-sealed remote online notarization for deeds, wills, powers of attorney, and business documents.',
+            serviceType: 'Remote Online Notarization',
+          }),
+          faqSchema(HOME_FAQ),
+        )}
+      />
       {/* Top nav */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-50" data-testid="public-nav">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3 sm:gap-6">
