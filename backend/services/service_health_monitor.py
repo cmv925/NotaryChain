@@ -59,11 +59,11 @@ async def _check_s3():
 
 async def _check_stripe():
     """Check Stripe API connectivity."""
-    if not os.environ.get("STRIPE_SECRET_KEY"):
+    if not os.environ.get("STRIPE_API_KEY"):
         return {"service": "Stripe", "status": "not_configured", "detail": "No key"}
     try:
         import stripe
-        stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
+        stripe.api_key = os.environ.get("STRIPE_API_KEY")
         stripe.Account.retrieve()
         return {"service": "Stripe", "status": "healthy", "detail": "API reachable"}
     except Exception as e:

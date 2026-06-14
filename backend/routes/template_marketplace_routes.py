@@ -1,25 +1,36 @@
 """
 Template Marketplace — publish, browse, and purchase document templates created
-in the Smart Document Studio, with creator royalties recorded on a ledger and the
-sale receipt anchored on Hedera HCS.
+in the Smart Document Studio, with creator royalties paid out via Stripe Connect.
 
-Payment is SIMULATED (no real card charge) — purchases are recorded and the buyer
-receives an editable copy in their Studio. Royalty splits are tracked per sale.
+Payment flow (real Stripe Checkout):
+  • Free templates  → fulfilled instantly.
+  • Paid templates  → buyer pays the platform via Stripe Checkout; on confirmed
+    payment the buyer gets an editable copy, the sale receipt is anchored on
+    Hedera, and the creator royalty is transferred to their connected Stripe
+    account (or recorded as a *pending* payout if they haven't onboarded yet).
 """
 from fastapi import APIRouter, HTTPException, Depends, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timezone
+import os
 import hashlib
 import uuid
 import re
 import logging
 
+from emergentintegrations.payments.stripe.checkout import (
+    StripeCheckout,
+    CheckoutSessionRequest,
+    CheckoutSessionResponse,
+    CheckoutStatusResponse,
+)
 from models import User
 from routes.auth_routes import get_current_user
 from middleware.security import limiter
 from services.hedera_service import hedera_service
+from services import stripe_connect_service as connect
 
 logger = logging.getLogger(__name__)
 
@@ -134,11 +145,24 @@ async def publish_template(request: Request, body: PublishRequest, current_user:
 async def my_listings(current_user: User = Depends(get_current_user)):
     cursor = db.marketplace_templates.find({"creator_id": current_user.id}).sort("created_at", -1)
     items = [{**_public_listing(t), "status": t.get("status")} async for t in cursor]
-    # earnings summary from the royalty/sales ledger
-    earnings = 0.0
-    async for s in db.marketplace_sales.find({"creator_id": current_user.id}, {"_id": 0, "creator_earnings": 1}):
-        earnings += s.get("creator_earnings", 0.0)
-    return {"listings": items, "total_earnings": round(earnings, 2)}
+    # Royalty summary from the payout ledger.
+    total = pending = paid = 0.0
+    async for p in db.marketplace_payouts.find({"creator_id": current_user.id}, {"_id": 0, "amount": 1, "status": 1}):
+        amt = p.get("amount", 0.0)
+        total += amt
+        if p.get("status") == "paid":
+            paid += amt
+        else:
+            pending += amt
+    user_doc = await db.users.find_one({"id": current_user.id}, {"_id": 0, "stripe_payouts_enabled": 1, "stripe_connect_account_id": 1})
+    return {
+        "listings": items,
+        "total_earnings": round(total, 2),
+        "pending_payout": round(pending, 2),
+        "paid_out": round(paid, 2),
+        "payouts_connected": bool((user_doc or {}).get("stripe_payouts_enabled")),
+        "connect_started": bool((user_doc or {}).get("stripe_connect_account_id")),
+    }
 
 
 @router.get("/my/purchases")
@@ -166,19 +190,50 @@ async def get_template(template_id: str, current_user: User = Depends(get_curren
     return listing
 
 
-@router.post("/{template_id}/purchase")
-@limiter.limit("10/minute")
-async def purchase_template(template_id: str, request: Request, current_user: User = Depends(get_current_user)):
-    """Purchase a template (SIMULATED payment). Records the royalty split, anchors a
-    receipt on Hedera, and clones the document into the buyer's Studio."""
-    t = await db.marketplace_templates.find_one({"id": template_id}, {"_id": 0})
-    if not t:
-        raise HTTPException(status_code=404, detail="Template not found")
-    if t["creator_id"] == current_user.id:
-        raise HTTPException(status_code=400, detail="You already own this template")
-    existing = await db.marketplace_sales.find_one({"template_id": template_id, "buyer_id": current_user.id})
+async def _payout_creator(sale: dict, template: dict):
+    """Pay the creator their royalty via Stripe Connect, or record a pending payout
+    if they haven't connected an account (sale is never blocked on payout)."""
+    amount = sale["creator_earnings"]
+    now = datetime.now(timezone.utc).isoformat()
+    payout = {
+        "id": str(uuid.uuid4()),
+        "sale_id": sale["id"],
+        "template_id": sale["template_id"],
+        "creator_id": sale["creator_id"],
+        "creator_email": sale.get("creator_email"),
+        "amount": amount,
+        "currency": "usd",
+        "status": "pending",
+        "transfer_id": None,
+        "created_at": now,
+    }
+    if amount <= 0:
+        payout["status"] = "not_applicable"
+        await db.marketplace_payouts.insert_one(payout)
+        return payout
+
+    creator = await db.users.find_one({"id": sale["creator_id"]}, {"_id": 0, "stripe_connect_account_id": 1, "stripe_payouts_enabled": 1})
+    acct = (creator or {}).get("stripe_connect_account_id")
+    if acct and (creator or {}).get("stripe_payouts_enabled"):
+        res = await connect.transfer_to_creator(amount, acct, {"sale_id": sale["id"], "template_id": sale["template_id"]})
+        if res.get("status") == "paid":
+            payout["status"] = "paid"
+            payout["transfer_id"] = res.get("transfer_id")
+            payout["paid_at"] = now
+        else:
+            payout["status"] = "pending"
+            payout["last_error"] = res.get("error")
+    # else: creator not connected → remains pending for later payout
+    await db.marketplace_payouts.insert_one(payout)
+    return payout
+
+
+async def _fulfill_sale(t: dict, buyer: User, payment_status: str = "paid", session_id: Optional[str] = None) -> dict:
+    """Idempotently fulfill a marketplace purchase: clone the doc into the buyer's
+    Studio, anchor a receipt on Hedera, record the sale, and pay out the creator."""
+    existing = await db.marketplace_sales.find_one({"template_id": t["id"], "buyer_id": buyer.id}, {"_id": 0})
     if existing:
-        raise HTTPException(status_code=400, detail="You have already purchased this template")
+        return existing
 
     now = datetime.now(timezone.utc).isoformat()
     price = float(t.get("price_usd", 0.0))
@@ -186,36 +241,33 @@ async def purchase_template(template_id: str, request: Request, current_user: Us
     creator_earnings = round(price * royalty_pct / 100.0, 2)
     platform_fee = round(price - creator_earnings, 2)
 
-    # Clone the template into the buyer's Studio as an editable generated doc.
     new_gen_id = str(uuid.uuid4())
     await db.ai_generated_docs.insert_one({
         "id": new_gen_id,
-        "user_id": current_user.id,
+        "user_id": buyer.id,
         "description": f"Purchased from marketplace: {t['title']}",
         "document_type": t.get("category"),
         "result": t.get("document", {}),
         "status": "generated",
-        "marketplace_template_id": template_id,
+        "marketplace_template_id": t["id"],
         "created_at": now,
     })
 
-    # Anchor a sale receipt on Hedera HCS (tamper-evident royalty record).
-    receipt = f"{template_id}|{current_user.id}|{t['creator_id']}|{price}|{royalty_pct}|{now}"
+    receipt = f"{t['id']}|{buyer.id}|{t['creator_id']}|{price}|{royalty_pct}|{now}"
     receipt_hash = hashlib.sha256(receipt.encode()).hexdigest()
     seal = await hedera_service.seal_document(
         document_hash=receipt_hash,
         document_name=f"Template Sale Receipt — {t['title']}",
-        user_id=current_user.id,
-        metadata={"kind": "template_sale", "template_id": template_id, "royalty_pct": royalty_pct},
+        user_id=buyer.id,
+        metadata={"kind": "template_sale", "template_id": t["id"], "royalty_pct": royalty_pct},
     )
 
-    sale_id = str(uuid.uuid4())
     sale = {
-        "id": sale_id,
-        "template_id": template_id,
+        "id": str(uuid.uuid4()),
+        "template_id": t["id"],
         "template_title": t["title"],
-        "buyer_id": current_user.id,
-        "buyer_email": current_user.email,
+        "buyer_id": buyer.id,
+        "buyer_email": buyer.email,
         "creator_id": t["creator_id"],
         "creator_email": t.get("creator_email"),
         "price_usd": price,
@@ -226,23 +278,161 @@ async def purchase_template(template_id: str, request: Request, current_user: Us
         "receipt_hash": receipt_hash,
         "transaction_id": seal.get("transaction_id"),
         "explorer_url": seal.get("explorer_url"),
-        "payment_status": "simulated",
+        "payment_status": payment_status,
+        "checkout_session_id": session_id,
         "purchased_at": now,
     }
     await db.marketplace_sales.insert_one(sale)
-    await db.marketplace_templates.update_one({"id": template_id}, {"$inc": {"sales_count": 1}})
-
+    await db.marketplace_templates.update_one({"id": t["id"]}, {"$inc": {"sales_count": 1}})
+    payout = await _payout_creator(sale, t)
     sale.pop("_id", None)
-    return {
-        "success": True,
-        "sale_id": sale_id,
-        "generation_id": new_gen_id,
-        "creator_earnings": creator_earnings,
-        "receipt_hash": receipt_hash,
-        "transaction_id": sale["transaction_id"],
-        "explorer_url": sale["explorer_url"],
-        "message": "Template purchased. An editable copy is now in your Studio.",
+    sale["payout_status"] = payout["status"]
+    return sale
+
+
+class CheckoutRequest(BaseModel):
+    origin_url: str
+
+
+@router.post("/{template_id}/checkout")
+@limiter.limit("10/minute")
+async def checkout_template(template_id: str, body: CheckoutRequest, request: Request, current_user: User = Depends(get_current_user)):
+    """Start a purchase. Free templates fulfill instantly; paid templates return a
+    Stripe Checkout URL (price is fixed server-side — never trusted from the client)."""
+    t = await db.marketplace_templates.find_one({"id": template_id}, {"_id": 0})
+    if not t:
+        raise HTTPException(status_code=404, detail="Template not found")
+    if t["creator_id"] == current_user.id:
+        raise HTTPException(status_code=400, detail="You already own this template")
+    if await db.marketplace_sales.find_one({"template_id": template_id, "buyer_id": current_user.id}):
+        raise HTTPException(status_code=400, detail="You have already purchased this template")
+
+    price = float(t.get("price_usd", 0.0))  # server-side price
+    if price <= 0:
+        sale = await _fulfill_sale(t, current_user, payment_status="free")
+        return {"free": True, "sale_id": sale["id"], "generation_id": sale["cloned_generation_id"],
+                "message": "Template added. An editable copy is now in your Studio."}
+
+    api_key = os.environ.get("STRIPE_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Payment system not configured")
+
+    origin = body.origin_url.rstrip("/")
+    success_url = f"{origin}/template-marketplace?session_id={{CHECKOUT_SESSION_ID}}"
+    cancel_url = f"{origin}/template-marketplace"
+    webhook_url = f"{str(request.base_url).rstrip('/')}/api/webhook/stripe"
+    stripe_checkout = StripeCheckout(api_key=api_key, webhook_url=webhook_url)
+
+    metadata = {
+        "type": "marketplace_purchase",
+        "template_id": template_id,
+        "buyer_id": current_user.id,
+        "buyer_email": current_user.email,
+        "creator_id": t["creator_id"],
     }
+    try:
+        session: CheckoutSessionResponse = await stripe_checkout.create_checkout_session(
+            CheckoutSessionRequest(amount=price, currency="usd", success_url=success_url, cancel_url=cancel_url, metadata=metadata)
+        )
+    except Exception as e:
+        logger.error("Marketplace checkout error: %s", e)
+        raise HTTPException(status_code=500, detail="Failed to create checkout session")
+
+    await db.payment_transactions.insert_one({
+        "id": str(uuid.uuid4()),
+        "session_id": session.session_id,
+        "type": "marketplace_purchase",
+        "template_id": template_id,
+        "user_id": current_user.id,
+        "user_email": current_user.email,
+        "amount": price,
+        "currency": "usd",
+        "payment_status": "pending",
+        "status": "initiated",
+        "metadata": metadata,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    return {"free": False, "checkout_url": session.url, "session_id": session.session_id}
+
+
+@router.get("/checkout/status/{session_id}")
+async def marketplace_checkout_status(session_id: str, current_user: User = Depends(get_current_user)):
+    """Poll a marketplace Checkout session; fulfill the purchase on first confirmed payment."""
+    txn = await db.payment_transactions.find_one({"session_id": session_id, "user_id": current_user.id}, {"_id": 0})
+    if not txn:
+        raise HTTPException(status_code=404, detail="Payment not found")
+    if txn.get("status") == "completed":
+        sale = await db.marketplace_sales.find_one({"checkout_session_id": session_id}, {"_id": 0})
+        return {"status": "complete", "payment_status": "paid",
+                "generation_id": (sale or {}).get("cloned_generation_id")}
+
+    api_key = os.environ.get("STRIPE_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Payment system not configured")
+    try:
+        stripe_checkout = StripeCheckout(api_key=api_key, webhook_url="")
+        cs: CheckoutStatusResponse = await stripe_checkout.get_checkout_status(session_id)
+    except Exception as e:
+        logger.error("Marketplace status error: %s", e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+    if cs.payment_status == "paid" and txn.get("status") != "completed":
+        t = await db.marketplace_templates.find_one({"id": txn["template_id"]}, {"_id": 0})
+        if not t:
+            raise HTTPException(status_code=404, detail="Template no longer available")
+        sale = await _fulfill_sale(t, current_user, payment_status="paid", session_id=session_id)
+        await db.payment_transactions.update_one(
+            {"session_id": session_id},
+            {"$set": {"status": "completed", "payment_status": "paid", "completed_at": datetime.now(timezone.utc).isoformat()}},
+        )
+        return {"status": "complete", "payment_status": "paid", "generation_id": sale["cloned_generation_id"]}
+
+    return {"status": cs.status, "payment_status": cs.payment_status}
+
+
+# ── Creator payout onboarding (Stripe Connect Express) ──
+
+class OnboardRequest(BaseModel):
+    origin_url: str
+
+
+@router.get("/connect/status")
+async def connect_status(current_user: User = Depends(get_current_user)):
+    """Whether the creator can receive royalty payouts."""
+    if not connect.is_configured():
+        return {"configured": False, "connected": False, "payouts_enabled": False}
+    user_doc = await db.users.find_one({"id": current_user.id}, {"_id": 0, "stripe_connect_account_id": 1, "stripe_payouts_enabled": 1})
+    acct = (user_doc or {}).get("stripe_connect_account_id")
+    if not acct:
+        return {"configured": True, "connected": False, "payouts_enabled": False}
+    st = await connect.account_status(acct)
+    payouts_enabled = bool(st.get("payouts_enabled"))
+    if payouts_enabled != (user_doc or {}).get("stripe_payouts_enabled"):
+        await db.users.update_one({"id": current_user.id}, {"$set": {"stripe_payouts_enabled": payouts_enabled}})
+    return {"configured": True, "connected": True, "payouts_enabled": payouts_enabled,
+            "details_submitted": st.get("details_submitted", False)}
+
+
+@router.post("/connect/onboard")
+@limiter.limit("6/minute")
+async def connect_onboard(body: OnboardRequest, request: Request, current_user: User = Depends(get_current_user)):
+    """Create/refresh the creator's Stripe Express account and return an onboarding URL."""
+    if not connect.is_configured():
+        raise HTTPException(status_code=503, detail="Payouts are not configured")
+    user_doc = await db.users.find_one({"id": current_user.id}, {"_id": 0, "stripe_connect_account_id": 1})
+    acct = (user_doc or {}).get("stripe_connect_account_id")
+    if not acct:
+        res = await connect.create_express_account(current_user.email)
+        if res.get("error"):
+            raise HTTPException(status_code=502, detail=f"Could not start payout onboarding: {res['error']}")
+        acct = res["account_id"]
+        await db.users.update_one({"id": current_user.id}, {"$set": {"stripe_connect_account_id": acct}})
+
+    origin = body.origin_url.rstrip("/")
+    link = await connect.onboarding_link(acct, refresh_url=f"{origin}/template-marketplace", return_url=f"{origin}/template-marketplace")
+    if link.get("error"):
+        raise HTTPException(status_code=502, detail=f"Could not create onboarding link: {link['error']}")
+    return {"onboarding_url": link["url"]}
 
 
 @router.delete("/{template_id}")

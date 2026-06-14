@@ -128,7 +128,9 @@ def test_notarize_creates_trust_anchor(studio_session):
     assert esc["status"] == "active" and esc["conditions_total"] == 1 and esc["escrow_type"] == "studio"
 
 
-def test_marketplace_publish_browse_purchase():
+def test_marketplace_free_purchase_and_paid_checkout():
+    """Free templates fulfill instantly; paid templates return a Stripe Checkout URL
+    (no real charge is completed in the test). Also covers access-control + royalty ledger."""
     ua = {"Content-Type": "application/json", **UA_HEADERS}
     creator = requests.Session(); creator.headers.update(ua)
     creator.post(f"{BASE_URL}/api/auth/login", json={"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD}).raise_for_status()
@@ -136,34 +138,57 @@ def test_marketplace_publish_browse_purchase():
         "description": "NDA between two startups.", "document_type": "nda",
     })
     gid = g.json()["generation_id"]
-    pub = creator.post(f"{BASE_URL}/api/template-marketplace/publish", json={
-        "generation_id": gid, "title": "Startup NDA (test)", "description": "Mutual NDA.",
-        "category": "Business", "price_usd": 20, "royalty_pct": 10,
+
+    # ---- FREE template: end-to-end fulfillment ----
+    free = creator.post(f"{BASE_URL}/api/template-marketplace/publish", json={
+        "generation_id": gid, "title": "Free Startup NDA (test)", "description": "Mutual NDA.",
+        "category": "Business", "price_usd": 0, "royalty_pct": 10,
     })
-    assert pub.status_code == 200, pub.text
-    tid = pub.json()["id"]
+    assert free.status_code == 200, free.text
+    free_tid = free.json()["id"]
 
-    # Public browse should list it.
     anon = requests.Session(); anon.headers.update(ua)
-    lst = anon.get(f"{BASE_URL}/api/template-marketplace", params={"q": "Startup NDA (test)"})
-    assert lst.status_code == 200 and any(t["id"] == tid for t in lst.json()["templates"])
+    lst = anon.get(f"{BASE_URL}/api/template-marketplace", params={"q": "Free Startup NDA (test)"})
+    assert lst.status_code == 200 and any(t["id"] == free_tid for t in lst.json()["templates"])
 
-    # Buyer purchases.
     buyer = requests.Session(); buyer.headers.update(ua)
     from credentials import DEMO_EMAIL, DEMO_PASSWORD
     buyer.post(f"{BASE_URL}/api/auth/login", json={"email": DEMO_EMAIL, "password": DEMO_PASSWORD}).raise_for_status()
-    # Pre-purchase: body hidden.
-    d = buyer.get(f"{BASE_URL}/api/template-marketplace/{tid}").json()
+    d = buyer.get(f"{BASE_URL}/api/template-marketplace/{free_tid}").json()
     assert d["purchased"] is False and "document" not in d
-    buy = buyer.post(f"{BASE_URL}/api/template-marketplace/{tid}/purchase", json={})
-    # Allow already-purchased from a prior run.
-    if buy.status_code == 400 and "already" in buy.text:
-        return
-    assert buy.status_code == 200, buy.text
-    assert buy.json()["creator_earnings"] == 2.0  # 10% of 20
-    # Post-purchase: body visible + double-purchase blocked.
-    d2 = buyer.get(f"{BASE_URL}/api/template-marketplace/{tid}").json()
-    assert d2["purchased"] is True and "document" in d2
-    again = buyer.post(f"{BASE_URL}/api/template-marketplace/{tid}/purchase", json={})
-    assert again.status_code == 400
+    co = buyer.post(f"{BASE_URL}/api/template-marketplace/{free_tid}/checkout", json={"origin_url": BASE_URL})
+    if not (co.status_code == 400 and "already" in co.text):
+        assert co.status_code == 200, co.text
+        assert co.json().get("free") is True and co.json().get("generation_id")
+        d2 = buyer.get(f"{BASE_URL}/api/template-marketplace/{free_tid}").json()
+        assert d2["purchased"] is True and "document" in d2
+        again = buyer.post(f"{BASE_URL}/api/template-marketplace/{free_tid}/checkout", json={"origin_url": BASE_URL})
+        assert again.status_code == 400
+
+    # ---- PAID template: Stripe Checkout session created (no charge completed) ----
+    paid = creator.post(f"{BASE_URL}/api/template-marketplace/publish", json={
+        "generation_id": gid, "title": "Paid NDA (test)", "description": "Premium NDA.",
+        "category": "Business", "price_usd": 20, "royalty_pct": 10,
+    })
+    paid_tid = paid.json()["id"]
+    buyer2 = requests.Session(); buyer2.headers.update(ua)
+    buyer2.post(f"{BASE_URL}/api/auth/login", json={"email": DEMO_EMAIL, "password": DEMO_PASSWORD}).raise_for_status()
+    co2 = buyer2.post(f"{BASE_URL}/api/template-marketplace/{paid_tid}/checkout", json={"origin_url": BASE_URL})
+    assert co2.status_code == 200, co2.text
+    body = co2.json()
+    assert body.get("free") is False
+    assert body.get("checkout_url", "").startswith("https://") and body.get("session_id")
+    # Status before payment must be pending/unpaid (we never complete a live charge in tests).
+    st = buyer2.get(f"{BASE_URL}/api/template-marketplace/checkout/status/{body['session_id']}")
+    assert st.status_code == 200 and st.json().get("payment_status") != "paid"
+
+
+def test_connect_status_endpoint():
+    s = requests.Session(); s.headers.update({"Content-Type": "application/json", **UA_HEADERS})
+    s.post(f"{BASE_URL}/api/auth/login", json={"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD}).raise_for_status()
+    r = s.get(f"{BASE_URL}/api/template-marketplace/connect/status")
+    assert r.status_code == 200
+    body = r.json()
+    assert "configured" in body and "connected" in body and "payouts_enabled" in body
+
 

@@ -30,6 +30,8 @@ const TemplateMarketplace = () => {
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
   const [earnings, setEarnings] = useState(0);
+  const [payoutInfo, setPayoutInfo] = useState({ pending_payout: 0, paid_out: 0, payouts_connected: false, connect_started: false });
+  const [connecting, setConnecting] = useState(false);
   const [purchases, setPurchases] = useState([]);
   const [selected, setSelected] = useState(null);
   const [buying, setBuying] = useState(false);
@@ -46,6 +48,20 @@ const TemplateMarketplace = () => {
     setLoading(false);
   }, [category, q]);
 
+  const fetchListings = useCallback(async () => {
+    try {
+      const r = await axios.get(`${API}/template-marketplace/my/listings`, { headers });
+      setListings(r.data.listings || []);
+      setEarnings(r.data.total_earnings || 0);
+      setPayoutInfo({
+        pending_payout: r.data.pending_payout || 0,
+        paid_out: r.data.paid_out || 0,
+        payouts_connected: !!r.data.payouts_connected,
+        connect_started: !!r.data.connect_started,
+      });
+    } catch {}
+  }, [headers]);
+
   useEffect(() => {
     axios.get(`${API}/template-marketplace/categories`).then((r) => setCategories(r.data.categories || [])).catch(() => {});
   }, []);
@@ -53,15 +69,46 @@ const TemplateMarketplace = () => {
   useEffect(() => { if (tab === 'browse') fetchBrowse(); }, [tab, fetchBrowse]);
 
   useEffect(() => {
-    if (tab === 'listings') {
-      axios.get(`${API}/template-marketplace/my/listings`, { headers }).then((r) => {
-        setListings(r.data.listings || []); setEarnings(r.data.total_earnings || 0);
-      }).catch(() => {});
-    }
+    if (tab === 'listings') fetchListings();
     if (tab === 'purchases') {
       axios.get(`${API}/template-marketplace/my/purchases`, { headers }).then((r) => setPurchases(r.data.purchases || [])).catch(() => {});
     }
-  }, [tab, headers]);
+  }, [tab, headers, fetchListings]);
+
+  // Return-from-Stripe: poll the marketplace checkout session and fulfill.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sid = params.get('session_id');
+    if (!sid) return;
+    let attempts = 0;
+    const clear = () => window.history.replaceState({}, '', '/template-marketplace');
+    const poll = async () => {
+      try {
+        const r = await axios.get(`${API}/template-marketplace/checkout/status/${sid}`, { headers });
+        if (r.data.payment_status === 'paid' || r.data.status === 'complete') {
+          toast({ title: 'Payment successful', description: 'Your template is now in My Purchases.' });
+          clear(); setTab('purchases');
+          return;
+        }
+        if (r.data.status === 'expired') { toast({ title: 'Payment expired', variant: 'destructive' }); clear(); return; }
+      } catch { /* keep trying */ }
+      if (attempts++ < 6) setTimeout(poll, 2000);
+      else { clear(); }
+    };
+    poll();
+  }, [headers]);
+
+  const startPayoutOnboarding = async () => {
+    setConnecting(true);
+    try {
+      const r = await axios.post(`${API}/template-marketplace/connect/onboard`, { origin_url: window.location.origin }, { headers });
+      if (r.data.onboarding_url) window.location.href = r.data.onboarding_url;
+    } catch (e) {
+      toast({ title: 'Payouts setup unavailable', description: e.response?.data?.detail || 'Try again later', variant: 'destructive' });
+    } finally {
+      setConnecting(false);
+    }
+  };
 
   const openDetail = async (id) => {
     try {
@@ -76,10 +123,14 @@ const TemplateMarketplace = () => {
     if (!selected) return;
     setBuying(true);
     try {
-      const res = await axios.post(`${API}/template-marketplace/${selected.id}/purchase`, {}, { headers });
-      toast({ title: 'Purchased!', description: 'View it any time under My Purchases.' });
-      setSelected(null);
-      setTab('purchases'); // marketplace is ungated; the buyer can read their copy here
+      const res = await axios.post(`${API}/template-marketplace/${selected.id}/checkout`, { origin_url: window.location.origin }, { headers });
+      if (res.data.free) {
+        toast({ title: 'Added!', description: 'View it any time under My Purchases.' });
+        setSelected(null);
+        setTab('purchases');
+      } else if (res.data.checkout_url) {
+        window.location.href = res.data.checkout_url; // redirect to Stripe Checkout
+      }
       return res;
     } catch (e) {
       toast({ title: 'Error', description: e.response?.data?.detail || 'Purchase failed', variant: 'destructive' });
@@ -160,10 +211,37 @@ const TemplateMarketplace = () => {
 
           {tab === 'listings' && (
             <>
-              <Card className="bg-white border-slate-200 mb-4"><CardContent className="p-4 flex items-center justify-between">
-                <span className="text-sm text-slate-500">Total royalty earnings</span>
-                <span className="text-2xl font-bold text-emerald-600" data-testid="market-earnings">${earnings.toFixed(2)}</span>
-              </CardContent></Card>
+              <Card className="bg-white border-slate-200 mb-4" data-testid="market-earnings-card">
+                <CardContent className="p-4">
+                  <div className="grid grid-cols-3 gap-4 mb-3">
+                    <div>
+                      <p className="text-xs text-slate-500">Total royalties</p>
+                      <p className="text-2xl font-bold text-emerald-600" data-testid="market-earnings">${earnings.toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500">Pending payout</p>
+                      <p className="text-2xl font-bold text-amber-600" data-testid="market-pending-payout">${payoutInfo.pending_payout.toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500">Paid out</p>
+                      <p className="text-2xl font-bold text-navy-700">${payoutInfo.paid_out.toFixed(2)}</p>
+                    </div>
+                  </div>
+                  {payoutInfo.payouts_connected ? (
+                    <div className="flex items-center gap-2 text-emerald-600 text-xs" data-testid="market-payouts-connected">
+                      <CheckCircle2 className="w-4 h-4" /> Stripe payouts connected — royalties are transferred automatically.
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between gap-3 bg-cream-100 rounded-lg p-3 border border-slate-200">
+                      <p className="text-xs text-slate-500">Connect a Stripe account to receive your royalty payouts automatically.</p>
+                      <Button size="sm" onClick={startPayoutOnboarding} disabled={connecting} className="bg-coral-500 hover:bg-coral-600 text-white h-8 text-xs flex-shrink-0" data-testid="market-connect-payouts-btn">
+                        {connecting ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : null}
+                        {payoutInfo.connect_started ? 'Finish payout setup' : 'Set up payouts'}
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
               {listings.length === 0 ? (
                 <Card className="bg-white border-slate-200"><CardContent className="py-10 text-center text-slate-400 text-sm">You haven't published any templates yet.</CardContent></Card>
               ) : (
@@ -238,7 +316,9 @@ const TemplateMarketplace = () => {
                     {selected.price_usd > 0 ? `Buy for $${selected.price_usd}` : 'Get Free Template'}
                   </Button>
                 )}
-                <p className="text-[10px] text-slate-400 text-center mt-2">Payment is simulated in this preview · sale receipt anchored on Hedera</p>
+                <p className="text-[10px] text-slate-400 text-center mt-2">
+                  {selected.price_usd > 0 ? 'Secure payment via Stripe · ' : ''}sale receipt anchored on Hedera
+                </p>
               </div>
             </>
           )}
