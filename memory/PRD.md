@@ -228,6 +228,11 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 
 
 ## Changelog (Recent)
+- **2026-06-16 — Revenue path E2E verified (Stripe test key) + Connect capability fix:**
+  - Ran the full marketplace revenue path with a `sk_test_` key (live key safely restored after): created a real `cs_test_` Checkout session → completed payment on Stripe Sandbox with test card 4242 → `/checkout/status` fulfilled the sale (cloned doc into buyer Studio, royalty split $3.75 creator / $21.25 platform on a $25 sale, Hedera receipt anchored). Subscription checkout also verified (valid `cs_test_` session).
+  - **Fixed P1 Connect bug:** `create_express_account` requested only the `transfers` capability → Stripe rejected with "needs approval for `transfers` without `card_payments`". Now requests `card_payments` + `transfers` (standard Express). Onboarding now returns a real Stripe Express URL (HTTP 200).
+  - **Fixed misleading error code:** `connect/onboard` raised HTTP 502 on Stripe failure → Cloudflare replaced the body with its own 502 page, hiding the detail. Changed to HTTP 400 so the frontend can surface the actual message.
+  - Pending-payout ledger confirmed correct ($3.75 pending until creator completes Connect onboarding; never blocks a sale).
 - **2026-06-14 — SEO/AEO verification + P0 fix:**
   - **Fixed P0 regression:** `Seo.jsx` rendered JSON-LD as a JSX text child of `<script>` inside `<Helmet>` → react-helmet-async invariant crash that took down ALL public pages (/, /pricing, /compliance/states/:code) into the ErrorBoundary. Switched to `<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: String(jsonLd) }} />`. All three pages now render with per-page titles + JSON-LD (verified via Playwright + screenshots).
   - **Completed SEO injection** the prior fork claimed but never finished: added `<Seo>` (with Product/Offer + FAQPage + BreadcrumbList JSON-LD) to `PricingPage.jsx` and `<Seo>` (Service + BreadcrumbList) to `StateDetail.jsx`.

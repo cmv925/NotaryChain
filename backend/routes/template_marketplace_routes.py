@@ -426,14 +426,14 @@ async def connect_onboard(body: OnboardRequest, request: Request, current_user: 
     if not acct:
         res = await connect.create_express_account(current_user.email)
         if res.get("error"):
-            raise HTTPException(status_code=502, detail=f"Could not start payout onboarding: {res['error']}")
+            raise HTTPException(status_code=400, detail=f"Could not start payout onboarding: {res['error']}")
         acct = res["account_id"]
         await db.users.update_one({"id": current_user.id}, {"$set": {"stripe_connect_account_id": acct}})
 
     origin = body.origin_url.rstrip("/")
     link = await connect.onboarding_link(acct, refresh_url=f"{origin}/template-marketplace", return_url=f"{origin}/template-marketplace")
     if link.get("error"):
-        raise HTTPException(status_code=502, detail=f"Could not create onboarding link: {link['error']}")
+        raise HTTPException(status_code=400, detail=f"Could not create onboarding link: {link['error']}")
     return {"onboarding_url": link["url"]}
 
 

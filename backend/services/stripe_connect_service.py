@@ -39,7 +39,10 @@ async def create_express_account(email: str) -> dict:
             s.Account.create,
             type="express",
             email=email,
-            capabilities={"transfers": {"requested": True}},
+            capabilities={
+                "card_payments": {"requested": True},
+                "transfers": {"requested": True},
+            },
         )
         return {"account_id": acct.id}
     except Exception as e:
