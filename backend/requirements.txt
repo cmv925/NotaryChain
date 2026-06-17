@@ -120,6 +120,7 @@ pytokens==0.4.1
 pytoniq-core-fork==0.1.48
 PyYAML==6.0.3
 qrcode==8.2
+redis==8.0.0
 referencing==0.37.0
 regex==2026.1.15
 reportlab==4.4.10

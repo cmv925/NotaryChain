@@ -28,8 +28,19 @@ def get_real_ip(request: Request) -> str:
         return real_ip
     return get_remote_address(request)
 
-# Create limiter instance
-limiter = Limiter(key_func=get_real_ip)
+# Create limiter instance.
+# When REDIS_URL is set, slowapi stores counters in Redis so limits are enforced
+# across ALL replicas (distributed). Otherwise counters are in-memory (per-pod).
+_redis_url = os.environ.get("REDIS_URL")
+if _redis_url:
+    try:
+        limiter = Limiter(key_func=get_real_ip, storage_uri=_redis_url)
+        logger.info("Rate limiting using shared Redis storage (distributed)")
+    except Exception as e:
+        logger.warning("Redis rate-limit storage unavailable, using in-memory: %s", e)
+        limiter = Limiter(key_func=get_real_ip)
+else:
+    limiter = Limiter(key_func=get_real_ip)
 
 # Rate limit configurations
 RATE_LIMITS = {
@@ -206,6 +217,7 @@ def capture_sentry_error(error: Exception, context: dict = None):
 async def health_check():
     """Comprehensive health check endpoint - returns sanitized info only"""
     from services.storage_service import storage_service
+    from services.cache_service import cache_service
     
     health = {
         "status": "healthy",
@@ -239,7 +251,7 @@ async def health_check():
         "status": "healthy",
         "backend": storage_service.backend,
     }
-    health["checks"]["cache"] = {"status": "healthy"}
+    health["checks"]["cache"] = {"status": "healthy", "backend": cache_service.backend}
     
     return health
 

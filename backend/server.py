@@ -571,17 +571,24 @@ async def create_indexes():
         except Exception as e:
             logger.warning(f"[admin_seed] failed (non-fatal): {e}")
 
-        # Start document expiry background checker
-        asyncio.create_task(expiry_service.run_expiry_checker())
-        asyncio.create_task(reminder_service.run_reminder_checks())
-        asyncio.create_task(salv_service_module.run_salv_scheduler())
-        asyncio.create_task(scheduled_reports_routes.start_report_scheduler())
-        asyncio.create_task(hbar_alert_service.run_balance_checker())
-        asyncio.create_task(service_health_monitor.run_service_monitor())
-        asyncio.create_task(pcv_service.run_pcv_scheduler())
-        asyncio.create_task(soc2_cron_service.run_scheduler())
-        asyncio.create_task(acn_oracle_service.run_scheduler())
+        # Start background schedulers on exactly ONE pod (cluster-wide leader).
+        # Followers stay idle; on leader failure another pod takes over.
+        from services import leader_election, scheduler_manager
+        leader_election.set_db(db)
+        if await leader_election.acquire_leadership():
+            await scheduler_manager.start_all()
+        asyncio.create_task(leader_election.heartbeat_loop())
 
         logger.info("Database indexes created/verified successfully")
     except Exception as e:
         logger.warning(f"Index creation warning: {e}")
+
+
+@app.on_event("shutdown")
+async def _release_scheduler_leadership():
+    """Release the scheduler leader lease so a replacement pod takes over instantly."""
+    try:
+        from services import leader_election
+        await leader_election.release_leadership()
+    except Exception as e:
+        logger.warning(f"Leader release on shutdown failed: {e}")
