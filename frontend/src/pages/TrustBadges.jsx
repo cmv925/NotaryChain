@@ -137,7 +137,7 @@ function BadgeCard({ badge, onShowEmbed, onShowVerify, onDelete }) {
       </CardHeader>
       <CardContent>
         <div className="bg-cream-200/40 border border-slate-300/40 rounded p-3 flex justify-center mb-3">
-          <img src={badgeUrl} alt="Trust Badge" className="h-12" data-testid="badge-preview" />
+          <img src={badgeUrl} alt="Trust Badge" loading="lazy" decoding="async" className="h-12" data-testid="badge-preview" />
         </div>
         <div className="flex items-center justify-between text-xs text-slate-500 mb-3">
           <span>Impressions: <b className="text-navy-900">{badge.stats?.impressions || 0}</b></span>
@@ -241,7 +241,7 @@ function EmbedModal({ badge, onClose }) {
           </div>
           <div className="pt-2 text-center">
             <p className="text-[11px] uppercase tracking-wider text-slate-500 mb-2">Preview</p>
-            <img src={`${API}/api/verify/badge/${badge.badge_id}.svg`} alt="preview" className="mx-auto h-16" />
+            <img src={`${API}/api/verify/badge/${badge.badge_id}.svg`} alt="preview" loading="lazy" decoding="async" className="mx-auto h-16" />
           </div>
           {!badge.verified && (
             <div className="bg-coral-500/10 border border-gold-500/30 rounded p-3 text-xs text-coral-700">

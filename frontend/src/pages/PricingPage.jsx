@@ -9,6 +9,7 @@ import { Breadcrumbs } from '../components/Breadcrumbs';
 import { Seo } from '../components/Seo';
 import { graph, offerCatalogSchema, faqSchema, breadcrumbSchema } from '../lib/seo';
 import { useAuth } from '../contexts/AuthContext';
+import { usePlans } from '../hooks/queries';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
 
@@ -24,22 +25,14 @@ const planAccents = {
 const PricingPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, token } = useAuth();
-  const [plans, setPlans] = useState([]);
+  const { data: plans = [] } = usePlans();
   const [currentPlan, setCurrentPlan] = useState('free');
   const [loading, setLoading] = useState(null);
 
   useEffect(() => {
-    fetchPlans();
     if (isAuthenticated && token) fetchCurrentPlan();
   // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
   }, [isAuthenticated, token]);
-
-  const fetchPlans = async () => {
-    try {
-      const res = await axios.get(`${API}/subscriptions/plans`);
-      setPlans(res.data.plans);
-    } catch {}
-  };
 
   const fetchCurrentPlan = async () => {
     try {

@@ -107,7 +107,7 @@ export default function PublicScannerDemo() {
                   <div className="grid grid-cols-3 gap-2 mb-5" data-testid="demo-pages-grid">
                     {pages.map((p, i) => (
                       <div key={i} className="relative group">
-                        <img src={p.preview} alt={`Page ${i + 1}`} className="w-full h-28 object-cover rounded border border-slate-200" />
+                        <img src={p.preview} alt={`Page ${i + 1}`} loading="lazy" decoding="async" className="w-full h-28 object-cover rounded border border-slate-200" />
                         <button onClick={() => removePage(i)} className="absolute top-1 right-1 p-1 bg-coral-500/90 rounded hover:bg-coral-600">
                           <Trash2 className="w-3 h-3 text-white" />
                         </button>

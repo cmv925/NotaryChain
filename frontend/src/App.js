@@ -14,12 +14,12 @@ import GlobalSubheader from './components/GlobalSubheader';
 import './i18n';
 
 // Eager-loaded (critical path)
-import HomePage from './pages/HomePage';
 import NotaryLanding from './pages/NotaryLanding';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 
 // Lazy-loaded pages
+const HomePage = React.lazy(() => import('./pages/HomePage'));
 import {
   PricingPage, QuickSealDemo, Dashboard, NotaryOnboarding, NotaryDashboard,
   RequestNotarization, VerifyDocument, CheckoutPage, CryptoCheckout, PaymentSuccess,

@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Seo } from '../components/Seo';
 import { graph, faqSchema, serviceSchema, breadcrumbSchema } from '../lib/seo';
+import { usePublicFLStats } from '../hooks/queries';
 import {
   ShieldCheck, Award, FileSignature, Stamp, Sparkles, ChevronRight,
   CheckCircle2, ArrowRight, Lock, Users, MapPin, Camera,
   Brain, Link2, Eye, Fingerprint, FileSearch, Zap,
 } from 'lucide-react';
-
-const API = process.env.REACT_APP_BACKEND_URL;
 
 const HOME_FAQ = [
   { q: 'Is online notarization legal?', a: 'Yes. Remote Online Notarization (RON) is legally recognized across most U.S. states. NotaryChain is built to Florida RON standards (Statute 117) and follows each state\u2019s specific requirements, producing court-admissible records.' },
@@ -19,14 +18,7 @@ const HOME_FAQ = [
 ];
 
 export default function NotaryLanding() {
-  const [stats, setStats] = useState(null);
-
-  useEffect(() => {
-    fetch(`${API}/api/fl/launch/public-stats`)
-      .then(r => r.ok ? r.json() : null)
-      .then(setStats)
-      .catch(() => {});
-  }, []);
+  const { data: stats } = usePublicFLStats();
 
   return (
     <div className="min-h-screen bg-cream-100 font-sans text-navy-900">

@@ -51,15 +51,18 @@ def _url(base: str, path: str, changefreq: str = "weekly", priority: str = "0.6"
 
 @router.get("/sitemap.xml")
 async def dynamic_sitemap(request: Request):
-    # Origin from the incoming request (works on preview AND custom domains).
-    # Force https — behind the ingress the request arrives as http internally,
-    # but the public canonical URL is always https.
-    base = str(request.base_url).rstrip("/")
-    fwd_proto = request.headers.get("x-forwarded-proto")
-    if fwd_proto:
-        base = base.replace("http://", f"{fwd_proto.split(',')[0].strip()}://", 1)
-    elif base.startswith("http://"):
-        base = "https://" + base[len("http://"):]
+    # Canonical public base. Prefer an explicit SITE_URL (set to the production
+    # domain post-deploy) so the sitemap always advertises the public domain,
+    # not the internal cluster host. Falls back to the request origin (https).
+    import os
+    base = (os.environ.get("SITE_URL") or "").rstrip("/")
+    if not base:
+        base = str(request.base_url).rstrip("/")
+        fwd_proto = request.headers.get("x-forwarded-proto")
+        if fwd_proto:
+            base = base.replace("http://", f"{fwd_proto.split(',')[0].strip()}://", 1)
+        elif base.startswith("http://"):
+            base = "https://" + base[len("http://"):]
 
     parts = [_url(base, p, cf, pr) for (p, cf, pr) in STATIC_ROUTES]
 

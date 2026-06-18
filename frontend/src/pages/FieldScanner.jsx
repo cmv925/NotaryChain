@@ -315,7 +315,7 @@ export default function FieldScanner() {
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {pages.map((p, i) => (
                   <div key={i} className="relative group" data-testid={`page-thumb-${i}`}>
-                    <img src={p.preview} alt={`Page ${i + 1}`} className="w-full h-24 object-cover rounded border border-slate-300" />
+                    <img src={p.preview} alt={`Page ${i + 1}`} loading="lazy" decoding="async" className="w-full h-24 object-cover rounded border border-slate-300" />
                     <button onClick={() => removePage(i)} className="absolute top-1 right-1 p-1 bg-red-500/80 rounded hover:bg-red-500" data-testid={`remove-page-${i}`}>
                       <Trash2 className="w-3 h-3 text-navy-900" />
                     </button>
