@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
 import { useWS } from '../contexts/WebSocketContext';
+import { useDashboardStats, useRecentSeals, useMyNotaryRequests } from '../hooks/queries';
 import { Shield, ShieldCheck, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp, Settings, CreditCard, Lock, Code, BookOpen, Building2, Save, CalendarClock, Layers, Users, Wand2, FileSearch, Fingerprint, Sparkles, Bell, GitCompareArrows, Palette, UserCheck, Sun, Moon, Brain, Scale, ShieldAlert, ChevronRight, FileCheck, Search, Hammer, RotateCcw, Timer, Globe, Coins, Activity, Vault, Network, HelpCircle, Store } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -17,10 +19,6 @@ import { OnboardingTour } from '../components/OnboardingTour';
 import EnhancedKBAFlow from '../components/EnhancedKBAFlow';
 import { useTheme } from '../contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
 
 // ─── Bento Action Button ───
 // Category accent palette — cohesive with the brand (coral primary) while giving
@@ -87,41 +85,24 @@ const Dashboard = () => {
   const isUser = !isAdmin && !isNotary;
   const identityVerified = !!user?.identity_verified;
   const [showKBA, setShowKBA] = useState(false);
-  const [stats, setStats] = useState({ total_seals: 0, recent_seals: 0 });
-  const [documents, setDocuments] = useState([]);
-  const [notaryRequests, setNotaryRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [expandedRequest, setExpandedRequest] = useState(null);
+  const queryClient = useQueryClient();
+
+  const { data: stats = { total_seals: 0, recent_seals: 0 }, isLoading: loading } = useDashboardStats(token);
+  const { data: documents = [] } = useRecentSeals(token, 10);
+  const { data: notaryRequests = [] } = useMyNotaryRequests(token);
+
+  const invalidateDashboard = React.useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+    queryClient.invalidateQueries({ queryKey: ['recent-seals'] });
+    queryClient.invalidateQueries({ queryKey: ['my-notary-requests'] });
+  }, [queryClient]);
 
   useEffect(() => {
-    fetchDashboardData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
-  }, []);
-
-  useEffect(() => {
-    const unsub1 = subscribe('request_assigned', () => fetchDashboardData());
-    const unsub2 = subscribe('request_completed', () => fetchDashboardData());
+    const unsub1 = subscribe('request_assigned', invalidateDashboard);
+    const unsub2 = subscribe('request_completed', invalidateDashboard);
     return () => { unsub1(); unsub2(); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only effect; fetchers are unstable per render
-  }, [subscribe]);
-
-  const fetchDashboardData = async () => {
-    try {
-      const [statsRes, docsRes, requestsRes] = await Promise.all([
-        axios.get(`${API}/documents/stats`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/documents/seals?limit=10`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/notary/requests/my`, { headers: { Authorization: `Bearer ${token}` } }).catch(() => ({ data: [] })),
-      ]);
-      setStats(statsRes.data);
-      setDocuments(docsRes.data);
-      setNotaryRequests(requestsRes.data || []);
-    } catch (error) {
-      console.error('Failed to fetch dashboard data:', error);
-      toast({ title: 'Error', description: 'Failed to load dashboard data', variant: 'destructive' });
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [subscribe, invalidateDashboard]);
 
   const handleLogout = async () => {
     await logout();
@@ -409,7 +390,7 @@ const Dashboard = () => {
                             {request.status === 'in_session' ? <><Play className="w-3 h-3 mr-1" /> Join</> : <><Video className="w-3 h-3 mr-1" /> Start</>}
                           </Button>
                         )}
-                        <SetExpiryButton requestId={request.id} currentExpiry={request.expires_at} token={token} onUpdate={fetchDashboardData} />
+                        <SetExpiryButton requestId={request.id} currentExpiry={request.expires_at} token={token} onUpdate={invalidateDashboard} />
                       </div>
                     </div>
                   </div>

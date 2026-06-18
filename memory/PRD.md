@@ -228,6 +228,10 @@ Build a sophisticated, futuristic notarization platform with AI-powered document
 
 
 ## Changelog (Recent)
+- **2026-06-18 (b) — React Query expansion to authenticated surfaces:**
+  - **SubscriptionContext → React Query**: the app-wide feature-gate map (`/subscriptions/feature-map`, drives every `GatedRoute`) now flows through a cached `useFeatureMap` query (2-min staleTime); `refresh()` invalidates the query (e.g. after an upgrade). Same context API, no call-site changes.
+  - **Client Dashboard → React Query**: replaced the manual `Promise.all` + `useState` fetch with `useDashboardStats`, `useRecentSeals`, `useMyNotaryRequests`. WebSocket `request_assigned`/`request_completed` events and the expiry button now `invalidateQueries` instead of refetching imperatively → cross-mount caching, dedup, instant back-navigation. Removed dead `axios`/`API` imports.
+  - Verified e2e: login → dashboard renders (57 open / 14 sealed), feature-gated launcher tiles present, pricing→dashboard re-nav shows cached data, no ErrorBoundary. Compiles clean (0 warnings).
 - **2026-06-18 — P2 frontend performance + SITE_URL production canonicals:**
   - **SITE_URL → notarychain.app**: added `REACT_APP_SITE_URL` (frontend) + `SITE_URL` (backend) = `https://notarychain.app`. `lib/seo.js` canonical/OG tags and `seo_routes.py` sitemap now advertise the public production domain (verified sitemap `<loc>https://notarychain.app/...`). **Fixed a duplicate-canonical bug**: `public/index.html` hardcoded a preview-domain `<link rel=canonical>` + og:url/og:image/twitter:image → removed the static canonical (Helmet now solely owns it) and repointed the OG/Twitter defaults to notarychain.app. Verified `/pricing` emits a SINGLE canonical `https://notarychain.app/pricing`.
   - **React Query** (`@tanstack/react-query`): added `QueryClientProvider` in `index.js` + tuned `lib/queryClient.js` (60s staleTime, no refetch-on-focus). New shared hooks `hooks/queries.js` (`usePlans`, `usePublicFLStats`); migrated `PricingPage` and `NotaryLanding` off ad-hoc `useEffect`+`useState` fetches → cached across mounts/route changes. Verified 4 plan cards + landing stats render.

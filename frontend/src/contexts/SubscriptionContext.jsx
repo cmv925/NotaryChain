@@ -1,8 +1,7 @@
-import { useState, useEffect, useCallback, createContext, useContext } from 'react';
-import axios from 'axios';
+import { useCallback, useMemo, createContext, useContext } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from './AuthContext';
-
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { useFeatureMap } from '../hooks/queries';
 
 const SubscriptionContext = createContext({
   plan: 'free',
@@ -13,33 +12,23 @@ const SubscriptionContext = createContext({
   refresh: () => {},
 });
 
+const PLAN_NAMES = { free: 'Starter', pro: 'Professional', enterprise: 'Enterprise' };
+
 export function SubscriptionProvider({ children }) {
   const { token, isAuthenticated } = useAuth();
-  const [plan, setPlan] = useState('free');
-  const [planName, setPlanName] = useState('Starter');
-  const [features, setFeatures] = useState({});
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const { data, isLoading } = useFeatureMap(token, isAuthenticated);
 
-  const refresh = useCallback(async () => {
-    if (!token) { setLoading(false); return; }
-    try {
-      const res = await axios.get(`${API}/subscriptions/feature-map`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setPlan(res.data.user_plan || 'free');
-      setFeatures(res.data.features || {});
-      const names = { free: 'Starter', pro: 'Professional', enterprise: 'Enterprise' };
-      setPlanName(names[res.data.user_plan] || 'Starter');
-    } catch {
-      // Default to free
-    }
-    setLoading(false);
-  }, [token]);
+  const plan = data?.user_plan || 'free';
+  const features = useMemo(() => data?.features || {}, [data]);
+  const planName = PLAN_NAMES[plan] || 'Starter';
+  // Only "loading" while an authenticated fetch is in flight.
+  const loading = isAuthenticated ? isLoading : false;
 
-  useEffect(() => {
-    if (isAuthenticated) refresh();
-    else setLoading(false);
-  }, [isAuthenticated, refresh]);
+  const refresh = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: ['feature-map'] }),
+    [queryClient],
+  );
 
   const canAccess = useCallback((feature) => {
     if (!feature) return true;
