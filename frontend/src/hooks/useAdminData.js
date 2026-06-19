@@ -15,6 +15,7 @@
  * `request_completed` WebSocket events and triggers a baseline refresh.
  */
 import { useState, useEffect, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useWS } from '../contexts/WebSocketContext';
@@ -27,14 +28,49 @@ const API = `${BACKEND_URL}/api`;
 export default function useAdminData({ onForbidden } = {}) {
   const { token } = useAuth();
   const { subscribe } = useWS();
+  const queryClient = useQueryClient();
 
-  // ─── Baseline data ─────────────────────────────────────────────
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState(null);
-  const [users, setUsers] = useState([]);
-  const [notaries, setNotaries] = useState([]);
-  const [pendingApplications, setPendingApplications] = useState([]);
-  const [revenueData, setRevenueData] = useState(null);
+  // Stable headers reference per token change.
+  const authHeaders = useMemo(
+    () => ({ headers: { Authorization: `Bearer ${token}` } }),
+    [token],
+  );
+
+  // ─── Baseline data (React Query: cached across remounts, WS-invalidated) ──
+  const { data: baseline = { stats: null, users: [], notaries: [], pendingApplications: [], revenueData: null }, isLoading: loading, error: baselineError } = useQuery({
+    queryKey: ['admin-dashboard'],
+    enabled: !!token,
+    queryFn: async () => {
+      const [statsRes, usersRes, notariesRes, pendingRes, revenueRes] = await Promise.all([
+        axios.get(`${API}/admin/stats`, authHeaders),
+        axios.get(`${API}/admin/users?page_size=10`, authHeaders),
+        axios.get(`${API}/admin/notaries?page_size=10`, authHeaders),
+        axios.get(`${API}/admin/notaries/pending`, authHeaders),
+        axios.get(`${API}/admin/analytics/revenue?days=30`, authHeaders),
+      ]);
+      return {
+        stats: statsRes.data,
+        users: usersRes.data.users,
+        notaries: notariesRes.data.notaries,
+        pendingApplications: pendingRes.data.applications,
+        revenueData: revenueRes.data,
+      };
+    },
+    retry: false,
+  });
+  const { stats, users, notaries, pendingApplications, revenueData } = baseline;
+
+  // Surface auth failures the same way the imperative fetcher used to.
+  useEffect(() => {
+    if (!baselineError) return;
+    if (baselineError.response?.status === 403) {
+      toast({ title: 'Access Denied', description: 'Admin access required', variant: 'destructive' });
+      onForbidden?.();
+    } else {
+      toast({ title: 'Error', description: 'Failed to load admin data', variant: 'destructive' });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [baselineError]);
 
   // ─── Lazy-loaded tab data ─────────────────────────────────────
   const [auditLogs, setAuditLogs] = useState([]);
@@ -64,39 +100,9 @@ export default function useAdminData({ onForbidden } = {}) {
   const [exportingIncidents, setExportingIncidents] = useState(false);
   const [savingAlerts, setSavingAlerts] = useState(false);
 
-  // Stable headers reference per token change.
-  const authHeaders = useMemo(
-    () => ({ headers: { Authorization: `Bearer ${token}` } }),
-    [token],
-  );
-
   // ─── Fetchers ─────────────────────────────────────────────────
-  const fetchDashboardData = async () => {
-    setLoading(true);
-    try {
-      const [statsRes, usersRes, notariesRes, pendingRes, revenueRes] = await Promise.all([
-        axios.get(`${API}/admin/stats`, authHeaders),
-        axios.get(`${API}/admin/users?page_size=10`, authHeaders),
-        axios.get(`${API}/admin/notaries?page_size=10`, authHeaders),
-        axios.get(`${API}/admin/notaries/pending`, authHeaders),
-        axios.get(`${API}/admin/analytics/revenue?days=30`, authHeaders),
-      ]);
-      setStats(statsRes.data);
-      setUsers(usersRes.data.users);
-      setNotaries(notariesRes.data.notaries);
-      setPendingApplications(pendingRes.data.applications);
-      setRevenueData(revenueRes.data);
-    } catch (error) {
-      if (error.response?.status === 403) {
-        toast({ title: 'Access Denied', description: 'Admin access required', variant: 'destructive' });
-        onForbidden?.();
-      } else {
-        toast({ title: 'Error', description: 'Failed to load admin data', variant: 'destructive' });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Refresh = invalidate the cached baseline (dedupes concurrent refetches).
+  const fetchDashboardData = () => queryClient.invalidateQueries({ queryKey: ['admin-dashboard'] });
 
   const fetchAuditLogs = async () => {
     try {
@@ -334,11 +340,6 @@ export default function useAdminData({ onForbidden } = {}) {
   };
 
   // ─── Lifecycle ────────────────────────────────────────────────
-  useEffect(() => {
-    fetchDashboardData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only baseline
-  }, []);
-
   useEffect(() => {
     const unsub1 = subscribe('notary_queue_update', () => fetchDashboardData());
     const unsub2 = subscribe('request_assigned', () => fetchDashboardData());

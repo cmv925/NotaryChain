@@ -52,6 +52,8 @@ export const UserGuide = lazy(() => import('./pages/UserGuide'));
 export const Marketplace = lazy(() => import('./pages/Marketplace'));
 export const AdminCeremonyAnalytics = lazy(() => import('./pages/AdminCeremonyAnalytics'));
 export const TrustBadges = lazy(() => import('./pages/TrustBadges'));
+export const SovereignID = lazy(() => import('./pages/SovereignID'));
+export const SovereignVerify = lazy(() => import('./pages/SovereignVerify'));
 export const TrustBadgeLanding = lazy(() => import('./pages/TrustBadgeLanding'));
 export const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
 export const TransactionRoom = lazy(() => import('./pages/TransactionRoom'));

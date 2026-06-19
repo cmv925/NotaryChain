@@ -44,7 +44,7 @@ import {
   PublicAuditTrail, CeremonyReplay, MultiSignature, CertificateExpiration, TokenizedEscrow,
   PCVDashboard, PCVPublicVerify, PCVMarketing,
   BatchCertificates,
-  ACNDashboard, ACNPublicVerify,
+  ACNDashboard, ACNPublicVerify, SovereignID, SovereignVerify,
 } from './lazyRoutes';
 
 const PageLoader = () => (
@@ -85,6 +85,15 @@ function App() {
             <Route path="/notaries" element={<NotaryDirectory />} />
             <Route path="/notary/:notaryId" element={<NotaryProfile />} />
             <Route path="/trustlayer" element={<TrustLayerLanding />} />
+            <Route path="/sovereign/verify/:sovereignId" element={<SovereignVerify />} />
+            <Route
+              path="/sovereign-id"
+              element={
+                <ProtectedRoute>
+                  <SovereignID />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/trust-graph/:userId" element={<TrustGraph />} />
             <Route
               path="/admin/trustlayer"

@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
 import { useWS } from '../contexts/WebSocketContext';
 import { useDashboardStats, useRecentSeals, useMyNotaryRequests } from '../hooks/queries';
-import { Shield, ShieldCheck, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp, Settings, CreditCard, Lock, Code, BookOpen, Building2, Save, CalendarClock, Layers, Users, Wand2, FileSearch, Fingerprint, Sparkles, Bell, GitCompareArrows, Palette, UserCheck, Sun, Moon, Brain, Scale, ShieldAlert, ChevronRight, FileCheck, Search, Hammer, RotateCcw, Timer, Globe, Coins, Activity, Vault, Network, HelpCircle, Store } from 'lucide-react';
+import { Shield, ShieldCheck, FileText, Clock, TrendingUp, LogOut, Upload, ExternalLink, Copy, Video, Play, ChevronDown, ChevronUp, Settings, CreditCard, Lock, Code, BookOpen, Building2, Save, CalendarClock, Layers, Users, Wand2, FileSearch, Fingerprint, Sparkles, Bell, GitCompareArrows, Palette, UserCheck, Sun, Moon, Brain, Scale, ShieldAlert, ChevronRight, FileCheck, Search, Hammer, RotateCcw, Timer, Globe, Coins, Activity, Vault, Network, HelpCircle, Store, Hexagon } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../components/ui/dropdown-menu';
@@ -275,6 +275,7 @@ const Dashboard = () => {
                 <BentoAction icon={Vault} label="Asset Vault" desc="Deeds, wills, IP, beneficiaries" onClick={() => navigate('/asset-vault')} accent="emerald" data-testid="asset-vault-btn" />
                 <BentoAction icon={Video} label="Video Witness" desc="Record witnessed signing" onClick={() => navigate('/video-witness')} accent="emerald" data-testid="video-witness-btn" />
                 <BentoAction icon={Fingerprint} label="Biometric Passport" desc="Portable identity proof" onClick={() => navigate('/biometric-passport')} accent="emerald" data-testid="biometric-btn" />
+                <BentoAction icon={Hexagon} label="Sovereign ID" desc="On-chain identity credential" onClick={() => navigate('/sovereign-id')} accent="emerald" data-testid="sovereign-id-btn" />
                 <BentoAction icon={Scale} label="Escrow Intelligence" desc="AI-verified conditions" onClick={() => navigate('/escrow')} accent="emerald" data-testid="escrow-btn" />
                 <BentoAction icon={Coins} label="Tokenized Escrow" desc="HTS on Hedera" onClick={() => navigate('/tokenized-escrow')} accent="emerald" data-testid="tokenized-escrow-btn" />
                 <BentoAction icon={ShieldCheck} label="Compliance Vault" desc="Continuous integrity & evidence" onClick={() => navigate('/pcv')} accent="emerald" data-testid="pcv-btn" />

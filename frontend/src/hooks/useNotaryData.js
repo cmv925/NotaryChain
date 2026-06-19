@@ -16,6 +16,7 @@
  * for non-notary users so the dashboard still works.
  */
 import { useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
@@ -30,13 +31,41 @@ export default function useNotaryData() {
   const { token } = useAuth();
   const { subscribe } = useWS();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  // ─── Baseline data ─────────────────────────────────────────────
-  const [stats, setStats] = useState(null);
-  const [pendingRequests, setPendingRequests] = useState([]);
-  const [assignedRequests, setAssignedRequests] = useState([]);
-  const [completedRequests, setCompletedRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
+
+  // ─── Baseline data (React Query: cached across remounts, WS-invalidated) ──
+  const { data: baseline = { stats: null, pendingRequests: [], assignedRequests: [], completedRequests: [] }, isLoading: loading } = useQuery({
+    queryKey: ['notary-dashboard'],
+    enabled: !!token,
+    queryFn: async () => {
+      const [statsRes, pendingRes, assignedRes, myReqsRes] = await Promise.all([
+        axios.get(`${API}/notary/stats`, authHeaders).catch(() => ({ data: { is_notary: false } })),
+        axios.get(`${API}/notary/requests/pending`, authHeaders).catch(() => ({ data: [] })),
+        axios.get(`${API}/notary/requests/assigned`, authHeaders).catch(() => ({ data: [] })),
+        axios.get(`${API}/notary/requests/my`, authHeaders).catch(() => ({ data: [] })),
+      ]);
+      const isNotary = !!statsRes.data?.is_notary;
+      if (isNotary) {
+        const assigned = assignedRes.data;
+        return {
+          stats: statsRes.data,
+          pendingRequests: pendingRes.data,
+          assignedRequests: assigned.filter((r) => r.status !== 'completed'),
+          completedRequests: assigned.filter((r) => r.status === 'completed'),
+        };
+      }
+      const myReqs = myReqsRes.data || [];
+      return {
+        stats: statsRes.data,
+        pendingRequests: myReqs.filter((r) => ['pending', 'submitted', 'reviewing'].includes(r.status)),
+        assignedRequests: myReqs.filter((r) => ['assigned', 'in_progress'].includes(r.status)),
+        completedRequests: myReqs.filter((r) => r.status === 'completed'),
+      };
+    },
+  });
+  const { stats, pendingRequests, assignedRequests, completedRequests } = baseline;
 
   // ─── Detail / per-row state ────────────────────────────────────
   const [selectedRequest, setSelectedRequest] = useState(null);
@@ -50,38 +79,8 @@ export default function useNotaryData() {
   const [loadingCopilot, setLoadingCopilot] = useState(false);
   const [loadingJournal, setLoadingJournal] = useState(false);
 
-  const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
-
-  // ─── Fetchers ─────────────────────────────────────────────────
-  const fetchDashboardData = async () => {
-    try {
-      const [statsRes, pendingRes, assignedRes, myReqsRes] = await Promise.all([
-        axios.get(`${API}/notary/stats`, authHeaders).catch(() => ({ data: { is_notary: false } })),
-        axios.get(`${API}/notary/requests/pending`, authHeaders).catch(() => ({ data: [] })),
-        axios.get(`${API}/notary/requests/assigned`, authHeaders).catch(() => ({ data: [] })),
-        axios.get(`${API}/notary/requests/my`, authHeaders).catch(() => ({ data: [] })),
-      ]);
-
-      const isNotary = !!statsRes.data?.is_notary;
-      setStats(statsRes.data);
-
-      if (isNotary) {
-        setPendingRequests(pendingRes.data);
-        const assigned = assignedRes.data;
-        setAssignedRequests(assigned.filter((r) => r.status !== 'completed'));
-        setCompletedRequests(assigned.filter((r) => r.status === 'completed'));
-      } else {
-        const myReqs = myReqsRes.data || [];
-        setPendingRequests(myReqs.filter((r) => ['pending', 'submitted', 'reviewing'].includes(r.status)));
-        setAssignedRequests(myReqs.filter((r) => ['assigned', 'in_progress'].includes(r.status)));
-        setCompletedRequests(myReqs.filter((r) => r.status === 'completed'));
-      }
-    } catch (error) {
-      console.error('Failed to fetch dashboard data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Refresh = invalidate the cached baseline (dedupes concurrent refetches).
+  const fetchDashboardData = () => queryClient.invalidateQueries({ queryKey: ['notary-dashboard'] });
 
   // ─── Mutations ────────────────────────────────────────────────
   const handleAssignRequest = async (requestId) => {
@@ -228,11 +227,6 @@ export default function useNotaryData() {
   const closeRequest = () => setSelectedRequest(null);
 
   // ─── Lifecycle ────────────────────────────────────────────────
-  useEffect(() => {
-    fetchDashboardData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only baseline
-  }, []);
-
   useEffect(() => {
     const unsub1 = subscribe('notary_queue_update', () => fetchDashboardData());
     const unsub2 = subscribe('request_assigned', () => fetchDashboardData());
