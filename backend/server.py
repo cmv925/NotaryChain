@@ -337,10 +337,21 @@ from routes import seo_routes
 seo_routes.set_db(db)
 app.include_router(seo_routes.router)
 
+_cors_origins = [o.strip() for o in os.environ.get('CORS_ORIGINS', '*').split(',') if o.strip()] or ['*']
+# Cross-origin callers (embeddable SDK, trust-badge web component, public verify)
+# use API keys / no auth — not cookies. The app's own frontend is same-origin, so
+# cookie auth never relies on CORS. Credentials are therefore OFF by default, which
+# eliminates the unsafe "wildcard origin + credentials" pattern. Operators who truly
+# need credentialed cross-origin requests must set CORS_ALLOW_CREDENTIALS=true AND an
+# explicit CORS_ORIGINS allowlist (the guard below refuses wildcard + credentials).
+_cors_allow_credentials = os.environ.get('CORS_ALLOW_CREDENTIALS', 'false').lower() == 'true'
+if _cors_allow_credentials and '*' in _cors_origins:
+    _cors_origins = [o for o in _cors_origins if o != '*'] or ['https://notarychain.app']
+
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_credentials=_cors_allow_credentials,
+    allow_origins=_cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )

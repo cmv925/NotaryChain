@@ -6,6 +6,7 @@ from models import DocumentSeal, DocumentSealCreate, DocumentSealResponse, User
 from routes.auth_routes import get_current_user
 from services.storage_service import storage_service
 import os
+import re
 
 router = APIRouter(prefix="/api/documents", tags=["documents"])
 
@@ -108,17 +109,28 @@ async def serve_document_file(
     filename: str,
     current_user: User = Depends(get_current_user)
 ):
-    """Serve an uploaded document file (authenticated access)"""
+    """Serve an uploaded document file (owner-scoped access)"""
     safe_name = os.path.basename(filename)
 
-    # Check DB for storage metadata
+    # SECURITY: scope to the caller's own seals (prevents cross-user IDOR) and
+    # regex-escape the filename + anchor the match (prevents regex injection / ReDoS).
     doc_record = await db.document_seals.find_one(
-        {"$or": [{"stored_filename": safe_name}, {"stored_filename": {"$regex": safe_name}}]},
+        {
+            "user_id": current_user.id,
+            "$or": [
+                {"stored_filename": safe_name},
+                {"stored_filename": {"$regex": f"{re.escape(safe_name)}$"}},
+            ],
+        },
         {"_id": 0, "storage_backend": 1, "stored_filename": 1}
     )
+    if not doc_record:
+        # No record owned by this user → do not fall back to serving an arbitrary
+        # file from the upload directory by name.
+        raise HTTPException(status_code=404, detail="File not found")
 
-    backend = doc_record.get("storage_backend", "local") if doc_record else "local"
-    stored_path = doc_record.get("stored_filename", safe_name) if doc_record else safe_name
+    backend = doc_record.get("storage_backend", "local")
+    stored_path = doc_record.get("stored_filename", safe_name)
 
     # Try presigned URL for S3
     if backend == "s3":

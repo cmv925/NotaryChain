@@ -5,7 +5,12 @@ Admin-only status + manual sync + inbound webhook placeholder for future bidirec
 from fastapi import APIRouter, HTTPException, Request
 from typing import Optional
 import logging
+import os
+import json
+import hmac
+import hashlib
 
+from middleware.security import limiter
 from services import ghl_service as ghl
 
 router = APIRouter(prefix="/api/ghl", tags=["ghl"])
@@ -101,14 +106,36 @@ async def test_contact_upsert(request: Request):
 
 
 @router.post("/webhook/inbound")
+@limiter.limit("60/minute")
 async def ghl_inbound_webhook(request: Request):
     """
-    Placeholder for future bidirectional sync.
-    GHL → NotaryChain events (contact updates, opportunity stage changes, tag changes, etc.)
-    will be routed here. Currently just logs + persists to an audit collection.
+    Inbound GHL → NotaryChain events (contact updates, opportunity stage changes,
+    tag changes, etc.). Persisted to an audit collection for processing.
+
+    SECURITY: this endpoint is unauthenticated (called by GHL), so when a
+    GHL_WEBHOOK_SECRET is configured we require a valid HMAC-SHA256 signature and
+    reject anything that doesn't match. Without the secret set it still ingests
+    (placeholder mode) but is rate-limited to blunt abuse.
     """
+    raw = await request.body()
+
+    secret = os.environ.get("GHL_WEBHOOK_SECRET")
+    if secret:
+        provided = (
+            request.headers.get("x-ghl-signature")
+            or request.headers.get("x-wh-signature")
+            or request.headers.get("x-webhook-signature")
+            or ""
+        )
+        expected = hmac.new(secret.encode(), raw, hashlib.sha256).hexdigest()
+        if not provided or not hmac.compare_digest(provided.strip(), expected):
+            logger.warning("GHL inbound webhook rejected: invalid signature")
+            raise HTTPException(status_code=401, detail="Invalid webhook signature")
+
     try:
-        body = await request.json()
+        body = json.loads(raw or b"{}")
+        if not isinstance(body, dict):
+            body = {}
     except Exception:
         body = {}
     event_type = body.get("type") or body.get("event") or "unknown"

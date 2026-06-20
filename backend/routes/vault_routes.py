@@ -8,6 +8,7 @@ from fastapi.responses import FileResponse, RedirectResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional, List
 from datetime import datetime, timezone
+import re
 from pydantic import BaseModel
 import uuid
 import os
@@ -136,9 +137,10 @@ async def list_documents(
     if category:
         query["category"] = category
     if search:
+        safe_search = re.escape(search)
         query["$or"] = [
-            {"name": {"$regex": search, "$options": "i"}},
-            {"description": {"$regex": search, "$options": "i"}},
+            {"name": {"$regex": safe_search, "$options": "i"}},
+            {"description": {"$regex": safe_search, "$options": "i"}},
         ]
     if tag:
         query["tags"] = tag

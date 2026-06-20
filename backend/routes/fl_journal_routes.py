@@ -28,6 +28,7 @@ Endpoints:
 import csv
 import io
 import logging
+import re
 import uuid
 from datetime import datetime, timezone, timedelta
 from typing import Optional, List
@@ -456,7 +457,7 @@ async def subpoena_export(subpoena_id: str, request: Request):
     if s.get("scope_ceremony_ids"):
         q["ceremony_id"] = {"$in": s["scope_ceremony_ids"]}
     if s.get("scope_signer_name"):
-        q["signer_name"] = {"$regex": s["scope_signer_name"], "$options": "i"}
+        q["signer_name"] = {"$regex": re.escape(s["scope_signer_name"]), "$options": "i"}
     if s.get("scope_start_date") or s.get("scope_end_date"):
         rng = {}
         if s.get("scope_start_date"):

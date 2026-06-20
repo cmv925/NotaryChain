@@ -9,6 +9,7 @@ Public, no-auth endpoints for:
 """
 import hashlib
 import logging
+import re
 import uuid
 from datetime import datetime, timezone, timedelta
 from typing import Optional
@@ -198,9 +199,10 @@ async def list_public_notaries(
     if state:
         query["license_state"] = state.upper()
     if q:
+        safe_q = re.escape(q)
         query["$or"] = [
-            {"full_name": {"$regex": q, "$options": "i"}},
-            {"license_number": {"$regex": q, "$options": "i"}},
+            {"full_name": {"$regex": safe_q, "$options": "i"}},
+            {"license_number": {"$regex": safe_q, "$options": "i"}},
         ]
 
     total = await db.users.count_documents(query)

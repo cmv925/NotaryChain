@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timezone, timedelta
 import uuid
+import re
 import logging
 
 from models import User
@@ -140,9 +141,10 @@ async def get_users(
     
     query = {}
     if search:
+        safe_search = re.escape(search)
         query["$or"] = [
-            {"email": {"$regex": search, "$options": "i"}},
-            {"full_name": {"$regex": search, "$options": "i"}}
+            {"email": {"$regex": safe_search, "$options": "i"}},
+            {"full_name": {"$regex": safe_search, "$options": "i"}}
         ]
     if role:
         query["role"] = role
