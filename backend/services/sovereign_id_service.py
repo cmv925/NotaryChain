@@ -168,7 +168,42 @@ def _public_view(doc: dict) -> dict:
 
 async def get_my_sovereign_id(db, user_id: str) -> Optional[dict]:
     doc = await db.sovereign_ids.find_one({"subject_user_id": user_id})
-    return _public_view(doc) if doc else None
+    if not doc:
+        return None
+    view = _public_view(doc)
+    view["notary"] = await _notary_block(db, user_id)
+    return view
+
+
+async def _notary_block(db, user_id: str) -> Optional[dict]:
+    """Live notary commission/credential data (kept current rather than baked into
+    the signed attestation, since commission expiry & act counts change over time)."""
+    u = await db.users.find_one(
+        {"id": user_id},
+        {"_id": 0, "role": 1, "license_number": 1, "license_state": 1,
+         "commission_expiry": 1, "license_expiration": 1, "active": 1},
+    )
+    if not u or u.get("role") not in ("notary", "admin"):
+        return None
+    try:
+        seals = await db.blockchain_seals.count_documents({"sealed_by_id": user_id})
+    except Exception:
+        seals = 0
+    try:
+        ceremonies = await db.ceremonies.count_documents({"notary_id": user_id})
+    except Exception:
+        ceremonies = 0
+    return {
+        "is_notary": True,
+        "notary_id": user_id,
+        "license_number": u.get("license_number"),
+        "license_state": u.get("license_state"),
+        "commission_expiry": u.get("commission_expiry") or u.get("license_expiration"),
+        "active": u.get("active", True),
+        "total_seals": seals,
+        "total_ceremonies": ceremonies,
+        "profile_path": f"/notary/{user_id}",
+    }
 
 
 async def mint_sovereign_id(db, user_id: str, holder_name: str, identity_verified: bool) -> dict:
@@ -230,6 +265,66 @@ async def anchor_sovereign_id(db, sovereign_id: str):
     )
 
 
+async def get_seal_settings(db, user_id: str) -> dict:
+    """Whether the notary's Sovereign Seal is stamped on notarized PDFs.
+    Default ON for Pro/Enterprise (opt-out); unavailable on Free."""
+    from routes.subscription_routes import get_user_plan
+    plan = await get_user_plan(user_id)
+    is_pro = plan in ("pro", "enterprise")
+    doc = await db.sovereign_ids.find_one({"subject_user_id": user_id}, {"_id": 0, "seal_enabled": 1})
+    enabled_pref = doc.get("seal_enabled", True) if doc else True  # opt-out default
+    return {
+        "plan": plan,
+        "is_pro": is_pro,
+        "minted": doc is not None,
+        "seal_enabled": bool(enabled_pref) and is_pro,
+        "seal_preference": bool(enabled_pref),
+    }
+
+
+async def set_seal_enabled(db, user_id: str, enabled: bool) -> dict:
+    await db.sovereign_ids.update_one(
+        {"subject_user_id": user_id}, {"$set": {"seal_enabled": bool(enabled)}}
+    )
+    return await get_seal_settings(db, user_id)
+
+
+async def resolve_seal_for_ceremony(db, ceremony: dict) -> Optional[dict]:
+    """Return the conducting notary's Sovereign Seal payload for stamping on a
+    certificate, honoring the per-ceremony override + the notary's Pro/opt-out
+    settings. Returns None when no seal should be stamped."""
+    if ceremony.get("sovereign_seal_disabled"):
+        return None  # per-document opt-out
+    notary_uid = ceremony.get("notary_user_id")
+    if not notary_uid:
+        email = ceremony.get("notary_email") or ceremony.get("initiated_by")
+        if email:
+            u = await db.users.find_one({"email": email}, {"_id": 0, "id": 1, "role": 1})
+            if u and u.get("role") in ("notary", "admin"):
+                notary_uid = u["id"]
+    if not notary_uid:
+        return None
+
+    settings = await get_seal_settings(db, notary_uid)
+    if not settings["seal_enabled"]:
+        return None
+    sov = await db.sovereign_ids.find_one({"subject_user_id": notary_uid})
+    if not sov:
+        return None
+
+    site = (os.environ.get("SITE_URL") or "https://notarychain.app").rstrip("/")
+    nb = await _notary_block(db, notary_uid)
+    nft = sov.get("nft", {})
+    return {
+        "holder_name": sov["holder_name"],
+        "token": f"{nft.get('token_id')} #{nft.get('serial_number')}",
+        "fingerprint": sov["key_fingerprint"],
+        "verify_url": f"{site}/sovereign/verify/{sov['sovereign_id']}",
+        "license_number": (nb or {}).get("license_number"),
+        "license_state": (nb or {}).get("license_state"),
+    }
+
+
 async def verify_sovereign_id(db, sovereign_id: str) -> dict:
     """Public verification — recompute canonical bytes and check the Ed25519 sig."""
     doc = await db.sovereign_ids.find_one({"sovereign_id": sovereign_id})
@@ -243,10 +338,12 @@ async def verify_sovereign_id(db, sovereign_id: str) -> dict:
         return {"found": True, "valid": False, "reason": "payload_digest_mismatch", "card": _public_view(doc)}
 
     valid, err = _verify_sig(doc["public_key"], doc["signature"], msg)
+    card = _public_view(doc)
+    card["notary"] = await _notary_block(db, doc["subject_user_id"])
     return {
         "found": True,
         "valid": valid,
         "reason": err,
         "verified_at": _now_iso(),
-        "card": _public_view(doc),
+        "card": card,
     }

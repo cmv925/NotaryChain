@@ -17,8 +17,12 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 
 
-def generate_ceremony_certificate(ceremony: dict) -> bytes:
-    """Generate a professional Ceremony Certificate PDF."""
+def generate_ceremony_certificate(ceremony: dict, sovereign_seal: dict = None) -> bytes:
+    """Generate a professional Ceremony Certificate PDF.
+
+    If `sovereign_seal` is provided (the conducting notary's enabled Sovereign ID),
+    a verifiable notary seal block + QR is stamped on the certificate.
+    """
     buf = io.BytesIO()
     doc = SimpleDocTemplate(buf, pagesize=letter, topMargin=0.6 * inch, bottomMargin=0.6 * inch,
                             leftMargin=0.75 * inch, rightMargin=0.75 * inch)
@@ -181,6 +185,41 @@ def generate_ceremony_certificate(ceremony: dict) -> bytes:
             ("TOPPADDING", (0, 0), (-1, -1), 3),
         ]))
         elements.append(seal_table)
+
+    # ===== NOTARY'S SOVEREIGN SEAL (verifiable digital seal) =====
+    if sovereign_seal:
+        elements.append(Spacer(1, 10))
+        elements.append(Paragraph("Notary's Sovereign Seal", section_head))
+        sov_qr_buf = io.BytesIO()
+        sov_qr = qrcode.make(sovereign_seal["verify_url"], box_size=4, border=2)
+        sov_qr.save(sov_qr_buf, format="PNG")
+        sov_qr_buf.seek(0)
+        sov_qr_flowable = Image(sov_qr_buf, width=1.1 * inch, height=1.1 * inch)
+        commission_line = ""
+        if sovereign_seal.get("license_number") or sovereign_seal.get("license_state"):
+            commission_line = (
+                f"<font size='7' color='#6b7280'>Commission "
+                f"{sovereign_seal.get('license_number') or '—'} &bull; "
+                f"{sovereign_seal.get('license_state') or '—'}</font><br/>"
+            )
+        sov_text = Paragraph(
+            f"<b>{sovereign_seal['holder_name']}</b> &mdash; Verified Notary<br/>"
+            f"{commission_line}"
+            f"<font size='7' color='#6b7280'>Sovereign NFT: {sovereign_seal['token']}</font><br/>"
+            f"<font size='7' color='#6b7280'>Ed25519: {sovereign_seal['fingerprint']}</font><br/>"
+            f"<font size='8' color='#10b981'><b>Scan to verify this notary</b></font><br/>"
+            f"<font size='6' color='#3b82f6'>{sovereign_seal['verify_url']}</font>",
+            ParagraphStyle("SovText", parent=styles["Normal"], fontSize=9, textColor=brand_dark, leading=12),
+        )
+        sov_table = Table([[sov_qr_flowable, sov_text]], colWidths=[1.4 * inch, 5.1 * inch])
+        sov_table.setStyle(TableStyle([
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("LEFTPADDING", (1, 0), (1, 0), 12),
+            ("BOX", (0, 0), (-1, -1), 1, brand_green),
+            ("TOPPADDING", (0, 0), (-1, -1), 8),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+        ]))
+        elements.append(sov_table)
 
     # ===== QR CODE =====
     base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://notarychain.com")

@@ -59,6 +59,20 @@ async def mint(background_tasks: BackgroundTasks, current_user: User = Depends(g
     return {"minted": True, "card": card}
 
 
+class SealSettings(BaseModel):
+    enabled: bool
+
+
+@router.get("/seal-settings")
+async def get_seal_settings(current_user: User = Depends(get_current_user)):
+    return await svc.get_seal_settings(db, current_user.id)
+
+
+@router.put("/seal-settings")
+async def update_seal_settings(body: SealSettings, current_user: User = Depends(get_current_user)):
+    return await svc.set_seal_enabled(db, current_user.id, body.enabled)
+
+
 @public_router.get("/verify/{sovereign_id}")
 async def verify(sovereign_id: str):
     return await svc.verify_sovereign_id(db, sovereign_id)

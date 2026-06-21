@@ -155,7 +155,12 @@ async def _ensure_certificate(ceremony_id: str) -> dict | None:
     if not ceremony or ceremony.get("status") != "sealed":
         return None
     from services.ceremony_certificate import generate_ceremony_certificate
-    pdf_bytes = generate_ceremony_certificate(ceremony)
+    try:
+        from services import sovereign_id_service
+        sovereign_seal = await sovereign_id_service.resolve_seal_for_ceremony(db, ceremony)
+    except Exception:
+        sovereign_seal = None
+    pdf_bytes = generate_ceremony_certificate(ceremony, sovereign_seal=sovereign_seal)
     pdf_b64 = base64.b64encode(pdf_bytes).decode()
     doc = {
         "ceremony_id": ceremony_id,

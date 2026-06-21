@@ -70,6 +70,14 @@ export default function SovereignVerify() {
                 <Field label="NFT" value={`${result.card.nft?.token_id} · #${result.card.nft?.serial_number}`} mono />
                 <Field label="Ed25519 Key" value={result.card.key_fingerprint} mono icon={<Fingerprint className="w-4 h-4 text-coral-400" />} />
                 <Field label="Issued" value={new Date(result.card.issued_at).toLocaleString()} />
+                {result.card.notary && (
+                  <>
+                    <Field label="Commission #" value={result.card.notary.license_number || '—'} mono icon={<BadgeCheck className="w-4 h-4 text-emerald-400" />} testid="verify-commission" />
+                    <Field label="State" value={result.card.notary.license_state || '—'} />
+                    <Field label="Commission Expires" value={result.card.notary.commission_expiry ? new Date(result.card.notary.commission_expiry).toLocaleDateString() : '—'} />
+                    <Field label="Notarial Acts" value={String(result.card.notary.total_ceremonies ?? 0)} />
+                  </>
+                )}
                 {result.card.anchor?.explorer_url && (
                   <div className="px-5 py-4 flex items-center justify-between">
                     <span className="text-xs uppercase tracking-widest text-slate-500">On-chain</span>
@@ -79,6 +87,11 @@ export default function SovereignVerify() {
                   </div>
                 )}
               </div>
+            )}
+            {result.card?.notary && (
+              <Link to={result.card.notary.profile_path} className="mt-4 flex items-center justify-center gap-2 w-full rounded-xl bg-coral-500 hover:bg-coral-600 text-white py-3 text-sm font-medium transition-colors" data-testid="verify-profile-link">
+                View Notary Profile <ExternalLink className="w-4 h-4" />
+              </Link>
             )}
             <p className="text-center text-xs text-slate-600 mt-6">Verified by NotaryChain · Ed25519 + Hedera</p>
           </div>

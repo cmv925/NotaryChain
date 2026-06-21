@@ -7,7 +7,7 @@ import { toast } from '../hooks/use-toast';
 import { Seo } from '../components/Seo';
 import {
   ShieldCheck, Fingerprint, Loader2, BadgeCheck, ExternalLink,
-  Lock, Sparkles, Copy, ArrowLeft, Hexagon,
+  Lock, Sparkles, Copy, ArrowLeft, Hexagon, ChevronRight, Stamp,
 } from 'lucide-react';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -24,6 +24,8 @@ export default function SovereignID() {
   const { token } = useAuth();
   const [state, setState] = useState({ loading: true, minted: false, identityVerified: false, card: null });
   const [minting, setMinting] = useState(false);
+  const [seal, setSeal] = useState(null);
+  const [savingSeal, setSavingSeal] = useState(false);
 
   const headers = { headers: { Authorization: `Bearer ${token}` } };
 
@@ -31,11 +33,30 @@ export default function SovereignID() {
     try {
       const res = await axios.get(`${API}/sovereign/me`, headers);
       setState({ loading: false, minted: res.data.minted, identityVerified: res.data.identity_verified, card: res.data.card });
+      if (res.data.minted) {
+        try {
+          const s = await axios.get(`${API}/sovereign/seal-settings`, headers);
+          setSeal(s.data);
+        } catch { /* non-fatal */ }
+      }
     } catch {
       setState((s) => ({ ...s, loading: false }));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
+
+  const toggleSeal = async (enabled) => {
+    setSavingSeal(true);
+    try {
+      const res = await axios.put(`${API}/sovereign/seal-settings`, { enabled }, headers);
+      setSeal(res.data);
+      toast({ title: enabled ? 'Document seal enabled' : 'Document seal disabled' });
+    } catch (e) {
+      toast({ title: 'Could not update', description: e?.response?.data?.detail || 'Try again.', variant: 'destructive' });
+    } finally {
+      setSavingSeal(false);
+    }
+  };
 
   useEffect(() => { load(); }, [load]);
 
@@ -117,7 +138,39 @@ export default function SovereignID() {
         )}
 
         {state.minted && state.card && (
-          <BlackCard card={state.card} site={SITE} onCopy={copy} data-testid="sovereign-card" />
+          <>
+            <BlackCard card={state.card} site={SITE} onCopy={copy} data-testid="sovereign-card" />
+            {state.card.notary && seal && (
+              <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-5" data-testid="seal-settings">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-medium flex items-center gap-2"><Stamp className="w-4 h-4 text-coral-400" /> Document Seal</p>
+                    <p className="text-xs text-slate-400 mt-1 max-w-sm">Stamp your verifiable Sovereign Seal (with a scan-to-verify QR) on every notarized certificate.</p>
+                  </div>
+                  {seal.is_pro ? (
+                    <button
+                      onClick={() => toggleSeal(!seal.seal_preference)}
+                      disabled={savingSeal}
+                      data-testid="seal-toggle"
+                      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${seal.seal_preference ? 'bg-emerald-500' : 'bg-slate-600'} disabled:opacity-60`}
+                      aria-pressed={seal.seal_preference}
+                    >
+                      <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${seal.seal_preference ? 'translate-x-5' : 'translate-x-1'}`} />
+                    </button>
+                  ) : (
+                    <Link to="/pricing" className="text-xs px-3 py-1.5 rounded-full bg-coral-500 hover:bg-coral-600 text-white whitespace-nowrap" data-testid="seal-upgrade-btn">
+                      Upgrade to Pro
+                    </Link>
+                  )}
+                </div>
+                {seal.is_pro && (
+                  <p className="text-xs text-slate-500 mt-3" data-testid="seal-status">
+                    {seal.seal_enabled ? 'On — your seal appears on new notarized documents (you can opt out per document during a ceremony).' : 'Off — your seal will not be stamped on documents.'}
+                  </p>
+                )}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -177,6 +230,25 @@ function BlackCard({ card, site, onCopy }) {
           <p className="mt-6 text-[10px] text-slate-500">Issued {new Date(card.issued_at).toLocaleDateString()}</p>
         </div>
       </div>
+
+      {/* Notary commission strip */}
+      {card.notary && (
+        <div className="mt-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4" data-testid="card-notary-block">
+          <div className="flex items-center gap-2 mb-3">
+            <BadgeCheck className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs uppercase tracking-widest text-emerald-300">Commissioned Notary</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div><p className="text-[10px] uppercase tracking-widest text-slate-500">Commission #</p><p className="font-mono text-slate-200" data-testid="card-commission">{card.notary.license_number || '—'}</p></div>
+            <div><p className="text-[10px] uppercase tracking-widest text-slate-500">State</p><p className="text-slate-200">{card.notary.license_state || '—'}</p></div>
+            <div><p className="text-[10px] uppercase tracking-widest text-slate-500">Expires</p><p className="text-slate-200">{card.notary.commission_expiry ? new Date(card.notary.commission_expiry).toLocaleDateString() : '—'}</p></div>
+            <div><p className="text-[10px] uppercase tracking-widest text-slate-500">Notarial Acts</p><p className="text-slate-200">{card.notary.total_ceremonies ?? 0}</p></div>
+          </div>
+          <Link to={card.notary.profile_path} className="mt-3 inline-flex items-center gap-1 text-sm text-coral-400 hover:text-coral-300" data-testid="card-profile-link">
+            View public notary profile <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      )}
 
       {/* Provenance / actions */}
       <div className="mt-6 space-y-3">
