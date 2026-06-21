@@ -30,6 +30,7 @@ from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 
 from services import trustlayer_crypto
+from services import crypto_vault
 
 router = APIRouter(prefix="/api/trustlayer", tags=["trustlayer"])
 logger = logging.getLogger(__name__)
@@ -129,7 +130,7 @@ async def create_partner(body: PartnerCreate, request: Request):
         "scopes": body.scopes or [],
         "api_key_hash": _hash_key(raw_key),
         "api_key_preview": raw_key[:10] + "…" + raw_key[-4:],
-        "ed25519_private_b64": priv_b64,  # WARNING: HSM-bound in Phase 3
+        "ed25519_private_b64": crypto_vault.encrypt_str(priv_b64),  # encrypted at rest (HSM-bound in Phase 3)
         "ed25519_public_b64": pub_b64,
         "key_version": 1,
         "status": "active",
@@ -225,7 +226,7 @@ async def create_attestation(body: AttestationCreate, request: Request):
     signed_blob = None
     if partner.get("ed25519_private_b64"):
         try:
-            signed_blob = trustlayer_crypto.sign_attestation(partner["ed25519_private_b64"], attestation)
+            signed_blob = trustlayer_crypto.sign_attestation(crypto_vault.decrypt_str(partner["ed25519_private_b64"]), attestation)
             attestation["signature"] = signed_blob["signature"]
             attestation["signature_alg"] = signed_blob["signature_alg"]
             attestation["payload_digest"] = signed_blob["payload_digest"]

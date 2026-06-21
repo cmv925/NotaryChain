@@ -14,6 +14,7 @@ import uuid
 import json
 import hashlib
 import logging
+from fastapi import HTTPException
 from datetime import datetime, timezone, timedelta
 from typing import Optional, Dict, Any, List
 
@@ -209,20 +210,14 @@ async def store_biometric_blob(
     sha256 = biometric_hash(image_bytes)
 
     if not (bucket and access_key and secret_key):
-        # Local fallback — only for dev. Production must have S3.
-        local_dir = "/tmp/notary_uploads/living_identity"
-        os.makedirs(local_dir, exist_ok=True)
-        local_path = os.path.join(local_dir, f"{snapshot_id}.bin")
-        with open(local_path, "wb") as f:
-            f.write(image_bytes)
-        return {
-            "backend": "local",
-            "path": local_path,
-            "key": key,
-            "size": len(image_bytes),
-            "sha256": sha256,
-            "encryption": "none-local-only",
-        }
+        # SECURITY: biometric data is sensitive PII. We refuse to persist it to an
+        # unencrypted local path. If encrypted object storage isn't configured the
+        # capture fails closed rather than leaking PII to disk.
+        logger.error("Biometric storage rejected: S3 (encrypted object storage) is not configured")
+        raise HTTPException(
+            status_code=503,
+            detail="Secure biometric storage is not available. Identity capture is temporarily disabled.",
+        )
 
     try:
         import boto3
@@ -251,20 +246,15 @@ async def store_biometric_blob(
             "encryption": encryption_mode,
             "kms_arn": byok_kms_arn,
         }
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.warning(f"S3 biometric upload failed, using local fallback: {e}")
-        local_dir = "/tmp/notary_uploads/living_identity"
-        os.makedirs(local_dir, exist_ok=True)
-        local_path = os.path.join(local_dir, f"{snapshot_id}.bin")
-        with open(local_path, "wb") as f:
-            f.write(image_bytes)
-        return {
-            "backend": "local-fallback",
-            "path": local_path,
-            "size": len(image_bytes),
-            "sha256": sha256,
-            "encryption": "none-fallback",
-        }
+        # SECURITY: never silently fall back to unencrypted local storage for PII.
+        logger.error(f"Biometric S3 upload failed — failing closed (no local fallback): {e}")
+        raise HTTPException(
+            status_code=503,
+            detail="Secure biometric storage is temporarily unavailable. Please try again later.",
+        )
 
 
 # ────────── BEHAVIORAL DRIFT ──────────

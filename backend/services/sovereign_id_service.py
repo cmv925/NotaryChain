@@ -22,6 +22,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from services import trustlayer_crypto as tc
+from services import crypto_vault
 
 logger = logging.getLogger(__name__)
 
@@ -200,7 +201,7 @@ async def mint_sovereign_id(db, user_id: str, holder_name: str, identity_verifie
     doc = {
         **att,
         "public_key": pub_b64,
-        "private_key": priv_b64,  # server-only; never returned
+        "private_key": crypto_vault.encrypt_str(priv_b64),  # encrypted at rest; never returned
         "key_fingerprint": key_fingerprint(pub_b64),
         "signature": sig_b64,
         "signature_alg": "Ed25519",
