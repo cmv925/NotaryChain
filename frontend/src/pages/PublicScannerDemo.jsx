@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { Seo } from '../components/Seo';
+import { graph, serviceSchema, breadcrumbSchema } from '../lib/seo';
 import {
   Camera, Upload, Loader2, ShieldCheck, ShieldAlert, ShieldX, Sparkles,
   Trash2, ArrowRight, CheckCircle2, FileImage, ChevronRight,
@@ -57,6 +59,20 @@ export default function PublicScannerDemo() {
 
   return (
     <div className="min-h-screen bg-cream-100 font-sans text-navy-900">
+      <Seo
+        path="/scanner/demo"
+        title="AI Document Scanner — Detect Tampering & Forgery"
+        description="Try NotaryChain's AI document forensics. Upload or capture a document and our GPT-powered vision engine scans for tampering, alteration, and forgery, then checks for a prior blockchain seal."
+        keywords="AI document scanner, detect document tampering, forgery detection, document forensics, verify document authenticity"
+        jsonLd={graph(
+          serviceSchema({
+            name: 'AI Document Forensics Scanner',
+            description: 'GPT-powered vision analysis that detects document tampering, alteration, and forgery and checks for a prior blockchain seal.',
+            serviceType: 'Document Forensics',
+          }),
+          breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'AI Document Scanner' }]),
+        )}
+      />
       <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5">

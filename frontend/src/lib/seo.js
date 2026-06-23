@@ -122,6 +122,20 @@ export const offerCatalogSchema = (plans = []) => ({
   })),
 });
 
+/** HowTo — step-by-step instructions; favored by answer engines & rich results. */
+export const howToSchema = ({ name, description, steps = [], totalTime }) => ({
+  '@type': 'HowTo',
+  name,
+  ...(description ? { description } : {}),
+  ...(totalTime ? { totalTime } : {}),
+  step: steps.map((s, i) => ({
+    '@type': 'HowToStep',
+    position: i + 1,
+    name: s.name,
+    text: s.text,
+  })),
+});
+
 /** Wrap a list of node objects into a single JSON-LD @graph string. */
 export const graph = (...nodes) =>
   JSON.stringify({ '@context': 'https://schema.org', '@graph': nodes.filter(Boolean) });

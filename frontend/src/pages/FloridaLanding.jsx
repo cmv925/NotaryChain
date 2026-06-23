@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Seo } from '../components/Seo';
+import { graph, serviceSchema, faqSchema, howToSchema, breadcrumbSchema } from '../lib/seo';
 import { Shield, ArrowRight, CheckCircle, Sun, Home, FileText, Users, Award, ExternalLink, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -32,6 +34,36 @@ export default function FloridaLanding() {
 
   return (
     <div className="min-h-screen bg-cream-100 text-navy-900" data-testid="florida-landing">
+      <Seo
+        path="/florida"
+        title="Florida Online Notarization (RON) — Notarize Online in Minutes"
+        description="Get documents notarized online in Florida with NotaryChain. Florida RON-compliant: credential analysis, knowledge-based authentication, secure video, and blockchain sealing. Court-admissible in minutes."
+        keywords="Florida online notarization, Florida RON, remote online notary Florida, notarize document online Florida, Florida notary public online"
+        jsonLd={graph(
+          serviceSchema({
+            name: 'Florida Online Notarization (RON)',
+            description: 'Florida RON-compliant remote online notarization with AI document forensics, identity proofing, and Hedera blockchain sealing.',
+            serviceType: 'Remote Online Notarization',
+            areaServed: { '@type': 'State', name: 'Florida' },
+          }),
+          faqSchema([
+            { q: 'Is online notarization legal in Florida?', a: 'Yes. Florida authorizes Remote Online Notarization (RON) under Florida Statutes Chapter 117 Part II. NotaryChain meets Florida\u2019s RON requirements, including credential analysis, knowledge-based authentication, a live audio-video session, tamper-evident sealing, and 10-year recording retention.' },
+            { q: 'How do I notarize a document online in Florida?', a: 'Create a request, upload your document, complete identity proofing (Florida-compliant credential analysis + KBA), and meet a Florida-commissioned online notary over secure video. The signed document is sealed and anchored on the Hedera blockchain.' },
+            { q: 'What are Florida\u2019s RON requirements?', a: 'Florida requires identity proofing via credential analysis and knowledge-based authentication (KBA), a live audio-video session, tamper-evident sealing, and retention of the session recording for at least 10 years.' },
+            { q: 'How long does online notarization take in Florida?', a: 'Most Florida RON sessions are completed in under 15 minutes once identity proofing is passed.' },
+          ]),
+          howToSchema({
+            name: 'How to notarize a document online in Florida',
+            steps: [
+              { name: 'Create a request and upload', text: 'Start a notarization request and upload your document.' },
+              { name: 'Complete identity proofing', text: 'Pass Florida-compliant credential analysis and a knowledge-based authentication (KBA) quiz.' },
+              { name: 'Meet the notary on video', text: 'Join a live, recorded audio-video session with a Florida-commissioned online notary.' },
+              { name: 'Receive the sealed document', text: 'The executed document is sealed and anchored on the Hedera blockchain, then available to download.' },
+            ],
+          }),
+          breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Florida' }]),
+        )}
+      />
       {/* Hero */}
       <div className="border-b border-slate-200 bg-cream-100">
         <div className="max-w-7xl mx-auto px-6 py-16 sm:py-24 grid lg:grid-cols-12 gap-12 items-center">

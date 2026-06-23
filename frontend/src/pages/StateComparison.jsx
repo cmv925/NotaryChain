@@ -4,6 +4,8 @@
  */
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Seo } from '../components/Seo';
+import { graph, faqSchema, breadcrumbSchema } from '../lib/seo';
 import axios from 'axios';
 import { Shield, ExternalLink, MapPin, CheckCircle2, Clock, AlertCircle, ChevronRight, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -40,6 +42,19 @@ export default function StateComparison() {
 
   return (
     <div className="min-h-screen bg-cream-100" data-testid="state-comparison-page">
+      <Seo
+        path="/compliance/states"
+        title="Remote Online Notarization by State — Compliance Matrix"
+        description="Compare Remote Online Notarization (RON) requirements across U.S. states. NotaryChain supports Florida, Texas, New York, California, and Virginia with state-specific compliance gates."
+        keywords="remote online notarization by state, RON states, online notary laws, state notary compliance, RON requirements"
+        jsonLd={graph(
+          faqSchema([
+            { q: 'Which states allow remote online notarization?', a: 'Most U.S. states authorize RON. NotaryChain supports Florida, Texas, New York, California, and Virginia with state-specific compliance gates, and is expanding to additional states.' },
+            { q: 'Is a remotely notarized document valid in other states?', a: 'Generally yes. Under interstate recognition principles, a document validly notarized via RON in one state is typically recognized in others, though specific acts such as certain real-estate or testamentary documents can have state-specific rules.' },
+          ]),
+          breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'State Compliance' }]),
+        )}
+      />
       <header className="border-b border-slate-200 bg-white">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">

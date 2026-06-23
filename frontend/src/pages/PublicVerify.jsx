@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Seo } from '../components/Seo';
+import { graph, faqSchema, howToSchema, breadcrumbSchema } from '../lib/seo';
 import { Shield, FileText, Award, Search, CheckCircle, XCircle, Loader2, Upload, ExternalLink, Hash, Calendar, AlertTriangle, Clock } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -87,6 +89,28 @@ export default function PublicVerify() {
 
   return (
     <div className="min-h-screen bg-cream-100 text-navy-900" data-testid="public-verify-page">
+      <Seo
+        path="/verify"
+        title="Verify a Notarized Document — Free Blockchain Verification"
+        description="Instantly verify any NotaryChain document, certificate, or notary. Upload a file or paste its SHA-256 hash to confirm it's authentic and untampered on the Hedera blockchain — free, no account required."
+        keywords="verify notarized document, blockchain document verification, check document authenticity, verify notary, tamper-evident verification"
+        jsonLd={graph(
+          faqSchema([
+            { q: 'How do I verify a notarized document?', a: 'Upload the document or paste its SHA-256 hash at notarychain.app/verify. NotaryChain recomputes the hash and checks it against the Hedera public ledger. A match confirms the document is authentic and unaltered; any change is detected instantly. No account is required and verification is free.' },
+            { q: 'Is document verification free?', a: 'Yes. Anyone can verify a NotaryChain document, certificate, or commissioned notary by hash or certificate ID at /verify with no account and no cost.' },
+            { q: 'What does a blockchain seal prove?', a: 'It proves the exact document existed at the time of notarization and has not been altered since. The seal\u2019s cryptographic SHA-256 hash is permanently recorded on the Hedera Consensus Service.' },
+          ]),
+          howToSchema({
+            name: 'How to verify a notarized document',
+            steps: [
+              { name: 'Open the verifier', text: 'Go to notarychain.app/verify.' },
+              { name: 'Provide the document or hash', text: 'Upload the document file, paste its SHA-256 hash, or enter a certificate ID.' },
+              { name: 'Read the result', text: 'NotaryChain checks the hash against the Hedera ledger and shows whether the document is authentic and untampered.' },
+            ],
+          }),
+          breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Verify' }]),
+        )}
+      />
       {/* Hero */}
       <div className="border-b border-slate-200 bg-cream-100">
         <div className="max-w-5xl mx-auto px-6 py-10">

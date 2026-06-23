@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Seo } from '../components/Seo';
+import { graph, faqSchema, breadcrumbSchema } from '../lib/seo';
 import { Shield, Check, ArrowRight, Code, Lock, Eye, TrendingUp, Award, Loader2, Globe, Zap, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -50,6 +52,20 @@ export default function TrustBadgeLanding() {
 
   return (
     <div className="min-h-screen bg-cream-100 text-navy-900" data-testid="trust-badge-landing-page">
+      <Seo
+        path="/trust-badge"
+        title="Trust Badge — Show Verified Trust on Your Website"
+        description="Add a verifiable NotaryChain trust badge to your website. Live blockchain-backed verification, 60-second setup, and a conversion lift comparable to McAfee SECURE and Norton seals."
+        keywords="website trust badge, trust seal, verified badge, blockchain trust badge, conversion trust signal"
+        jsonLd={graph(
+          faqSchema([
+            { q: 'What is a NotaryChain trust badge?', a: 'A verifiable on-page badge that proves your business and documents are cryptographically verified on the Hedera blockchain. Visitors can click it to confirm authenticity in real time.' },
+            { q: 'How long does it take to set up?', a: 'About 60 seconds — customize the badge, add your domain, and paste a single embed snippet onto your site.' },
+            { q: 'Will the badge slow down my website?', a: 'No. The badge is a lightweight, asynchronously loaded widget that does not impact Core Web Vitals.' },
+          ]),
+          breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Trust Badge' }]),
+        )}
+      />
       {/* HERO */}
       <section className="relative overflow-hidden border-b border-slate-200">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(14,165,233,0.15),_transparent_50%)]" />

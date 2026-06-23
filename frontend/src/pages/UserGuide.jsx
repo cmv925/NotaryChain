@@ -8,6 +8,8 @@
  */
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { Seo } from '../components/Seo';
+import { graph, faqSchema, breadcrumbSchema } from '../lib/seo';
 import { Shield, ArrowLeft, BookOpen, ExternalLink } from 'lucide-react';
 
 const SECTIONS = [
@@ -131,6 +133,19 @@ export default function UserGuide() {
 
   return (
     <div className="min-h-screen bg-cream-100" data-testid="docs-page">
+      <Seo
+        path="/docs"
+        title="NotaryChain Documentation & User Guide"
+        description="Learn how to use NotaryChain: online notarization, identity proofing, multi-state compliance, the Asset Vault, TrustLayer, free public verification, and the developer SDK."
+        keywords="NotaryChain docs, online notarization guide, how to notarize online, RON help, notary platform documentation"
+        jsonLd={graph(
+          faqSchema([
+            { q: 'How do I notarize a document online with NotaryChain?', a: 'Create a notarization request, upload your document, complete identity proofing (government ID + selfie face match + KBA quiz), then meet a commissioned notary over secure video. The executed document is sealed and anchored on the Hedera blockchain.' },
+            { q: 'How do I verify a NotaryChain document?', a: 'Go to /verify and upload the document or paste its SHA-256 hash. The hash is checked against the Hedera public ledger to confirm authenticity and detect tampering — free and without an account.' },
+          ]),
+          breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Documentation' }]),
+        )}
+      />
       {/* Header */}
       <header className="border-b border-slate-200 bg-white sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">

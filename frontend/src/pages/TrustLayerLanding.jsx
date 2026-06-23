@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Seo } from '../components/Seo';
+import { graph, serviceSchema, breadcrumbSchema } from '../lib/seo';
 import { Network, ArrowRight, CheckCircle, Code, Shield, Zap, Users, ExternalLink, Copy } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -27,6 +29,20 @@ export default function TrustLayerLanding() {
 
   return (
     <div className="min-h-screen bg-cream-100 text-navy-900" data-testid="trustlayer-landing">
+      <Seo
+        path="/trustlayer"
+        title="TrustLayer — Federated Trust Verification Network"
+        description="TrustLayer is NotaryChain's federated trust network: cryptographically signed, Hedera-anchored attestations that any partner can verify across chains. Build verifiable trust into your product."
+        keywords="trust verification network, federated trust, Ed25519 attestation, Hedera anchored, verifiable credentials"
+        jsonLd={graph(
+          serviceSchema({
+            name: 'TrustLayer Federated Trust Network',
+            description: 'Cryptographically signed, blockchain-anchored trust attestations verifiable across partners and chains.',
+            serviceType: 'Trust Verification Network',
+          }),
+          breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'TrustLayer' }]),
+        )}
+      />
       {/* Hero */}
       <div className="border-b border-slate-200 bg-cream-100">
         <div className="max-w-6xl mx-auto px-6 py-16 sm:py-24">

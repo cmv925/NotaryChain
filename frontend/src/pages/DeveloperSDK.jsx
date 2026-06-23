@@ -4,6 +4,8 @@
  */
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Seo } from '../components/Seo';
+import { graph, softwareSchema, breadcrumbSchema } from '../lib/seo';
 import { Shield, Copy, Check, Code, Zap, Webhook, KeyRound, PlayCircle, BookOpen, ChevronRight, Github } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { toast } from '../hooks/use-toast';
@@ -169,6 +171,16 @@ app.post('/webhooks/notarychain', express.raw({ type: 'application/json' }), (re
 
   return (
     <div className="min-h-screen bg-cream-100" data-testid="developer-sdk-page">
+      <Seo
+        path="/developers/sdk"
+        title="Embeddable Notarize SDK — Add Notarization to Your App"
+        description="Embed blockchain-backed online notarization directly into your product with the NotaryChain SDK. Publishable keys, an iframe ceremony, and signed webhooks — go live in minutes."
+        keywords="notarization SDK, embeddable notary, notarize API, e-notarization SDK, blockchain notarization API"
+        jsonLd={graph(
+          softwareSchema(),
+          breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Developers' }, { name: 'SDK' }]),
+        )}
+      />
       {/* Header */}
       <header className="border-b border-slate-200 bg-white">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">

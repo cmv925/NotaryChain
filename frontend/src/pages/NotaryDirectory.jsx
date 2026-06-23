@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { Seo } from '../components/Seo';
+import { graph, serviceSchema, breadcrumbSchema } from '../lib/seo';
 import { Shield, Search, MapPin, Award, ChevronLeft, ChevronRight, ExternalLink, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { Input } from '../components/ui/input';
@@ -53,6 +55,20 @@ export default function NotaryDirectory() {
 
   return (
     <div className="min-h-screen bg-cream-100 text-navy-900" data-testid="notary-directory-page">
+      <Seo
+        path="/notaries"
+        title="Find a Commissioned Online Notary — NotaryChain Directory"
+        description="Browse verified, commissioned notaries on NotaryChain. Search by state to find an online notary for deeds, wills, powers of attorney, and business documents — each backed by blockchain-sealed, tamper-evident records."
+        keywords="find online notary, notary directory, commissioned notary near me, remote online notary, RON notary"
+        jsonLd={graph(
+          serviceSchema({
+            name: 'Find an Online Notary',
+            description: 'Search a directory of verified, commissioned online notaries for Remote Online Notarization, each backed by blockchain-sealed records.',
+            serviceType: 'Notary Public Directory',
+          }),
+          breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Notaries' }]),
+        )}
+      />
       {/* Hero */}
       <div className="border-b border-slate-200 bg-cream-100">
         <div className="max-w-6xl mx-auto px-6 py-10">

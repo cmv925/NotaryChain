@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://trust-network-dev.preview.emergentagent.com/</loc>
+    <loc>https://notarychain.app/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://trust-network-dev.preview.emergentagent.com/pricing</loc>
+    <loc>https://notarychain.app/pricing</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://trust-network-dev.preview.emergentagent.com/florida</loc>
+    <loc>https://notarychain.app/florida</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://trust-network-dev.preview.emergentagent.com/florida/notaries</loc>
+    <loc>https://notarychain.app/florida/notaries</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://trust-network-dev.preview.emergentagent.com/notaries</loc>
+    <loc>https://notarychain.app/notaries</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://trust-network-dev.preview.emergentagent.com/trustlayer</loc>
+    <loc>https://notarychain.app/trustlayer</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://trust-network-dev.preview.emergentagent.com/trust-badge</loc>
+    <loc>https://notarychain.app/trust-badge</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://trust-network-dev.preview.emergentagent.com/verify</loc>
+    <loc>https://notarychain.app/verify</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://trust-network-dev.preview.emergentagent.com/compliance/states</loc>
+    <loc>https://notarychain.app/compliance/states</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://trust-network-dev.preview.emergentagent.com/developers/sdk</loc>
+    <loc>https://notarychain.app/developers/sdk</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://trust-network-dev.preview.emergentagent.com/scanner/demo</loc>
+    <loc>https://notarychain.app/scanner/demo</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://trust-network-dev.preview.emergentagent.com/docs</loc>
+    <loc>https://notarychain.app/docs</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
